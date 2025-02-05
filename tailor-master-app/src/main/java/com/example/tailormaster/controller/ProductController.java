@@ -1,9 +1,8 @@
 package com.example.tailormaster.controller;
 
 import com.example.tailormaster.dto.ProductDto;
-import com.example.tailormaster.entity.Product;
+import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.service.product.ProductService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

@@ -1,8 +1,6 @@
 package com.example.tailormaster.service.product;
 
-import com.example.tailormaster.entity.Product;
-import com.example.tailormaster.entity.ProductCategory;
-import com.example.tailormaster.repository.product.ProductCategoryRepository;
+import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.product.ProductRepository;
 import org.springframework.stereotype.Service;
 

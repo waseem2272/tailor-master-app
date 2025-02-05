@@ -1,5 +1,6 @@
 package com.example.tailormaster.entity;
 
+import com.example.tailormaster.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 

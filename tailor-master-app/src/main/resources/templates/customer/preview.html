@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Preview</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="container">
+    <h1>Preview Customer Details</h1>
+
+    <!-- Customer Information -->
+    <div>
+        <h3>Customer Information</h3>
+        <p><strong>Name:</strong> <span th:text="${registrationDTO.customer.fullName}"></span></p>
+        <p><strong>Phone:</strong> <span th:text="${registrationDTO.customer.phoneNumber}"></span></p>
+<!--        <p><strong>Father's Name:</strong> <span th:text="${registrationDTO.customer.fatherName}"></span></p>-->
+        <!-- Add other customer fields as needed -->
+    </div>
+
+
+    <!-- Selected Products and Measurements -->
+    <h3>Selected Products and Measurements</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Iterate over selected products and display their measurements -->
+            <div th:each="entry : ${registrationDTO.customerMeasurements}">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 th:text="${entry.value.product != null ? entry.value.product.name : 'Product Name Unavailable'}"></h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Display measurements dynamically -->
+                        <div class="form-group">
+                            <label>Chest:</label>
+                            <p th:text="${entry.value.chest}"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Sleeve Length:</label>
+                            <p th:text="${entry.value.sleeveLength}"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Shoulder:</label>
+                            <p th:text="${entry.value.shoulder}"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Hips:</label>
+                            <p th:text="${entry.value.hips}"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Waist:</label>
+                            <p th:text="${entry.value.waist}"></p>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit/Action Buttons -->
+    <form th:action="@{/customers/create}" method="post">
+        <input type="hidden" th:name="registrationDTO" th:value="${registrationDTO}" />
+        <button type="submit" class="btn btn-primary">Submit</button>
+<!--        <a href="#" th:href="@{/customers/create}" class="btn btn-secondary">Edit</a>-->
+    </form>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

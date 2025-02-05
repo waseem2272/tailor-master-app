@@ -2,15 +2,11 @@ package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
-import com.example.tailormaster.entity.Product;
+import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.validation.MeasurementValidationGroup;
-import com.example.tailormaster.validation.ProductSelectionGroup;
 import com.example.tailormaster.validation.measurement.ValidCustomerMeasurement;
 import com.example.tailormaster.validation.products.ValidateSelectedProducts;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,11 +17,9 @@ import java.util.Map;
 
 @Getter @Setter
 public class CustomerRegistrationDTO {
-    private Customer customer;
 
-//    @NotNull(message = "At least one product must be selected.", groups = ProductSelectionGroup.class)
-    @NotBlank(message = "At least one product must be selected.", groups = ProductSelectionGroup.class)
-    private List<Long> productIds;
+    @Valid
+    private Customer customer;
 
     @Valid
     @ValidateSelectedProducts(groups = MeasurementValidationGroup.class)

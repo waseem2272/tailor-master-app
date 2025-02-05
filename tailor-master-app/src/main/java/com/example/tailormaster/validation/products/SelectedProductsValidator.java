@@ -1,6 +1,6 @@
 package com.example.tailormaster.validation.products;
 
-import com.example.tailormaster.entity.Product;
+import com.example.tailormaster.entity.product.Product;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

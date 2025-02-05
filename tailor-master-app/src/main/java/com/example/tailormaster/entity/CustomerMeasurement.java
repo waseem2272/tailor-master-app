@@ -1,14 +1,12 @@
 package com.example.tailormaster.entity;
 
+import com.example.tailormaster.entity.product.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString
 @Entity
 public class CustomerMeasurement extends BaseEntity {
 

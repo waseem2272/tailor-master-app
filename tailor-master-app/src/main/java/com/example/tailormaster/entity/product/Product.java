@@ -1,5 +1,7 @@
-package com.example.tailormaster.entity;
+package com.example.tailormaster.entity.product;
 
+import com.example.tailormaster.entity.BaseEntity;
+import com.example.tailormaster.entity.CustomerMeasurement;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -19,6 +21,8 @@ public class Product extends BaseEntity {
     public Product(Long id) {
         super(id);
     }
+
+    private ProductType type;
 
     @NotBlank(message = "Product Name is required")
     @Size(max = 100, message = "Product name cannot exceed 100 characters.")

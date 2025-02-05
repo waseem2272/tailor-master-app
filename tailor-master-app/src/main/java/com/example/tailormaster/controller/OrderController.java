@@ -1,16 +1,11 @@
 package com.example.tailormaster.controller;
 
-import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.Order;
-import com.example.tailormaster.entity.Product;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.product.ProductService;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
 package com.example.tailormaster.repository.product;
 
-import com.example.tailormaster.entity.Product;
+import com.example.tailormaster.entity.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
