@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - Tailor Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Include Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar}" />
+<div class="content">
+    <header class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Dashboard</h2>
+        <p>Welcome, <span th:text="${#authentication.name}"></span></p>
+    </header>
+    <div class="main-content">
+        <p>This is the main content of the dashboard.</p>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}" />
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

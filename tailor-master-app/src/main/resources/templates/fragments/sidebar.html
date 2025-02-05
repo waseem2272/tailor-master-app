@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <div class="sidebar" th:fragment="sidebar">
+        <h4 class="text-center py-3">Ghazi Tailors</h4>
+        <a th:href="@{/dashboard}">Dashboard</a>
+<!--        <a th:href="@{/admin/staff}" sec:authorize="hasRole('ROLE_ADMIN')">Staff Details</a>-->
+<!--        <a th:href="@{/categories}" sec:authorize="hasRole('ROLE_ADMIN')">Product Category</a>-->
+        <a th:href="@{/products}" sec:authorize="hasRole('ROLE_ADMIN')">Products</a>
+        <a th:href="@{/customers}" sec:authorize="hasRole('ROLE_ADMIN')">Customers</a>
+<!--        <a th:href="@{/orders}" sec:authorize="hasRole('ROLE_ADMIN')">Orders</a>-->
+<!--        <a th:href="@{/orders/create}" sec:authorize="hasRole('ROLE_ADMIN')">Create Order</a>-->
+<!--        <a th:href="@{/orders/assigned}" sec:authorize="hasRole('ROLE_STAFF')">My Orders</a> &lt;!&ndash; New Link &ndash;&gt;-->
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</html>

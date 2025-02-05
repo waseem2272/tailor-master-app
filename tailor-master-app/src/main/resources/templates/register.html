@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - Tailor Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: #28a745;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h3>Sign Up</h3>
+                </div>
+                <div class="card-body">
+                    <p style="color: red;">Fields marked as * are required</p>
+                    <form method="post" th:action="@{/register}" th:object="${user}">
+                        <div class="form-group">
+                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}"
+                                   placeholder="Enter username" required>
+                            <div th:if="${#fields.hasErrors('username')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('username')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                   placeholder="Enter password" required>
+                            <div th:if="${#fields.hasErrors('password')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('password')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">Full Name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
+                                   placeholder="Enter full name" required>
+                            <div th:if="${#fields.hasErrors('fullName')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fathersName" class="form-label">Father's Name</label>
+                            <input type="text" class="form-control" id="fathersName" th:field="*{fathersName}"
+                                   placeholder="Enter father's name">
+                            <!--                            <div th:if="${#fields.hasErrors('fathersName')}" class="text-danger">-->
+                            <!--                                <div th:each="error : ${#fields.errors('fathersName')}" th:text="${error}"></div>-->
+                            <!--                            </div>-->
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone1" class="form-label">Phone Number 1 <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="phone1" th:field="*{phone1}"
+                                   placeholder="Enter phone number 1" required>
+                            <div th:if="${#fields.hasErrors('phone1')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('phone1')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone2" class="form-label">Phone Number 2</label>
+                            <input type="text" class="form-control" id="phone2" th:field="*{phone2}"
+                                   placeholder="Enter phone number 2 (optional)">
+                            <div th:if="${#fields.hasErrors('phone2')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateOfBirth" class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="dateOfBirth" th:field="*{dateOfBirth}" required>
+                            <div th:if="${#fields.hasErrors('dateOfBirth')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('dateOfBirth')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shopName" class="form-label">Shop Name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="shopName" th:field="*{shopName}"
+                                   placeholder="Enter shop name" required>
+                            <div th:if="${#fields.hasErrors('shopName')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('shopName')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="proprietorName" class="form-label">Proprietor Name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="proprietorName" th:field="*{proprietorName}"
+                                   placeholder="Enter proprietor name" required>
+                            <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="shopAddress" th:field="*{shopAddress}"
+                                      placeholder="Enter shop address" required></textarea>
+                            <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+                        <!--                        <div class="form-group">-->
+                        <!--                            <label for="role" class="form-label">Role</label>-->
+                        <!--                            <select class="form-control" id="role" name="role" th:field="*{role}" required>-->
+                        <!--                                <option value="ROLE_ADMIN">Admin</option>-->
+                        <!--                                <option value="ROLE_STAFF">Staff</option>-->
+                        <!--                            </select>-->
+                        <!--                            <div th:if="${#fields.hasErrors('role')}" class="text-danger">-->
+                        <!--                                <div th:each="error : ${#fields.errors('role')}" th:text="${error}"></div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="form-group">
+                            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="" disabled selected>Select Role</option>
+                                <option th:each="role : ${roles}" th:value="${role.name}"
+                                        th:text="${role.name}"></option>
+                            </select>
+                            <div th:if="${#fields.hasErrors('role')}" class="text-danger">
+                                <div th:each="error : ${#fields.errors('role')}" th:text="${error}"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Register</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Already have an account?
+                        <a th:href="@{/login}" class="text-primary">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

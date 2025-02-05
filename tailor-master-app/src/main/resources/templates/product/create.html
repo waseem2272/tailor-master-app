@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Category</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .card {
+            margin: 50px auto;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+<!-- Include Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar}"/>
+<div class="container">
+    <div class="card">
+        <h3 class="text-center">Create New Product</h3>
+        <p style="color: red;">Fields marked as * are required</p>
+        <form th:action="@{/products/create}" th:object="${product}" method="post">
+            <div class="form-group">
+                <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                <input type="text" id="name" name="name" th:field="*{name}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('name')}" class="text-danger">
+                    <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                <input type="number" id="price" name="price" th:field="*{price}" class="form-control" step="0.01" required>
+                <div th:if="${#fields.hasErrors('price')}" class="text-danger">
+                    <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" class="text-danger">
+                    <div th:each="error : ${#fields.errors('description')}" th:text="${error}"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
+                <select id="enabled" name="enabled" th:field="*{enabled}" class="form-select" required>
+                    <option value="true">Active</option>
+                    <option value="false">Non-Active</option>
+                </select>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn btn-success">Create</button>
+                <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

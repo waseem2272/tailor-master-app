@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Include Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar}"/>
+<div class="container mt-5">
+    <h2 class="text-center">My Assigned Orders</h2>
+    <div th:if="${success}" class="alert alert-success" role="alert">
+        <span th:text="${success}"></span>
+    </div>
+    <table id="assignedOrders" class="table table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Order Type</th>
+            <th>Order Date</th>
+            <th>Delivery Date</th>
+            <th>Customer Name</th>
+            <th>Customer Phone</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order, iterStat : ${orders}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td th:text="${order.orderType}"></td>
+            <td th:text="${order.orderDate}"></td>
+            <td th:text="${order.deliveryDate}"></td>
+            <td th:text="${order.customer.firstName + ' ' + order.customer.lastName}"></td>
+            <td th:text="${order.customer.phoneNumber}"></td>
+            <td>
+                <!-- Dropdown for status -->
+                <form th:action="@{'/orders/update-status/' + ${order.id}}" method="post">
+                    <select name="status" class="form-select" th:value="${order.status}" required>
+                        <option value="Pending" th:selected="${order.status == 'Pending'}">Pending</option>
+                        <option value="In Progress" th:selected="${order.status == 'In Progress'}">In Progress</option>
+                        <option value="Completed" th:selected="${order.status == 'Completed'}">Completed</option>
+                        <option value="Cancelled" th:selected="${order.status == 'Cancelled'}">Cancelled</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary mt-2">Update</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script>
+    $(document).ready(function () {
+        $('#assignedOrders').DataTable();
+    });
+</script>
+<div th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>

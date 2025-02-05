@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Include Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar}"/>
+<div class="container mt-5">
+    <h2 class="text-center">Assign Order</h2>
+    <form th:action="@{/orders/assign}" method="post">
+        <input type="hidden" name="orderId" th:value="${order.id}">
+        <div class="form-group">
+            <label for="staff">Assign to Staff</label>
+            <select id="staff" name="staffId" class="form-select" required>
+                <option th:each="staff : ${staffList}" th:value="${staff.id}"
+                        th:text="${staff.firstName + ' ' + staff.lastName}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Assign Order</button>
+        <a th:href="@{/orders}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+<div th:replace="~{fragments/footer :: footer}"/>
+</body>
+</html>
