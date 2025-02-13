@@ -23,6 +23,7 @@ import static com.example.tailormaster.validation.Validation.validateMeasurement
 
 @Controller
 @RequestMapping("/customers")
+@SessionAttributes("registrationDTO")  // Store DTO in session
 public class CustomerController {
 
     private CustomerService customerService;
@@ -92,6 +93,7 @@ public class CustomerController {
 
         // Validate measurements dynamically based on selected products
         Map<Long, CustomerMeasurement> customerMeasurements = registrationDTO.getCustomerMeasurements();
+        Map<Long, CustomerMeasurement> selectedMeasurements = new LinkedHashMap<>(); // Store only selected ones
         if (productIds != null) {
             for (Long productId : productIds) {
                 CustomerMeasurement measurement = customerMeasurements.get(productId);
@@ -99,6 +101,9 @@ public class CustomerController {
                     result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
                 } else {
                     validateMeasurement(productId, measurement, result);
+                    Product product = productService.getProductById(productId);
+                    measurement.setProduct(product);
+                    selectedMeasurements.put(productId, measurement); // Store only valid measurements
                 }
             }
         }
@@ -116,7 +121,8 @@ public class CustomerController {
             return "customer/create";
         }
 
-        // Add the registrationDTO to the model to display on the preview page
+        // Set only the selected measurements to DTO before preview
+        registrationDTO.setCustomerMeasurements(selectedMeasurements);
         model.addAttribute("registrationDTO", registrationDTO);
         return "customer/preview";  // Show the preview page
 
@@ -140,6 +146,39 @@ public class CustomerController {
 //            return "redirect:/customer/create";
 //        }
     }
+    @PostMapping("/save")
+    public String saveCustomer(
+            @ModelAttribute("registrationDTO") CustomerRegistrationDTO registrationDTO,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            // Save customer details
+            Customer savedCustomer = customerService.createCustomer(registrationDTO.getCustomer());
+
+            // Save Measurements
+            for (Map.Entry<Long, CustomerMeasurement> entry : registrationDTO.getCustomerMeasurements().entrySet()) {
+                CustomerMeasurement measurement = entry.getValue();
+                measurement.setCustomer(savedCustomer);
+                measurement.setBarcode(generateBarcode(savedCustomer));
+                measurementService.saveMeasurement(measurement);
+            }
+
+            // Success message
+            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
+            return "redirect:/customers";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error saving customer details!");
+            return "customer/preview";
+        }
+    }
+
+    // generate barcode
+    private static String generateBarcode(Customer savedCustomer) {
+        return savedCustomer.getFullName() + savedCustomer.getPhoneNumber() + "-" + UUID.randomUUID();
+    }
+
 
     // Utility method to save customer measurements
     private void saveCustomerMeasurement(Customer customer, Product product, CustomerMeasurement providedMeasurement) {
@@ -153,7 +192,7 @@ public class CustomerController {
         measurement.setWaist(providedMeasurement.getWaist());
 
         // Generate barcode
-        String barcode = customer.getFullName() + customer.getPhoneNumber() + "-" + UUID.randomUUID();
+        String barcode = generateBarcode(customer);
         measurement.setBarcode(barcode);
 
         measurementService.saveMeasurement(measurement);

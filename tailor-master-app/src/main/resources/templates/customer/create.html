@@ -260,6 +260,20 @@
 <script th:src="@{/js/create-customer.js}"></script>
 
 <script>
+
+    function closeMeasurement(productId) {
+        let measurementDiv = document.querySelector(`.measurement-fields[data-product-id="${productId}"]`);
+        if (measurementDiv) {
+            measurementDiv.style.display = "none";
+            resetFields(productId);
+        }
+        // Uncheck the associated product checkbox
+        let checkbox = document.querySelector(`.product-checkbox[value="${productId}"]`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+    }
+
     function toggleMeasurements(checkbox) {
         let productId = checkbox.value;
         let measurementDiv = document.querySelector(`.measurement-fields[data-product-id="${productId}"]`);
