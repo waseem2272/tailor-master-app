@@ -26,9 +26,9 @@ import static com.example.tailormaster.validation.Validation.validateMeasurement
 @SessionAttributes("registrationDTO")  // Store DTO in session
 public class CustomerController {
 
-    private CustomerService customerService;
-    private ProductService productService;
-    private CustomerMeasurementService measurementService;
+    private final CustomerService customerService;
+    private final ProductService productService;
+    private final CustomerMeasurementService measurementService;
 
     public CustomerController(CustomerService customerService, ProductService productService,
                               CustomerMeasurementService measurementService) {
@@ -101,9 +101,9 @@ public class CustomerController {
                     result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
                 } else {
                     validateMeasurement(productId, measurement, result);
-                    Product product = productService.getProductById(productId);
-                    measurement.setProduct(product);
-                    selectedMeasurements.put(productId, measurement); // Store only valid measurements
+//                    Product product = productService.getProductById(productId);
+//                    measurement.setProduct(product);
+//                    selectedMeasurements.put(productId, measurement); // Store only valid measurements
                 }
             }
         }
@@ -122,34 +122,35 @@ public class CustomerController {
         }
 
         // Set only the selected measurements to DTO before preview
-        registrationDTO.setCustomerMeasurements(selectedMeasurements);
-        model.addAttribute("registrationDTO", registrationDTO);
-        return "customer/preview";  // Show the preview page
+//        registrationDTO.setCustomerMeasurements(selectedMeasurements);
+//        model.addAttribute("registrationDTO", registrationDTO);
+//        return "customer/preview";  // Show the preview page
 
-//        try {
-//            // Save customer details
-//            Customer savedCustomer = customerService.createCustomer(registrationDTO.getCustomer());
-//
-//            // Save measurements for each selected product
-//            for (Long productId : productIds) {
-//                Product product = productService.getProductById(productId);
-//                saveCustomerMeasurement(savedCustomer, product, customerMeasurements.get(productId));
-//            }
-//
-//            // Success message
-//            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
-//            return "redirect:/customers";
-//
-//        } catch (Exception e) {
-//            // Handle unexpected errors
-//            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating the customer.");
-//            return "redirect:/customer/create";
-//        }
+        try {
+            // Save customer details
+            Customer savedCustomer = customerService.createCustomer(registrationDTO.getCustomer());
+
+            // Save measurements for each selected product
+            for (Long productId : productIds) {
+                Product product = productService.getProductById(productId);
+                saveCustomerMeasurement(savedCustomer, product, customerMeasurements.get(productId));
+            }
+
+            // Success message
+            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
+            return "redirect:/customers";
+
+        } catch (Exception e) {
+            // Handle unexpected errors
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating the customer.");
+            return "redirect:/customer/create";
+        }
     }
+
     @PostMapping("/save")
     public String saveCustomer(
             @ModelAttribute("registrationDTO") CustomerRegistrationDTO registrationDTO,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Model model) {
 
         try {
 
@@ -169,7 +170,11 @@ public class CustomerController {
             return "redirect:/customers";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error saving customer details!");
+            e.printStackTrace();
+            // Pass error message and existing registration data back to the model
+            model.addAttribute("error", "Error saving customer details! Error details: " + e.getMessage());
+            model.addAttribute("registrationDTO", registrationDTO); // Ensure existing data is retained
+//            redirectAttributes.addFlashAttribute("error", "Error saving customer details!");
             return "customer/preview";
         }
     }

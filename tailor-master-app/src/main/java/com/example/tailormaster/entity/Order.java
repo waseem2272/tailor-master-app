@@ -22,8 +22,8 @@ public class Order extends BaseEntity {
 
     private LocalDate orderDate;
     private LocalDate deliveryDate;
-    private BigDecimal extraCharges;
-    private String extraChargesDescription;
+//    private BigDecimal extraCharges;
+//    private String extraChargesDescription;
     private BigDecimal advancePayment;
     private BigDecimal totalPayment;
 

@@ -4,6 +4,8 @@ import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.repository.customer.CustomerMeasurementRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerMeasurementService {
     private final CustomerMeasurementRepository measurementRepository;
@@ -14,5 +16,9 @@ public class CustomerMeasurementService {
 
     public void saveMeasurement(CustomerMeasurement measurement) {
         measurementRepository.save(measurement);
+    }
+
+    public List<CustomerMeasurement> getCustomerMeasurement(Long customerId) {
+        return measurementRepository.findByCustomerId(customerId);
     }
 }
