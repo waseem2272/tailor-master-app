@@ -11,9 +11,11 @@ import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.product.ProductService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -31,6 +33,13 @@ public class OrderController {
     private final ProductService productService;
     private final CustomerMeasurementService customerMeasurementService;
     private final OrderService orderService;
+
+    @GetMapping
+    public String listOrders(Model model) {
+        List<Order> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+        return "order/orders"; // Redirects to orders.html
+    }
 
     // Show create order form
     @GetMapping("/create/{id}")
@@ -54,8 +63,16 @@ public class OrderController {
 
     // create order
     @PostMapping("/create")
-    public String createOrder(@ModelAttribute CustomerOrderDto orderDto, RedirectAttributes redirectAttributes) {
+    public String createOrder(@Valid @ModelAttribute CustomerOrderDto orderDto,
+                              BindingResult result,
+                              RedirectAttributes redirectAttributes) {
         try {
+
+            if (result.hasErrors()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid order details. Please check your inputs.");
+                return "redirect:/orders/create"; // Redirect back to form
+            }
+
             Order order = new Order();
             order.setOrderDate(orderDto.getOrderDate());
             order.setDeliveryDate(orderDto.getDeliveryDate());

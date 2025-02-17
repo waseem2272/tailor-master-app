@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Orders</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .alert {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<!-- Include Sidebar Fragment -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+            <h2 class="text-center">Orders</h2>
+            <!-- Success Message Alert -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <table id="ordersTable" class="table table-bordered">
+                <thead class="table-success">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>Delivery Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order, i : ${orders}">
+                    <td th:text="${i.count}"></td>
+                    <td th:text="${order.customer.fullName + ' ' + order.customer.phoneNumber}"></td>
+                    <td th:text="${order.orderDate}"></td>
+                    <td th:text="${order.deliveryDate}"></td>
+                    <td>
+                    <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
+                          th:text="${order.status}">
+                    </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Edit</a>
+
+                        <form th:action="@{/orders/delete/{id}(id=${order.id})}" method="post" style="display: inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script>
+    $(document).ready(function () {
+        $('#ordersTable').DataTable();
+    });
+</script>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

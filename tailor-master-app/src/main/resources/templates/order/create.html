@@ -153,7 +153,7 @@
                 <!-- Buttons -->
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success">Save Order</button>
-                    <a href="/orders" class="btn btn-danger">Cancel</a>
+                    <a th:href="@{/orders}" class="btn btn-danger">Cancel</a>
                 </div>
             </form>
         </div>
@@ -163,30 +163,15 @@
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
 <script>
-    /*document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll(".product-checkbox");
-
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", function () {
-                const measurementCard = document.getElementById("measurement_card_" + this.value);
-
-                if (this.checked) {
-                    measurementCard.classList.remove("d-none");
-                    measurementCard.classList.add("fade-in");
-                } else {
-                    measurementCard.classList.add("fade-out");
-                    setTimeout(() => measurementCard.classList.add("d-none"), 300);
-                }
-            });
-        });
-    });*/
-
     document.addEventListener("DOMContentLoaded", function () {
         let selectedProductsContainer = document.getElementById("selectedProductsContainer");
-        // let extraChargesInput = document.getElementById("extraCharges");
         let advancePaymentInput = document.getElementById("advancePayment");
         let totalPaymentInput = document.getElementById("totalPayment");
+        let orderDateInput = document.querySelector("input[name='orderDate']");
+        let deliveryDateInput = document.querySelector("input[name='deliveryDate']");
+        let form = document.querySelector("form");
 
         function updateTotal() {
             let subtotal = 0;
@@ -195,11 +180,25 @@
             });
 
             let advancePayment = parseFloat(advancePaymentInput.value || 0);
-            let total = subtotal - advancePayment; // Removed extraCharges
+            let total = subtotal - advancePayment;
             totalPaymentInput.value = total.toFixed(2);
         }
 
-        document.querySelectorAll(".product-checkbox").forEach(checkbox => {
+        advancePaymentInput.addEventListener("input", function () {
+            let advancePayment = parseFloat(advancePaymentInput.value || 0);
+
+            // Clear previous errors
+            document.querySelectorAll(".error-message").forEach(el => el.remove());
+
+            if (advancePayment < 0) {
+                advancePaymentInput.value = "0"; // Reset negative values to 0
+                showError(advancePaymentInput, "Advance payment cannot be negative.");
+            }
+
+            updateTotal();
+        });
+
+        document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
             checkbox.addEventListener("change", function () {
                 let productId = this.value;
                 let productName = this.nextElementSibling.innerText;
@@ -210,52 +209,50 @@
 
                 if (this.checked) {
                     if (!existingProduct) {
-                        // ✅ Create Product Card
                         let productCard = document.createElement("div");
                         productCard.classList.add("col-md-6");
                         productCard.id = "product_card_" + productId;
                         productCard.innerHTML = `
-                    <div class="card p-3 border-success shadow-sm">
-                        <div class="card-header bg-secondary text-white fw-bold">${productName} Details</div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6"><strong>Price:</strong> <span class="product-price">${productPrice}</span></div>
-                                <div class="col-6">
-                                    <strong>Quantity:</strong>
-                                    <input type="number" min="1" value="1" class="form-control product-quantity" data-product-id="${productId}">
+                            <div class="card p-3 border-success shadow-sm">
+                                <div class="card-header bg-secondary text-white fw-bold">${productName} Details</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6"><strong>Price:</strong> <span class="product-price">${productPrice}</span></div>
+                                        <div class="col-6">
+                                            <strong>Quantity:</strong>
+                                            <input type="number" min="1" value="1" class="form-control product-quantity" data-product-id="${productId}">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-12"><strong>Subtotal:</strong> $<span class="product-subtotal">${productPrice.toFixed(2)}</span></div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-12"><strong>Subtotal:</strong> $<span class="product-subtotal">${productPrice.toFixed(2)}</span></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                        `;
 
                         selectedProductsContainer.appendChild(productCard);
 
-                        // ✅ Create Hidden Inputs for Backend Submission
+                        let productIndex = document.querySelectorAll(".product-checkbox:checked").length - 1;
+
                         let inputProductId = document.createElement("input");
                         inputProductId.type = "hidden";
-                        inputProductId.name = `orderProducts[${productId}].productId`;
+                        inputProductId.name = `orderProducts[${productIndex}].productId`;
                         inputProductId.value = productId;
                         inputProductId.id = `hidden_product_${productId}`;
                         container.appendChild(inputProductId);
 
                         let inputQuantity = document.createElement("input");
                         inputQuantity.type = "hidden";
-                        inputQuantity.name = `orderProducts[${productId}].quantity`;
-                        inputQuantity.value = "1"; // Default quantity
+                        inputQuantity.name = `orderProducts[${productIndex}].quantity`;
+                        inputQuantity.value = "1";
                         inputQuantity.id = `hidden_quantity_${productId}`;
                         container.appendChild(inputQuantity);
 
-                        // ✅ Update Subtotal on Quantity Change
                         productCard.querySelector(".product-quantity").addEventListener("input", function () {
                             let quantity = parseInt(this.value || 1);
                             let subtotalField = productCard.querySelector(".product-subtotal");
                             subtotalField.innerText = (productPrice * quantity).toFixed(2);
 
-                            // Update hidden input for quantity
                             document.getElementById(`hidden_quantity_${productId}`).value = quantity;
 
                             updateTotal();
@@ -274,13 +271,61 @@
             });
         });
 
-
-        // extraChargesInput.addEventListener("input", updateTotal);
         advancePaymentInput.addEventListener("input", updateTotal);
+
+        // ✅ VALIDATION FUNCTION
+        function validateForm(event) {
+            let isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll(".error-message").forEach(el => el.remove());
+
+            // ✅ Order Date Validation
+            let today = new Date().toISOString().split("T")[0];
+            if (orderDateInput.value < today) {
+                showError(orderDateInput, "Order date cannot be in the past.");
+                isValid = false;
+            }
+
+            // ✅ Delivery Date Validation
+            if (deliveryDateInput.value <= orderDateInput.value) {
+                showError(deliveryDateInput, "Delivery date must be after order date.");
+                isValid = false;
+            }
+
+            // ✅ Product Selection Validation
+            let selectedProducts = document.querySelectorAll(".product-checkbox:checked");
+            if (selectedProducts.length === 0) {
+                showError(selectedProductsContainer, "Please select at least one product.");
+                isValid = false;
+            }
+
+            // ✅ Advance Payment Validation
+            let advancePayment = parseFloat(advancePaymentInput.value || 0);
+            let totalPayment = parseFloat(totalPaymentInput.value || 0);
+            if (advancePayment > totalPayment) {
+                showError(advancePaymentInput, "Advance payment cannot be more than total amount.");
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        }
+
+        function showError(element, message) {
+            let errorDiv = document.createElement("div");
+            errorDiv.className = "text-danger error-message";
+            errorDiv.innerText = message;
+            element.parentNode.appendChild(errorDiv);
+        }
+
+        form.addEventListener("submit", validateForm);
     });
 
-
 </script>
+
+
 
 </body>
 </html>

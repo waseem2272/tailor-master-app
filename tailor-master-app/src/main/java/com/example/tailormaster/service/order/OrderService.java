@@ -21,7 +21,7 @@ public class OrderService {
     }
 
     // Get all orders
-    public List<Order> findAll() {
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
