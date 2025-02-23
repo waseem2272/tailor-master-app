@@ -27,8 +27,9 @@
             </div>
 
             <!-- Error Alert -->
-            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
                 <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
             <table id="ordersTable" class="table table-bordered">
@@ -76,5 +77,6 @@
     });
 </script>
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package com.example.tailormaster.validation;
 
+import com.example.tailormaster.dto.CustomerOrderDto;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import io.micrometer.common.util.StringUtils;
+import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 
 public class Validation {
@@ -27,4 +29,10 @@ public class Validation {
         }
     }
 
+    public static boolean validateCustomerOrderDto(CustomerOrderDto orderDto) {
+        if (orderDto != null) {
+            return orderDto.getCustomerId() != null;
+        }
+        return false;
+    }
 }

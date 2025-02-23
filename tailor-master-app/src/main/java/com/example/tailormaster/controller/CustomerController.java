@@ -7,6 +7,7 @@ import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.product.ProductService;
+import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Utility;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
@@ -66,6 +67,7 @@ public class CustomerController {
     @GetMapping
     public String listCustomers(Model model) {
         model.addAttribute("customers", customerService.getAllCustomers());
+        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "customer/list";
     }
 

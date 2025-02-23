@@ -11,6 +11,10 @@ import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.product.ProductService;
+import com.example.tailormaster.util.AESUtil;
+import com.example.tailormaster.util.ThymeleafUtil;
+import com.example.tailormaster.validation.Utility;
+import com.example.tailormaster.validation.Validation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,69 +48,117 @@ public class OrderController {
 
     // Show create order form
     @GetMapping("/create/{id}")
-    public String showCreateOrderForm(@PathVariable Long id, Model model) {
+    public String showCreateOrderForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
 
-        Customer customer = customerService.getCustomerById(id);
-        if (customer == null) {
-            return "redirect:/customers?error=CustomerNotFound";
+        try {
+            Long customerId = Long.parseLong(AESUtil.decrypt(id));
+            Customer customer = customerService.getCustomerById(customerId);
+            if (customer == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                return "redirect:/customers";
+            }
+
+            CustomerOrderDto orderDto = new CustomerOrderDto();
+            orderDto.setOrderDate(LocalDate.now());
+            orderDto.setDeliveryDate(LocalDate.now().plusDays(1));
+
+            List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
+            List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+
+            model.addAttribute("orderDto", orderDto);
+            model.addAttribute("customer", customer);
+            model.addAttribute("products", products);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            return "order/create";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order");
+            return "redirect:/customers"; // Handle invalid decryption cases
         }
-
-        List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(id);
-        List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
-
-        model.addAttribute("order", new Order());
-        model.addAttribute("customer", customer);
-//        model.addAttribute("measurements", measurements);
-        model.addAttribute("products", products);
-
-        return "order/create";
     }
 
     // create order
     @PostMapping("/create")
-    public String createOrder(@Valid @ModelAttribute CustomerOrderDto orderDto,
+    public String createOrder(@Valid @ModelAttribute("orderDto") CustomerOrderDto orderDto,
                               BindingResult result,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes,
+                              Model model,
+                              @RequestParam("encryptedCustomerId") String encryptedCustomerId) {
         try {
 
+            // Decrypt the customer ID from the hidden field
+            String decryptedId = AESUtil.decrypt(encryptedCustomerId);
+
+            // Validate if it's a valid number
+            if (!decryptedId.matches("\\d+")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+                return "redirect:/customers";
+            }
+
+            // Convert decrypted ID to Long
+            Long actualCustomerId = Long.parseLong(decryptedId);
+
+            Customer customer = customerService.getCustomerById(actualCustomerId);
+            if (customer == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                return "redirect:/customers";
+            }
+
+//            if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
+//                result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
+//            }
+//            else {
+//                // Validate each product quantity
+//                for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
+//                    OrderProductDto product = orderDto.getOrderProducts().get(i);
+//                    if (product.getQuantity() != null && product.getQuantity() < 1) {
+//                        result.rejectValue("orderProducts[" + i + "].quantity",
+//                                "error.orderProducts[" + i + "].quantity",
+//                                "Quantity must be at least 1.");
+//                    }
+//                }
+//            }
+
             if (result.hasErrors()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid order details. Please check your inputs.");
-                return "redirect:/orders/create"; // Redirect back to form
+                List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(actualCustomerId);
+                List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+
+                model.addAttribute("orderDto", orderDto);
+                model.addAttribute("customer", customer);
+                model.addAttribute("products", products);
+                model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+                result.getAllErrors().forEach(System.out::println);
+                return "order/create";  // Stay on form
             }
 
-            Order order = new Order();
-            order.setOrderDate(orderDto.getOrderDate());
-            order.setDeliveryDate(orderDto.getDeliveryDate());
-            order.setStatus(orderDto.getStatus());
-//            order.setExtraCharges(orderDto.getExtraCharges());
-//            order.setExtraChargesDescription(orderDto.getExtraChargesDescription());
-            order.setAdvancePayment(orderDto.getAdvancePayment());
-            order.setTotalPayment(orderDto.getTotalPayment());
-
-            // Fetch customer
-            Customer customer = customerService.getCustomerById(orderDto.getCustomerId());
-            order.setCustomer(customer);
-
-            // Save Products with Quantity
-            List<OrderProduct> orderProducts = new ArrayList<>();
-            for (OrderProductDto opDto : orderDto.getOrderProducts()) {
-                OrderProduct orderProduct = new OrderProduct();
-                Product product = productService.getProductById(opDto.getProductId());
-                orderProduct.setProduct(product);
-                orderProduct.setQuantity(opDto.getQuantity());
-                orderProduct.setSubtotal(product.getPrice().multiply(new BigDecimal(opDto.getQuantity())));
-                orderProduct.setOrder(order);
-                orderProducts.add(orderProduct);
-            }
-
-            order.setOrderProducts(orderProducts);
-            orderService.save(order);
+            // save order logic will add later
 
             redirectAttributes.addFlashAttribute("successMessage", "Order created successfully!");
             return "redirect:/orders";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error creating order: " + e.getMessage());
-            return "redirect:/orders/create";
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
+            return "redirect:/orders";
         }
+    }
+
+    private String handleValidationFailure(CustomerOrderDto orderDto, Long customerId, Model model,
+                                           BindingResult result, Customer customer, String field, String message) {
+        // Fetch customer measurements and products
+        List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
+        List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+
+        // Pass necessary data back to the form
+        model.addAttribute("orderDto", orderDto);
+        model.addAttribute("customer", customer);
+        model.addAttribute("products", products);
+//        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+
+        // Add validation error message if a specific field is provided
+        if (field != null && message != null) {
+            result.rejectValue(field, "error.orderDto", message);
+        }
+
+        return "order/create";  // Stay on the form
     }
 }

@@ -31,7 +31,7 @@
                     <h3>Sign Up</h3>
                 </div>
                 <div class="card-body">
-                    <p style="color: red;">Fields marked as * are required</p>
+                    <p class="text-danger fw-bold">Fields marked as * are required</p>
                     <form method="post" th:action="@{/register}" th:object="${user}">
                         <div class="form-group">
                             <label for="username" class="form-label">Username <span class="text-danger">*</span></label>

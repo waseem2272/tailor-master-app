@@ -33,7 +33,7 @@
 <div class="container">
     <div class="card">
         <h3 class="text-center">Create New Product</h3>
-        <p style="color: red;">Fields marked as * are required</p>
+        <p class="text-danger fw-bold">Fields marked as * are required</p>
         <form th:action="@{/products/create}" th:object="${product}" method="post">
             <div class="form-group">
                 <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>

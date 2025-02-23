@@ -22,18 +22,24 @@
             <h2 class="text-center">Customers</h2>
 
             <!-- Success Alert -->
-            <div th:if="${successMessage}" class="alert alert-success text-center" role="alert">
-                <span th:text="${successMessage}"></span>
+            <div th:if="${successMessage}" class="row justify-content-center">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
 
             <!-- Error Alert -->
-            <div th:if="${errorMessage}" class="alert alert-danger text-center" role="alert">
-                <span th:text="${errorMessage}"></span>
+            <div th:if="${errorMessage}" class="row justify-content-center">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
 
             <a th:href="@{/customers/create}" class="btn btn-primary mb-3">Create New Customer</a>
             <table id="customersTable" class="table table-bordered">
-                <thead>
+                <thead class="table-success">
                 <tr>
                     <th>#</th>
                     <th>Customer Name</th>
@@ -47,7 +53,7 @@
                     <td th:text="${customer.fullName}"></td>
                     <td th:text="${customer.phoneNumber}"></td>
                     <td>
-                        <a th:href="@{'/orders/create/' + ${customer.id}}" class="btn btn-sm btn-success">Create
+                        <a th:href="@{'/orders/create/' + ${thymeleafUtil.encryptId(customer.id)}}" class="btn btn-sm btn-success">Create
                             Order</a>
                         <!--                <a th:href="@{'/customers/update/' + ${customer.id}}" class="btn btn-sm btn-warning">Edit</a>-->
                         <!--                <a th:href="@{'/customers/delete/' + ${customer.id}}" class="btn btn-sm btn-danger"-->
@@ -67,5 +73,6 @@
     });
 </script>
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
