@@ -99,10 +99,6 @@
                                 <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].id'" th:value="${product.id}">
                                 <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].name'" th:value="${product.name}">
                                 <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].price'" th:value="${product.price}">
-                                <!-- Quantity Field -->
-<!--                                <input type="number" class="form-control quantity-input"-->
-<!--                                       th:name="'orderProducts[' + ${iterStat.index} + '].quantity'"-->
-<!--                                       th:value="${product.quantity}" min="1">-->
 
                                 <!-- Error Message for Quantity -->
                                 <div class="text-danger error-message"

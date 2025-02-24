@@ -41,8 +41,7 @@ public class OrderController {
 
     @GetMapping
     public String listOrders(Model model) {
-        List<Order> orders = orderService.getAllOrders();
-        model.addAttribute("orders", orders);
+        model.addAttribute("orders", orderService.getAllOrders());
         return "order/orders"; // Redirects to orders.html
     }
 
@@ -62,14 +61,7 @@ public class OrderController {
             orderDto.setOrderDate(LocalDate.now());
             orderDto.setDeliveryDate(LocalDate.now().plusDays(1));
 
-            List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
-            List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
-
-            model.addAttribute("orderDto", orderDto);
-            model.addAttribute("customer", customer);
-            model.addAttribute("products", products);
-            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-            return "order/create";
+            return populateModel(model, customerId, orderDto, customer);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +78,6 @@ public class OrderController {
                               Model model,
                               @RequestParam("encryptedCustomerId") String encryptedCustomerId) {
         try {
-
             // Decrypt the customer ID from the hidden field
             String decryptedId = AESUtil.decrypt(encryptedCustomerId);
 
@@ -105,31 +96,8 @@ public class OrderController {
                 return "redirect:/customers";
             }
 
-//            if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
-//                result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
-//            }
-//            else {
-//                // Validate each product quantity
-//                for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
-//                    OrderProductDto product = orderDto.getOrderProducts().get(i);
-//                    if (product.getQuantity() != null && product.getQuantity() < 1) {
-//                        result.rejectValue("orderProducts[" + i + "].quantity",
-//                                "error.orderProducts[" + i + "].quantity",
-//                                "Quantity must be at least 1.");
-//                    }
-//                }
-//            }
-
             if (result.hasErrors()) {
-                List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(actualCustomerId);
-                List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
-
-                model.addAttribute("orderDto", orderDto);
-                model.addAttribute("customer", customer);
-                model.addAttribute("products", products);
-                model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-                result.getAllErrors().forEach(System.out::println);
-                return "order/create";  // Stay on form
+                return populateModel(model, actualCustomerId, orderDto, customer);
             }
 
             // save order logic will add later
@@ -140,6 +108,17 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
             return "redirect:/orders";
         }
+    }
+
+    private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
+        List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
+        List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+
+        model.addAttribute("orderDto", orderDto);
+        model.addAttribute("customer", customer);
+        model.addAttribute("products", products);
+        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+        return "order/create";
     }
 
     private String handleValidationFailure(CustomerOrderDto orderDto, Long customerId, Model model,
