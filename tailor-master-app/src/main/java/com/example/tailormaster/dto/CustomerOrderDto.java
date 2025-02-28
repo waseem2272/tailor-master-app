@@ -33,6 +33,8 @@ public class CustomerOrderDto {
 
     private OrderStatus status = OrderStatus.PENDING;
 
+    private BigDecimal advancePayment;
+
     @NotNull(message = "Due payment is required.")
     @DecimalMin(value = "0.00", message = "Due payment cannot be negative.")
     private BigDecimal duePayment;

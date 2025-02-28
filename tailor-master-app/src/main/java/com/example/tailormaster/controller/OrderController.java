@@ -70,7 +70,6 @@ public class OrderController {
         }
     }
 
-    // create order
     @PostMapping("/create")
     public String createOrder(@Valid @ModelAttribute("orderDto") CustomerOrderDto orderDto,
                               BindingResult result,
@@ -78,29 +77,26 @@ public class OrderController {
                               Model model,
                               @RequestParam("encryptedCustomerId") String encryptedCustomerId) {
         try {
-            // Decrypt the customer ID from the hidden field
-            String decryptedId = AESUtil.decrypt(encryptedCustomerId);
+            // Decrypt and validate customer ID
+            Long customerId = decryptAndValidateCustomerId(encryptedCustomerId, redirectAttributes);
+            if (customerId == null) return "redirect:/customers";
 
-            // Validate if it's a valid number
-            if (!decryptedId.matches("\\d+")) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
-                return "redirect:/customers";
-            }
-
-            // Convert decrypted ID to Long
-            Long actualCustomerId = Long.parseLong(decryptedId);
-
-            Customer customer = customerService.getCustomerById(actualCustomerId);
+            // Fetch customer details
+            Customer customer = customerService.getCustomerById(customerId);
             if (customer == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
 
+            // Perform validation checks
+            validateOrder(orderDto, result);
             if (result.hasErrors()) {
-                return populateModel(model, actualCustomerId, orderDto, customer);
+                return populateModel(model, customerId, orderDto, customer);
             }
 
-            // save order logic will add later
+            // Save Order Logic
+            Order order = buildOrder(orderDto, customerId);
+            orderService.save(order);
 
             redirectAttributes.addFlashAttribute("successMessage", "Order created successfully!");
             return "redirect:/orders";
@@ -109,6 +105,70 @@ public class OrderController {
             return "redirect:/orders";
         }
     }
+
+    private Long decryptAndValidateCustomerId(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
+        try {
+            String decryptedId = AESUtil.decrypt(encryptedCustomerId);
+            if (!decryptedId.matches("\\d+")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+                return null;
+            }
+            return Long.parseLong(decryptedId);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to decrypt customer ID.");
+            return null;
+        }
+    }
+
+
+    private void validateOrder(CustomerOrderDto orderDto, BindingResult result) {
+        if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
+            result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
+            return;
+        }
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
+            OrderProductDto product = orderDto.getOrderProducts().get(i);
+
+            // Validate Quantity
+            if (product.getQuantity() == null || product.getQuantity() < 1) {
+                result.rejectValue("orderProducts[" + i + "].quantity",
+                        "error.orderProducts[" + i + "].quantity",
+                        "Quantity must be at least 1.");
+            }
+
+            // Validate Product Price
+            if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                result.rejectValue("orderProducts[" + i + "].price",
+                        "error.orderProducts[" + i + "].price",
+                        "Price must be greater than zero.");
+            }
+
+            // Calculate Total Amount
+            if (product.getPrice() != null && product.getQuantity() != null) {
+                totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity())));
+            }
+        }
+
+        // Validate Total Amount
+        if (orderDto.getTotalProductAmount().compareTo(totalAmount) != 0) {
+            result.rejectValue("totalProductAmount", "error.totalProductAmount", "Total amount is incorrect.");
+        }
+
+        // Validate Advance Payment
+        if (orderDto.getAdvancePayment().compareTo(totalAmount) > 0) {
+            result.rejectValue("advancePayment", "error.advancePayment", "Advance payment cannot exceed total amount.");
+        }
+
+        // Validate Due Payment
+        BigDecimal expectedDuePayment = totalAmount.subtract(orderDto.getAdvancePayment());
+        if (orderDto.getDuePayment().compareTo(expectedDuePayment) != 0) {
+            result.rejectValue("duePayment", "error.duePayment", "Due payment is incorrect.");
+        }
+    }
+
 
     private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
         List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
@@ -121,23 +181,32 @@ public class OrderController {
         return "order/create";
     }
 
-    private String handleValidationFailure(CustomerOrderDto orderDto, Long customerId, Model model,
-                                           BindingResult result, Customer customer, String field, String message) {
-        // Fetch customer measurements and products
-        List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
-        List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+    private Order buildOrder(CustomerOrderDto orderDto, Long actualCustomerId) {
+        Order order = new Order();
+        order.setOrderDate(orderDto.getOrderDate());
+        order.setDeliveryDate(orderDto.getDeliveryDate());
+        order.setStatus(orderDto.getStatus());
+        order.setAdvancePayment(orderDto.getAdvancePayment());
+        order.setDuePayment(orderDto.getDuePayment());
 
-        // Pass necessary data back to the form
-        model.addAttribute("orderDto", orderDto);
-        model.addAttribute("customer", customer);
-        model.addAttribute("products", products);
-//        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+        // Fetch customer and associate with order
+        Customer customer = customerService.getCustomerById(actualCustomerId);
+        order.setCustomer(customer);
 
-        // Add validation error message if a specific field is provided
-        if (field != null && message != null) {
-            result.rejectValue(field, "error.orderDto", message);
-        }
+        // Convert OrderProductDto list to OrderProduct entities
+        List<OrderProduct> orderProducts = orderDto.getOrderProducts().stream().map(opDto -> {
+            OrderProduct orderProduct = new OrderProduct();
+            Product product = productService.getProductById(opDto.getId());
+            orderProduct.setProduct(product);
+            orderProduct.setQuantity(opDto.getQuantity());
+            orderProduct.setSubtotal(product.getPrice().multiply(new BigDecimal(opDto.getQuantity())));
+            orderProduct.setOrder(order);
+            return orderProduct;
+        }).collect(Collectors.toList());
 
-        return "order/create";  // Stay on the form
+        order.setTotalProductAmount(orderDto.getTotalProductAmount());
+
+        order.setOrderProducts(orderProducts);
+        return order;
     }
 }

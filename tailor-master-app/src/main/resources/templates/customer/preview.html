@@ -104,7 +104,7 @@
             Confirm & Submit
         </button>
         <a th:href="@{/customers/edit}" class="btn btn-warning">Edit</a>
-        <a th:href="@{/customers}" class="btn btn-danger">Cancel</a>
+        <a th:href="@{/customers}" class="btn btn-secondary">Cancel</a>
     </div>
 </div>
 
@@ -120,7 +120,7 @@
                 Are you sure you want to submit this customer registration?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form th:action="@{/customers/save}" method="post">
                     <button type="submit" class="btn btn-primary">Yes, Submit</button>
                 </form>

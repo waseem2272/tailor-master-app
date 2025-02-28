@@ -22,10 +22,9 @@ public class Order extends BaseEntity {
 
     private LocalDate orderDate;
     private LocalDate deliveryDate;
-//    private BigDecimal extraCharges;
-//    private String extraChargesDescription;
     private BigDecimal advancePayment;
-    private BigDecimal totalPayment;
+    private BigDecimal duePayment;
+    private BigDecimal totalProductAmount;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING; // Default status
