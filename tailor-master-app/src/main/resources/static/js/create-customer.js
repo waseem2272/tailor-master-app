@@ -2,19 +2,45 @@
 function validateForm() {
     let isValid = true;
 
+    // Validate Full Name
+    const fullName = document.getElementById("fullName");
+    if (fullName.value.trim() === "") {
+        showError(fullName, "Full Name is required.");
+        isValid = false;
+    } else {
+        removeError(fullName);
+    }
+
+    // Validate Phone Number (Must start with 03 and be exactly 11 digits)
+    const phoneNumber = document.getElementById("phoneNumber");
+    const phoneRegex = /^03\d{9}$/; // Starts with '03' and followed by 9 digits
+
+    if (phoneNumber.value.trim() === "") {
+        showError(phoneNumber, "Phone Number is required.");
+        isValid = false;
+    } else if (!phoneRegex.test(phoneNumber.value.trim())) {
+        showError(phoneNumber, "Enter a valid 11-digit phone number starting with 03.");
+        isValid = false;
+    } else {
+        removeError(phoneNumber);
+    }
+
     // Validate if at least one product is selected
     const productCheckboxes = document.querySelectorAll('.product-checkbox');
     const isProductSelected = [...productCheckboxes].some(checkbox => checkbox.checked);
+    const productErrorContainer = document.getElementById("productError");
 
     if (!isProductSelected) {
-        alert("Please select at least one product.");
+        productErrorContainer.innerText = "Please select at least one product.";
+        productErrorContainer.style.color = "red";
+        productErrorContainer.style.fontSize = "12px";
         isValid = false;
-        return isValid;
+    } else {
+        productErrorContainer.innerText = ""; // Clear error message if valid
     }
 
     // Validate measurement fields for selected products
     document.querySelectorAll('.measurement-fields').forEach(measurementField => {
-        // Retrieve the product ID dynamically from the data attribute
         const productId = measurementField.getAttribute('data-product-id');
         const checkbox = document.querySelector(`.product-checkbox[value="${productId}"]`);
 
@@ -22,24 +48,10 @@ function validateForm() {
             const inputs = measurementField.querySelectorAll('input');
 
             inputs.forEach(input => {
-                // Remove previous error messages
-                let errorSpan = input.nextElementSibling;
-                if (errorSpan && errorSpan.classList.contains('error-message')) {
-                    errorSpan.remove();
-                }
+                removeError(input); // Remove previous error messages
 
                 if (input.value.trim() === '') {
-                    // Extract the field name (without prefixes)
-                    const fieldName = input.name.split('.').pop();  // Get the last part of the name
-
-                    // Create and display error message below the input field
-                    const errorMessage = document.createElement('span');
-                    errorMessage.classList.add('error-message');
-                    errorMessage.style.color = 'red';
-                    errorMessage.style.fontSize = '12px';
-                    errorMessage.innerText = `* ${fieldName} is required.`;
-
-                    input.after(errorMessage); // Insert error message after the input field
+                    showError(input, `${input.placeholder} is required.`);
                     isValid = false;
                 }
             });
@@ -47,4 +59,23 @@ function validateForm() {
     });
 
     return isValid;
+}
+
+// Function to show error message
+function showError(input, message) {
+    removeError(input); // Remove previous errors
+    const errorMessage = document.createElement('span');
+    errorMessage.classList.add('error-message');
+    errorMessage.style.color = 'red';
+    errorMessage.style.fontSize = '12px';
+    errorMessage.innerText = `* ${message}`;
+    input.after(errorMessage);
+}
+
+// Function to remove error message
+function removeError(input) {
+    let errorSpan = input.nextElementSibling;
+    if (errorSpan && errorSpan.classList.contains('error-message')) {
+        errorSpan.remove();
+    }
 }

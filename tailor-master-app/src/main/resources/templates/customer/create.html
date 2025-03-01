@@ -4,85 +4,6 @@
     <title>Customer Registration</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!--<style>
-        .measurement-fields {
-            display: none;
-            border: 2px solid #ddd; /* Light border */
-            border-radius: 8px; /* Rounded corners */
-            padding: 15px;
-            margin-top: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            background-color: #f9f9f9;
-        }
-
-        .measurement-header {
-            background-color: #007bff; /* Blue header */
-            color: white;
-            padding: 10px 15px;
-            font-weight: bold;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn-close {
-            width: 22px;
-            height: 22px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: white; /* White background */
-            color: #dc3545; /* Bootstrap danger color (Red) */
-            border: 1px solid #dc3545;
-            border-radius: 50%; /* Make it circular */
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .btn-close:hover {
-            background-color: #dc3545; /* Red background on hover */
-            color: white; /* White 'X' */
-        }
-
-        /* Add spacing between heading and fields */
-        .measurement-body {
-            padding-top: 15px; /* Creates space between heading and fields */
-        }
-
-        .card {
-            margin: 50px auto;
-            max-width: 900px; /* Adjusted for a proper card size */
-            padding: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .form-group label {
-            font-weight: 600;
-        }
-
-        .row {
-            margin-bottom: 20px;
-        }
-
-        .btn-container {
-            margin-top: 20px;
-        }
-
-        .btn {
-            width: 120px;
-            margin: 0 10px;
-        }
-
-        /* Hidden by default */
-        .measurement-fields {
-            display: none;
-        }
-    </style>-->
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -152,6 +73,7 @@
                                     <label class="form-check-label fs-5 fw-bold" th:for="'product_' + ${product.id}"
                                            th:text="${product.name}"></label>
                                 </div>
+                                <p id="productError" class="text-danger fw-bold"></p>
                             </div>
                         </div>
 
@@ -376,6 +298,19 @@
             field.value = ""; // Clear input field value
         });
     }
+
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const productErrorContainer = document.getElementById("productError");
+            const isProductSelected = [...document.querySelectorAll('.product-checkbox')].some(cb => cb.checked);
+
+            if (isProductSelected) {
+                productErrorContainer.innerText = ""; // Remove error message when a product is selected
+            }
+        });
+    });
+
+
 </script>
 
 </body>
