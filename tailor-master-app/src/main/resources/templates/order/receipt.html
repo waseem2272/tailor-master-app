@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Generate Receipt</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-success text-white">
+                    <h3 th:text="${receiptType == 'customer' ? '🧾 کسٹمر کی رسید' : '🧵 درزی کی رسید'}"></h3>
+                </div>
+
+                <div class="card-body">
+                    <!-- Shop Information -->
+                    <div class="mb-3">
+                        <h4 class="text-primary">🏪 دکان کی معلومات</h4>
+                        <p><strong>دکان کا نام:</strong> <span th:text="${user.shopName}"></span></p>
+                        <p><strong>مالک کا نام:</strong> <span th:text="${user.proprietorName}"></span></p>
+                        <p><strong>دکان کا پتہ:</strong> <span th:text="${user.shopAddress}"></span></p>
+                        <p><strong>فون نمبر:</strong> <span th:text="${user.phone1}"></span></p>
+                    </div>
+
+                    <!-- Customer Information -->
+                    <div class="mb-3">
+                        <h4 class="text-primary">👤 گاہک کی معلومات</h4>
+                        <p><strong>نام:</strong> <span th:text="${order.customer.fullName}"></span></p>
+                        <p><strong>فون نمبر:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
+                    </div>
+
+                    <!-- Order Details -->
+                    <div class="mb-3">
+                        <h4 class="text-primary">📦 آرڈر کی تفصیلات</h4>
+                        <p><strong>آرڈر تاریخ:</strong> <span th:text="${order.orderDate}"></span></p>
+                        <p><strong>ترسیل تاریخ:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                    </div>
+
+                    <!-- Product Details Table -->
+                    <div class="mb-3">
+                        <h4 class="text-primary">🛒 مصنوعات کی تفصیلات</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered text-center">
+                                <thead class="table-success">
+                                <tr>
+                                    <th>#</th>
+                                    <th>پروڈکٹ</th>
+                                    <th>مقدار</th>
+                                    <th>قیمت</th>
+                                    <th>کل</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item, i : ${order.orderProducts}">
+                                    <td th:text="${i.count}"></td>
+                                    <td th:text="${item.product.name}"></td>
+                                    <td th:text="${item.quantity}"></td>
+                                    <td th:text="${item.product.price}"></td>
+                                    <td th:text="${item.quantity * item.product.price}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details (Only for Customer Receipt) -->
+                    <div class="payment-details" th:if="${receiptType == 'customer'}">
+                        <div class="mb-3">
+                            <h4 class="text-primary">💰 ادائیگی کی تفصیلات</h4>
+                            <p><strong>کل رقم:</strong>
+                                <span id="totalProductAmount"
+                                      th:text="${order.totalProductAmount != null ? order.totalProductAmount : '-'}"></span>
+                            </p>
+                            <p><strong>پیشگی ادائیگی:</strong>
+                                <span id="advancePayment"
+                                      th:text="${order.advancePayment != null ? order.advancePayment : '-'}"></span>
+                            </p>
+                            <p><strong>بقایا رقم:</strong>
+                                <span id="duePayment"
+                                      th:text="${order.duePayment != null ? order.duePayment : '-'}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer text-center bg-light">
+                    <p class="fw-bold">شکریہ! ہم آپ کے ساتھ کاروبار کرنے کی قدر کرتے ہیں۔</p>
+                    <button class="btn btn-success no-print" onclick="validateAndPrint()">پرنٹ کریں</button>
+                    <a th:href="@{/orders}" class="btn btn-secondary no-print">🔙 آرڈر لسٹ پر واپس جائیں</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
+<!-- **Validation Script Before Printing** -->
+<script>
+    function validateAndPrint() {
+        let totalAmount = parseFloat(document.getElementById('totalProductAmount').innerText);
+        let advancePayment = parseFloat(document.getElementById('advancePayment').innerText);
+        let duePayment = parseFloat(document.getElementById('duePayment').innerText);
+
+        if (isNaN(totalAmount) || isNaN(advancePayment) || isNaN(duePayment)) {
+            alert("رقم کے تمام فیلڈز کو درست طریقے سے بھریں!");
+            return;
+        }
+
+        if (totalAmount !== (advancePayment + duePayment)) {
+            alert("ادائیگی کی تفصیلات غلط ہیں، براہ کرم درست کریں!");
+            return;
+        }
+
+        window.print();
+    }
+</script>
+
+</body>
+</html>

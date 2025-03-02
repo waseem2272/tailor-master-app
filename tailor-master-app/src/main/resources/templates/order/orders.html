@@ -20,9 +20,13 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="text-center">Orders</h2>
-            <!-- Success Message Alert -->
+
+            <!-- Success Message Alert with Order Details Link -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <span th:text="${successMessage}"></span>
+                <a th:if="${orderId}" th:href="@{/orders/details/{id}(id=${orderId})}" class="btn btn-light btn-sm ms-2">
+                    View Order Details
+                </a>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
@@ -50,18 +54,20 @@
                     <td th:text="${order.orderDate}"></td>
                     <td th:text="${order.deliveryDate}"></td>
                     <td>
-                    <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
-                          th:text="${order.status}">
-                    </span>
+                        <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
+                              th:text="${order.status}">
+                        </span>
                     </td>
                     <td>
-                        <a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Edit</a>
-
+                        <a th:href="@{/orders/details/{id}(id=${order.id})}" class="btn btn-info btn-sm">
+                            View Details
+                        </a>
+                        <!--<a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Edit</a>
                         <form th:action="@{/orders/delete/{id}(id=${order.id})}" method="post" style="display: inline;">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
                                 Delete
                             </button>
-                        </form>
+                        </form>-->
                     </td>
                 </tr>
                 </tbody>
@@ -69,6 +75,7 @@
         </div>
     </div>
 </div>
+
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script>

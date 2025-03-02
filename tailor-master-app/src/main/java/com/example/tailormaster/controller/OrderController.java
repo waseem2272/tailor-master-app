@@ -96,9 +96,10 @@ public class OrderController {
 
             // Save Order Logic
             Order order = buildOrder(orderDto, customerId);
-            orderService.save(order);
+            Order savedOrder = orderService.save(order);
 
             redirectAttributes.addFlashAttribute("successMessage", "Order created successfully!");
+            redirectAttributes.addFlashAttribute("orderId", savedOrder.getId());
             return "redirect:/orders";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
@@ -208,5 +209,12 @@ public class OrderController {
 
         order.setOrderProducts(orderProducts);
         return order;
+    }
+
+    @GetMapping("/details/{id}")
+    public String showOrderDetails(@PathVariable Long id, Model model) {
+        Order order = orderService.findById(id);
+        model.addAttribute("order", order);
+        return "order/order-details";
     }
 }

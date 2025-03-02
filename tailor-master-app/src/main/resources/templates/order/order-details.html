@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <h2 class="text-center">Order Details</h2>
+
+            <!-- Customer Information -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Customer Information</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <span th:text="${order.customer.fullName}"></span></p>
+                    <p><strong>Phone:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
+                </div>
+            </div>
+
+            <!-- Order Details -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Order Details</div>
+                <div class="card-body">
+                    <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
+                    <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                    <p><strong>Status:</strong>
+                        <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
+                              th:text="${order.status}"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="card">
+                <div class="card-header bg-success text-white">Product Details</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item, i : ${order.orderProducts}">
+                                <td th:text="${i.count}"></td>
+                                <td th:text="${item.product.name}"></td>
+                                <td th:text="${item.quantity}"></td>
+                                <td th:text="${item.product.price}"></td>
+                                <td th:text="${item.quantity * item.product.price}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Receipt Button -->
+            <div class="text-center mt-4">
+                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='customer')}" class="btn btn-success">
+                    View Customer Receipt
+                </a>
+                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='tailor')}" class="btn btn-success">
+                    View Tailor Receipt
+                </a>
+                <a th:href="@{/orders}" class="btn btn-secondary">Back to Order List</a>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
+
+</body>
+</html>
