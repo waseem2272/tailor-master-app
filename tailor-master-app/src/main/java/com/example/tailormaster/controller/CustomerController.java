@@ -80,6 +80,7 @@ public class CustomerController {
         return "customer/create";
     }
 
+    // create customer
     @PostMapping("/create")
     public String createCustomer(
             @Valid @ModelAttribute CustomerRegistrationDTO registrationDTO,
@@ -95,7 +96,7 @@ public class CustomerController {
 
         // Validate measurements dynamically based on selected products
         Map<Long, CustomerMeasurement> customerMeasurements = registrationDTO.getCustomerMeasurements();
-        Map<Long, CustomerMeasurement> selectedMeasurements = new LinkedHashMap<>(); // Store only selected ones
+        // Store only selected ones
         if (productIds != null) {
             for (Long productId : productIds) {
                 CustomerMeasurement measurement = customerMeasurements.get(productId);
@@ -103,9 +104,6 @@ public class CustomerController {
                     result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
                 } else {
                     validateMeasurement(productId, measurement, result);
-//                    Product product = productService.getProductById(productId);
-//                    measurement.setProduct(product);
-//                    selectedMeasurements.put(productId, measurement); // Store only valid measurements
                 }
             }
         }
@@ -122,11 +120,6 @@ public class CustomerController {
             model.addAttribute("org.springframework.validation.BindingResult.registrationDTO", result);
             return "customer/create";
         }
-
-        // Set only the selected measurements to DTO before preview
-//        registrationDTO.setCustomerMeasurements(selectedMeasurements);
-//        model.addAttribute("registrationDTO", registrationDTO);
-//        return "customer/preview";  // Show the preview page
 
         try {
             // Save customer details

@@ -2,9 +2,7 @@ package com.example.tailormaster.entity.product;
 
 import com.example.tailormaster.entity.BaseEntity;
 import com.example.tailormaster.entity.CustomerMeasurement;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -22,6 +20,9 @@ public class Product extends BaseEntity {
         super(id);
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('QAMEEZ', 'SHALWAR')")
+//    @ValidProductType
     private ProductType type;
 
     @NotBlank(message = "Product Name is required")

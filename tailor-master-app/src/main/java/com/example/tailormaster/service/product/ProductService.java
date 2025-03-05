@@ -2,18 +2,16 @@ package com.example.tailormaster.service.product;
 
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.product.ProductRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class ProductService {
 
-    private ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductRepository productRepository;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();

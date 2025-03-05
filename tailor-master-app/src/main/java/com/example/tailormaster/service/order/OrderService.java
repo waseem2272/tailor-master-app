@@ -4,6 +4,8 @@ import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.OrderStatus;
 import com.example.tailormaster.repository.order.OrderRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,4 +57,29 @@ public class OrderService {
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
     }
+
+    public int getNextOrderNumberForUser(Long userId) {
+        Pageable pageable = PageRequest.of(0, 1); // Get the latest order
+        List<String> lastOrderIdList = orderRepository.findLastOrderIdForUser(userId, pageable);
+
+        if (lastOrderIdList.isEmpty() || lastOrderIdList.get(0) == null) {
+            return 1; // Start from 001 if no previous order exists
+        }
+
+        String lastOrderId = lastOrderIdList.get(0);
+        String[] parts = lastOrderId.split("-"); // Split based on '-'
+
+        if (parts.length < 3) {
+            return 1; // Fallback if format is incorrect
+        }
+
+        try {
+            int lastNumber = Integer.parseInt(parts[2]); // Extract last number
+            return lastNumber + 1;
+        } catch (NumberFormatException e) {
+            return 1; // Handle parsing error
+        }
+    }
+
+
 }

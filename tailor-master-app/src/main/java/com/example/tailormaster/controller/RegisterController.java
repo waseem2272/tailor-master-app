@@ -53,6 +53,7 @@ public class RegisterController {
             redirectAttributes.addFlashAttribute("success", "Registration successful. You can now log in.");
             return "redirect:/login";
         } catch (RuntimeException e) {
+            e.printStackTrace();
             redirectAttributes.addAttribute("errorMessage", e.getMessage());
             return "register";
         }
@@ -71,7 +72,7 @@ public class RegisterController {
         user.setShopName(registerUserForm.getShopName());
         user.setProprietorName(registerUserForm.getProprietorName());
         user.setShopAddress(registerUserForm.getShopAddress());
-
+        user.setShortCode(registerUserForm.getShortCode());
         return user;
     }
 }

@@ -1,31 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Category</title>
+    <title>Create Product</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .card {
-            margin: 50px auto;
-            max-width: 500px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .btn {
-            width: 48%;
-        }
-    </style>
 </head>
 <body>
 <!-- Include Sidebar Fragment -->
@@ -33,47 +11,167 @@
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-            <div class="card">
-                <h3 class="text-center">Create New Product</h3>
-                <p class="text-danger fw-bold">Fields marked as * are required</p>
-                <form th:action="@{/products/create}" th:object="${product}" method="post">
-                    <div class="form-group">
-                        <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
-                        <input type="text" id="name" name="name" th:field="*{name}" class="form-control" required>
-                        <div th:if="${#fields.hasErrors('name')}" class="text-danger">
-                            <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
+            <div class="row justify-content-center">
+                <div class="col-md-8"> <!-- 8-column width -->
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h2 class="text-center">Create New Product</h2>
+
+                            <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+                            <form id="productForm" th:action="@{/products/create}" th:object="${product}" method="post" onsubmit="return validateForm()">
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                    <input type="text" id="name" name="name" th:field="*{name}" class="form-control" required>
+                                    <div th:if="${#fields.hasErrors('name')}" class="text-danger error-message">
+                                        <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
+                                    </div>
+                                    <div id="nameError" class="text-danger error-message"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Product Type <span class="text-danger">*</span></label>
+                                    <select id="type" name="type" th:field="*{type}" class="form-select" required>
+                                        <option value="">Select Product Type</option>
+                                        <option th:each="productType : ${T(com.example.tailormaster.entity.product.ProductType).values()}"
+                                                th:value="${productType}"
+                                                th:text="${productType}">
+                                        </option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('type')}" class="text-danger error-message">
+                                        <div th:each="error : ${#fields.errors('type')}" th:text="${error}"></div>
+                                    </div>
+                                    <div id="typeError" class="text-danger error-message"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                                    <input type="number" id="price" name="price" th:field="*{price}" class="form-control" step="0.01" required>
+                                    <div th:if="${#fields.hasErrors('price')}" class="text-danger error-message">
+                                        <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
+                                    </div>
+                                    <div id="priceError" class="text-danger error-message"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                                    <div th:if="${#fields.hasErrors('description')}" class="text-danger error-message">
+                                        <div th:each="error : ${#fields.errors('description')}" th:text="${error}"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select id="enabled" name="enabled" th:field="*{enabled}" class="form-select" required>
+                                        <option value="true">Active</option>
+                                        <option value="false">Non-Active</option>
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button triggers modal -->
+                                <div class="text-center mt-3">
+                                    <button type="button" class="btn btn-success" id="openModal">
+                                        Create
+                                    </button>
+
+                                    <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
-                        <input type="number" id="price" name="price" th:field="*{price}" class="form-control" step="0.01" required>
-                        <div th:if="${#fields.hasErrors('price')}" class="text-danger">
-                            <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea id="description" name="description" th:field="*{description}" class="form-control" rows="3"></textarea>
-                        <div th:if="${#fields.hasErrors('description')}" class="text-danger">
-                            <div th:each="error : ${#fields.errors('description')}" th:text="${error}"></div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
-                        <select id="enabled" name="enabled" th:field="*{enabled}" class="form-select" required>
-                            <option value="true">Active</option>
-                            <option value="false">Non-Active</option>
-                        </select>
-                    </div>
-                    <div class="btn-container">
-                        <button type="submit" class="btn btn-success">Create</button>
-                        <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Bootstrap Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Product Creation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to create this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirmSubmit">Yes, Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("openModal").addEventListener("click", function (event) {
+            event.preventDefault(); // Prevent default button action
+
+            if (validateForm()) {
+                var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                confirmModal.show(); // Show the confirmation modal **only if validation passes**
+            }
+        });
+
+        document.getElementById("confirmSubmit").addEventListener("click", function () {
+            document.getElementById("productForm").submit(); // Submit the form after confirmation
+        });
+    });
+
+    function validateForm() {
+        let isValid = true;
+
+        // Get form fields
+        const name = document.getElementById("name");
+        const price = document.getElementById("price");
+        const type = document.getElementById("type");
+        // const enabled = document.getElementById("enabled");
+
+        // Clear previous errors
+        document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
+
+        // Validate Name (Required)
+        if (name.value.trim() === "") {
+            showError(name, "Product name is required.");
+            isValid = false;
+        }
+
+        // Validate Price (Required & Must be Positive)
+        if (price.value.trim() === "" || parseFloat(price.value) <= 0) {
+            showError(price, "Price must be greater than 0.");
+            isValid = false;
+        }
+
+        // Validate Product Type (Must be selected)
+        if (type.value.trim() === "") {
+            showError(type, "Please select a product type.");
+            isValid = false;
+        }
+
+        // Validate Status (Must be selected)
+        // if (enabled.value.trim() === "") {
+        //     showError(enabled, "Please select a status.");
+        //     isValid = false;
+        // }
+
+        return isValid; // Return validation result
+    }
+
+    function showError(input, message) {
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "text-danger error-message";
+        errorDiv.textContent = message;
+        input.parentNode.appendChild(errorDiv);
+    }
+</script>
+
+
 </body>
 </html>

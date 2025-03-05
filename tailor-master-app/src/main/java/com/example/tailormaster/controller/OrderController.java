@@ -2,11 +2,9 @@ package com.example.tailormaster.controller;
 
 import com.example.tailormaster.dto.CustomerOrderDto;
 import com.example.tailormaster.dto.OrderProductDto;
-import com.example.tailormaster.entity.Customer;
-import com.example.tailormaster.entity.CustomerMeasurement;
-import com.example.tailormaster.entity.Order;
-import com.example.tailormaster.entity.OrderProduct;
+import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.order.OrderService;
@@ -24,9 +22,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -38,10 +39,12 @@ public class OrderController {
     private final ProductService productService;
     private final CustomerMeasurementService customerMeasurementService;
     private final OrderService orderService;
+    private final UserService userService;
 
     @GetMapping
     public String listOrders(Model model) {
         model.addAttribute("orders", orderService.getAllOrders());
+        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "order/orders"; // Redirects to orders.html
     }
 
@@ -50,12 +53,14 @@ public class OrderController {
     public String showCreateOrderForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
 
         try {
-            Long customerId = Long.parseLong(AESUtil.decrypt(id));
-            Customer customer = customerService.getCustomerById(customerId);
-            if (customer == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+            // Decrypt and validate customer ID
+            Long customerId = validateAndFetchCustomer(id, redirectAttributes);
+            if (customerId == null) {
                 return "redirect:/customers";
             }
+
+            // Fetch customer details (since ID is valid)
+            Customer customer = customerService.getCustomerById(customerId);
 
             CustomerOrderDto orderDto = new CustomerOrderDto();
             orderDto.setOrderDate(LocalDate.now());
@@ -75,18 +80,17 @@ public class OrderController {
                               BindingResult result,
                               RedirectAttributes redirectAttributes,
                               Model model,
-                              @RequestParam("encryptedCustomerId") String encryptedCustomerId) {
+                              @RequestParam("encryptedCustomerId") String encryptedCustomerId,
+                              Principal principal) {
         try {
             // Decrypt and validate customer ID
-            Long customerId = decryptAndValidateCustomerId(encryptedCustomerId, redirectAttributes);
-            if (customerId == null) return "redirect:/customers";
-
-            // Fetch customer details
-            Customer customer = customerService.getCustomerById(customerId);
-            if (customer == null) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+            Long customerId = validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
+            if (customerId == null) {
                 return "redirect:/customers";
             }
+
+            // Fetch customer details (since ID is valid)
+            Customer customer = customerService.getCustomerById(customerId);
 
             // Perform validation checks
             validateOrder(orderDto, result);
@@ -94,8 +98,20 @@ public class OrderController {
                 return populateModel(model, customerId, orderDto, customer);
             }
 
+            Optional<User> user = userService.findByUsername(principal.getName());
+            if (user.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+                return "redirect:/orders";
+            }
+
+            // Generate Order ID
+            String orderId = generateOrderId(user.get());
+
             // Save Order Logic
             Order order = buildOrder(orderDto, customerId);
+            order.setUser(user.get());
+            order.setOrderId(orderId);
+
             Order savedOrder = orderService.save(order);
 
             redirectAttributes.addFlashAttribute("successMessage", "Order created successfully!");
@@ -107,16 +123,32 @@ public class OrderController {
         }
     }
 
-    private Long decryptAndValidateCustomerId(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
+    private Long validateAndFetchCustomer(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
+        Long customerId = decryptAndValidateId(encryptedCustomerId);
+        if (customerId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+            return null;
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+            return null;
+        }
+
+        return customerId;
+    }
+
+
+    private Long decryptAndValidateId(String encryptedId) {
         try {
-            String decryptedId = AESUtil.decrypt(encryptedCustomerId);
+            String decryptedId = AESUtil.decrypt(encryptedId);
             if (!decryptedId.matches("\\d+")) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
                 return null;
             }
             return Long.parseLong(decryptedId);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to decrypt customer ID.");
+            e.printStackTrace();
             return null;
         }
     }
@@ -212,9 +244,29 @@ public class OrderController {
     }
 
     @GetMapping("/details/{id}")
-    public String showOrderDetails(@PathVariable Long id, Model model) {
-        Order order = orderService.findById(id);
-        model.addAttribute("order", order);
+    public String showOrderDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+
+        try {
+            // Decrypt and validate customer ID
+            Long orderId = decryptAndValidateId(id);
+            if (orderId == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid order ID.");
+                return "redirect:/orders";
+            }
+
+            Order order = orderService.findById(orderId);
+            model.addAttribute("order", order);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "order/order-details";
     }
+
+    private String generateOrderId(User user) {
+        int orderNumber = orderService.getNextOrderNumberForUser(user.getId());
+        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+        return String.format("%s-%s-%03d", user.getShortCode(), datePart, orderNumber);
+    }
+
 }

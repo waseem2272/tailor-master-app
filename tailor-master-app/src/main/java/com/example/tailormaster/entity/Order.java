@@ -26,6 +26,12 @@ public class Order extends BaseEntity {
     private BigDecimal duePayment;
     private BigDecimal totalProductAmount;
 
+    private String orderId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING; // Default status
 

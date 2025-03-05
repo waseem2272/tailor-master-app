@@ -51,9 +51,9 @@
                     <td th:text="${product.enabled} ? 'Active' : 'Non-Active'"></td>
                     <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}"></td>
                     <td>
-                        <a th:href="@{'/products/update/' + ${product.id}}" class="btn btn-sm btn-warning">Edit</a>
-                        <a th:href="@{'/products/delete/' + ${product.id}}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                        <a th:href="@{'/products/update/' + ${thymeleafUtil.encryptId(product.id)}}" class="btn btn-sm btn-warning">Edit</a>
+                        <!--<a th:href="@{'/products/delete/' + ${product.id}}" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>-->
                     </td>
                 </tr>
                 </tbody>

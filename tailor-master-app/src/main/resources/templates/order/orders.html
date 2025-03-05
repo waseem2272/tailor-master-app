@@ -40,6 +40,7 @@
                 <thead class="table-success">
                 <tr>
                     <th>#</th>
+                    <th>Order ID</th>
                     <th>Customer</th>
                     <th>Order Date</th>
                     <th>Delivery Date</th>
@@ -50,6 +51,7 @@
                 <tbody>
                 <tr th:each="order, i : ${orders}">
                     <td th:text="${i.count}"></td>
+                    <td th:text="${order.orderId}"></td>
                     <td th:text="${order.customer.fullName + ' ' + order.customer.phoneNumber}"></td>
                     <td th:text="${order.orderDate}"></td>
                     <td th:text="${order.deliveryDate}"></td>
@@ -59,7 +61,7 @@
                         </span>
                     </td>
                     <td>
-                        <a th:href="@{/orders/details/{id}(id=${order.id})}" class="btn btn-info btn-sm">
+                        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-info btn-sm">
                             View Details
                         </a>
                         <!--<a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Edit</a>

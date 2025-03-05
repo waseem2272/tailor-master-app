@@ -10,6 +10,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -51,6 +52,9 @@ public class User extends BaseEntity {
     @Lob
     private String shopAddress;
 
+    @NotBlank(message = "Short Code is required")
+    private String shortCode;
+
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -61,4 +65,7 @@ public class User extends BaseEntity {
     )
     @NotEmpty(message = "At least one role must be selected.") // Validation annotation
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 }

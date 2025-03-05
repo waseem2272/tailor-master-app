@@ -23,5 +23,6 @@ public class RegisterUserForm {
     private String shopName;
     private String proprietorName;
     private String shopAddress;
+    private String shortCode;
     private String role;
 }
