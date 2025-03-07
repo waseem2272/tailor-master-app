@@ -40,6 +40,7 @@ public class OrderController {
     private final CustomerMeasurementService customerMeasurementService;
     private final OrderService orderService;
     private final UserService userService;
+    private final Validation validation;
 
     @GetMapping
     public String listOrders(Model model) {
@@ -54,7 +55,7 @@ public class OrderController {
 
         try {
             // Decrypt and validate customer ID
-            Long customerId = validateAndFetchCustomer(id, redirectAttributes);
+            Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
             if (customerId == null) {
                 return "redirect:/customers";
             }
@@ -84,7 +85,7 @@ public class OrderController {
                               Principal principal) {
         try {
             // Decrypt and validate customer ID
-            Long customerId = validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
+            Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
             if (customerId == null) {
                 return "redirect:/customers";
             }
@@ -122,37 +123,6 @@ public class OrderController {
             return "redirect:/orders";
         }
     }
-
-    private Long validateAndFetchCustomer(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
-        Long customerId = decryptAndValidateId(encryptedCustomerId);
-        if (customerId == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
-            return null;
-        }
-
-        Customer customer = customerService.getCustomerById(customerId);
-        if (customer == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
-            return null;
-        }
-
-        return customerId;
-    }
-
-
-    private Long decryptAndValidateId(String encryptedId) {
-        try {
-            String decryptedId = AESUtil.decrypt(encryptedId);
-            if (!decryptedId.matches("\\d+")) {
-                return null;
-            }
-            return Long.parseLong(decryptedId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 
     private void validateOrder(CustomerOrderDto orderDto, BindingResult result) {
         if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
@@ -248,7 +218,7 @@ public class OrderController {
 
         try {
             // Decrypt and validate customer ID
-            Long orderId = decryptAndValidateId(id);
+            Long orderId = validation.decryptAndValidateId(id);
             if (orderId == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Invalid order ID.");
                 return "redirect:/orders";

@@ -9,8 +9,10 @@ import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Utility;
+import com.example.tailormaster.validation.Validation;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,9 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.example.tailormaster.validation.Validation.validateMeasurement;
 
+@AllArgsConstructor
 @Controller
 @RequestMapping("/customers")
 @SessionAttributes("registrationDTO")  // Store DTO in session
@@ -30,38 +33,7 @@ public class CustomerController {
     private final CustomerService customerService;
     private final ProductService productService;
     private final CustomerMeasurementService measurementService;
-
-    public CustomerController(CustomerService customerService, ProductService productService,
-                              CustomerMeasurementService measurementService) {
-        this.customerService = customerService;
-        this.productService = productService;
-        this.measurementService = measurementService;
-    }
-
-//    @GetMapping
-//    @ResponseBody
-//    public DataTablesResponse getCustomers(@RequestParam("draw") int draw,
-//                                           @RequestParam("start") int start,
-//                                           @RequestParam("length") int length,
-//                                           @RequestParam("search[value]") String search) {
-//        int page = start / length;
-//        Page<Customer> customerPage;
-//
-//        if (search != null && !search.isEmpty()) {
-//            customerPage = customerService.searchCustomers(search, PageRequest.of(page, length));
-//        } else {
-//            customerPage = customerService.getAllCustomers(PageRequest.of(page, length));
-//        }
-//
-//        DataTablesResponse response = new DataTablesResponse();
-//        response.setDraw(draw);
-//        response.setRecordsTotal(customerService.countAllCustomers());
-//        response.setRecordsFiltered((int) customerPage.getTotalElements());
-//        response.setData(customerPage.getContent());
-//
-//        return response;
-//    }
-
+    private final Validation validation;
 
     // List all customers
     @GetMapping
@@ -103,7 +75,8 @@ public class CustomerController {
                 if (measurement == null) {
                     result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
                 } else {
-                    validateMeasurement(productId, measurement, result);
+                    Product product = productService.getProductById(productId);
+                    validation.validateMeasurement(product, measurement, result);
                 }
             }
         }
@@ -113,9 +86,8 @@ public class CustomerController {
             CustomerRegistrationDTO tempRegistrationDTO = populateCustomerRegistrationDTO(registrationDTO);
 
             // Extract selected product IDs
-            List<Long> selectedProductIds = productIds != null ? Arrays.asList(productIds) : new ArrayList<>();
-
-            model.addAttribute("selectedProductIds", selectedProductIds);
+            Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
+            tempRegistrationDTO.setSelectedProductIds(selectedProductIds);
             model.addAttribute("registrationDTO", tempRegistrationDTO);
             model.addAttribute("org.springframework.validation.BindingResult.registrationDTO", result);
             return "customer/create";
@@ -142,43 +114,10 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/save")
-    public String saveCustomer(
-            @ModelAttribute("registrationDTO") CustomerRegistrationDTO registrationDTO,
-            RedirectAttributes redirectAttributes, Model model) {
-
-        try {
-
-            // Save customer details
-            Customer savedCustomer = customerService.createCustomer(registrationDTO.getCustomer());
-
-            // Save Measurements
-            for (Map.Entry<Long, CustomerMeasurement> entry : registrationDTO.getCustomerMeasurements().entrySet()) {
-                CustomerMeasurement measurement = entry.getValue();
-                measurement.setCustomer(savedCustomer);
-                measurement.setBarcode(generateBarcode(savedCustomer));
-                measurementService.saveMeasurement(measurement);
-            }
-
-            // Success message
-            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
-            return "redirect:/customers";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Pass error message and existing registration data back to the model
-            model.addAttribute("error", "Error saving customer details! Error details: " + e.getMessage());
-            model.addAttribute("registrationDTO", registrationDTO); // Ensure existing data is retained
-//            redirectAttributes.addFlashAttribute("error", "Error saving customer details!");
-            return "customer/preview";
-        }
-    }
-
     // generate barcode
     private static String generateBarcode(Customer savedCustomer) {
         return savedCustomer.getFullName() + savedCustomer.getPhoneNumber() + "-" + UUID.randomUUID();
     }
-
 
     // Utility method to save customer measurements
     private void saveCustomerMeasurement(Customer customer, Product product, CustomerMeasurement providedMeasurement) {
@@ -196,41 +135,6 @@ public class CustomerController {
         measurement.setBarcode(barcode);
 
         measurementService.saveMeasurement(measurement);
-    }
-
-    // Show update customer form
-    @GetMapping("/update/{id}")
-    public String showUpdateCustomerForm(@PathVariable Long id, Model model) {
-        model.addAttribute("customer", customerService.getCustomerById(id));
-        return "customer/update";
-    }
-
-    // Handle update customer form submission
-    @PostMapping("/update/{id}")
-    public String updateCustomer(@PathVariable Long id,
-                                 @Valid @ModelAttribute("customer") Customer updatedCustomer,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes) {
-
-        if (bindingResult.hasErrors()) {
-            // If validation fails, stay on the update page and display validation errors
-            return "customer/update";
-        }
-
-        try {
-            customerService.updateCustomer(id, updatedCustomer);
-            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating customer: " + e.getMessage());
-        }
-        return "redirect:/customers";
-    }
-
-    // Delete customer
-    @GetMapping("/delete/{id}")
-    public String deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
-        return "redirect:/customers";
     }
 
     private CustomerRegistrationDTO populateCustomerRegistrationDTO() {
@@ -264,4 +168,135 @@ public class CustomerController {
         return registrationDTO;
     }
 
+    @GetMapping("/edit/{id}")
+    public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            // Decrypt and validate customer ID
+            Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
+            if (customerId == null) {
+                return "redirect:/customers";
+            }
+
+            Customer customer = customerService.getCustomerById(customerId);
+
+            CustomerRegistrationDTO registrationDTO = populateEditCustomerRegistrationDTO(customer);
+            model.addAttribute("registrationDTO", registrationDTO);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            return "customer/update";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
+            return "redirect:/customers"; // Keep only one return statement
+        }
+    }
+
+    private CustomerRegistrationDTO populateEditCustomerRegistrationDTO(Customer customer) {
+        CustomerRegistrationDTO registrationDTO = new CustomerRegistrationDTO();
+
+        // Set customer info
+        registrationDTO.setCustomer(customer);
+
+        // Fetch all active products
+        List<Product> allActiveProducts = productService.getAllActiveProducts();
+
+        // Fetch products the customer has selected
+        Set<Long> selectedProductIds = customer.getMeasurements()
+                .stream()
+                .map(measurement -> measurement.getProduct().getId())
+                .collect(Collectors.toSet());
+
+        // Ensure all active products are listed, marking selected ones
+        List<Product> productsList = new ArrayList<>();
+        for (Product product : allActiveProducts) {
+            productsList.add(product); // Add all active products (both selected & unselected)
+        }
+        registrationDTO.setProducts(productsList);
+
+        // Populate customer measurements
+        Map<Long, CustomerMeasurement> measurementMap = new HashMap<>();
+        for (CustomerMeasurement measurement : customer.getMeasurements()) {
+            measurementMap.put(measurement.getProduct().getId(), measurement);
+        }
+        registrationDTO.setCustomerMeasurements(measurementMap);
+
+        // Pass the selected product IDs for Thymeleaf to check the right boxes
+        registrationDTO.setSelectedProductIds(selectedProductIds);
+
+        return registrationDTO;
+    }
+
+
+    // update customer
+    @PostMapping("/update")
+    public String updateCustomer(
+            @Valid @ModelAttribute CustomerRegistrationDTO registrationDTO,
+            BindingResult result,
+            @RequestParam(value = "productIds", required = false) Long[] productIds,
+            @RequestParam("encryptedCustomerId") String encryptedCustomerId,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        try {
+            // Decrypt and validate customer ID
+            Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
+            if (customerId == null) {
+                return "redirect:/customers";
+            }
+
+            // Validate selected products
+            if (productIds == null || productIds.length == 0) {
+                result.rejectValue("products", Utility.PRODUCT_ERROR_CODE, Utility.PRODUCT_ERROR_MESSAGE);
+            }
+
+            List<Product> selectedProducts = new ArrayList<>();
+
+            // Validate measurements dynamically based on selected products
+            Map<Long, CustomerMeasurement> customerMeasurements = registrationDTO.getCustomerMeasurements();
+            // Store only selected ones
+            if (productIds != null) {
+                for (Long productId : productIds) {
+                    CustomerMeasurement measurement = customerMeasurements.get(productId);
+                    if (measurement == null) {
+                        result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
+                    } else {
+                        Product product = productService.getProductById(productId);
+                        validation.validateMeasurement(product, measurement, result);
+                        selectedProducts.add(product);
+                    }
+                }
+            }
+
+            // set decrypted customer id
+            registrationDTO.getCustomer().setId(customerId);
+
+            // If validation fails, return with error messages
+            if (result.hasErrors()) {
+                CustomerRegistrationDTO tempRegistrationDTO = populateCustomerRegistrationDTO(registrationDTO);
+
+                // Extract selected product IDs
+                Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
+                tempRegistrationDTO.setSelectedProductIds(selectedProductIds);
+                model.addAttribute("registrationDTO", tempRegistrationDTO);
+                model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+                model.addAttribute("org.springframework.validation.BindingResult.registrationDTO", result);
+                return "customer/update";
+            }
+
+            customerService.updateCustomer(registrationDTO, selectedProducts);
+            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
+            return "redirect:/customers";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
+            return "redirect:/customers";
+        }
+    }
+
+    // Delete customer
+    @GetMapping("/delete/{id}")
+    public String deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return "redirect:/customers";
+    }
 }

@@ -1,24 +1,33 @@
 package com.example.tailormaster.validation;
 
-import com.example.tailormaster.dto.CustomerOrderDto;
+import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.entity.product.ProductType;
+import com.example.tailormaster.service.customer.CustomerService;
+import com.example.tailormaster.util.AESUtil;
 import io.micrometer.common.util.StringUtils;
-import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@AllArgsConstructor
+@Service
 public class Validation {
 
-    public static void validateMeasurement(Long productId, CustomerMeasurement measurement, BindingResult result) {
-        if (productId == 4L) { // Qameez
-            validateField(measurement.getChest(), "customerMeasurements[" + productId + "].chest", Utility.CHEST, result);
-            validateField(measurement.getSleeveLength(), "customerMeasurements[" + productId + "].sleeveLength", Utility.SLEEVE, result);
-            validateField(measurement.getShoulder(), "customerMeasurements[" + productId + "].shoulder", Utility.SHOULDER, result);
-        } else if (productId == 2L) { // Shalwar
-            validateField(measurement.getHips(), "customerMeasurements[" + productId + "].hips", Utility.HIPS, result);
-            validateField(measurement.getWaist(), "customerMeasurements[" + productId + "].waist", Utility.WAIST, result);
+    private final CustomerService customerService;
+
+    public void validateMeasurement(Product product, CustomerMeasurement measurement, BindingResult result) {
+        if (product.getType() == ProductType.QAMEEZ) { // Qameez
+            validateField(measurement.getChest(), "customerMeasurements[" + product.getId() + "].chest", Utility.CHEST, result);
+            validateField(measurement.getSleeveLength(), "customerMeasurements[" + product.getId() + "].sleeveLength", Utility.SLEEVE, result);
+            validateField(measurement.getShoulder(), "customerMeasurements[" + product.getId() + "].shoulder", Utility.SHOULDER, result);
+        } else if (product.getType() == ProductType.SHALWAR) { // Shalwar
+            validateField(measurement.getHips(), "customerMeasurements[" + product.getId() + "].hips", Utility.HIPS, result);
+            validateField(measurement.getWaist(), "customerMeasurements[" + product.getId() + "].waist", Utility.WAIST, result);
         }
     }
-
 
     /**
      * Helper method to validate individual measurement fields.
@@ -29,10 +38,33 @@ public class Validation {
         }
     }
 
-    public static boolean validateCustomerOrderDto(CustomerOrderDto orderDto) {
-        if (orderDto != null) {
-            return orderDto.getCustomerId() != null;
+    public Long decryptAndValidateId(String encryptedId) {
+        try {
+            String decryptedId = AESUtil.decrypt(encryptedId);
+            if (!decryptedId.matches("\\d+")) {
+                return null;
+            }
+            return Long.parseLong(decryptedId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return false;
     }
+
+    public Long validateAndFetchCustomer(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
+        Long customerId = decryptAndValidateId(encryptedCustomerId);
+        if (customerId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+            return null;
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+            return null;
+        }
+
+        return customerId;
+    }
+
 }

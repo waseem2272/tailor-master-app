@@ -51,6 +51,7 @@
                     <div class="card-header bg-success text-white">Customer Information</div>
                     <div class="card-body">
                         <input type="hidden" name="encryptedCustomerId"
+                               th:if="${thymeleafUtil != null}"
                                th:value="${thymeleafUtil.encryptId(customer.id)}">
                         <div class="row">
                             <div class="col-md-6">

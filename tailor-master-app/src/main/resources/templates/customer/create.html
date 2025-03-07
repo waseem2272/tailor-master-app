@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Customer Registration</title>
+    <title>Create Customer</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
@@ -55,7 +55,7 @@
                                 <div class="form-check form-switch">
                                     <input class="form-check-input product-checkbox" type="checkbox" th:id="'product_' + ${product.id}"
                                            th:value="${product.id}" name="productIds[]"
-                                           th:checked="${selectedProductIds != null and #lists.contains(selectedProductIds, product.id)}"
+                                           th:checked="${registrationDTO.selectedProductIds != null and #lists.contains(registrationDTO.selectedProductIds, product.id)}"
                                            onchange="toggleMeasurements(this)">
                                     <label class="form-check-label fs-5 fw-bold" th:for="'product_' + ${product.id}"
                                            th:text="${product.name}"></label>
@@ -67,7 +67,7 @@
                         <!-- Product Measurements -->
                         <h5 class="mt-4">Product Measurements</h5>
                         <div th:each="product : ${registrationDTO.products}" class="measurement-fields" th:data-product-id="${product.id}"
-                             th:style="${selectedProductIds != null and #lists.contains(selectedProductIds, product.id)} ? 'display: block;' : 'display: none;'">
+                             th:style="${registrationDTO.selectedProductIds.contains(product.id) ? 'display:block;' : 'display:none;'}">
                             <div class="card p-3 border-success shadow-sm">
                                 <div class="card-header bg-secondary text-white fw-bold">
                                     <span th:text="${product.name}"></span>

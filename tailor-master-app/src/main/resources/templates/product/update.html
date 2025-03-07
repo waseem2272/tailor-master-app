@@ -27,6 +27,7 @@
                             <form id="updateProductForm" th:action="@{/products/update}" th:object="${product}" method="post" onsubmit="return validateForm()">
 <!--                                <input type="hidden" th:field="*{id}"/>-->
                                 <input type="hidden" name="encryptedProductId"
+                                       th:if="${thymeleafUtil != null}"
                                        th:value="${thymeleafUtil.encryptId(product.id)}">
 
                                 <div class="mb-3">

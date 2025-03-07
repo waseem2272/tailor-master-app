@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter @Setter
 public class CustomerRegistrationDTO {
@@ -26,6 +23,9 @@ public class CustomerRegistrationDTO {
     private List<Product> products = new ArrayList<>();
     @ValidCustomerMeasurement(groups = MeasurementValidationGroup.class)
     private Map<Long, CustomerMeasurement> customerMeasurements = new HashMap<>();
+
+    // Store selected product IDs separately for easier pre-selection
+    private Set<Long> selectedProductIds = new HashSet<>();
 
     public void addCustomerMeasurement(Long productId, CustomerMeasurement measurement) {
         customerMeasurements.put(productId, measurement);

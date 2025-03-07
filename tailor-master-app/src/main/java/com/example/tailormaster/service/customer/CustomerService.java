@@ -1,11 +1,16 @@
 package com.example.tailormaster.service.customer;
 
+import com.example.tailormaster.dto.CustomerRegistrationDTO;
 import com.example.tailormaster.entity.Customer;
+import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.customer.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -29,19 +34,31 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public void updateCustomer(Long id, Customer updatedCustomer) {
-        Customer existingCustomer = getCustomerById(id);
-        existingCustomer.setFullName(updatedCustomer.getFullName());
-//        existingCustomer.setFatherName(updatedCustomer.getFatherName());
-//        existingCustomer.setSurname(updatedCustomer.getSurname());
-        existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
-//        existingCustomer.setChest(updatedCustomer.getChest());
-//        existingCustomer.setWaist(updatedCustomer.getWaist());
-//        existingCustomer.setHips(updatedCustomer.getHips());
-//        existingCustomer.setSleeveLength(updatedCustomer.getSleeveLength());
-//        existingCustomer.setShoulder(updatedCustomer.getShoulder());
+    @Transactional
+    public void updateCustomer(CustomerRegistrationDTO registrationDTO, List<Product> selectedProducts) {
+        Long customerId = registrationDTO.getCustomer().getId();
+        Customer existingCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        // Update customer information
+        existingCustomer.setFullName(registrationDTO.getCustomer().getFullName());
+        existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
+
+        // Update Products
+        existingCustomer.getMeasurements().clear();
+
+        for (Product product : selectedProducts) {
+            CustomerMeasurement measurement = registrationDTO.getCustomerMeasurements().get(product.getId());
+            if (measurement != null) {
+                measurement.setCustomer(existingCustomer);
+                measurement.setProduct(product);
+                existingCustomer.getMeasurements().add(measurement);
+            }
+        }
+
         customerRepository.save(existingCustomer);
     }
+
 
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
