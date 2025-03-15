@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <h2 class="text-center">Customer Details</h2>
+
+            <!-- Customer Information -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Customer Information</div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
+                    <p><strong>Phone:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">Products & Measurements</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div th:each="product : ${products}" class="col-md-6 mb-3">
+                            <div class="border p-3 rounded shadow-sm">
+                                <h5 class="text-success" th:text="${product.name}"></h5>
+
+                                <!-- Measurements for this product -->
+                                <div th:each="measurement : ${measurements}" th:if="${measurement.product.id == product.id}">
+
+                                    <!-- Qameez Fields -->
+                                    <div th:if="${product.type.name() == 'QAMEEZ'}">
+                                        <hr/>
+                                        <p><strong>Chest:</strong> <span th:text="${measurement.chest}"></span></p>
+                                        <p><strong>Sleeve Length:</strong> <span th:text="${measurement.sleeveLength}"></span></p>
+                                        <p><strong>Shoulder:</strong> <span th:text="${measurement.shoulder}"></span></p>
+                                    </div>
+
+                                    <!-- Shalwar Fields -->
+                                    <div th:if="${product.type.name() == 'SHALWAR'}">
+                                        <hr/>
+                                        <p><strong>Hips:</strong> <span th:text="${measurement.hips}"></span></p>
+                                        <p><strong>Waist:</strong> <span th:text="${measurement.waist}"></span></p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr/>
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-center">
+                        <a th:href="@{'/customers/edit/' + ${thymeleafUtil.encryptId(customer.id)}}"
+                           class="btn btn-success">Edit</a>
+                        <a th:href="@{/customers}" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+</body>
+</html>

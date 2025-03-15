@@ -3,6 +3,7 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.CustomerRegistrationDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
@@ -291,6 +292,44 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
             return "redirect:/customers";
         }
+    }
+
+    @GetMapping("/details/{id}")
+    public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+
+        try {
+            // Decrypt and validate customer ID
+            Long customerId = validation.decryptAndValidateId(id);
+            if (customerId == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+                return "redirect:/customers";
+            }
+
+            // Fetch customer details
+            Customer customer = customerService.getCustomerById(customerId);
+            model.addAttribute("customer", customer);
+
+            // Fetch customer measurements
+            List<CustomerMeasurement> measurements = customer.getMeasurements();
+            model.addAttribute("measurements", measurements);
+
+            // Fetch product details (orders/products associated with the customer)
+            // Fetch products from measurements
+            List<Product> productsList = new ArrayList<>();
+            if (measurements != null) {
+                for (CustomerMeasurement measurement : measurements) {
+                    if (measurement.getProduct() != null) {
+                        productsList.add(measurement.getProduct());
+                    }
+                }
+            }
+            model.addAttribute("products", productsList);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "customer/customer-details";
     }
 
     // Delete customer
