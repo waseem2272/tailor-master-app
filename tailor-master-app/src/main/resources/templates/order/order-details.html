@@ -4,6 +4,22 @@
     <title>Order Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style>
+        @media (max-width: 768px) {
+            .d-flex.flex-wrap {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .w-auto {
+                width: 100% !important;
+            }
+        }
+    </style>
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -26,12 +42,49 @@
             <div class="card mb-3">
                 <div class="card-header bg-success text-white">Order Details</div>
                 <div class="card-body">
+                    <input type="hidden" id="orderId" th:field="*{order.id}" />
                     <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
                     <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
-                    <p><strong>Status:</strong>
-                        <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
-                              th:text="${order.status}"></span>
-                    </p>
+
+                    <div class="row align-items-end">
+                        <div class="col-md-6 col-sm-12 d-flex flex-wrap align-items-center gap-2">
+                            <label for="orderStatus" class="fw-bold me-2">Order Status</label>
+
+                            <!-- Status Badge (Completed / Cancelled) -->
+                            <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED}"
+                                  class="badge bg-success" th:text="${order.status}"></span>
+
+                            <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
+                                  class="badge bg-danger" th:text="${order.status}"></span>
+
+                            <!-- Dropdown & Cabinet No (Visible only when not Completed or Cancelled) -->
+                            <div class="d-flex flex-wrap align-items-center gap-2"
+                                 th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED and
+                     order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}">
+
+                                <!-- Status Dropdown -->
+                                <select id="orderStatus" name="status" class="form-select w-auto">
+                                    <option th:each="status : ${T(com.example.tailormaster.entity.OrderStatus).values()}"
+                                            th:value="${status}" th:text="${status}"
+                                            th:selected="${order.status == status}">
+                                    </option>
+                                </select>
+
+                                <!-- Cabinet No Field (Only shown when COMPLETED is selected) -->
+                                <input type="text" id="cabinetNo" name="cabinetNo" class="form-control w-auto d-none"
+                                       placeholder="Cabinet No" th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
+
+                                <!-- Update Button -->
+                                <button type="button" id="updateOrderStatusBtn" class="btn btn-success btn-sm">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div id="orderStatusMessage"></div> <!-- Alert will be inserted here -->
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -75,7 +128,6 @@
                 <a th:href="@{/orders}" class="btn btn-secondary">Back to Order List</a>
             </div>
 
-
         </div>
     </div>
 </div>
@@ -84,6 +136,66 @@
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
+<script>
+    function toggleCabinetField() {
+        let selectedStatus = $("#orderStatus").val();
+        if (selectedStatus === "COMPLETED") {
+            $("#cabinetNo").removeClass("d-none");
+        } else {
+            $("#cabinetNo").addClass("d-none");
+        }
+    }
+
+    function updateOrderStatus() {
+        var csrfToken = $("meta[name='_csrf']").attr("content");
+        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        let orderId = $("#orderId").val();
+        let status = $("#orderStatus").val();
+        let cabinetNo = $("#cabinetNo").val();
+
+        $.ajax({
+            url: contextPath + "orders/update-order-status",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                orderId: orderId,
+                status: status,
+                cabinetNo: status === "COMPLETED" ? cabinetNo : null
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            },
+            success: function (response) {
+                showAlert("success", "Order status updated successfully!");
+                setTimeout(() => location.reload(), 5000); // Reload after 5 seconds
+            },
+            error: function () {
+                showAlert("danger", "Error updating order status. Please try again.");
+            }
+        });
+    }
+
+    function showAlert(type, message) {
+        let alertHtml = `<div class="alert alert-${type} alert-dismissible fade show mt-2" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                     </div>`;
+        $("#orderStatusMessage").html(alertHtml);
+    }
+
+    // Attach event listeners
+    $(function () {
+        toggleCabinetField(); // Run on initial load
+
+        $("#orderStatus").change(toggleCabinetField);
+        $("#updateOrderStatusBtn").click(updateOrderStatus);
+    });
+</script>
 
 
 </body>

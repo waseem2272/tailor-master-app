@@ -3,15 +3,21 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.RegisterUserForm;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+import java.util.Optional;
+
 @Controller
+@RequestMapping("/users")
 public class RegisterController {
     private final UserService userService;
 
@@ -75,4 +81,44 @@ public class RegisterController {
         user.setShortCode(registerUserForm.getShortCode());
         return user;
     }
+
+    @GetMapping("/profile")
+    public String showUserProfile(Model model, Principal principal, RedirectAttributes redirectAttributes) {
+        Optional<User> user = userService.findByUsername(principal.getName());
+        if (user.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+            return "redirect:/dashboard";
+        }
+        model.addAttribute("user", user.get());
+        return "user-profile";
+    }
+
+    @GetMapping("/profile/edit")
+    public String editUserProfile(Model model, Principal principal, RedirectAttributes redirectAttributes) {
+        Optional<User> userOptional = userService.findByUsername(principal.getName());
+        if (userOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+            return "redirect:/dashboard";
+        }
+        model.addAttribute("user", userOptional.get());
+        return "edit-profile";
+    }
+
+    // Handle profile update
+    @PostMapping("/profile/update")
+    public String updateProfile(@Valid @ModelAttribute("user") User user, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "edit-profile"; // Return profile page with validation errors
+        }
+
+        try {
+            userService.updateUser(user);
+            redirectAttributes.addFlashAttribute("success", "Profile updated successfully.");
+            return "redirect:/users/profile";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "An error occurred while updating the profile. Please try again.");
+            return "redirect:/users/profile/edit";
+        }
+    }
+
 }

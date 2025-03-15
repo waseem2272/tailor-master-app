@@ -1,13 +1,7 @@
 package com.example.tailormaster.dto;
 
-import com.example.tailormaster.entity.Role;
-import com.example.tailormaster.validation.OptionalPhoneValidation;
-import jakarta.persistence.Lob;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data

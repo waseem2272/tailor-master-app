@@ -4,8 +4,11 @@ import com.example.tailormaster.entity.Role;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.repository.RoleRepository;
 import com.example.tailormaster.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -53,5 +56,31 @@ public class UserService {
 
     public Optional<User> findByUsername(String name) {
         return this.userRepository.findByUsername(name);
+    }
+
+    // Get the currently logged-in user
+    public User getLoggedInUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    // Update user profile
+    @Transactional
+    public void updateUser(User updatedUser) {
+        User existingUser = getLoggedInUser();
+
+        // Updating allowed fields only
+        existingUser.setFullName(updatedUser.getFullName());
+        existingUser.setFathersName(updatedUser.getFathersName());
+        existingUser.setPhone1(updatedUser.getPhone1());
+        existingUser.setPhone2(updatedUser.getPhone2());
+        existingUser.setDateOfBirth(updatedUser.getDateOfBirth());
+        existingUser.setShopName(updatedUser.getShopName());
+        existingUser.setProprietorName(updatedUser.getProprietorName());
+        existingUser.setShopAddress(updatedUser.getShopAddress());
+        existingUser.setShortCode(updatedUser.getShortCode());
+
+        userRepository.save(existingUser);
     }
 }

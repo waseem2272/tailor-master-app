@@ -77,7 +77,7 @@
                                     <div th:if="${product.type.name() == 'QAMEEZ'}">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label th:for="'chest_'+ ${product.id}" class="form-label">Chest <span class="text-danger">*</span></label>
+                                                <label th:for="'chest_'+ ${product.id}" class="form-label">سینہ <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'chest_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].chest'"
                                                        th:value="${registrationDTO.customerMeasurements.get(product.id).chest}" class="form-control"
                                                        placeholder="Enter chest size">
@@ -86,7 +86,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label th:for="'shoulder_'+ ${product.id}" class="form-label">Shoulder <span class="text-danger">*</span></label>
+                                                <label th:for="'shoulder_'+ ${product.id}" class="form-label">کندھا <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'shoulder_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].shoulder'"
                                                        th:value="${registrationDTO.customerMeasurements.get(product.id).shoulder}" class="form-control"
                                                        placeholder="Enter shoulder length">
@@ -95,7 +95,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-2">
-                                                <label th:for="'sleeveLength_'+ ${product.id}" class="form-label">Sleeves Length <span class="text-danger">*</span></label>
+                                                <label th:for="'sleeveLength_'+ ${product.id}" class="form-label">آستینیں <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'sleeveLength_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].sleeveLength'"
                                                        th:value="${registrationDTO.customerMeasurements.get(product.id).sleeveLength}" class="form-control"
                                                        placeholder="Enter sleeves length">

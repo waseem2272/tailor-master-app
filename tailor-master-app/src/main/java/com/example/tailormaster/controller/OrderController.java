@@ -2,6 +2,8 @@ package com.example.tailormaster.controller;
 
 import com.example.tailormaster.dto.CustomerOrderDto;
 import com.example.tailormaster.dto.OrderProductDto;
+import com.example.tailormaster.dto.OrderStatusUpdateDto;
+import com.example.tailormaster.dto.UpdateCustomerOrderDto;
 import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.service.UserService;
@@ -9,12 +11,12 @@ import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.product.ProductService;
-import com.example.tailormaster.util.AESUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
-import com.example.tailormaster.validation.Utility;
 import com.example.tailormaster.validation.Validation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +27,6 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -96,6 +97,7 @@ public class OrderController {
             // Perform validation checks
             validateOrder(orderDto, result);
             if (result.hasErrors()) {
+                model.addAttribute("org.springframework.validation.BindingResult.orderDto", result);
                 return populateModel(model, customerId, orderDto, customer);
             }
 
@@ -172,13 +174,61 @@ public class OrderController {
         }
     }
 
+    private void validateOrder(UpdateCustomerOrderDto orderDto, BindingResult result) {
+        if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
+            result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
+            return;
+        }
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
+            OrderProductDto product = orderDto.getOrderProducts().get(i);
+
+            // Validate Quantity
+            if (product.getQuantity() == null || product.getQuantity() < 1) {
+                result.rejectValue("orderProducts[" + i + "].quantity",
+                        "error.orderProducts[" + i + "].quantity",
+                        "Quantity must be at least 1.");
+            }
+
+            // Validate Product Price
+            if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                result.rejectValue("orderProducts[" + i + "].price",
+                        "error.orderProducts[" + i + "].price",
+                        "Price must be greater than zero.");
+            }
+
+            // Calculate Total Amount
+            if (product.getPrice() != null && product.getQuantity() != null) {
+                totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity())));
+            }
+        }
+
+        // Validate Total Amount
+        if (orderDto.getTotalProductAmount().compareTo(totalAmount) != 0) {
+            result.rejectValue("totalProductAmount", "error.totalProductAmount", "Total amount is incorrect.");
+        }
+
+        // Validate Advance Payment
+        if (orderDto.getAdvancePayment().compareTo(totalAmount) > 0) {
+            result.rejectValue("advancePayment", "error.advancePayment", "Advance payment cannot exceed total amount.");
+        }
+
+        // Validate Due Payment
+        BigDecimal expectedDuePayment = totalAmount.subtract(orderDto.getAdvancePayment());
+        if (orderDto.getDuePayment().compareTo(expectedDuePayment) != 0) {
+            result.rejectValue("duePayment", "error.duePayment", "Due payment is incorrect.");
+        }
+    }
+
 
     private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
         List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
         List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
-
+        orderDto.setCustomer(customer);
         model.addAttribute("orderDto", orderDto);
-        model.addAttribute("customer", customer);
+//        model.addAttribute("customer", customer);
         model.addAttribute("products", products);
         model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "order/create";
@@ -238,5 +288,122 @@ public class OrderController {
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
         return String.format("%s-%s-%03d", user.getShortCode(), datePart, orderNumber);
     }
+
+    @GetMapping("/edit/{id}")
+    public String showEditOrderForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            // Decrypt and validate order ID
+            Long orderId = validation.validateAndFetchOrder(id, redirectAttributes);
+            if (orderId == null) {
+                return "redirect:/orders";
+            }
+
+            Order order = orderService.findById(orderId);
+            UpdateCustomerOrderDto orderUpdateDto = populateOrderUpdateDto(order);
+            model.addAttribute("orderDto", orderUpdateDto);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            return "order/update";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating order: " + e.getMessage());
+            return "redirect:/orders"; // Keep only one return statement
+        }
+    }
+
+    private UpdateCustomerOrderDto populateOrderUpdateDto(Order order) {
+        UpdateCustomerOrderDto orderUpdateDto = new UpdateCustomerOrderDto();
+
+        // Set order details
+        orderUpdateDto.setId(order.getId());
+        orderUpdateDto.setCustomer(order.getCustomer());
+        orderUpdateDto.setOrderDate(order.getOrderDate());
+        orderUpdateDto.setDeliveryDate(order.getDeliveryDate());
+//        orderUpdateDto.setStatus(order.getStatus());
+        orderUpdateDto.setAdvancePayment(order.getAdvancePayment());
+        orderUpdateDto.setDuePayment(order.getDuePayment());
+        orderUpdateDto.setTotalProductAmount(order.getTotalProductAmount());
+
+        // Populate order products
+        List<OrderProductDto> orderProductDtos = order.getOrderProducts().stream().map(orderProduct -> {
+            OrderProductDto orderProductDto = new OrderProductDto();
+            orderProductDto.setId(orderProduct.getProduct().getId());
+            orderProductDto.setName(orderProduct.getProduct().getName());
+            orderProductDto.setQuantity(orderProduct.getQuantity());
+            orderProductDto.setPrice(orderProduct.getProduct().getPrice());
+            return orderProductDto;
+        }).collect(Collectors.toList());
+
+        orderUpdateDto.setOrderProducts(orderProductDtos);
+
+        return orderUpdateDto;
+    }
+
+    @PostMapping("/update")
+    public String updateOrder(
+            @ModelAttribute("orderDto") @Valid UpdateCustomerOrderDto orderUpdateDto,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes,
+            @RequestParam("encryptedOrderId") String encryptedOrderId) {
+
+        try {
+            // Decrypt and validate order ID
+            Long orderId = validation.validateAndFetchOrder(encryptedOrderId, redirectAttributes);
+            if (orderId == null) {
+                return "redirect:/orders";
+            }
+
+            // Fetch order details (since ID is valid)
+            Order order = orderService.findById(orderId);
+
+            // Perform validation checks
+            validateOrder(orderUpdateDto, bindingResult);
+            if (bindingResult.hasErrors()) {
+                model.addAttribute("org.springframework.validation.BindingResult.orderDto", bindingResult);
+                UpdateCustomerOrderDto orderUpdateDto1 = populateOrderUpdateDto(order);
+                model.addAttribute("orderDto", orderUpdateDto1);
+                model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+                return "order/update";
+            }
+
+            Order updateOrder = orderService.updateOrder(orderId, orderUpdateDto);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Order updated successfully!");
+            redirectAttributes.addFlashAttribute("orderId", updateOrder.getId());
+            return "redirect:/orders";
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
+            return "redirect:/orders";
+        }
+    }
+
+    @PostMapping("/update-order-status")
+    @ResponseBody
+    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderStatusUpdateDto dto) {
+        try {
+            Order order = orderService.findById(dto.getOrderId());
+
+            if (order == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
+            }
+
+            order.setStatus(dto.getStatus());
+
+            if (dto.getStatus() == OrderStatus.COMPLETED) {
+                order.setCabinetNo(dto.getCabinetNo());
+            } else {
+                order.setCabinetNo(null); // Clear cabinet number if status is not COMPLETED
+            }
+
+            orderService.save(order);
+            return ResponseEntity.ok("Order status updated successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating order status: " + e.getMessage());
+        }
+    }
+
+
 
 }

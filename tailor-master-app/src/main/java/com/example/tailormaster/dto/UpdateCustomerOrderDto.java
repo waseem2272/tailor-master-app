@@ -1,39 +1,32 @@
 package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.Customer;
-import com.example.tailormaster.entity.OrderStatus;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-public class CustomerOrderDto {
+public class UpdateCustomerOrderDto {
 
     private Customer customer;
+    
+//    @NotNull(message = "Order ID is required.")
+    private Long id;
 
     @NotNull(message = "Order date is required.")
-    @FutureOrPresent(message = "Order date cannot be in the past.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
 
     @NotNull(message = "Delivery date is required.")
-    @Future(message = "Delivery date must be in the future.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate deliveryDate;
-
-    private OrderStatus status = OrderStatus.PENDING;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Advance payment cannot be negative.")
     private BigDecimal advancePayment;
@@ -48,4 +41,5 @@ public class CustomerOrderDto {
 
     @NotEmpty(message = "At least one product must be selected.")
     private List<@Valid OrderProductDto> orderProducts = new ArrayList<>();
+
 }

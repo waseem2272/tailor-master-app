@@ -24,7 +24,8 @@
             <!-- Success Message Alert with Order Details Link -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <span th:text="${successMessage}"></span>
-                <a th:if="${orderId}" th:href="@{/orders/details/{id}(id=${orderId})}" class="btn btn-light btn-sm ms-2">
+                <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
+                   class="btn btn-light btn-sm ms-2">
                     View Order Details
                 </a>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -45,6 +46,7 @@
                     <th>Order Date</th>
                     <th>Delivery Date</th>
                     <th>Status</th>
+                    <th>Cabinet No</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -56,24 +58,34 @@
                     <td th:text="${order.orderDate}"></td>
                     <td th:text="${order.deliveryDate}"></td>
                     <td>
-                        <span th:classappend="${order.status == 'Completed'} ? 'badge bg-success' : 'badge bg-warning'"
-                              th:text="${order.status}">
-                        </span>
+    <span th:classappend="${
+        order.status == T(com.example.tailormaster.entity.OrderStatus).PENDING ? 'badge bg-secondary' :
+        order.status == T(com.example.tailormaster.entity.OrderStatus).IN_PROGRESS ? 'badge bg-primary' :
+        order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED ? 'badge bg-success' :
+        order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED ? 'badge bg-danger' : ''
+    }"
+          th:text="${order.status}">
+    </span>
                     </td>
+
+                    <td th:text="${order.cabinetNo}"></td>
                     <td>
-                        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-info btn-sm">
+                        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
+                           class="btn btn-info btn-sm">
                             View Details
                         </a>
-                        <!--<a th:href="@{/orders/edit/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Edit</a>
-                        <form th:action="@{/orders/delete/{id}(id=${order.id})}" method="post" style="display: inline;">
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
-                                Delete
-                            </button>
-                        </form>-->
+                        <!-- Show Edit button only if the order is NOT Completed or Cancelled -->
+                        <a th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED
+               and order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
+                           th:href="@{'/orders/edit/' + ${thymeleafUtil.encryptId(order.id)}}"
+                           class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+
         </div>
     </div>
 </div>

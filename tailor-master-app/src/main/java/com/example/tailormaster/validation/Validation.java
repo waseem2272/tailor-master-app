@@ -2,9 +2,11 @@ package com.example.tailormaster.validation;
 
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.entity.product.ProductType;
 import com.example.tailormaster.service.customer.CustomerService;
+import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.util.AESUtil;
 import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class Validation {
 
     private final CustomerService customerService;
+    private final OrderService orderService;
 
     public void validateMeasurement(Product product, CustomerMeasurement measurement, BindingResult result) {
         if (product.getType() == ProductType.QAMEEZ) { // Qameez
@@ -65,6 +68,22 @@ public class Validation {
         }
 
         return customerId;
+    }
+
+    public Long validateAndFetchOrder(String encryptedOrderId, RedirectAttributes redirectAttributes) {
+        Long orderId = decryptAndValidateId(encryptedOrderId);
+        if (orderId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid order ID.");
+            return null;
+        }
+
+        Order order = orderService.findById(orderId);
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+            return null;
+        }
+
+        return orderId;
     }
 
 }

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,10 +22,10 @@ import java.util.Set;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-    @NotBlank(message = "Username is required")
+//    @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank(message = "Password is required")
+//    @NotBlank(message = "Password is required")
     private String password;
 
     @NotBlank(message = "Full name is required")
@@ -40,6 +41,7 @@ public class User extends BaseEntity {
             groups = {OptionalPhoneValidation.class})
     private String phone2;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")  // Ensure correct format
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Shop Name is required")
@@ -63,7 +65,7 @@ public class User extends BaseEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @NotEmpty(message = "At least one role must be selected.") // Validation annotation
+//    @NotEmpty(message = "At least one role must be selected.") // Validation annotation
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

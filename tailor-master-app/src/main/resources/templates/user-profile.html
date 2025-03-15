@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <!-- Customer Information -->
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">User Profile</div>
+                <div class="card-body">
+
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+
+                    <table class="table">
+
+                        <tr>
+                            <th>Full Name:</th>
+                            <td th:text="${user.fullName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Father's Name:</th>
+                            <td th:text="${user.fathersName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Phone Number 1:</th>
+                            <td th:text="${user.phone1}"></td>
+                        </tr>
+                        <tr>
+                            <th>Phone Number 2:</th>
+                            <td th:text="${user.phone2}"></td>
+                        </tr>
+                        <tr>
+                            <th>Date of Birth:</th>
+                            <td th:text="${user.dateOfBirth}"></td>
+                        </tr>
+                        <tr>
+                            <th>Shop Name:</th>
+                            <td th:text="${user.shopName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Proprietor Name:</th>
+                            <td th:text="${user.proprietorName}"></td>
+                        </tr>
+                        <tr>
+                            <th>Shop Address:</th>
+                            <td th:text="${user.shopAddress}"></td>
+                        </tr>
+                        <tr>
+                            <th>Short Code:</th>
+                            <td th:text="${user.shortCode}"></td>
+                        </tr>
+
+                    </table>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-center">
+                        <a th:href="@{/users/profile/edit}" class="btn btn-success">Edit</a>
+                        <a th:href="@{/dashboard}" class="btn btn-secondary ms-2">Cancel</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
