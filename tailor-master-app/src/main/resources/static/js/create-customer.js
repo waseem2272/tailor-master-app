@@ -7,6 +7,9 @@ function validateForm() {
     if (fullName.value.trim() === "") {
         showError(fullName, "Full Name is required.");
         isValid = false;
+    } else if (fullName.value.trim().length < 3) {
+        showError(fullName, "Full Name must have at least 3 characters.");
+        isValid = false;
     } else {
         removeError(fullName);
     }
@@ -51,7 +54,7 @@ function validateForm() {
                 removeError(input); // Remove previous error messages
 
                 if (input.value.trim() === '') {
-                    showError(input, `${input.placeholder} is required.`);
+                    showError(input, `${input.placeholder.split("Enter")[1]} is required.`);
                     isValid = false;
                 }
             });

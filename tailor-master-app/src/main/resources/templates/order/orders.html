@@ -4,24 +4,20 @@
     <title>Orders</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .alert {
-            max-width: 600px;
-            margin: 20px auto;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
-<!-- Include Sidebar Fragment -->
+<!-- Sidebar -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-            <h2 class="text-center">Orders</h2>
-
-            <!-- Success Message Alert with Order Details Link -->
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-bag-check-fill me-2"></i> Orders
+            </h2>
+            <!-- Success Message Alert -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <span th:text="${successMessage}"></span>
                 <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
@@ -32,72 +28,206 @@
             </div>
 
             <!-- Error Alert -->
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div th:if="${errorMessage}" class="row justify-content-center">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
 
-            <table id="ordersTable" class="table table-bordered">
-                <thead class="table-success">
-                <tr>
-                    <th>#</th>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Order Date</th>
-                    <th>Delivery Date</th>
-                    <th>Status</th>
-                    <th>Cabinet No</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="order, i : ${orders}">
-                    <td th:text="${i.count}"></td>
-                    <td th:text="${order.orderId}"></td>
-                    <td th:text="${order.customer.fullName + ' ' + order.customer.phoneNumber}"></td>
-                    <td th:text="${order.orderDate}"></td>
-                    <td th:text="${order.deliveryDate}"></td>
-                    <td>
-    <span th:classappend="${
-        order.status == T(com.example.tailormaster.entity.OrderStatus).PENDING ? 'badge bg-secondary' :
-        order.status == T(com.example.tailormaster.entity.OrderStatus).IN_PROGRESS ? 'badge bg-primary' :
-        order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED ? 'badge bg-success' :
-        order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED ? 'badge bg-danger' : ''
-    }"
-          th:text="${order.status}">
-    </span>
-                    </td>
+            <!-- Filters Card -->
+            <div class="card shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-search me-2"></i> Filter Orders
+                    </div>
+                    <button class="btn btn-light btn-sm rounded-pill shadow-sm" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filterSection">
+                        <i class="bi bi-funnel"></i> Toggle Filters
+                        <span id="filterCountBadge" class="badge bg-danger ms-2 d-none">0</span>
+                    </button>
+                </div>
+                <div id="filterSection" class="collapse show">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="dateRange" class="form-label fw-semibold">Quick Date Range</label>
+                                <select id="dateRange" class="form-select rounded-pill">
+                                    <option value="">Select range</option>
+                                    <option value="last7days">Last 7 days</option>
+                                    <option value="thismonth">This month</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="startDate" class="form-label fw-semibold">Start Date</label>
+                                <input type="date" id="startDate" class="form-control rounded-pill">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="endDate" class="form-label fw-semibold">End Date</label>
+                                <input type="date" id="endDate" class="form-control rounded-pill">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end gap-2">
+                                <button id="applyFilters" class="btn btn-success shadow rounded-pill w-100">
+                                    <i class="bi bi-check-circle"></i> Apply Filters
+                                </button>
+                                <button id="clearFilters" class="btn btn-secondary shadow rounded-pill w-100">
+                                    <i class="bi bi-x-circle"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <td th:text="${order.cabinetNo}"></td>
-                    <td>
-                        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
-                           class="btn btn-info btn-sm">
-                            View Details
-                        </a>
-                        <!-- Show Edit button only if the order is NOT Completed or Cancelled -->
-                        <a th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED
-               and order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
-                           th:href="@{'/orders/edit/' + ${thymeleafUtil.encryptId(order.id)}}"
-                           class="btn btn-sm btn-warning">
-                            Edit
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
+            <div class="card shadow-sm border-success mt-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-list-check me-2"></i> Orders List
+                </div>
+                <div class="card-body">
+                    <table id="ordersTable" class="table table-bordered table-hover table-striped">
+                        <thead class="table-success text-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Order Date</th>
+                            <th>Delivery Date</th>
+                            <th>Status</th>
+                            <th>Cabinet No</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+<div th:replace="~{fragments/footer :: footer}"></div>
+
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
 <script>
+    function updateFilterBadge() {
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
+        const dateRange = $('#dateRange').val();
+        let count = 0;
+        if (startDate) count++;
+        if (endDate) count++;
+        if (dateRange) count++;
+
+        if (count > 0) {
+            $('#filterCountBadge').removeClass('d-none').text(count);
+        } else {
+            $('#filterCountBadge').addClass('d-none').text('0');
+        }
+    }
+
     $(document).ready(function () {
-        $('#ordersTable').DataTable();
+        // Update badge on filter change
+        $('#startDate, #endDate, #dateRange').on('change', updateFilterBadge);
+
+        var table = $('#ordersTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "responsive": true,
+            "autoWidth": false,
+            "ajax": {
+                "url": contextPath + "orders/datatable",
+                "type": "GET",
+                "data": function (d) {
+                    d.startDate = $('#startDate').val();
+                    d.endDate = $('#endDate').val();
+                }
+            },
+            "columns": [
+                {"data": "orderId"},
+                {"data": "customer"},
+                {"data": "orderDate"},
+                {"data": "deliveryDate"},
+                {
+                    "data": "status",
+                    "render": function (data) {
+                        let badgeClass = {
+                            "PENDING": "badge bg-secondary",
+                            "IN_PROGRESS": "badge bg-primary",
+                            "COMPLETED": "badge bg-success",
+                            "CANCELLED": "badge bg-danger"
+                        }[data] || "";
+                        return `<span class="${badgeClass}">${data}</span>`;
+                    }
+                },
+                {"data": "cabinetNo"},
+                {
+                    "data": "id",
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row) {
+                        let encryptedId = row.encryptedId;
+                        let editButton = (row.status !== "COMPLETED" && row.status !== "CANCELLED")
+                            ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
+                            : "";
+
+                        return `
+                                <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Details</a>
+                                ${editButton}
+                        `;
+                    }
+                }
+            ]
+        });
+
+        // Apply filters button
+        $('#applyFilters').on('click', function () {
+            table.ajax.reload();
+        });
+
+        // Clear filters button
+        $('#clearFilters').on('click', function () {
+            $('#dateRange').val('');
+            $('#startDate').val('');
+            $('#endDate').val('');
+            updateFilterBadge();
+            table.ajax.reload();
+        });
+
+        // Handle quick range but do not reload immediately — just populate the fields
+        $('#dateRange').on('change', function () {
+            var today = new Date();
+            var startDate = '';
+            var endDate = today.toISOString().split('T')[0];
+
+            if (this.value === 'last7days') {
+                var lastWeek = new Date();
+                lastWeek.setDate(today.getDate() - 6);
+                startDate = lastWeek.toISOString().split('T')[0];
+            } else if (this.value === 'thismonth') {
+                var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+                startDate = firstDay.toISOString().split('T')[0];
+            } else {
+                startDate = '';
+                endDate = '';
+            }
+
+            $('#startDate').val(startDate);
+            $('#endDate').val(endDate);
+            updateFilterBadge();
+        });
+
     });
 </script>
-<div th:replace="~{fragments/footer :: footer}"></div>
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
 </body>
 </html>

@@ -5,6 +5,8 @@
     <title>Edit Profile</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
 <body>
 <div th:replace="fragments/sidebar :: sidebar"></div>
@@ -12,107 +14,91 @@
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Edit Profile</div>
+
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-lines-fill me-2"></i> Update Profile
+            </h2>
+
+            <div class="card shadow-sm rounded-4 animate__animated animate__fadeIn mb-4">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                </div>
                 <div class="card-body">
-                    <p class="text-danger fw-bold">Fields marked as * are required</p>
+                    <p class="text-danger fw-bold mb-4">Fields marked with <span class="text-danger">*</span> are required</p>
                     <form id="profileForm" th:action="@{/users/profile/update}" method="post" th:object="${user}">
                         <input type="hidden" th:field="*{id}"/>
 
-                        <div class="row">
-                            <!-- Full Name -->
-                            <div class="col-md-6 mb-3">
-                                <label for="fullName" class="form-label">Full Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
-                                       placeholder="Enter full name" >
-                                <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control shadow-sm" id="fullName" th:field="*{fullName}" placeholder="Enter full name">
+                                <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Phone Number 1 -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label for="phone1" class="form-label">Phone Number 1 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="phone1" th:field="*{phone1}"
-                                       placeholder="Enter phone number" >
-                                <div th:if="${#fields.hasErrors('phone1')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('phone1')}" th:text="${error}"></div>
+                                <input type="text" class="form-control shadow-sm" id="phone1" th:field="*{phone1}" placeholder="Enter phone number">
+                                <div th:if="${#fields.hasErrors('phone1')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('phone1')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Phone Number 2 -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label for="phone2" class="form-label">Phone Number 2</label>
-                                <input type="text" class="form-control" id="phone2" th:field="*{phone2}"
-                                       placeholder="Enter alternate phone number">
-                                <div th:if="${#fields.hasErrors('phone2')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
+                                <input type="text" class="form-control shadow-sm" id="phone2" th:field="*{phone2}" placeholder="Enter alternate phone number">
+                                <div th:if="${#fields.hasErrors('phone2')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Date of Birth -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" id="dateOfBirth"
+                                <input type="date" class="form-control shadow-sm" id="dateOfBirth"
                                        th:value="${user?.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'yyyy-MM-dd') : ''}"
-                                       th:field="*{dateOfBirth}" />
+                                       th:field="*{dateOfBirth}">
                             </div>
 
-                            <!-- Shop Name -->
-                            <div class="col-md-6 mb-3">
-                                <label for="shopName" class="form-label">Shop Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="shopName" th:field="*{shopName}"
-                                       placeholder="Enter shop name" >
-                                <div th:if="${#fields.hasErrors('shopName')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('shopName')}" th:text="${error}"></div>
+                            <div class="col-md-6">
+                                <label for="shopName" class="form-label">Shop Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control shadow-sm" id="shopName" th:field="*{shopName}" placeholder="Enter shop name">
+                                <div th:if="${#fields.hasErrors('shopName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shopName')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Proprietor Name -->
-                            <div class="col-md-6 mb-3">
-                                <label for="proprietorName" class="form-label">Proprietor Name <span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="proprietorName" th:field="*{proprietorName}"
-                                       placeholder="Enter proprietor name" >
-                                <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
+                            <div class="col-md-6">
+                                <label for="proprietorName" class="form-label">Proprietor Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control shadow-sm" id="proprietorName" th:field="*{proprietorName}" placeholder="Enter proprietor name">
+                                <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Short Code -->
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6">
                                 <label for="shortCode" class="form-label">Short Code <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="shortCode" th:field="*{shortCode}"
-                                       placeholder="Enter short code" >
-                                <div th:if="${#fields.hasErrors('shortCode')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('shortCode')}" th:text="${error}"></div>
+                                <input type="text" class="form-control shadow-sm" id="shortCode" th:field="*{shortCode}" placeholder="Enter short code">
+                                <div th:if="${#fields.hasErrors('shortCode')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shortCode')}" th:text="${error}"></div>
                             </div>
 
-                            <!-- Shop Address (Full Width) -->
-                            <div class="col-md-12 mb-3">
-                                <label for="shopAddress" class="form-label">Shop Address <span
-                                        class="text-danger">*</span></label>
-                                <textarea class="form-control" id="shopAddress" th:field="*{shopAddress}" rows="3"
-                                          placeholder="Enter shop address" ></textarea>
-                                <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger small"
-                                     th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
+                            <div class="col-md-12">
+                                <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control shadow-sm" id="shopAddress" th:field="*{shopAddress}" rows="3" placeholder="Enter shop address"></textarea>
+                                <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
                             </div>
                         </div>
 
-                        <!-- Submit and Cancel Buttons -->
-                        <div class="d-flex justify-content-center mt-3">
-                            <button type="submit" class="btn btn-success">Update</button>
-                            <a th:href="@{/users/profile}" class="btn btn-secondary ms-2">Cancel</a>
+                        <div class="d-flex justify-content-center mt-4 gap-2">
+                            <button type="submit" class="btn btn-success shadow rounded-pill px-4">
+                                <i class="bi bi-check-circle"></i> Update
+                            </button>
+                            <a th:href="@{/users/profile}" class="btn btn-secondary shadow rounded-pill px-4">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
                         </div>
                     </form>
-
                 </div>
-
             </div>
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/update-user.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
 </body>
 </html>

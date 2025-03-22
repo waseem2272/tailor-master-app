@@ -8,15 +8,19 @@ import com.example.tailormaster.entity.OrderStatus;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
+import com.example.tailormaster.util.ThymeleafUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +32,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final ThymeleafUtil thymeleafUtil;
 
     // Save an order
     public Order save(Order order) {
@@ -145,5 +150,61 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public Map<String, Object> getPaginatedOrders(
+            int draw,
+            int start,
+            int length,
+            String searchValue,
+            Integer columnIndex,
+            String sortDirection,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (start < 0 || length <= 0) {
+            throw new IllegalArgumentException("Start index and length must be greater than zero.");
+        }
+
+        String[] columnNames = {"id", "orderId", "customer.fullName", "orderDate", "deliveryDate", "status", "cabinetNo"};
+        String sortBy = (columnIndex != null && columnIndex < columnNames.length) ? columnNames[columnIndex] : "orderDate";
+
+        Sort sort = (sortDirection != null && sortDirection.equalsIgnoreCase("desc"))
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(start / length, length, sort);
+
+        Page<Order> orderPage;
+        try {
+            orderPage = orderRepository.findBySearchAndDateRange(
+                    (searchValue != null && !searchValue.isEmpty()) ? searchValue : null,
+                    startDate,
+                    endDate,
+                    pageable
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving orders from the database.", e);
+        }
+
+        List<Map<String, Object>> orderList = orderPage.getContent().stream().map(order -> {
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("orderId", order.getOrderId());
+            orderMap.put("customer", order.getCustomer().getFullName() + " " + order.getCustomer().getPhoneNumber());
+            orderMap.put("orderDate", order.getOrderDate());
+            orderMap.put("deliveryDate", order.getDeliveryDate());
+            orderMap.put("status", order.getStatus().name());
+            orderMap.put("cabinetNo", order.getCabinetNo());
+            orderMap.put("id", order.getId());
+            orderMap.put("encryptedId", thymeleafUtil.encryptId(order.getId()));
+            return orderMap;
+        }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("draw", draw);
+        response.put("recordsTotal", orderRepository.count());
+        response.put("recordsFiltered", orderPage.getTotalElements());
+        response.put("data", orderList);
+
+        return response;
+    }
 
 }

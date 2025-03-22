@@ -1,0 +1,93 @@
+body {
+    background-color: #f7f9fc;
+}
+
+h2 {
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    animation: fadeInDown 0.5s;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f7ff;
+    cursor: pointer;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-header.bg-success {
+    background: linear-gradient(90deg, #28a745 0%, #218838 100%);
+}
+
+.card-header.bg-success:hover {
+    filter: brightness(1.1);
+}
+
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+input[type="date"], select.form-select, input.form-control {
+    transition: box-shadow 0.2s;
+}
+
+input[type="date"]:focus, select.form-select:focus, input.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.table thead th {
+    vertical-align: middle;
+    font-weight: 600;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+.shadow-sm {
+    transition: box-shadow 0.3s ease;
+}
+
+.shadow-sm:hover {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn {
+    transition: all 0.3s ease-in-out;
+    border-radius: 2rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}

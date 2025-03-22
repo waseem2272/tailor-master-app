@@ -15,6 +15,7 @@ import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Validation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,7 +28,9 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,9 +48,37 @@ public class OrderController {
 
     @GetMapping
     public String listOrders(Model model) {
-        model.addAttribute("orders", orderService.getAllOrders());
         model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "order/orders"; // Redirects to orders.html
+    }
+
+    @GetMapping("/datatable")
+    public ResponseEntity<Map<String, Object>> getOrdersDatatable(
+            @RequestParam("draw") int draw,
+            @RequestParam("start") int start,
+            @RequestParam("length") int length,
+            @RequestParam(value = "search[value]", required = false) String searchValue,
+            @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
+            @RequestParam(value = "order[0][dir]", required = false) String sortDirection,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        try {
+            Map<String, Object> response = orderService.getPaginatedOrders(draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(createErrorResponse("Invalid request parameters: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse("An unexpected error occurred. Please try again."));
+        }
+    }
+
+    private Map<String, Object> createErrorResponse(String message) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", true);
+        errorResponse.put("message", message);
+        return errorResponse;
     }
 
     // Show create order form

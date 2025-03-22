@@ -3,19 +3,9 @@
 <head>
     <title>Order Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
-    <style>
-        @media (max-width: 768px) {
-            .d-flex.flex-wrap {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .w-auto {
-                width: 100% !important;
-            }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -26,75 +16,85 @@
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-file-earmark-text-fill me-2"></i> Order Details
+            </h2>
 
-            <h2 class="text-center">Order Details</h2>
-
-            <!-- Customer Information -->
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Customer Information</div>
-                <div class="card-body">
-                    <p><strong>Name:</strong> <span th:text="${order.customer.fullName}"></span></p>
-                    <p><strong>Phone:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-success h-100">
+                        <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                            <i class="bi bi-person-circle me-2"></i> Customer Information
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Name:</strong> <span th:text="${order.customer.fullName}"></span></p>
+                            <p><strong>Phone:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Order Details -->
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Order Details</div>
-                <div class="card-body">
-                    <input type="hidden" id="orderId" th:field="*{order.id}" />
-                    <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
-                    <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-success h-100">
+                        <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                            <i class="bi bi-card-list me-2"></i> Order Details
+                        </div>
+                        <div class="card-body">
+                            <input type="hidden" id="orderId" th:field="*{order.id}" />
+                            <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+                            <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
+                            <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
 
-                    <div class="row align-items-end">
-                        <div class="col-md-6 col-sm-12 d-flex flex-wrap align-items-center gap-2">
-                            <label for="orderStatus" class="fw-bold me-2">Order Status</label>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
+                                    <label for="orderStatus" class="fw-bold me-2">Order Status</label>
 
-                            <!-- Status Badge (Completed / Cancelled) -->
-                            <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED}"
-                                  class="badge bg-success" th:text="${order.status}"></span>
+                                    <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED}"
+                                          class="badge bg-success" th:text="${order.status}"></span>
 
-                            <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
-                                  class="badge bg-danger" th:text="${order.status}"></span>
+                                    <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
+                                          class="badge bg-danger" th:text="${order.status}"></span>
 
-                            <!-- Dropdown & Cabinet No (Visible only when not Completed or Cancelled) -->
-                            <div class="d-flex flex-wrap align-items-center gap-2"
-                                 th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED and
-                     order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}">
+                                    <div class="d-flex flex-wrap align-items-center gap-2"
+                                         th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED and
+                 order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}">
+                                        <select id="orderStatus" name="status" class="form-select w-auto">
+                                            <option th:each="status : ${T(com.example.tailormaster.entity.OrderStatus).values()}"
+                                                    th:value="${status}" th:text="${status}"
+                                                    th:selected="${order.status == status}">
+                                            </option>
+                                        </select>
 
-                                <!-- Status Dropdown -->
-                                <select id="orderStatus" name="status" class="form-select w-auto">
-                                    <option th:each="status : ${T(com.example.tailormaster.entity.OrderStatus).values()}"
-                                            th:value="${status}" th:text="${status}"
-                                            th:selected="${order.status == status}">
-                                    </option>
-                                </select>
+                                        <input type="text" id="cabinetNo" name="cabinetNo"
+                                               class="form-control w-auto d-none"
+                                               placeholder="Cabinet No"
+                                               th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
 
-                                <!-- Cabinet No Field (Only shown when COMPLETED is selected) -->
-                                <input type="text" id="cabinetNo" name="cabinetNo" class="form-control w-auto d-none"
-                                       placeholder="Cabinet No" th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
+                                        <button type="button" id="updateOrderStatusBtn" class="btn btn-success shadow rounded-pill px-4">
+                                            <i class="bi bi-check-circle"></i> Update
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <!-- Update Button -->
-                                <button type="button" id="updateOrderStatusBtn" class="btn btn-success btn-sm">Update</button>
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <div id="orderStatusMessage"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div id="orderStatusMessage"></div> <!-- Alert will be inserted here -->
-                        </div>
-                    </div>
-
                 </div>
             </div>
 
-            <!-- Product Details -->
-            <div class="card">
-                <div class="card-header bg-success text-white">Product Details</div>
+
+            <div class="card shadow-sm border-success mb-4">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                    <i class="bi bi-box-seam me-2"></i> Product Details
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
@@ -117,25 +117,30 @@
                 </div>
             </div>
 
-            <!-- Generate Receipt Button -->
             <div class="text-center mt-4">
-                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='customer')}" class="btn btn-success">
-                    View Customer Receipt
+                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='customer')}"
+                   class="btn btn-success me-2">
+                    <i class="bi bi-receipt"></i> View Customer Receipt
                 </a>
-                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='tailor')}" class="btn btn-success">
-                    View Tailor Receipt
+                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='tailor')}"
+                   class="btn btn-success me-2">
+                    <i class="bi bi-receipt"></i> View Tailor Receipt
                 </a>
-                <a th:href="@{/orders}" class="btn btn-secondary">Back to Order List</a>
+                <a th:href="@{/orders}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Orders
+                </a>
             </div>
 
         </div>
     </div>
 </div>
 
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
@@ -181,12 +186,27 @@
     }
 
     function showAlert(type, message) {
-        let alertHtml = `<div class="alert alert-${type} alert-dismissible fade show mt-2" role="alert">
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                     </div>`;
+        let icon = type === "success"
+            ? `<i class="bi bi-check-circle-fill me-2"></i>`
+            : `<i class="bi bi-x-circle-fill me-2"></i>`;
+
+        let alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
+            ${icon}${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
         $("#orderStatusMessage").html(alertHtml);
+
+        if (type === "success") {
+            setTimeout(() => {
+                $(".alert").fadeOut(500, function () {
+                    $(this).remove();
+                });
+            }, 4000);
+        }
     }
+
 
     // Attach event listeners
     $(function () {

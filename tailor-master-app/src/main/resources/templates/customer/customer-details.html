@@ -3,8 +3,9 @@
 <head>
     <title>Customer Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
-
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -12,58 +13,75 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <h2 class="text-center">Customer Details</h2>
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-fill me-2"></i> Customer Details
+            </h2>
 
             <!-- Customer Information -->
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Customer Information</div>
+            <div class="card shadow-sm border-success mb-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-info-circle me-2"></i> Customer Information
+                </div>
                 <div class="card-body">
-                    <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
-                    <p><strong>Phone:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Products Section -->
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">Products & Measurements</div>
+            <!-- Products & Measurements -->
+            <div class="card shadow-sm border-success mb-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-rulers me-2"></i> Products & Measurements
+                </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div th:each="product : ${products}" class="col-md-6 mb-3">
-                            <div class="border p-3 rounded shadow-sm">
-                                <h5 class="text-success" th:text="${product.name}"></h5>
-
-                                <!-- Measurements for this product -->
-                                <div th:each="measurement : ${measurements}" th:if="${measurement.product.id == product.id}">
-
-                                    <!-- Qameez Fields -->
-                                    <div th:if="${product.type.name() == 'QAMEEZ'}">
-                                        <hr/>
-                                        <p><strong>Chest:</strong> <span th:text="${measurement.chest}"></span></p>
-                                        <p><strong>Sleeve Length:</strong> <span th:text="${measurement.sleeveLength}"></span></p>
-                                        <p><strong>Shoulder:</strong> <span th:text="${measurement.shoulder}"></span></p>
+                    <div class="row g-4">
+                        <div th:each="product : ${products}" class="col-md-6">
+                            <div class="card border-secondary shadow-sm">
+                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        <span class="fw-bold" th:text="${product.name}"></span>
                                     </div>
+                                </div>
+                                <div class="card-body">
+                                    <div th:each="measurement : ${measurements}" th:if="${measurement.product.id == product.id}">
 
-                                    <!-- Shalwar Fields -->
-                                    <div th:if="${product.type.name() == 'SHALWAR'}">
-                                        <hr/>
-                                        <p><strong>Hips:</strong> <span th:text="${measurement.hips}"></span></p>
-                                        <p><strong>Waist:</strong> <span th:text="${measurement.waist}"></span></p>
+                                        <div th:if="${product.type.name() == 'QAMEEZ'}">
+                                            <p><strong>سینہ:</strong> <span th:text="${measurement.chest}"></span></p>
+                                            <p><strong>آستینیں:</strong> <span th:text="${measurement.sleeveLength}"></span></p>
+                                            <p><strong>کندھا:</strong> <span th:text="${measurement.shoulder}"></span></p>
+                                        </div>
+
+                                        <div th:if="${product.type.name() == 'SHALWAR'}">
+                                            <p><strong>Hips:</strong> <span th:text="${measurement.hips}"></span></p>
+                                            <p><strong>Waist:</strong> <span th:text="${measurement.waist}"></span></p>
+                                        </div>
+
                                     </div>
-
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="d-flex justify-content-center gap-2 mt-4">
+                        <a th:href="@{'/customers/edit/' + ${thymeleafUtil.encryptId(customer.id)}}" class="btn btn-success shadow rounded-pill px-4">
+                            <i class="bi bi-pencil-square"></i> Edit Customer
+                        </a>
+
+                        <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle"></i> Back to Customers
+                        </a>
                     </div>
-                    <hr/>
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-center">
-                        <a th:href="@{'/customers/edit/' + ${thymeleafUtil.encryptId(customer.id)}}"
-                           class="btn btn-success">Edit</a>
-                        <a th:href="@{/customers}" class="btn btn-secondary ms-2">Cancel</a>
-                    </div>
+
                 </div>
             </div>
+
 
         </div>
     </div>
@@ -73,5 +91,6 @@
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
 </body>
 </html>

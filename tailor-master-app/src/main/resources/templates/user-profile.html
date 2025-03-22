@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Profile</title>
+    <title>User Profile</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/style.css}"/>
-
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -12,24 +13,34 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <!-- Customer Information -->
-            <div class="card mb-3">
-                <div class="card-header bg-success text-white">User Profile</div>
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-fill me-2"></i> User Profile
+            </h2>
+
+            <!-- Success Alert -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                    <span th:text="${success}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <span th:text="${error}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card shadow-sm animate__animated animate__fadeIn rounded-4">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                    <i class="bi bi-person-circle me-2"></i> User Information
+                </div>
                 <div class="card-body">
-
-                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                        <span th:text="${success}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <span th:text="${error}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-
-                    <table class="table">
-
+                    <table class="table table-striped table-hover">
                         <tr>
                             <th>Full Name:</th>
                             <td th:text="${user.fullName}"></td>
@@ -66,23 +77,23 @@
                             <th>Short Code:</th>
                             <td th:text="${user.shortCode}"></td>
                         </tr>
-
                     </table>
 
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-center">
-                        <a th:href="@{/users/profile/edit}" class="btn btn-success">Edit</a>
-                        <a th:href="@{/dashboard}" class="btn btn-secondary ms-2">Cancel</a>
+                    <div class="d-flex justify-content-center mt-4 gap-2">
+                        <a th:href="@{/users/profile/edit}" class="btn btn-success shadow rounded-pill px-4">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </a>
+                        <a th:href="@{/dashboard}" class="btn btn-secondary shadow rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                        </a>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 </div>
-
-<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+
 </body>
 </html>

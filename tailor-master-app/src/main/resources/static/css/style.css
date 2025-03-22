@@ -1,96 +1,90 @@
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-
-/* Sidebar */
 .sidebar {
-    background: #343a40;
-    color: white;
+    background: #dee2e6; /* Light grey background */
+    color: #333;
     height: 100vh;
     position: fixed;
-    width: 200px;
-    transition: all 0.3s ease; /* Smooth transition for resizing */
+    width: 220px;
+    left: 0;
+    top: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1050;
 }
 
+/* Sidebar links */
 .sidebar a {
-    color: white;
+    color: #333;
     text-decoration: none;
     display: block;
     padding: 10px 20px;
     font-size: 16px;
 }
+/* Active link styling */
+.sidebar a.active {
+    background-color: #198754; /* Bootstrap's bg-success color */
+    color: #fff;
+}
 
+/*.sidebar a.active i {*/
+/*    color: white; !* Also make the icon white in active state *!*/
+/*}*/
+
+/* Hover state - grey background on hover */
 .sidebar a:hover {
-    background-color: #495057;
-    text-decoration: none;
+    background-color: #d1e7dd; /* Bootstrap alert-success light green */
+    color: #0f5132; /* Optional: Adjust the text color for better contrast */
 }
 
-/* Content area styling */
-.container {
-    margin-left: 200px; /* Matches sidebar width */
+/* Optional: ensure active link text color stays white on hover */
+.sidebar a.active:hover {
+    background-color: #198754;
+    color: #fff;
+}
+
+/*.sidebar a:hover i {*/
+/*    color: black; !* Change icon color on hover for consistency *!*/
+/*}*/
+
+.hamburger-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #ffffff;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 1100;
+    display: none; /* show only on small screens */
+}
+
+.content {
+    margin-left: 220px;
     padding: 20px;
+    transition: margin-left 0.3s;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .sidebar {
-        width: 60px; /* Collapsed sidebar */
-    }
-
-    .container {
-        margin-left: 60px; /* Adjust content width for collapsed sidebar */
-    }
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        position: absolute;
-        z-index: 1000;
-        width: 200px;
         transform: translateX(-100%);
-        transition: transform 0.3s ease-in-out;
     }
 
     .sidebar.show {
         transform: translateX(0);
     }
 
+    .hamburger-btn {
+        display: block;
+    }
+
     .content {
-        margin-left: 0 !important;
+        margin-left: 0;
     }
 }
-
 
 .footer {
     background: #f8f9fa;
     text-align: center;
     padding: 10px 0;
-}
-
-.table {
-    margin-top: 20px;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table th, .table td {
-    text-align: left;
-    padding: 8px;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
-}
-
-@media (max-width: 768px) {
-    .content {
-        margin-left: 60px; /* Adjust content width for smaller screens */
-    }
-}
-
-/* Content */
-.content {
-    margin-left: 200px;
-    padding: 20px;
 }

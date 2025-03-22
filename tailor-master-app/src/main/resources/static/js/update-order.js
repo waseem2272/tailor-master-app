@@ -170,22 +170,26 @@ document.addEventListener("DOMContentLoaded", function () {
         productCard.id = `product_card_${productId}`;
 
         productCard.innerHTML = `
-    <div class="card p-3 border-success shadow-sm">
-        <div class="card-header bg-secondary text-white fw-bold">${productName}</div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-6"><strong>Price:</strong> <span class="product-price">${productPrice}</span></div>
-                <div class="col-6">
-                    <strong>Quantity:</strong>
-                    <input type="number" min="1" value="${quantity}" class="form-control product-quantity" data-product-id="${productId}">
+        <div class="card shadow-sm border-success mb-4">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle me-2"></i> ${productName}
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col-12"><strong>Subtotal:</strong> <span class="product-subtotal">${(productPrice * quantity).toFixed(2)}</span></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6"><strong>Price:</strong> <span class="product-price">${productPrice}</span></div>
+                    <div class="col-6">
+                        <strong>Quantity:</strong>
+                        <input type="number" min="1" value="${quantity}" class="form-control product-quantity" data-product-id="${productId}">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12"><strong>Subtotal:</strong> <span class="product-subtotal">${(productPrice * quantity).toFixed(2)}</span></div>
+                </div>
             </div>
         </div>
-    </div>
-    `;
+        `;
 
         selectedProductsContainer.appendChild(productCard);
 

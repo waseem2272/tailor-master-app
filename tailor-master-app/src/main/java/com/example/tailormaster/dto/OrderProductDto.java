@@ -2,10 +2,8 @@ package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.product.Product;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import java.math.BigDecimal;
 
 @Getter
 @Setter

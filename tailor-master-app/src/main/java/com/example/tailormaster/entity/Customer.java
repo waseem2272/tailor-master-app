@@ -1,5 +1,6 @@
 package com.example.tailormaster.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,5 +34,6 @@ public class Customer extends BaseEntity {
     private boolean enabled;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CustomerMeasurement> measurements;
 }

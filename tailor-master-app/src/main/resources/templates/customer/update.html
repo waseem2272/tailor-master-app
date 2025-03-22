@@ -4,6 +4,8 @@
     <title>Update Customer</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -11,25 +13,31 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <form th:action="@{/customers/update}" th:object="${registrationDTO}" method="post" onsubmit="return validateForm()">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-lines-fill me-2"></i> Update Customer
+            </h2>
 
+            <form th:action="@{/customers/update}" th:object="${registrationDTO}" method="post" onsubmit="return validateForm()">
                 <input type="hidden" name="encryptedCustomerId"
                        th:if="${thymeleafUtil != null}"
                        th:value="${thymeleafUtil.encryptId(registrationDTO.customer.id)}">
 
-                <h3 class="text-center mb-4">Update Customer</h3>
                 <div th:if="${#fields.hasErrors('*')}">
                     <div class="alert alert-danger">Please correct the following errors:
-                        <pre th:text="${#fields.errors('*')}"></pre>
+                        <ul>
+                            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                        </ul>
                     </div>
                 </div>
-                <p class="text-danger fw-bold">Fields marked as * are required</p>
+                <p class="text-danger fw-bold">Fields marked with * are required</p>
 
                 <!-- Customer Information -->
-                <div class="card mt-3">
-                    <div class="card-header bg-success text-white">Customer Information</div>
+                <div class="card shadow-sm border-success mb-4">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                        <i class="bi bi-info-circle me-2"></i> Customer Information
+                    </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-6">
                                 <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
                                 <input type="text" id="fullName" name="fullName" th:field="*{customer.fullName}" class="form-control"
@@ -50,80 +58,81 @@
                     </div>
                 </div>
 
-                <!-- Product Selection -->
-                <div class="card mt-3">
-                    <div class="card-header bg-success text-white">Products and Measurements</div>
+                <!-- Products and Measurements -->
+                <div class="card shadow-sm border-success mb-4">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                        <i class="bi bi-rulers me-2"></i> Products and Measurements
+                    </div>
                     <div class="card-body">
-                        <h5>Select Products <span class="text-danger">*</span></h5>
+                        <h5 class="fw-bold">Select Products <span class="text-danger">*</span></h5>
                         <hr/>
                         <div class="row">
-                            <div class="col-md-4" th:each="product : ${registrationDTO.products}">
+                            <div class="col-md-4 mb-2" th:each="product : ${registrationDTO.products}">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input product-checkbox" type="checkbox" th:id="'product_' + ${product.id}"
+                                    <input class="form-check-input product-checkbox" type="checkbox"
+                                           th:id="'product_' + ${product.id}"
                                            th:value="${product.id}" name="productIds[]"
-                                           th:checked="${registrationDTO.selectedProductIds.contains(product.id)}"
+                                           th:checked="${registrationDTO.selectedProductIds != null and #lists.contains(registrationDTO.selectedProductIds, product.id)}"
                                            onchange="toggleMeasurements(this)">
-                                    <label class="form-check-label fs-5 fw-bold" th:for="'product_' + ${product.id}"
+                                    <label class="form-check-label fw-bold fs-5" th:for="'product_' + ${product.id}"
                                            th:text="${product.name}"></label>
                                 </div>
-                                <p id="productError" class="text-danger fw-bold"></p>
                             </div>
                         </div>
+                        <p id="productError" class="text-danger fw-bold"></p>
 
-                        <!--Product Measurements-->
-                        <h5 class="mt-4">Product Measurements</h5>
-                        <div th:each="product : ${registrationDTO.products}" class="measurement-fields" th:data-product-id="${product.id}"
+                        <!-- Product Measurements -->
+                        <h5 class="mt-4 fw-bold">Product Measurements</h5>
+                        <hr/>
+                        <div th:each="product : ${registrationDTO.products}" class="measurement-fields"
+                             th:data-product-id="${product.id}"
                              th:style="${registrationDTO.selectedProductIds.contains(product.id) ? 'display:block;' : 'display:none;'}">
-                            <div class="card p-3 border-success shadow-sm">
-                                <div class="card-header bg-secondary text-white fw-bold">
-                                    <span th:text="${product.name}"></span>
+                            <div class="card shadow-sm border-success mb-4">
+                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        <span class="fw-bold" th:text="${product.name}"></span>
+                                    </div>
+                                    <!-- Optional close button (if you want hide measurement card feature)
+                                    <button type="button" class="btn-close btn-close-white" aria-label="Close"
+                                            onclick="closeMeasurement([[${product.id}]])"></button>
+                                    -->
                                 </div>
                                 <div class="card-body">
-                                    <!-- Qameez Fields -->
                                     <div th:if="${product.type.name() == 'QAMEEZ'}">
-                                        <div class="row">
-                                            <div class="col-md-6">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
                                                 <label th:for="'chest_'+ ${product.id}" class="form-label">سینہ <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'chest_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].chest'"
-                                                       th:value="${registrationDTO.customerMeasurements.containsKey(product.id) ? registrationDTO.customerMeasurements.get(product.id).chest : ''}"
-                                                       class="form-control"
-                                                       placeholder="Enter chest size">
+                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.chest}" class="form-control" placeholder="Enter chest size">
                                                 <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].chest')}" class="text-danger">
                                                     <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].chest')}" th:text="${error}"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <label th:for="'shoulder_'+ ${product.id}" class="form-label">کندھا <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'shoulder_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].shoulder'"
-                                                       th:value="${registrationDTO.customerMeasurements.containsKey(product.id) ? registrationDTO.customerMeasurements.get(product.id).shoulder : ''}"
-                                                       class="form-control"
-                                                       placeholder="Enter shoulder length">
+                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.shoulder}" class="form-control" placeholder="Enter shoulder length">
                                                 <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].shoulder')}" class="text-danger">
                                                     <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].shoulder')}" th:text="${error}"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mt-2">
+                                            <div class="col-md-4">
                                                 <label th:for="'sleeveLength_'+ ${product.id}" class="form-label">آستینیں <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'sleeveLength_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].sleeveLength'"
-                                                       th:value="${registrationDTO.customerMeasurements.containsKey(product.id) ? registrationDTO.customerMeasurements.get(product.id).sleeveLength : ''}"
-                                                       class="form-control"
-                                                       placeholder="Enter sleeves length">
+                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.sleeveLength}" class="form-control" placeholder="Enter sleeves length">
                                                 <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].sleeveLength')}" class="text-danger">
                                                     <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].sleeveLength')}" th:text="${error}"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Shalwar Fields -->
                                     <div th:if="${product.type.name() == 'SHALWAR'}">
-                                        <div class="row">
+                                        <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label th:for="'hips_'+ ${product.id}" class="form-label">Hips <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'hips_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].hips'"
-                                                       th:value="${registrationDTO.customerMeasurements.containsKey(product.id) ? registrationDTO.customerMeasurements.get(product.id).hips : ''}"
-                                                       class="form-control"
-                                                       placeholder="Enter hips size">
+                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.hips}" class="form-control" placeholder="Enter hips size">
                                                 <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].hips')}" class="text-danger">
                                                     <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].hips')}" th:text="${error}"></span>
                                                 </div>
@@ -131,9 +140,7 @@
                                             <div class="col-md-6">
                                                 <label th:for="'waist_'+ ${product.id}" class="form-label">Waist <span class="text-danger">*</span></label>
                                                 <input type="text" th:id="'waist_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].waist'"
-                                                       th:value="${registrationDTO.customerMeasurements.containsKey(product.id) ? registrationDTO.customerMeasurements.get(product.id).waist : ''}"
-                                                       class="form-control"
-                                                       placeholder="Enter waist size">
+                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.waist}" class="form-control" placeholder="Enter waist size">
                                                 <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].waist')}" class="text-danger">
                                                     <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].waist')}" th:text="${error}"></span>
                                                 </div>
@@ -143,35 +150,38 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="text-center mt-4">
-                    <button type="button" class="btn btn-success" id="openConfirmationModal">Update</button>
-                    <a th:href="@{/customers}" class="btn btn-secondary">Cancel</a>
+                    <button type="button" id="openConfirmationModal" class="btn btn-success shadow rounded-pill px-4">
+                        <i class="bi bi-check-circle"></i> Update
+                    </button>
+                    <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
 
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
-     aria-hidden="true">
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content shadow-sm">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">Confirm Submission</h5>
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Update</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Are you sure you want to update this customer with the provided details?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="confirmSubmit">Yes, Update</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+                <button type="button" class="btn btn-success" id="confirmSubmit"><i class="bi bi-check-circle me-1"></i>Yes, Update</button>
             </div>
         </div>
     </div>
@@ -182,6 +192,7 @@
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/create-customer.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
 
 <script>
 

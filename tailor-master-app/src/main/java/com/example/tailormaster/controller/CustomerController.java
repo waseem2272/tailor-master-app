@@ -1,5 +1,6 @@
 package com.example.tailormaster.controller;
 
+import com.example.tailormaster.dto.CustomerDTO;
 import com.example.tailormaster.dto.CustomerRegistrationDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
@@ -14,6 +15,8 @@ import com.example.tailormaster.validation.Validation;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,9 +43,25 @@ public class CustomerController {
     // List all customers
     @GetMapping
     public String listCustomers(Model model) {
-        model.addAttribute("customers", customerService.getAllCustomers());
         model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "customer/list";
+    }
+
+    @GetMapping("/datatable")
+    @ResponseBody
+    public Map<String, Object> getCustomersData(@RequestParam("draw") int draw,
+                                                @RequestParam("start") int start,
+                                                @RequestParam("length") int length,
+                                                @RequestParam(value = "search[value]", required = false) String searchValue,
+                                                @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
+                                                @RequestParam(value = "order[0][dir]", required = false) String sortDirection,
+                                                @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            return customerService.getCustomersData(draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate);
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving customers from the database.", e);
+        }
     }
 
     // Show create customer form
@@ -106,6 +126,7 @@ public class CustomerController {
 
             // Success message
             redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
+            redirectAttributes.addFlashAttribute("customerId", savedCustomer.getId());
             return "redirect:/customers";
 
         } catch (Exception e) {
@@ -284,8 +305,9 @@ public class CustomerController {
                 return "customer/update";
             }
 
-            customerService.updateCustomer(registrationDTO, selectedProducts);
+            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, selectedProducts);
             redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
+            redirectAttributes.addFlashAttribute("customerId", updatedCustomer.getId());
             return "redirect:/customers";
         } catch (Exception e) {
             e.printStackTrace();
