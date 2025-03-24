@@ -28,12 +28,21 @@
             border-top: 1px dashed #000;
             margin: 10px 0;
         }
-        .item-row {
+        .item-header, .item-row {
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            margin-bottom: 4px;
+            border-bottom: 1px dotted #ccc;
+            padding: 2px 0;
         }
+        .item-header {
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+        }
+        .col-qty { width: 15%; text-align: center; }
+        .col-desc { width: 40%; text-align: left; }
+        .col-price { width: 20%; text-align: right; }
+        .col-total { width: 25%; text-align: right; }
         .bold {
             font-weight: bold;
         }
@@ -80,13 +89,21 @@
 
     <div class="divider"></div>
 
-    <div>
-        <p class="bold">Items:</p>
-        <div th:each="item : ${order.orderProducts}">
-            <div class="item-row">
-                <span th:text="${item.product.name}"></span>
-                <span th:text="'x' + ${item.quantity} + ' | ' + (${item.quantity * item.product.price})"></span>
-            </div>
+    <!-- Items header row -->
+    <div class="item-header">
+        <div class="col-qty">Qty</div>
+        <div class="col-desc">Description</div>
+        <div class="col-price">Price</div>
+        <div class="col-total">Total</div>
+    </div>
+
+    <!-- Items -->
+    <div th:each="item : ${order.orderProducts}">
+        <div class="item-row">
+            <div class="col-qty" th:text="${item.quantity}"></div>
+            <div class="col-desc" th:text="${item.product.name}"></div>
+            <div class="col-price" th:text="${item.product.price}"></div>
+            <div class="col-total" th:text="${item.quantity * item.product.price}"></div>
         </div>
     </div>
 

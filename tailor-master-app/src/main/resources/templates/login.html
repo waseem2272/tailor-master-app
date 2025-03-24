@@ -2,60 +2,66 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login - Tailor Master</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card mt-5">
-                <div class="card-header bg-success text-white text-center">
-                    <h3>Login</h3>
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+
+        <!-- Left side with tailor image -->
+        <div class="col-md-6 p-0 d-none d-md-block login-background">
+            <img th:src="@{/images/tailor-shop.jpg}" alt="Tailor Shop" class="img-fluid h-100 w-100" style="object-fit: cover;" />
+        </div>
+        <div class="col-md-1"></div>
+        <!-- Login Form on right (4 columns) -->
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <div class="card shadow-sm border-success mb-4 w-100 p-3">
+                <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                    <i class="bi bi-person-circle me-2"></i>Login to Tailor Master
                 </div>
                 <div class="card-body">
-                    <!-- Error message for invalid login -->
                     <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                        Invalid username or password. Please try again.
+                        <i class="bi bi-exclamation-triangle-fill"></i> Invalid username or password. Please try again.
                     </div>
-                    <!-- Message for successful logout -->
                     <div th:if="${param.logout}" class="alert alert-success" role="alert">
-                        You have been logged out successfully.
+                        <i class="bi bi-check-circle-fill"></i> You have been logged out successfully.
                     </div>
-                    <!-- Message for successful registration -->
                     <div th:if="${success}" class="alert alert-success" role="alert">
-                        <span th:text="${success}"></span>
+                        <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
                     </div>
 
                     <form method="post" th:action="@{/login}">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Login</button>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <p class="mb-0">Don't have an account?
-                        <a th:href="@{users/register}" class="text-primary">Sign Up</a>
-                    </p>
+                    <p class="mb-0">Don't have an account? <a th:href="@{users/register}" class="text-primary">Sign Up</a></p>
                 </div>
             </div>
         </div>
+        <div class="col-md-1"></div>
     </div>
 </div>
+
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

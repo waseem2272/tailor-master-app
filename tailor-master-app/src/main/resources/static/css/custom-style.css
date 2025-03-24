@@ -91,3 +91,10 @@ input[type="date"]:focus, select.form-select:focus, input.form-control:focus {
     transform: scale(1.05);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
+
+.login-background {
+    background: url('../images/tailor-shop.jpg');
+    background-size: cover;
+}
+
+
