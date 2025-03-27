@@ -1,7 +1,7 @@
 package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.Customer;
-import com.example.tailormaster.entity.OrderStatus;
+import com.example.tailormaster.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

@@ -1,4 +1,4 @@
-package com.example.tailormaster.entity;
+package com.example.tailormaster.enums;
 
 public enum OrderStatus {
     PENDING,

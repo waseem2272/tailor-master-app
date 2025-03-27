@@ -4,8 +4,9 @@ import com.example.tailormaster.dto.OrderProductDto;
 import com.example.tailormaster.dto.UpdateCustomerOrderDto;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.OrderProduct;
-import com.example.tailormaster.entity.OrderStatus;
+import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.enums.PickupStatus;
 import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
 import com.example.tailormaster.util.ThymeleafUtil;
@@ -16,9 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -164,7 +167,7 @@ public class OrderService {
             throw new IllegalArgumentException("Start index and length must be greater than zero.");
         }
 
-        String[] columnNames = {"id", "orderId", "customer.fullName", "orderDate", "deliveryDate", "status", "cabinetNo"};
+        String[] columnNames = {"id", "orderId", "customer.fullName", "orderDate", "deliveryDate", "status", "cabinetNo", "duePayment", "pickupStatus"};
         String sortBy = (columnIndex != null && columnIndex < columnNames.length) ? columnNames[columnIndex] : "orderDate";
 
         Sort sort = (sortDirection != null && sortDirection.equalsIgnoreCase("desc"))
@@ -195,6 +198,8 @@ public class OrderService {
             orderMap.put("cabinetNo", order.getCabinetNo());
             orderMap.put("id", order.getId());
             orderMap.put("encryptedId", thymeleafUtil.encryptId(order.getId()));
+            orderMap.put("duePayment", order.getDuePayment());
+            orderMap.put("pickupStatus", order.getPickupStatus() != null ? order.getPickupStatus().name() : "NOT_PICKED_UP");
             return orderMap;
         }).toList();
 
@@ -205,6 +210,30 @@ public class OrderService {
         response.put("data", orderList);
 
         return response;
+    }
+
+    @Transactional
+    public void markOrderAsPickedUp(Long orderId, BigDecimal amountReceived) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        BigDecimal dueAmount = order.getDuePayment();
+        BigDecimal outstandingDueAmount = dueAmount.subtract(amountReceived).max(BigDecimal.ZERO); // Prevent negative values
+
+        order.setPickupStatus(PickupStatus.PICKED_UP);
+        order.setPickedUpWithDue(outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0); // TRUE if any due remains
+        order.setPickupDate(LocalDateTime.now());
+        order.setStatus(OrderStatus.COMPLETED);
+
+        // ✅ Update the outstanding due amount field
+        order.setOutstandingDueAmount(outstandingDueAmount);
+        order.setPaidAmount(amountReceived.max(BigDecimal.ZERO));
+
+        orderRepository.save(order);
+    }
+
+    public List<Order> getOrdersWithOutstandingDue() {
+        return orderRepository.findOrdersWithOutstandingDue();
     }
 
 }

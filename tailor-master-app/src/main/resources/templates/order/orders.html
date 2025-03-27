@@ -7,6 +7,9 @@
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <!-- Sidebar -->
@@ -18,13 +21,18 @@
                 <i class="bi bi-bag-check-fill me-2"></i> Orders
             </h2>
             <!-- Success Message Alert -->
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <span th:text="${successMessage}"></span>
-                <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
-                   class="btn btn-light btn-sm ms-2">
-                    View Order Details
-                </a>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div th:if="${successMessage}" class="row justify-content-center">
+                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                        <span th:text="${successMessage}"></span>
+                        <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
+                           class="btn btn-light btn-sm ms-2">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             </div>
 
             <!-- Error Alert -->
@@ -107,12 +115,72 @@
     </div>
 </div>
 
+<!-- Mark as Picked Up Modal -->
+<div class="modal fade" id="pickupModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title fw-bold" id="pickupModalLabel">
+                    <i class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-tag me-2"></i>Order ID:</strong>
+                        <span id="modalOrderId" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
+                        <span id="modalCustomerName" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-calendar-event me-2"></i>Delivery Date:</strong>
+                        <span id="modalDeliveryDate" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-cash me-2"></i>Due Amount:</strong>
+                        <span id="modalDueAmount" class="ms-2 text-danger fw-bold"></span>
+                    </li>
+                </ul>
+
+                <div class="mt-4 p-3 bg-light rounded border">
+                    <label for="amountReceived" class="form-label fw-bold">
+                        <i class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup:
+                    </label>
+                    <input type="number" min="0" step="0.01" id="amountReceived" class="form-control form-control-sm" placeholder="Enter amount received">
+                    <small class="text-muted ms-1">You can adjust if partial payment is made.</small>
+                </div>
+
+                <div class="alert alert-warning mt-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    پک اپ کرنے سے پہلے، کسٹمر سے بقایا رقم ضرور وصول کر لیں۔
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </button>
+                <button type="button" id="confirmPickupBtn" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Confirm Pickup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
@@ -153,10 +221,10 @@
                 }
             },
             "columns": [
-                {"data": "orderId"},
-                {"data": "customer"},
-                {"data": "orderDate"},
-                {"data": "deliveryDate"},
+                { "data": "orderId" },
+                { "data": "customer" },
+                { "data": "orderDate" },
+                { "data": "deliveryDate" },
                 {
                     "data": "status",
                     "render": function (data) {
@@ -169,9 +237,9 @@
                         return `<span class="${badgeClass}">${data}</span>`;
                     }
                 },
-                {"data": "cabinetNo"},
+                { "data": "cabinetNo" },
                 {
-                    "data": "id",
+                    "data": null,
                     "orderable": false,
                     "searchable": false,
                     "render": function (data, type, row) {
@@ -180,14 +248,30 @@
                             ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
                             : "";
 
+                        let pickupButton = (row.status === "COMPLETED" && row.pickupStatus === "NOT_PICKED_UP")
+                            ? `<button
+                                  class="btn btn-success btn-sm pickup-btn me-1"
+                                  data-order-id="${row.orderId}"
+                                  data-order-db-id="${row.id}"
+                                  data-due="${row.duePayment}"
+                                  data-customer-name="${row.customer}"
+                                  data-delivery-date="${row.deliveryDate}"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#pickupModal">
+                                  <i class="bi bi-check2-circle"></i> Mark as Picked Up
+                               </button>`
+                                                : "";
+
                         return `
-                                <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Details</a>
-                                ${editButton}
-                        `;
+                    <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Details</a>
+                    ${editButton}
+                    ${pickupButton}
+                `;
                     }
                 }
             ]
         });
+
 
         // Apply filters button
         $('#applyFilters').on('click', function () {
@@ -226,7 +310,80 @@
             updateFilterBadge();
         });
 
+        $('#ordersTable').on('click', '.pickup-btn', function () {
+            const orderId = $(this).data('order-id');
+            const customerName = $(this).data('customer-name');
+            const deliveryDate = $(this).data('delivery-date');
+            const orderDbId = $(this).data('order-db-id');
+            const dueAmount = parseFloat($(this).data('due')).toFixed(2); // convert to decimal format
+
+            $('#modalOrderId').text(orderId);
+            $('#modalCustomerName').text(customerName);
+            $('#modalDeliveryDate').text(deliveryDate);
+            $('#modalOrderDbId').val(orderDbId);
+            $('#modalDueAmount').text(dueAmount);
+            $('#confirmPickupBtn').data('order-db-id', orderDbId);
+            $('#amountReceived').val(dueAmount); // Auto-fill with due
+        });
+
     });
+
+    $('#confirmPickupBtn').on('click', function () {
+
+        var csrfToken = $("meta[name='_csrf']").attr("content");
+        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        let orderDbId = $(this).data('order-db-id');
+        let dueAmount = parseFloat($('#modalDueAmount').text());
+        let amountReceived = parseFloat($('#amountReceived').val() || 0);
+
+        if (amountReceived > dueAmount) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Amount',
+                text: 'Amount received cannot be greater than due.'
+            });
+            return false;
+        } else if (amountReceived < 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Amount',
+                text: 'Amount received cannot be less than 0.'
+            });
+            return false;
+        }
+
+        $.ajax({
+            url: contextPath + "orders/pickup",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                orderId: orderDbId,
+                amountReceived: amountReceived
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            },
+            success: function (response) {
+                $('#pickupModal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order marked as picked up!',
+                    showConfirmButton: false,
+                    timer: 3500
+                });
+                $('#ordersTable').DataTable().ajax.reload(null, false);
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error updating order',
+                    text: 'Please try again later.'
+                });
+            }
+        });
+    });
+
 </script>
 
 </body>

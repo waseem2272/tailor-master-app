@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Products</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div class="content">
+    <div class="main-content container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-box-seam-fill me-2"></i> Pending Payments
+            </h2>
+        </div>
+
+        <!-- Success Alert -->
+        <div th:if="${successMessage}" class="row justify-content-center">
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                    <span th:text="${successMessage}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div th:if="${errorMessage}" class="row justify-content-center">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                <i class="bi bi-box-seam me-2"></i> Pending Payments List
+            </div>
+            <div class="card-body">
+                <table id="pendingPaymentsTable" class="table table-bordered table-hover table-striped">
+                    <thead class="table-success text-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total Amount</th>
+                        <th>Paid Amount</th>
+                        <th>Outstanding Due</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${pendingPayments}">
+                        <td th:text="${order.orderId}"></td>
+                        <td>
+                            <span th:text="${order.customer.fullName}"></span> <br>
+                            <small class="text-muted" th:text="${order.customer.phoneNumber}"></small>
+                        </td>
+
+                        <td th:text="${order.duePayment}"></td>
+                        <td th:text="${order.paidAmount}"></td>
+                        <td class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></td>
+                        <td>
+                            <a th:href="@{/orders/details/{id}(id=${order.id})}" class="btn btn-primary btn-sm">View</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script>
+    $(document).ready(function () {
+        $('#pendingPaymentsTable').DataTable();
+    });
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.example.tailormaster.repository.order;
 
 import com.example.tailormaster.entity.Order;
-import com.example.tailormaster.entity.OrderStatus;
+import com.example.tailormaster.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,4 +42,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Pageable pageable
     );
 
+    @Query("SELECT o FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0")
+    List<Order> findOrdersWithOutstandingDue();
 }

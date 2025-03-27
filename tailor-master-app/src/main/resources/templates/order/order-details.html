@@ -48,17 +48,17 @@
                                 <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
                                     <label for="orderStatus" class="fw-bold me-2">Order Status</label>
 
-                                    <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).COMPLETED}"
+                                    <span th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED}"
                                           class="badge bg-success" th:text="${order.status}"></span>
 
-                                    <span th:if="${order.status == T(com.example.tailormaster.entity.OrderStatus).CANCELLED}"
+                                    <span th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).CANCELLED}"
                                           class="badge bg-danger" th:text="${order.status}"></span>
 
                                     <div class="d-flex flex-wrap align-items-center gap-2"
-                                         th:if="${order.status != T(com.example.tailormaster.entity.OrderStatus).COMPLETED and
-                 order.status != T(com.example.tailormaster.entity.OrderStatus).CANCELLED}">
+                                         th:if="${order.status != T(com.example.tailormaster.enums.OrderStatus).COMPLETED and
+                 order.status != T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
                                         <select id="orderStatus" name="status" class="form-select w-auto">
-                                            <option th:each="status : ${T(com.example.tailormaster.entity.OrderStatus).values()}"
+                                            <option th:each="status : ${T(com.example.tailormaster.enums.OrderStatus).values()}"
                                                     th:value="${status}" th:text="${status}"
                                                     th:selected="${order.status == status}">
                                             </option>

@@ -1,6 +1,6 @@
 package com.example.tailormaster.dto;
 
-import com.example.tailormaster.entity.OrderStatus;
+import com.example.tailormaster.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 

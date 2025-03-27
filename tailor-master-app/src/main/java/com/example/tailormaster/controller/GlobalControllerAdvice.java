@@ -13,6 +13,8 @@ public class GlobalControllerAdvice {
         String uri = request.getRequestURI();
         if (uri.contains("/customers")) {
             model.addAttribute("activePage", "customers");
+        } else if (uri.contains("/orders/pending-payments")) {
+            model.addAttribute("activePage", "orders/pending-payments");
         } else if (uri.contains("/orders")) {
             model.addAttribute("activePage", "orders");
         } else if (uri.contains("/products")) {

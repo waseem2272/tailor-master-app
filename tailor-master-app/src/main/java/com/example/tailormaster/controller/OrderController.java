@@ -1,11 +1,9 @@
 package com.example.tailormaster.controller;
 
-import com.example.tailormaster.dto.CustomerOrderDto;
-import com.example.tailormaster.dto.OrderProductDto;
-import com.example.tailormaster.dto.OrderStatusUpdateDto;
-import com.example.tailormaster.dto.UpdateCustomerOrderDto;
+import com.example.tailormaster.dto.*;
 import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
@@ -37,6 +35,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Controller
 @RequestMapping("/orders")
+@SessionAttributes("orderDto")
 public class OrderController {
 
     private final CustomerService customerService;
@@ -103,7 +102,7 @@ public class OrderController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order");
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order, please try again.");
             return "redirect:/customers"; // Handle invalid decryption cases
         }
     }
@@ -135,7 +134,7 @@ public class OrderController {
             Optional<User> user = userService.findByUsername(principal.getName());
             if (user.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
-                return "redirect:/orders";
+                return "redirect:/customers";
             }
 
             // Generate Order ID
@@ -152,12 +151,17 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("orderId", savedOrder.getId());
             return "redirect:/orders";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
-            return "redirect:/orders";
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order, please try again.");
+            return "redirect:/customers";
         }
     }
 
     private void validateOrder(CustomerOrderDto orderDto, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return;
+        }
+
         if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
             result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
             return;
@@ -206,6 +210,9 @@ public class OrderController {
     }
 
     private void validateOrder(UpdateCustomerOrderDto orderDto, BindingResult result) {
+
+        if (result.hasErrors()) {return;}
+
         if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
             result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
             return;
@@ -435,6 +442,23 @@ public class OrderController {
         }
     }
 
+    @PostMapping("/pickup")
+    @ResponseBody
+    public ResponseEntity<String> markOrderAsPickedUp(@RequestBody PickupRequest request) {
+        try {
+            orderService.markOrderAsPickedUp(request.getOrderId(), request.getAmountReceived());
+            return ResponseEntity.ok("Order updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating order.");
+        }
+    }
 
+    @GetMapping("/pending-payments")
+    public String showPendingPayments(Model model) {
+        List<Order> pendingPayments = orderService.getOrdersWithOutstandingDue();
+        model.addAttribute("pendingPayments", pendingPayments);
+        model.addAttribute("activePage", "orders/pending-payments");
+        return "order/pending-payments";
+    }
 
 }

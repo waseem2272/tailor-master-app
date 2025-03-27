@@ -32,9 +32,9 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/staff/**").hasRole("STAFF")
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/font/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/staff/**").hasRole("STAFF")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
