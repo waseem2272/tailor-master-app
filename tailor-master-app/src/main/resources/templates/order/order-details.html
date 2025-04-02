@@ -21,7 +21,8 @@
             </h2>
 
             <div class="row">
-                <div class="col-md-6 mb-4">
+                <!-- Customer Information (Smaller Column) -->
+                <div class="col-md-4 mb-4">
                     <div class="card shadow-sm border-success h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
                             <i class="bi bi-person-circle me-2"></i> Customer Information
@@ -33,46 +34,72 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-4">
+                <!-- Order Details (Wider Column) -->
+                <div class="col-md-8 mb-4">
                     <div class="card shadow-sm border-success h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
                             <i class="bi bi-card-list me-2"></i> Order Details
                         </div>
                         <div class="card-body">
-                            <input type="hidden" id="orderId" th:field="*{order.id}" />
-                            <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
-                            <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
-                            <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                            <input type="hidden" id="orderId" th:field="*{order.id}"/>
 
-                            <div class="row align-items-center mb-3">
+                            <!-- Using row with two columns for better alignment -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
+                                    <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
+                                    <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                                    <p><strong>Pickup Status:</strong> <span th:text="${order.pickupStatus}"></span></p>
+                                    <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'yyyy-MM-dd')}"></span></p>
+
+                                    <!-- Order Status (Only for COMPLETED and CANCELLED) -->
+                                    <p th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED
+                or order.status == T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
+                                        <strong>Order Status:</strong>
+                                        <span th:classappend="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED} ? 'badge bg-success' : 'badge bg-danger'"
+                                              th:text="${order.status}">
+            </span>
+                                    </p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p><strong>Total Amount:</strong> <span th:text="${order.totalProductAmount}"></span></p>
+                                    <p><strong>Advance Payment:</strong> <span th:text="${order.advancePayment}"></span></p>
+                                    <p><strong>Due Amount:</strong> <span th:text="${order.duePayment}"></span></p>
+                                    <p><strong>Paid Amount:</strong> <span th:text="${order.paidAmount}"></span></p>
+                                    <p><strong>Outstanding Due:</strong> <span class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></span></p>
+
+                                    <!-- Payment Status (Show if Order is COMPLETED OR Outstanding Due > 0) -->
+                                    <p th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED
+            and order.pickupStatus == T(com.example.tailormaster.enums.PickupStatus).PICKED_UP}">
+                                        <strong>Payment Status:</strong>
+                                        <span th:classappend="${order.paidAmount == order.duePayment} ? 'badge bg-success' : 'badge bg-warning text-dark'"
+                                              th:text="${order.paidAmount == order.duePayment} ? 'Paid' : 'Partially Paid'"></span>
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <!-- Status Update Section (Appears Only for Active Orders) -->
+                            <div class="row align-items-center mb-3"
+                                 th:if="${order.status != T(com.example.tailormaster.enums.OrderStatus).COMPLETED and
+                             order.status != T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
                                 <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
                                     <label for="orderStatus" class="fw-bold me-2">Order Status</label>
-
-                                    <span th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED}"
-                                          class="badge bg-success" th:text="${order.status}"></span>
-
-                                    <span th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).CANCELLED}"
-                                          class="badge bg-danger" th:text="${order.status}"></span>
-
-                                    <div class="d-flex flex-wrap align-items-center gap-2"
-                                         th:if="${order.status != T(com.example.tailormaster.enums.OrderStatus).COMPLETED and
-                 order.status != T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
-                                        <select id="orderStatus" name="status" class="form-select w-auto">
-                                            <option th:each="status : ${T(com.example.tailormaster.enums.OrderStatus).values()}"
-                                                    th:value="${status}" th:text="${status}"
-                                                    th:selected="${order.status == status}">
-                                            </option>
-                                        </select>
-
-                                        <input type="text" id="cabinetNo" name="cabinetNo"
-                                               class="form-control w-auto d-none"
-                                               placeholder="Cabinet No"
-                                               th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
-
-                                        <button type="button" id="updateOrderStatusBtn" class="btn btn-success shadow rounded-pill px-4">
-                                            <i class="bi bi-check-circle"></i> Update
-                                        </button>
-                                    </div>
+                                    <select id="orderStatus" name="status" class="form-select w-auto">
+                                        <option th:each="status : ${T(com.example.tailormaster.enums.OrderStatus).values()}"
+                                                th:value="${status}" th:text="${status}"
+                                                th:selected="${order.status == status}">
+                                        </option>
+                                    </select>
+                                    <input type="text" id="cabinetNo" name="cabinetNo"
+                                           class="form-control w-auto d-none"
+                                           placeholder="Cabinet No"
+                                           th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
+                                    <button type="button" id="updateOrderStatusBtn"
+                                            class="btn btn-success shadow rounded-pill px-4">
+                                        <i class="bi bi-check-circle"></i> Update
+                                    </button>
                                 </div>
                             </div>
 
@@ -85,7 +112,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="card shadow-sm border-success mb-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
@@ -118,11 +144,13 @@
             </div>
 
             <div class="text-center mt-4">
-                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='customer')}"
+
+                <a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='customer')}"
                    class="btn btn-success me-2">
                     <i class="bi bi-receipt"></i> View Customer Receipt
                 </a>
-                <a th:href="@{/orders/generate-receipt/{id}(id=${order.id}, type='tailor')}"
+
+                <a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='tailor')}"
                    class="btn btn-success me-2">
                     <i class="bi bi-receipt"></i> View Tailor Receipt
                 </a>
@@ -193,7 +221,7 @@
         let alertHtml = `
         <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
             ${icon}${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
         $("#orderStatusMessage").html(alertHtml);

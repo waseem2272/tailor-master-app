@@ -9,9 +9,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PickupRequest {
+public class PendingPaymentRequest {
     private String orderId;
-    private BigDecimal amountReceived;
+    private BigDecimal paymentAmount;
 
     // Getters and Setters
 }

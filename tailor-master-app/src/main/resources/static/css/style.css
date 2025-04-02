@@ -3,7 +3,7 @@
     color: #333;
     height: 100vh;
     position: fixed;
-    width: 240px;
+    width: 270px;
     left: 0;
     top: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
@@ -60,7 +60,7 @@
 }
 
 .content {
-    margin-left: 220px;
+    margin-left: 260px;
     padding: 20px;
     transition: margin-left 0.3s;
 }

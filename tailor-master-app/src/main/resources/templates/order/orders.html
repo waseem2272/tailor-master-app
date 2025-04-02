@@ -31,7 +31,7 @@
                             <i class="bi bi-eye"></i> View Details
                         </a>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </div>
 
@@ -104,6 +104,7 @@
                             <th>Delivery Date</th>
                             <th>Status</th>
                             <th>Cabinet No</th>
+                            <th>Payment Status</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -123,7 +124,7 @@
                 <h5 class="modal-title fw-bold" id="pickupModalLabel">
                     <i class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <ul class="list-group list-group-flush">
@@ -149,9 +150,10 @@
                     <label for="amountReceived" class="form-label fw-bold">
                         <i class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup:
                     </label>
-                    <input type="number" min="0" step="0.01" id="amountReceived" class="form-control form-control-sm" placeholder="Enter amount received">
+                    <input type="number" min="0" step="0.01" id="amountReceived" class="form-control fw-bold" placeholder="Enter amount received">
                     <small class="text-muted ms-1">You can adjust if partial payment is made.</small>
                 </div>
+                <div id="amountReceivedError" class="text-danger mt-1"></div> <!-- Error message appears here -->
 
                 <div class="alert alert-warning mt-3" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -243,6 +245,33 @@
                     "orderable": false,
                     "searchable": false,
                     "render": function (data, type, row) {
+                        let duePayment = data.duePayment;
+                        let paidAmount = data.paidAmount;
+                        let orderStatus = data.status;
+                        let pickedUpStatus = data.pickupStatus;
+
+                        let badgeClass = "secondary"; // Default badge (gray)
+                        let paymentStatus = `<span class="badge bg-secondary">N/A</span>`; // Default
+
+                        if (orderStatus === "COMPLETED" && pickedUpStatus === "PICKED_UP") {
+                            if (duePayment !== paidAmount) {
+                                badgeClass = "warning text-dark"; // Yellow badge for partial payment
+                                paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
+                            } else {
+                                badgeClass = "success"; // Green badge for full payment
+                                paymentStatus = `<span class="badge bg-${badgeClass}">Paid</span>`;
+                            }
+                        }
+
+                        return paymentStatus;
+                    }
+                },
+
+                {
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row) {
                         let encryptedId = row.encryptedId;
                         let editButton = (row.status !== "COMPLETED" && row.status !== "CANCELLED")
                             ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
@@ -252,7 +281,7 @@
                             ? `<button
                                   class="btn btn-success btn-sm pickup-btn me-1"
                                   data-order-id="${row.orderId}"
-                                  data-order-db-id="${row.id}"
+                                  data-order-db-id="${encryptedId}"
                                   data-due="${row.duePayment}"
                                   data-customer-name="${row.customer}"
                                   data-delivery-date="${row.deliveryDate}"
@@ -263,9 +292,13 @@
                                                 : "";
 
                         return `
-                    <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Details</a>
-                    ${editButton}
-                    ${pickupButton}
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
+                            <i class="bi bi-eye"></i> Details
+                        </a>
+                        ${editButton}
+                        ${pickupButton}
+                    </div>
                 `;
                     }
                 }
@@ -310,6 +343,20 @@
             updateFilterBadge();
         });
 
+        document.getElementById("amountReceived").addEventListener("input", function () {
+            const paymentAmount = parseFloat(this.value);
+            const due = parseFloat(document.getElementById("modalDueAmount").innerText);
+            const errorElement = document.getElementById("amountReceivedError");
+
+            if (isNaN(paymentAmount) || paymentAmount <= 0) {
+                errorElement.innerText = "Received amount must be greater than 0.";
+            } else if (paymentAmount > due) {
+                errorElement.innerText = "Received amount cannot be more than outstanding due.";
+            } else {
+                errorElement.innerText = ""; // No errors
+            }
+        });
+
         $('#ordersTable').on('click', '.pickup-btn', function () {
             const orderId = $(this).data('order-id');
             const customerName = $(this).data('customer-name');
@@ -318,7 +365,7 @@
             const dueAmount = parseFloat($(this).data('due')).toFixed(2); // convert to decimal format
 
             $('#modalOrderId').text(orderId);
-            $('#modalCustomerName').text(customerName);
+            $('#modalCustomerName').html(customerName);
             $('#modalDeliveryDate').text(deliveryDate);
             $('#modalOrderDbId').val(orderDbId);
             $('#modalDueAmount').text(dueAmount);
@@ -351,6 +398,13 @@
                 text: 'Amount received cannot be less than 0.'
             });
             return false;
+        } else if (amountReceived === 0) {  // ✅ Added Zero Validation
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Amount',
+                text: 'Amount received must be greater than 0.'
+            });
+            return false;
         }
 
         $.ajax({
@@ -374,11 +428,16 @@
                 });
                 $('#ordersTable').DataTable().ajax.reload(null, false);
             },
-            error: function () {
+            error: function (xhr) {
+                let errorMessage = "Something went wrong!";
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;  // ✅ Extracts the correct error message
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Error updating order',
-                    text: 'Please try again later.'
+                    text: errorMessage
                 });
             }
         });

@@ -10,6 +10,7 @@ import com.example.tailormaster.enums.PickupStatus;
 import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
 import com.example.tailormaster.util.ThymeleafUtil;
+import com.example.tailormaster.validation.Validation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -167,7 +169,7 @@ public class OrderService {
             throw new IllegalArgumentException("Start index and length must be greater than zero.");
         }
 
-        String[] columnNames = {"id", "orderId", "customer.fullName", "orderDate", "deliveryDate", "status", "cabinetNo", "duePayment", "pickupStatus"};
+        String[] columnNames = {"id", "orderId", "customer.fullName", "orderDate", "deliveryDate", "status", "cabinetNo", "duePayment", "pickupStatus", "paidAmount"};
         String sortBy = (columnIndex != null && columnIndex < columnNames.length) ? columnNames[columnIndex] : "orderDate";
 
         Sort sort = (sortDirection != null && sortDirection.equalsIgnoreCase("desc"))
@@ -191,14 +193,16 @@ public class OrderService {
         List<Map<String, Object>> orderList = orderPage.getContent().stream().map(order -> {
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("orderId", order.getOrderId());
-            orderMap.put("customer", order.getCustomer().getFullName() + " " + order.getCustomer().getPhoneNumber());
+            orderMap.put("customer", "<span>" + order.getCustomer().getFullName() + "</span><br>" +
+                    "<small class='text-muted'>" + order.getCustomer().getPhoneNumber() + "</small>");
             orderMap.put("orderDate", order.getOrderDate());
             orderMap.put("deliveryDate", order.getDeliveryDate());
             orderMap.put("status", order.getStatus().name());
             orderMap.put("cabinetNo", order.getCabinetNo());
-            orderMap.put("id", order.getId());
+            orderMap.put("id", thymeleafUtil.encryptId(order.getId()));
             orderMap.put("encryptedId", thymeleafUtil.encryptId(order.getId()));
             orderMap.put("duePayment", order.getDuePayment());
+            orderMap.put("paidAmount", order.getPaidAmount());
             orderMap.put("pickupStatus", order.getPickupStatus() != null ? order.getPickupStatus().name() : "NOT_PICKED_UP");
             return orderMap;
         }).toList();
@@ -213,12 +217,20 @@ public class OrderService {
     }
 
     @Transactional
-    public void markOrderAsPickedUp(Long orderId, BigDecimal amountReceived) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+    public void markOrderAsPickedUp(Order order, BigDecimal amountReceived) {
 
         BigDecimal dueAmount = order.getDuePayment();
-        BigDecimal outstandingDueAmount = dueAmount.subtract(amountReceived).max(BigDecimal.ZERO); // Prevent negative values
+
+        // ✅ Validate amount received
+        if (amountReceived.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount received must be greater than 0.");
+        }
+        if (amountReceived.compareTo(dueAmount) > 0) {
+            throw new IllegalArgumentException("Amount received cannot be greater than due.");
+        }
+
+        // ✅ Calculate Outstanding Due
+        BigDecimal outstandingDueAmount = dueAmount.subtract(amountReceived).max(BigDecimal.ZERO);
 
         order.setPickupStatus(PickupStatus.PICKED_UP);
         order.setPickedUpWithDue(outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0); // TRUE if any due remains
@@ -236,4 +248,26 @@ public class OrderService {
         return orderRepository.findOrdersWithOutstandingDue();
     }
 
+    @Transactional
+    public void processPayment(Order order, BigDecimal paymentAmount) {
+
+        BigDecimal outstandingDue = order.getOutstandingDueAmount();
+
+        if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Payment amount must be greater than 0.");
+        }
+        if (paymentAmount.compareTo(outstandingDue) > 0) {
+            throw new IllegalArgumentException("Payment amount cannot exceed outstanding due.");
+        }
+
+        // Process payment
+        order.setPaidAmount(order.getPaidAmount().add(paymentAmount));
+        order.setOutstandingDueAmount(outstandingDue.subtract(paymentAmount));
+
+        if (order.getOutstandingDueAmount().compareTo(BigDecimal.ZERO) == 0) {
+            order.setStatus(OrderStatus.COMPLETED);
+        }
+
+        orderRepository.save(order);
+    }
 }

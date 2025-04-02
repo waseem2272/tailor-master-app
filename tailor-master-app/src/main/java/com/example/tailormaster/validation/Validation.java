@@ -86,4 +86,18 @@ public class Validation {
         return orderId;
     }
 
+    public Long validateAndFetchOrder(String encryptedOrderId) {
+        Long orderId = decryptAndValidateId(encryptedOrderId);
+        if (orderId == null) {
+            return null;
+        }
+
+        Order order = orderService.findById(orderId);
+        if (order == null) {
+            return null;
+        }
+
+        return orderId;
+    }
+
 }

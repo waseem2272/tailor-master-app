@@ -11,6 +11,7 @@ import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Validation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,10 +27,8 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -260,7 +259,6 @@ public class OrderController {
         }
     }
 
-
     private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
         List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
         List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
@@ -314,6 +312,7 @@ public class OrderController {
 
             Order order = orderService.findById(orderId);
             model.addAttribute("order", order);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -444,13 +443,9 @@ public class OrderController {
 
     @PostMapping("/pickup")
     @ResponseBody
-    public ResponseEntity<String> markOrderAsPickedUp(@RequestBody PickupRequest request) {
-        try {
-            orderService.markOrderAsPickedUp(request.getOrderId(), request.getAmountReceived());
-            return ResponseEntity.ok("Order updated successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating order.");
-        }
+    public ResponseEntity<Map<String, String>> markOrderAsPickedUp(@RequestBody PickupRequest request) {
+        return handleOrderRequest(request.getOrderId(), request.getAmountReceived(), "Order updated successfully.",
+                orderService::markOrderAsPickedUp);
     }
 
     @GetMapping("/pending-payments")
@@ -458,7 +453,50 @@ public class OrderController {
         List<Order> pendingPayments = orderService.getOrdersWithOutstandingDue();
         model.addAttribute("pendingPayments", pendingPayments);
         model.addAttribute("activePage", "orders/pending-payments");
+        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "order/pending-payments";
+    }
+
+    @PostMapping("/pending-payments/pay")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> processPayment(@RequestBody PendingPaymentRequest request) {
+        return handleOrderRequest(request.getOrderId(), request.getPaymentAmount(), "Payment successful.",
+                orderService::processPayment);
+    }
+
+    /**
+     * ✅ Utility method to handle common order request logic.
+     */
+    private ResponseEntity<Map<String, String>> handleOrderRequest(String encryptedOrderId, BigDecimal amount,
+                                                                   String successMessage,
+                                                                   BiConsumer<Order, BigDecimal> orderProcessor) {
+        try {
+            Long decryptedOrderId = validation.validateAndFetchOrder(encryptedOrderId);
+            if (decryptedOrderId == null) {
+                return errorResponse(HttpStatus.NOT_FOUND, "Order not found!");
+            }
+
+            Order order = orderService.findById(decryptedOrderId);
+            if (order == null) {
+                return errorResponse(HttpStatus.NOT_FOUND, "Order not found!");
+            }
+
+            // ✅ Process the order (payment or pickup)
+            orderProcessor.accept(order, amount);
+
+            return ResponseEntity.ok(Collections.singletonMap("message", successMessage));
+        } catch (IllegalArgumentException e) {
+            return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing request.");
+        }
+    }
+
+    /**
+     * ✅ Utility method to create error responses.
+     */
+    private ResponseEntity<Map<String, String>> errorResponse(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(Collections.singletonMap("error", message));
     }
 
 }

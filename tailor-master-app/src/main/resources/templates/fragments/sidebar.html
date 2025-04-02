@@ -28,22 +28,27 @@
             <i class="bi bi-people me-2"></i> Customers
         </a>
 
-        <!--<a th:href="@{/orders}"
+        <a th:href="@{/orders}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'orders'} ? 'active'">
             <i class="bi bi-card-checklist me-2"></i> Orders
-        </a>-->
+        </a>
 
-        <div class="nav-item" th:classappend="${activePage.startsWith('orders')} ? 'active show'">
-            <a class="nav-link d-flex align-items-center" href="#" data-bs-toggle="collapse"
-               data-bs-target="#orders-submenu"
-               aria-expanded="${activePage.startsWith('orders')} ? 'true' : 'false'">
+        <a th:href="@{/orders/pending-payments}"
+           sec:authorize="hasRole('ROLE_ADMIN')"
+           th:classappend="${activePage == 'orders/pending-payments'} ? 'active'">
+            <i class="bi bi-cash-coin me-2"></i> Pending Payments
+        </a>
+
+        <!--<div class="nav-item" th:classappend="${activePage.startsWith('orders')} ? 'active show'">
+            <a id="orders-toggle" class="nav-link d-flex align-items-center" href="#"
+               data-bs-toggle="collapse" data-bs-target="#orders-submenu" aria-expanded="${activePage.startsWith('orders')}">
                 <i class="bi bi-card-checklist me-2"></i> Orders
-                <i class="bi bi-chevron-down ms-auto" id="orders-toggle-arrow"
+                <i class="bi ms-auto" id="orders-toggle-arrow"
                    th:classappend="${activePage.startsWith('orders')} ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
             </a>
             <div class="collapse" id="orders-submenu" th:classappend="${activePage.startsWith('orders')} ? 'show'">
-                <ul class="nav flex-column sub-menu ps-4"> <!-- Added left padding -->
+                <ul class="nav flex-column sub-menu ps-4">
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/orders}"
                            th:classappend="${activePage == 'orders'} ? 'active'">
@@ -58,7 +63,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>-->
 
         <a th:href="@{/logout}" class="text-danger">
             <i class="bi bi-box-arrow-right me-2"></i> Logout
@@ -82,31 +87,31 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ordersLink = document.querySelector('.sidebar a[href="#orders-submenu"]');
-        const ordersSubmenu = document.getElementById('orders-submenu');
-        const ordersToggleArrow = document.getElementById('orders-toggle-arrow');
-        const ordersNavItem = ordersLink.parentNode;
+    document.addEventListener("DOMContentLoaded", function () {
+        const ordersLink = document.getElementById("orders-toggle");
+        const ordersSubmenu = document.getElementById("orders-submenu");
+        const ordersToggleArrow = document.getElementById("orders-toggle-arrow");
 
-        if (ordersLink && ordersSubmenu && ordersToggleArrow && ordersNavItem) {
-            ordersLink.addEventListener('click', function(event) {
+        if (ordersLink && ordersSubmenu && ordersToggleArrow) {
+            ordersLink.addEventListener("click", function (event) {
                 event.preventDefault();
-                ordersSubmenu.classList.toggle('show');
-                ordersToggleArrow.classList.toggle('bi-chevron-down');
-                ordersToggleArrow.classList.toggle('bi-chevron-right');
-            });
+                const isExpanded = ordersSubmenu.classList.contains("show");
 
-            // Keep submenu open if an item inside is active on page load
-            const activeSubmenuItem = ordersSubmenu.querySelector('.nav-link.active');
-            if (activeSubmenuItem) {
-                ordersSubmenu.classList.add('show');
-                ordersToggleArrow.classList.remove('bi-chevron-down');
-                ordersToggleArrow.classList.add('bi-chevron-right');
-                ordersNavItem.classList.add('active');
-                ordersNavItem.classList.add('show');
-            }
+                // Toggle Bootstrap collapse
+                ordersSubmenu.classList.toggle("show");
+
+                // Change arrow direction
+                if (isExpanded) {
+                    ordersToggleArrow.classList.remove("bi-chevron-up");
+                    ordersToggleArrow.classList.add("bi-chevron-down");
+                } else {
+                    ordersToggleArrow.classList.remove("bi-chevron-down");
+                    ordersToggleArrow.classList.add("bi-chevron-up");
+                }
+            });
         }
     });
+
 </script>
 
 </html>

@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Products</title>
+    <title>Pending Payments</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -14,7 +17,7 @@
     <div class="main-content container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-box-seam-fill me-2"></i> Pending Payments
+                <i class="bi bi-cash-coin me-2"></i> Pending Payments
             </h2>
         </div>
 
@@ -25,7 +28,7 @@
                     <i class="bi bi-check-circle-fill me-2 fs-4"></i>
                     <span th:text="${successMessage}"></span>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
@@ -36,13 +39,13 @@
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                     <span th:text="${errorMessage}"></span>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
         <div class="card shadow-sm border-success">
             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                <i class="bi bi-box-seam me-2"></i> Pending Payments List
+                <i class="bi bi-cash-coin me-2"></i> Pending Payments List
             </div>
             <div class="card-body">
                 <table id="pendingPaymentsTable" class="table table-bordered table-hover table-striped">
@@ -68,7 +71,15 @@
                         <td th:text="${order.paidAmount}"></td>
                         <td class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></td>
                         <td>
-                            <a th:href="@{/orders/details/{id}(id=${order.id})}" class="btn btn-primary btn-sm">View</a>
+                            <button class="btn btn-success btn-sm pay-btn"
+                                    th:data-order-id="${thymeleafUtil.encryptId(order.id)}"
+                                    th:data-outstanding-due="${order.outstandingDueAmount}">
+                                <i class="bi bi-cash-coin"></i> Pay Now
+                            </button>
+                            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
+                               class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
                         </td>
                     </tr>
                     </tbody>
@@ -79,15 +90,150 @@
     </div>
 </div>
 
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title" id="paymentModalLabel">Make Payment</h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="orderId">
+                <p><strong>Outstanding Due:</strong> <span id="modalOutstandingDue" class="text-danger fw-bold"></span></p>
+                <label for="paymentAmount" class="form-label">Enter Payment Amount</label>
+                <input type="number" id="paymentAmount" class="form-control" min="1">
+                <div id="paymentError" class="text-danger mt-1"></div> <!-- Error message appears here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="confirmPayment">
+                    <i class="bi bi-check-circle"></i> Confirm Payment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/sweetalert2.all.min.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 <script>
     $(document).ready(function () {
         $('#pendingPaymentsTable').DataTable();
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const paymentModal = new bootstrap.Modal(document.getElementById("paymentModal"));
+
+        document.querySelectorAll(".pay-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const orderId = this.getAttribute("data-order-id");
+                const outstandingDue = parseFloat(this.getAttribute("data-outstanding-due"));
+
+                document.getElementById("orderId").value = orderId;
+                document.getElementById("modalOutstandingDue").innerText = outstandingDue.toFixed(2);
+                document.getElementById("paymentAmount").value = "";
+                document.getElementById("paymentAmount").setAttribute("max", outstandingDue.toFixed(2));
+                document.getElementById("paymentAmount").setAttribute("min", 1);
+                document.getElementById("paymentError").innerText = ""; // Clear previous errors
+                $('#paymentAmount').val(outstandingDue.toFixed(2));
+
+                paymentModal.show();
+            });
+        });
+
+        document.getElementById("paymentAmount").addEventListener("input", function () {
+            const paymentAmount = parseFloat(this.value);
+            const outstandingDue = parseFloat(document.getElementById("modalOutstandingDue").innerText);
+            const errorElement = document.getElementById("paymentError");
+
+            if (isNaN(paymentAmount) || paymentAmount <= 0) {
+                errorElement.innerText = "Payment amount must be greater than 0.";
+            } else if (paymentAmount > outstandingDue) {
+                errorElement.innerText = "Payment amount cannot be more than outstanding due.";
+            } else {
+                errorElement.innerText = ""; // No errors
+            }
+        });
+
+        document.getElementById("confirmPayment").addEventListener("click", function () {
+            const orderId = document.getElementById("orderId").value;
+            const paymentAmount = parseFloat(document.getElementById("paymentAmount").value);
+            const outstandingDue = parseFloat(document.getElementById("modalOutstandingDue").innerText);
+            const errorElement = document.getElementById("paymentError");
+
+            var csrfToken = $("meta[name='_csrf']").attr("content");
+            var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            // 🔹 Validation
+            if (isNaN(paymentAmount) || paymentAmount <= 0) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Amount",
+                    text: "Payment amount must be greater than 0.",
+                });
+                return;
+            }
+            if (paymentAmount > outstandingDue) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Exceeds Due Amount",
+                    text: "Payment amount cannot be more than the outstanding due.",
+                });
+                return;
+            }
+
+            // 🔹 AJAX Request
+            fetch(contextPath + `orders/pending-payments/pay`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken  // ✅ Send CSRF token
+                },
+                body: JSON.stringify({ orderId, paymentAmount })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Payment Failed",
+                            text: data.error,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Payment Successful",
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Reload page after success
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Payment Error:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Something went wrong!",
+                        text: "Payment could not be processed. Please try again.",
+                    });
+                });
+        });
+
+    });
+
+
 </script>
 </body>
 </html>
