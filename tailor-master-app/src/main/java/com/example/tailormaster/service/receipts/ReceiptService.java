@@ -15,11 +15,8 @@ import org.springframework.stereotype.Service;
 public class ReceiptService {
     
     private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
 
-    public ReceiptDTO generateReceipt(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+    public ReceiptDTO generateReceipt(Order order) {
 
         // Fetch logged-in user details
         String username = getLoggedInUsername();

@@ -3,6 +3,9 @@
 <head>
     <title>Receipt</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -122,9 +125,11 @@
         <p>ہماری دکان پر آنے کا شکریہ</p>
     </div>
 
-    <div class="text-center no-print mt-3">
-        <button class="btn btn-success btn-sm" onclick="window.print()">🖨 Print</button>
-        <a th:href="@{/orders}" class="btn btn-secondary btn-sm">Back</a>
+    <div class="text-center no-print mt-4">
+        <button class="btn btn-success me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary me-2">
+            <i class="bi bi-arrow-left-circle"></i> Back
+        </a>
     </div>
 </div>
 
