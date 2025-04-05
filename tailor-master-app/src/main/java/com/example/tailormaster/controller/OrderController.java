@@ -277,6 +277,7 @@ public class OrderController {
         order.setStatus(orderDto.getStatus());
         order.setAdvancePayment(orderDto.getAdvancePayment());
         order.setDuePayment(orderDto.getDuePayment());
+        order.setPaidAmount(orderDto.getAdvancePayment());
 
         // Fetch customer and associate with order
         Customer customer = customerService.getCustomerById(actualCustomerId);
@@ -360,6 +361,7 @@ public class OrderController {
         orderUpdateDto.setAdvancePayment(order.getAdvancePayment());
         orderUpdateDto.setDuePayment(order.getDuePayment());
         orderUpdateDto.setTotalProductAmount(order.getTotalProductAmount());
+        orderUpdateDto.setPaidAmount(order.getAdvancePayment());
 
         // Populate order products
         List<OrderProductDto> orderProductDtos = order.getOrderProducts().stream().map(orderProduct -> {

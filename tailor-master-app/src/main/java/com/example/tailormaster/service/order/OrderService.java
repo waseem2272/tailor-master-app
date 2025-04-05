@@ -24,11 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -270,4 +269,88 @@ public class OrderService {
 
         orderRepository.save(order);
     }
+
+    public Long getTotalOrdersCount() {
+        return orderRepository.count();
+    }
+
+    public Long getPendingPaymentsCount() {
+        return orderRepository.countPendingPayments();
+    }
+
+    public Long getOrdersInProgressCount() {
+        return orderRepository.countOrdersInProgress();
+    }
+
+    public Long getCompletedOrdersCount() {
+        return orderRepository.countCompletedOrders();
+    }
+
+    public Long getOrdersReadyForPickupCount() {
+        return orderRepository.countOrdersReadyForPickup();
+    }
+
+    public BigDecimal getRevenueThisMonth() {
+        return orderRepository.getRevenueThisMonth();
+    }
+
+    public List<Map<String, Object>> getMonthlyRevenueTrendsForLast6Months() {
+        List<Map<String, Object>> trends = new ArrayList<>();
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Karachi"));
+
+        for (int i = 5; i >= 0; i--) {
+            YearMonth yearMonth = YearMonth.from(today.minusMonths(i));
+            LocalDate firstDayOfMonth = yearMonth.atDay(1);
+            LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
+
+            LocalDateTime startOfMonth = firstDayOfMonth.atStartOfDay(ZoneId.of("Asia/Karachi")).toLocalDateTime();
+            LocalDateTime endOfMonth = lastDayOfMonth.atTime(23, 59, 59, 999999999).atZone(ZoneId.of("Asia/Karachi")).toLocalDateTime();
+
+            List<Order> completedOrders = orderRepository.findByPickupDateBetweenAndStatusAndPickupStatus(startOfMonth, endOfMonth, OrderStatus.COMPLETED, PickupStatus.PICKED_UP); // Adjust status as needed
+            BigDecimal monthlyRevenue = completedOrders.stream()
+                    .map(Order::getPaidAmount)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            Map<String, Object> dataPoint = new HashMap<>();
+            dataPoint.put("month", yearMonth.format(DateTimeFormatter.ofPattern("MMM yyyy"))); // Format month display
+            dataPoint.put("revenue", monthlyRevenue);
+            trends.add(dataPoint);
+        }
+        return trends;
+    }
+
+    public Map<String, Long> getOrderStatusCounts() {
+        Map<String, Long> statusCounts = new LinkedHashMap<>();
+        statusCounts.put("Pending", orderRepository.countPendingOrders());
+        statusCounts.put("InProgress", orderRepository.countOrdersInProgress());
+        statusCounts.put("Completed", orderRepository.countCompletedOrders());
+        statusCounts.put("Ready for Pickup", orderRepository.countOrdersReadyForPickup());
+        return statusCounts;
+    }
+
+    // In OrderService.java
+    public List<Order> getRecentOrders(int limit) {
+        Pageable pageable = PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return orderRepository.findAll(pageable).getContent();
+    }
+
+    public List<Order> getTop5ByOrderByCreatedAtDesc() {
+        return orderRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
+    public List<Map<String, Object>> getTopCustomers() {
+        Pageable topFive = PageRequest.of(0, 5);
+        List<Object[]> results = orderRepository.findTopCustomersWithDetails(topFive);
+
+        return results.stream().map(obj -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", obj[0]);
+            map.put("phone", obj[1]);
+            map.put("totalOrders", obj[2]);
+            map.put("totalPaid", obj[3]);
+            return map;
+        }).collect(Collectors.toList());
+    }
+
 }

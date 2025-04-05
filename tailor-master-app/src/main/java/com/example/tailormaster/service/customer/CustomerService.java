@@ -119,7 +119,6 @@ public class CustomerService {
         }
     }
 
-
     public long getTotalCustomerCount() {
         return customerRepository.count();
     }

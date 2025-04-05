@@ -13,6 +13,7 @@
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
@@ -23,7 +24,7 @@
             <div class="row">
                 <!-- Customer Information (Smaller Column) -->
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm border-success h-100">
+                    <div class="card shadow-sm border-success border-bottom border-3 h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
                             <i class="bi bi-person-circle me-2"></i> Customer Information
                         </div>
@@ -36,7 +37,7 @@
 
                 <!-- Order Details (Wider Column) -->
                 <div class="col-md-8 mb-4">
-                    <div class="card shadow-sm border-success h-100">
+                    <div class="card shadow-sm border-success border-bottom border-3 h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
                             <i class="bi bi-card-list me-2"></i> Order Details
                         </div>
@@ -113,7 +114,7 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm border-success mb-4">
+            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
                     <i class="bi bi-box-seam me-2"></i> Product Details
                 </div>
@@ -164,7 +165,7 @@
 </div>
 
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>

@@ -39,6 +39,8 @@ public class UpdateCustomerOrderDto {
     @DecimalMin(value = "0.00", message = "Total product amount cannot be negative.")
     private BigDecimal totalProductAmount;
 
+    private BigDecimal paidAmount;
+
     @NotEmpty(message = "At least one product must be selected.")
     private List<@Valid OrderProductDto> orderProducts = new ArrayList<>();
 

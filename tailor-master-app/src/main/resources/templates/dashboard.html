@@ -7,24 +7,508 @@
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+    <style>
+        /*body {
+            background-color: #f8f9fc; !* Soft light blue background *!
+        }*/
+        /*.card {
+            transition: transform 0.1s ease-in-out;
+            border-radius: 0.75rem;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            !*transition: transform 0.1s ease-in-out; !* Smooth transition *!*!
+        }*/
+
+        .text-gray-800 {
+            color: #5a5c69 !important;
+        }
+
+        .fa-2x {
+            font-size: 2rem;
+        }
+
+        .border-left-primary {
+            border-left: 4px solid #4e73df !important;
+        }
+
+        .border-left-success {
+            border-left: 4px solid #1cc88a !important;
+        }
+
+        .border-left-danger {
+            border-left: 4px solid #e74a3b !important;
+        }
+
+        .border-left-warning {
+            border-left: 4px solid #f6c23e !important;
+        }
+
+        .border-left-info {
+            border-left: 4px solid #36b9cc !important;
+        }
+
+        .border-left-dark {
+            border-left: 4px solid #343a40 !important;
+        }
+        .card.custom-shadow {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15),
+            0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
 </head>
 <body>
 <!-- Include Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
-    <header class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Dashboard</h2>
-        <p>Welcome, <span th:text="${#authentication.name}"></span></p>
-    </header>
     <div class="main-content">
-        <p>This is the main content of the dashboard.</p>
+        <div class="container-fluid">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </h2>
+
+            <div class="row">
+                <!-- Total Customers -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary custom-shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total Customers
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCustomers">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-people-fill fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Orders -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success custom-shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Total Orders
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalOrders">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-cart-fill fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders in Progress -->
+                <!--<div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Orders in Progress
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="ordersInProgress">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-hourglass-split fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+
+                <!-- Completed Orders -->
+                <!--<div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Completed Orders
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="completedOrders">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-check-circle-fill fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+
+                <!-- Pending Payments -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger custom-shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Pending Payments
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingPayments">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-exclamation-circle-fill fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue This Month -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-dark custom-shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                        Revenue This Month
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="revenueThisMonth">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <!-- Revenue Chart -->
+                <div class="col-md-8 d-flex">
+                    <div class="card shadow border-success border-bottom border-3 w-100 h-100 d-flex flex-column">
+                        <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                            <i class="bi bi-activity me-2"></i> Revenue Trend (Last 6 Months)
+                        </div>
+                        <div class="card-body flex-grow-1">
+                            <div style="height: 100%; max-height: 300px;">
+                                <canvas id="revenueChart" style="height: 100%; width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status Chart -->
+                <div class="col-md-4 d-flex">
+                    <div class="card shadow border-success border-bottom border-3 w-100 h-100 d-flex flex-column">
+                        <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                            <i class="bi bi-pie-chart me-2"></i> Order Status Breakdown
+                        </div>
+                        <div class="card-body flex-grow-1">
+                            <div style="height: 100%; max-height: 300px;">
+                                <canvas id="orderStatusChart" style="height: 100%; width: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-clock-history me-2"></i> Recent Orders
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead class="table-success text-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Order Date</th>
+                                <th>Status</th>
+                                <th>Total Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody id="recentOrdersBody">
+                            <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-star-fill me-2"></i> Top Customers
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped" id="topCustomersTable">
+                            <thead class="table-success text-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Total Orders</th>
+                                <th>Total Paid</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Rows will be inserted via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
     </div>
 </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/chart.umd.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Load Total Customers
+        fetch(contextPath + "dashboard/total-customers")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("totalCustomers").innerText = data;
+            })
+            .catch(error => console.error("Error fetching total customers:", error));
+
+        // Load Total Orders
+        fetch(contextPath + "dashboard/total-orders")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("totalOrders").innerText = data;
+            })
+            .catch(error => console.error("Error fetching total orders:", error));
+
+        // Load Pending Payments
+        fetch(contextPath + "dashboard/pending-payments")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("pendingPayments").innerText = data;
+            })
+            .catch(error => console.error("Error fetching pending payments:", error));
+
+        // Load Orders in progress
+        fetch(contextPath + "dashboard/orders-in-progress")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("ordersInProgress").innerText = data;
+            })
+            .catch(error => console.error("Error fetching orders in progress:", error));
+
+        // Load completed orders
+        fetch(contextPath + "dashboard/completed-orders")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("completedOrders").innerText = data;
+            })
+            .catch(error => console.error("Error fetching completed orders:", error));
+
+        // Load revenue this month
+        fetch(contextPath + "dashboard/revenue-this-month")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("revenueThisMonth").innerText = data;
+            })
+            .catch(error => console.error("Error fetching Revenue this month:", error));
+
+
+        fetch(contextPath + 'dashboard/monthly-revenue-trends')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(item => item.month);
+                const revenueData = data.map(item => item.revenue);
+
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const revenueChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Monthly Revenue (PKR)',
+                            data: revenueData,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        return 'PKR ' + value;
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Monthly Revenue Trend (Last 6 Months)'
+                            }
+                        }
+                    }
+                });
+            });
+
+        // Order status breakdown
+        fetch(contextPath + 'dashboard/order-status-counts')
+            .then(response => response.json())
+            .then(data => {
+                const labels = Object.keys(data);
+                const counts = Object.values(data);
+                const backgroundColors = [
+                    'rgba(108, 117, 125, 0.8)',   // Pending (Bootstrap Secondary - Grey)
+                    'rgba(0, 123, 255, 0.8)',     // In Progress (Bootstrap Primary - Blue)
+                    'rgba(40, 167, 69, 0.8)',      // Completed (Bootstrap Success - Green)
+                    'rgba(255, 193, 7, 0.8)'       // Ready for Pickup (Bootstrap Warning - Yellow - Suitable)
+                ];
+                const borderColors = [
+                    'rgba(108, 117, 125, 1)',
+                    'rgba(0, 123, 255, 1)',
+                    'rgba(40, 167, 69, 1)',
+                    'rgba(255, 193, 7, 1)'
+                ];
+
+                const ctx = document.getElementById('orderStatusChart').getContext('2d');
+                const orderStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Order Status',
+                            data: counts,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Order Status Breakdown'
+                            }
+                        }
+                    }
+                });
+            });
+
+        fetch('dashboard/recent-orders')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('recentOrdersBody');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No recent orders found.</td></tr>';
+                    return;
+                }
+
+                data.forEach((order, index) => {
+                    let badgeClass = "badge bg-secondary"; // Default badge (gray)
+                    if (order.status === "PENDING") {
+                        badgeClass = "badge bg-secondary";
+                    } else if (order.status === "IN_PROGRESS") {
+                        badgeClass = "badge bg-primary";
+                    } else if (order.status === "COMPLETED") {
+                        badgeClass = "badge bg-success";
+                    } else if (order.status === "CANCELLED") {
+                        badgeClass = "badge bg-danger";
+                    }
+                    const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${order.orderId}</td>
+                        <td>${order.customer}</td>
+                        <td>${new Date(order.orderDate).toLocaleDateString('en-GB', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                    })}</td>
+
+                        <td><span class="${badgeClass}">${order.status}</span></td>
+                        <td>${order.totalAmount}</td>
+                    </tr>
+                `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(err => {
+                document.getElementById('recentOrdersBody').innerHTML =
+                    '<tr><td colspan="5" class="text-danger text-center">Failed to load orders.</td></tr>';
+            });
+
+        fetch(contextPath + 'dashboard/customers/top')
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.querySelector('#topCustomersTable tbody');
+                tbody.innerHTML = '';
+
+                data.forEach((cust, index) => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Customer: ${cust.name}">
+                        ${cust.name}
+                    </span>
+                </td>
+                <td>
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Phone: ${cust.phone}">
+                        ${cust.phone}
+                    </span>
+                </td>
+                <td>
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="${cust.totalOrders} Orders">
+                        ${cust.totalOrders}
+                    </span>
+                </td>
+                <td>
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Rs. ${cust.totalPaid}">
+                        Rs. ${cust.totalPaid}
+                    </span>
+                </td>
+            `;
+
+                    tbody.appendChild(row);
+                });
+
+                // Enable Bootstrap tooltips
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+            });
+
+
+    });
+</script>
+
 </body>
 </html>

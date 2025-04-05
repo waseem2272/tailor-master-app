@@ -9,11 +9,12 @@
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content container-fluid">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card shadow rounded-4 p-3">
+                <div class="card border-success border-bottom border-3 shadow rounded-4 p-3">
                     <h2 class="text-center mb-3">Create New Product</h2>
                     <hr>
                     <p class="text-danger fw-bold">Fields marked with * are required.</p>
@@ -102,7 +103,7 @@
     </div>
 </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>

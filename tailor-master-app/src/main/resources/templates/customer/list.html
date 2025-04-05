@@ -11,6 +11,7 @@
 <body>
 <!-- Include Sidebar Fragment -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
@@ -57,7 +58,7 @@
             </div>-->
 
             <!-- Filters Card -->
-            <div class="card shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-search me-2"></i> Filter Customers
@@ -101,7 +102,7 @@
             </div>
 
             <!-- Customers Table -->
-            <div class="card shadow-sm border-success mt-4">
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-people me-2"></i> Customers List
                 </div>
@@ -124,7 +125,7 @@
     </div>
 </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
