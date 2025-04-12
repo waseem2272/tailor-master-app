@@ -1,12 +1,10 @@
 package com.example.tailormaster.controller.dashboard;
 
 import com.example.tailormaster.entity.Order;
+import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.service.dashboard.DashboardService;
 import com.example.tailormaster.service.order.OrderService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
+    private final OrderService orderService;
 
     @GetMapping("/total-customers")
     public ResponseEntity<Long> getTotalCustomers() {
@@ -99,5 +99,11 @@ public class DashboardController {
     public List<Map<String, Object>> getTopCustomers() {
         return dashboardService.getTopCustomers();
     }
+
+    @GetMapping("/notifications/upcoming-deliveries")
+    public List<Map<String, Object>> getUpcomingDeliveries() {
+        return dashboardService.getUpcomingDeliveries();
+    }
+
 
 }

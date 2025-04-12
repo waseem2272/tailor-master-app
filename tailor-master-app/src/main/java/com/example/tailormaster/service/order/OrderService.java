@@ -353,4 +353,29 @@ public class OrderService {
         }).collect(Collectors.toList());
     }
 
+    public List<Map<String, Object>> getUpcomingDeliveries() {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Karachi"));
+        LocalDate threeDaysLater = today.plusDays(3);
+
+        List<OrderStatus> excludedStatuses = Arrays.asList(OrderStatus.CANCELLED, OrderStatus.COMPLETED);
+
+        // Fetch orders that are either upcoming or overdue but still not completed
+        List<Order> upcomingOrOverdueOrders = orderRepository
+                .findByDeliveryDateLessThanEqualAndStatusNotIn(threeDaysLater, excludedStatuses);
+
+        // Optional: sort by delivery date ascending
+        upcomingOrOverdueOrders.sort(Comparator.comparing(Order::getDeliveryDate));
+
+        return upcomingOrOverdueOrders.stream().map(order -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("orderId", order.getOrderId());
+            map.put("orderId_pk", thymeleafUtil.encryptId(order.getId()));
+            map.put("customerName", order.getCustomer().getFullName());
+            map.put("deliveryDate", order.getDeliveryDate().toString());
+            map.put("status", order.getStatus().name());
+            map.put("isOverdue", order.getDeliveryDate().isBefore(today));
+            return map;
+        }).collect(Collectors.toList());
+    }
+
 }

@@ -93,8 +93,12 @@
         </div>
     </div>
 </div>
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
-
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 </body>
 </html>

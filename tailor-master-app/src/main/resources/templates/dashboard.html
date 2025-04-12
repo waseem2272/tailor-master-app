@@ -266,11 +266,25 @@
                 </div>
             </div>
 
-
-
         </div>
     </div>
 </div>
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+<!--<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Upcoming Deliveries</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="notificationList">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>-->
 
 
 <!--<div th:replace="~{fragments/footer :: footer}"></div>-->
@@ -279,6 +293,7 @@
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/chart.umd.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
@@ -310,20 +325,20 @@
             .catch(error => console.error("Error fetching pending payments:", error));
 
         // Load Orders in progress
-        fetch(contextPath + "dashboard/orders-in-progress")
+        /*fetch(contextPath + "dashboard/orders-in-progress")
             .then(response => response.json())
             .then(data => {
                 document.getElementById("ordersInProgress").innerText = data;
             })
-            .catch(error => console.error("Error fetching orders in progress:", error));
+            .catch(error => console.error("Error fetching orders in progress:", error));*/
 
         // Load completed orders
-        fetch(contextPath + "dashboard/completed-orders")
+        /*fetch(contextPath + "dashboard/completed-orders")
             .then(response => response.json())
             .then(data => {
                 document.getElementById("completedOrders").innerText = data;
             })
-            .catch(error => console.error("Error fetching completed orders:", error));
+            .catch(error => console.error("Error fetching completed orders:", error));*/
 
         // Load revenue this month
         fetch(contextPath + "dashboard/revenue-this-month")

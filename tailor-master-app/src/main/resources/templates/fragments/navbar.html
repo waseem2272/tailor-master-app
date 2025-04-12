@@ -1,3 +1,4 @@
+
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
         <!--Sidebar Toggle (Topbar)-->
@@ -8,12 +9,23 @@
 
         <!--Topbar Navbar-->
         <ul class="navbar-nav ms-auto">
-            <!--Notification Icon-->
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{#}">
-                    <i class="bi bi-bell-fill"></i>
+
+            <!-- Notification Bell -->
+            <li class="nav-item dropdown no-arrow mx-1 position-relative">
+                <a class="nav-link dropdown-toggle no-arrow-dropdown" href="#" id="notificationsDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-bell-fill fa-fw"></i>
+                    <span class="badge badge-danger badge-counter" id="notificationCount">0</span>
                 </a>
+                <div class="dropdown-list dropdown-menu dropdown-menu-end shadow animated--grow-in"
+                     aria-labelledby="notificationsDropdown" id="notificationDropdownList">
+                    <div id="notificationList" class="p-0"></div>
+                </div>
             </li>
+
+
+            <!-- Divider -->
+            <div class="topbar-divider d-none d-sm-block"></div>
 
             <!--User Information-->
             <li class="nav-item dropdown no-arrow">
@@ -22,7 +34,7 @@
                     <i class="bi bi-person-circle"></i>
                 </a>
                 <!--Dropdown Menu-->
-                <div class="dropdown-menu dropdown-menu-end shadow animated grow-in" aria-labelledby="userDropdown">
+                <div class="dropdown-menu dropdown-menu-end custom-dropdown shadow animated grow-in" aria-labelledby="userDropdown">
                     <a class="dropdown-item" th:href="@{/users/profile}">
                         <i class="bi bi-person-fill text-gray-400"></i> Profile
                     </a>

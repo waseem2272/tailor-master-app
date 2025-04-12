@@ -102,6 +102,58 @@ body.sidebar-open .sidebar {
     }
 }
 
+.badge-counter {
+    position: absolute;
+    transform: scale(0.8);
+    transform-origin: top right;
+    top: 0.25rem;
+    right: 0.25rem;
+    font-size: 0.75rem;
+    background-color: #e74a3b;
+    color: white;
+    padding: 0.25em 0.4em;
+    border-radius: 10rem;
+}
+
+.topbar-divider {
+    height: 2.375rem;
+    width: 0;
+    border-right: 1px solid #e3e6f0;
+    margin: 0 1rem;
+}
+.custom-dropdown {
+    margin-right: 1.5rem; /* Adjust as needed */
+}
+.no-arrow-dropdown::after {
+    display: none !important;
+}
+/* Scroll container for notifications */
+.max-height-scroll {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+/* Ensure alerts have a fixed layout with wrapping text */
+.notification-wrap {
+    width: 300px; /* or any width that fits your dropdown design */
+    white-space: normal !important;
+    word-wrap: break-word;
+    text-wrap: wrap;
+}
+
+
+/* Notification item styling */
+.notification-item {
+    transition: background-color 0.2s ease;
+    border-radius: 0.375rem;
+}
+
+/* Subtle hover */
+.notification-item:hover {
+    background-color: #f1f1f1;
+}
+
+
 .footer {
     background: #f8f9fa;
     text-align: center;

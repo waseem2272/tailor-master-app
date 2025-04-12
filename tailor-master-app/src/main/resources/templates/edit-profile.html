@@ -9,8 +9,8 @@
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
 <body>
-<div th:replace="fragments/sidebar :: sidebar"></div>
-
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
@@ -93,12 +93,16 @@
         </div>
     </div>
 </div>
-
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 <!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/update-user.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 </body>
 </html>

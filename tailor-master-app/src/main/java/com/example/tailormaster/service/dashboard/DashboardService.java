@@ -32,4 +32,8 @@ public class DashboardService {
     public List<Map<String, Object>> getTopCustomers() {
         return orderService.getTopCustomers();
     }
+
+    public List<Map<String, Object>> getUpcomingDeliveries() {
+        return orderService.getUpcomingDeliveries();
+    }
 }

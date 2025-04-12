@@ -76,4 +76,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     """)
     List<Object[]> findTopCustomersWithDetails(Pageable pageable);
 
+    List<Order> findByDeliveryDateLessThanEqualAndStatusNotIn(
+            LocalDate from, List<OrderStatus> excludedStatuses);
+
 }
