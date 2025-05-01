@@ -7,6 +7,8 @@ import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.customer.CustomerRepository;
 import com.example.tailormaster.util.ThymeleafUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,35 +24,39 @@ import java.util.Map;
 @Service
 public class CustomerService {
 
+    private static final Logger logger = LogManager.getLogger(CustomerService.class);
+
     private final CustomerRepository customerRepository;
 
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
-    }
-
     public Customer getCustomerById(Long id) {
+        logger.debug("Fetching customer by ID: {}", id);
         return customerRepository.findById(id).orElse(null);
     }
 
     public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
+        logger.info("Creating customer: {}", customer.getFullName());
+        Customer savedCustomer = customerRepository.save(customer);
+        logger.debug("Customer created with ID: {}", savedCustomer.getId());
+        return savedCustomer;
     }
 
     @Transactional
     public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, List<Product> selectedProducts) {
         Long customerId = registrationDTO.getCustomer().getId();
-        Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+        logger.info("Updating customer with ID: {}", customerId);
 
-        // Update customer information
+        Customer existingCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> {
+                    logger.error("Customer not found with ID: {}", customerId);
+                    return new IllegalArgumentException("Customer not found");
+                });
+
         existingCustomer.setFullName(registrationDTO.getCustomer().getFullName());
         existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
-
-        // Update Products
         existingCustomer.getMeasurements().clear();
 
         for (Product product : selectedProducts) {
@@ -62,11 +68,15 @@ public class CustomerService {
             }
         }
 
-        return customerRepository.save(existingCustomer);
+        Customer updatedCustomer = customerRepository.save(existingCustomer);
+        logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
+        return updatedCustomer;
     }
 
     public void deleteCustomer(Long id) {
+        logger.info("Deleting customer with ID: {}", id);
         customerRepository.deleteById(id);
+        logger.debug("Customer deleted successfully");
     }
 
     public Map<String, Object> getCustomersData(int draw, int start, int length, String searchValue,
@@ -74,6 +84,9 @@ public class CustomerService {
                                                 LocalDate startDate, LocalDate endDate) {
         Map<String, Object> response = new HashMap<>();
         try {
+            logger.debug("Fetching customers for DataTables: page={}, length={}, search={}, date range=[{} - {}]",
+                    start / length, length, searchValue, startDate, endDate);
+
             int page = start / length;
             Page<Customer> customerPage = getCustomersForDataTables(page, length, searchValue, columnIndex, sortDirection, startDate, endDate);
 
@@ -86,7 +99,9 @@ public class CustomerService {
             response.put("recordsFiltered", customerPage.getTotalElements());
             response.put("data", customerDTOs);
 
+            logger.debug("Customer data fetched: {} records", customerDTOs.size());
         } catch (Exception e) {
+            logger.error("Error retrieving customers: {}", e.getMessage(), e);
             throw new RuntimeException("Error retrieving customers from the database.", e);
         }
 
@@ -96,32 +111,38 @@ public class CustomerService {
     public Page<Customer> getCustomersForDataTables(int page, int size, String search, Integer columnIndex,
                                                     String sortDirection, LocalDate startDate, LocalDate endDate) {
         try {
+            logger.debug("Preparing pageable customer data. Page: {}, Size: {}, Search: '{}'", page, size, search);
             Pageable pageable;
-
-            // Include createdAt as a sortable column
             String[] columns = {"id", "fullName", "phoneNumber", "createdAt"};
-            String sortBy = (columnIndex != null && columnIndex >= 0 && columnIndex < columns.length) ? columns[columnIndex] : "createdAt"; // Default to createdAt
+            String sortBy = (columnIndex != null && columnIndex >= 0 && columnIndex < columns.length) ? columns[columnIndex] : "createdAt";
             Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
-            pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+//            pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+            Page<Customer> result;
             if (search != null && !search.isEmpty() && startDate != null && endDate != null) {
-                return customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseAndCreatedAtBetween(
+                result = customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseAndCreatedAtBetween(
                         search, search, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), pageable);
             } else if (search != null && !search.isEmpty()) {
-                return customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCase(search, search, pageable);
+                result = customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCase(search, search, pageable);
             } else if (startDate != null && endDate != null) {
-                return customerRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59), pageable);
+                result = customerRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59), pageable);
+            } else {
+                result = customerRepository.findAll(pageable);
             }
 
-            return customerRepository.findAll(pageable);
+            logger.debug("Customer page fetched: {} items", result.getNumberOfElements());
+            return result;
+
         } catch (Exception e) {
+            logger.error("Error retrieving customer page: {}", e.getMessage(), e);
             throw new RuntimeException("Error retrieving customers from the database.", e);
         }
     }
 
     public long getTotalCustomerCount() {
-        return customerRepository.count();
+        long count = customerRepository.count();
+        logger.debug("Total customer count: {}", count);
+        return count;
     }
-
-
 }

@@ -25,8 +25,8 @@
                 </div>
                 <div class="card-body">
                     <p class="text-danger fw-bold mb-4">Fields marked with <span class="text-danger">*</span> are required</p>
-                    <form id="profileForm" th:action="@{/users/profile/update}" method="post" th:object="${user}">
-                        <input type="hidden" th:field="*{id}"/>
+                    <form id="profileForm" th:action="@{/users/profile/update}" method="post" th:object="${user}" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}"/>
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -76,6 +76,19 @@
                                 <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>
                                 <textarea class="form-control shadow-sm" id="shopAddress" th:field="*{shopAddress}" rows="3" placeholder="Enter shop address"></textarea>
                                 <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <label class="form-label d-block">Current Shop Logo</label>
+                                <div th:if="${user.logo != null}">
+                                    <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" class="img-thumbnail" style="max-height: 120px; max-width: 120px;">
+                                </div>
+                                <div th:if="${user.logo == null}" class="text-muted small">No logo uploaded yet</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="logo" class="form-label">Change Logo (PNG, JPG, JPEG)</label>
+                                <input type="file" class="form-control shadow-sm" id="logo" name="logoFile" accept="image/png, image/jpeg, image/jpg">
+                                <div th:if="${#fields.hasErrors('logo')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('logo')}" th:text="${error}"></div>
                             </div>
                         </div>
 

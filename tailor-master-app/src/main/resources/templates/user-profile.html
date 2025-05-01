@@ -43,6 +43,19 @@
                 <div class="card-body">
                     <table class="table table-striped table-hover">
                         <tr>
+                            <th>Logo:</th>
+                            <td>
+                                <div th:if="${user.logo != null}">
+                                    <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" style="max-height: 120px; max-width: 120px;">
+                                </div>
+
+                                <div th:if="${user.logo == null}">
+                                    <span>No logo uploaded</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
                             <th>Full Name:</th>
                             <td th:text="${user.fullName}"></td>
                         </tr>

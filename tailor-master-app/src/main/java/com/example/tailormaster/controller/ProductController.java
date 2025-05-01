@@ -6,6 +6,9 @@ import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.AESUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,8 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
+    private static final Logger logger = LogManager.getLogger(ProductController.class);
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -28,26 +33,42 @@ public class ProductController {
     // List all products
     @GetMapping
     public String listProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
-        model.addAttribute("products", products);
-        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+        logger.info("User accessed the product list page.");
+        try {
+            List<Product> products = productService.getAllProducts();
+            model.addAttribute("products", products);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            logger.info("Retrieved products: {} ", products);
+        } catch (Exception e) {
+            logger.error("Error retrieving products for the list: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Error loading products.");
+        }
         return "product/list";
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
+        logger.info("Fetching product by ID: {}", id);
+        try {
+            Product product = productService.getProductById(id);
+            if (product == null) {
+                logger.warn("Product not found with ID: {}", id);
+                return ResponseEntity.notFound().build();
+            }
+            // Convert to DTO if needed
+            ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getPrice());
+            logger.info("Retrieved product with ID {}: {}", id, productDto);
+            return ResponseEntity.ok(productDto);
+        } catch (Exception e) {
+            logger.error("Error fetching product by ID {}: {}", id, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        // Convert to DTO if needed
-        ProductDto productDto = new ProductDto(product.getId(), product.getName(), product.getPrice());
-        return ResponseEntity.ok(productDto);
     }
 
     // Show create product form
     @GetMapping("/create")
     public String showCreateProductForm(Model model) {
+        logger.info("Displaying create product form.");
         model.addAttribute("product", new Product());
         return "product/create";
     }
@@ -57,14 +78,18 @@ public class ProductController {
     public String createProduct(@Valid @ModelAttribute("product") Product product,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes) {
+        logger.info("Attempting to create a new product: {}", product);
         if (result.hasErrors()) {
+            logger.warn("Validation errors occurred during product creation: {}", result.getAllErrors());
             return "product/create";
         }
 
         try {
             productService.createProduct(product);
+            logger.info("Product created successfully: {}", product);
             redirectAttributes.addFlashAttribute("successMessage", "Product created successfully!");
         } catch (RuntimeException e) {
+            logger.error("Error creating product {}: {}", product, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating product: " + e.getMessage());
         }
         return "redirect:/products";
@@ -74,22 +99,29 @@ public class ProductController {
     @GetMapping("/update/{id}")
     public String showUpdateProductForm(@PathVariable String id, Model model,
                                         RedirectAttributes redirectAttributes) {
-
+        logger.info("Displaying update product form for product ID: {}", id);
         try {
             // Decrypt and validate product ID
             Long productId = decryptAndValidateProductId(id);
             if (productId == null) {
+                logger.warn("Invalid product ID provided for update: {}", id);
                 redirectAttributes.addFlashAttribute("errorMessage", "Invalid product ID.");
                 return "redirect:/products";
             }
-
+            logger.debug("Decrypted product ID for update: {}", productId);
             Product product = productService.getProductById(productId);
+            if (product == null) {
+                logger.warn("Product not found with ID {} for update.", productId);
+                redirectAttributes.addFlashAttribute("errorMessage", "Product not found.");
+                return "redirect:/products";
+            }
             model.addAttribute("product", product);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            logger.info("Fetched product for update (ID {}): {}", productId, product);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to decrypt product ID.");
+            logger.error("An error occurred while preparing the update product form for encrypted ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while preparing the update product.");
             return "redirect:/products";
         }
 
@@ -103,9 +135,9 @@ public class ProductController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             @RequestParam("encryptedProductId") String encryptedProductId) {
-
+        logger.info("Attempting to update product with encrypted ID: {}", encryptedProductId);
         if (bindingResult.hasErrors()) {
-            // If validation fails, stay on the update page and display validation errors
+            logger.warn("Validation errors occurred during product update for encrypted ID {}: {}", encryptedProductId, bindingResult.getAllErrors());
             return "product/update";
         }
 
@@ -114,15 +146,17 @@ public class ProductController {
             // Decrypt and validate product ID
             Long productId = decryptAndValidateProductId(encryptedProductId);
             if (productId == null) {
+                logger.warn("Invalid product ID provided for update: {}", encryptedProductId);
                 redirectAttributes.addFlashAttribute("errorMessage", "Invalid product ID.");
                 return "redirect:/products";
             }
-
+            logger.debug("Decrypted product ID for update: {}", productId);
             productService.updateProduct(productId, updatedProduct);
+            logger.info("Product updated successfully with ID: {}", productId);
             redirectAttributes.addFlashAttribute("successMessage", "Product updated successfully!");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while updating product with encrypted ID {}: {}", encryptedProductId, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating Product: " + e.getMessage());
         }
         return "redirect:/products";
@@ -136,14 +170,18 @@ public class ProductController {
     }
 
     private Long decryptAndValidateProductId(String encryptedProductId) {
+        logger.debug("Attempting to decrypt and validate product ID: {}", encryptedProductId);
         try {
             String decryptedId = AESUtil.decrypt(encryptedProductId);
             if (!decryptedId.matches("\\d+")) {
+                logger.warn("Decrypted product ID '{}' is not a valid number.", decryptedId);
                 return null;
             }
-            return Long.parseLong(decryptedId);
+            Long productId = Long.parseLong(decryptedId);
+            logger.debug("Successfully decrypted product ID: {}", productId);
+            return productId;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error decrypting product ID '{}': {}", encryptedProductId, e.getMessage(), e);
             return null;
         }
     }

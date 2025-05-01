@@ -4,10 +4,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class ProductSelection {
     
     @NotNull(message = "Product ID is required.")

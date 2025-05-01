@@ -62,7 +62,7 @@
                 <div id="filterSection" class="collapse show">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="dateRange" class="form-label fw-semibold">Quick Date Range</label>
                                 <select id="dateRange" class="form-select rounded-pill">
                                     <option value="">Select range</option>
@@ -70,17 +70,36 @@
                                     <option value="thismonth">This month</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="startDate" class="form-label fw-semibold">Start Date</label>
                                 <input type="date" id="startDate" class="form-control rounded-pill">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="endDate" class="form-label fw-semibold">End Date</label>
                                 <input type="date" id="endDate" class="form-control rounded-pill">
                             </div>
-                            <div class="col-md-3 d-flex align-items-end gap-2">
+                            <div class="col-md-2">
+                                <label for="paymentStatus" class="form-label fw-semibold">Payment Status</label>
+                                <select id="paymentStatus" name="orderStatus" class="form-select rounded-pill">
+                                    <option value="" selected>All</option>
+                                    <option th:value="paid">Paid</option>
+                                    <option th:value="partial_paid">Partial Paid</option>
+                                    <option th:value="ready_for_pickup">Ready for Pickup</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="orderStatus" class="form-label fw-semibold">Order Status</label>
+                                <select id="orderStatus" name="orderStatus" class="form-select rounded-pill">
+                                    <option value="" selected>All</option>
+                                    <option th:each="status : ${orderStatusList}"
+                                            th:value="${status}"
+                                            th:text="${status}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 d-flex align-items-end gap-2">
                                 <button id="applyFilters" class="btn btn-success shadow rounded-pill w-100">
-                                    <i class="bi bi-check-circle"></i> Apply Filters
+                                    <i class="bi bi-check-circle"></i> Filter
                                 </button>
                                 <button id="clearFilters" class="btn btn-secondary shadow rounded-pill w-100">
                                     <i class="bi bi-x-circle"></i> Clear
@@ -137,15 +156,29 @@
                         <strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
                         <span id="modalCustomerName" class="ms-2"></span>
                     </li>
+
                     <li class="list-group-item">
-                        <strong><i class="bi bi-calendar-event me-2"></i>Delivery Date:</strong>
-                        <span id="modalDeliveryDate" class="ms-2"></span>
+                        <strong><i class="bi bi-calendar-event me-2"></i>Total Amount:</strong>
+                        <span id="modalTotalAmount" class="ms-2"></span>
                     </li>
+
+
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-calendar-event me-2"></i>Advance Payment:</strong>
+                        <span id="modalAdvancePayment" class="ms-2"></span>
+                    </li>
+
                     <li class="list-group-item">
                         <strong><i class="bi bi-cash me-2"></i>Due Amount:</strong>
                         <span id="modalDueAmount" class="ms-2 text-danger fw-bold"></span>
                     </li>
+
                 </ul>
+
+                <div id="modalProductDetails" class="mt-4">
+                    <h6 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Products in Order</h6>
+                    <ul class="list-group list-group-flush" id="productList"></ul>
+                </div>
 
                 <div class="mt-4 p-3 bg-light rounded border">
                     <label for="amountReceived" class="form-label fw-bold">
@@ -192,10 +225,15 @@
         const startDate = $('#startDate').val();
         const endDate = $('#endDate').val();
         const dateRange = $('#dateRange').val();
+        const paymentStatus = $('#paymentStatus').val();
+        const orderStatus = $('#orderStatus').val();
+
         let count = 0;
         if (startDate) count++;
         if (endDate) count++;
         if (dateRange) count++;
+        if (paymentStatus) count++;
+        if (orderStatus) count++;
 
         if (count > 0) {
             $('#filterCountBadge').removeClass('d-none').text(count);
@@ -206,7 +244,7 @@
 
     $(document).ready(function () {
         // Update badge on filter change
-        $('#startDate, #endDate, #dateRange').on('change', updateFilterBadge);
+        $('#startDate, #endDate, #dateRange, #paymentStatus, #orderStatus').on('change', updateFilterBadge);
 
         var table = $('#ordersTable').DataTable({
             "processing": true,
@@ -219,6 +257,8 @@
                 "data": function (d) {
                     d.startDate = $('#startDate').val();
                     d.endDate = $('#endDate').val();
+                    d.orderStatus = $('#orderStatus').val();
+                    d.paymentStatus = $('#paymentStatus').val();
                 }
             },
             "columns": [
@@ -244,7 +284,8 @@
                     "orderable": false,
                     "searchable": false,
                     "render": function (data, type, row) {
-                        let duePayment = data.duePayment;
+                        // let duePayment = data.duePayment;
+                        let totalProductAmount = data.totalProductAmount;
                         let paidAmount = data.paidAmount;
                         let orderStatus = data.status;
                         let pickedUpStatus = data.pickupStatus;
@@ -253,7 +294,7 @@
                         let paymentStatus = `<span class="badge bg-secondary">N/A</span>`; // Default
 
                         if (orderStatus === "COMPLETED" && pickedUpStatus === "PICKED_UP") {
-                            if (duePayment !== paidAmount) {
+                            if (totalProductAmount !== paidAmount) {
                                 badgeClass = "warning text-dark"; // Yellow badge for partial payment
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
                             } else {
@@ -281,6 +322,8 @@
                                   class="btn btn-success btn-sm pickup-btn me-1"
                                   data-order-id="${row.orderId}"
                                   data-order-db-id="${encryptedId}"
+                                  data-total-amount="${row.totalProductAmount}"
+                                  data-advance-payment="${row.advancePayment}"
                                   data-due="${row.duePayment}"
                                   data-customer-name="${row.customer}"
                                   data-delivery-date="${row.deliveryDate}"
@@ -315,6 +358,9 @@
             $('#dateRange').val('');
             $('#startDate').val('');
             $('#endDate').val('');
+            $('#paymentStatus').val('');
+            $('#orderStatus').val('');
+
             updateFilterBadge();
             table.ajax.reload();
         });
@@ -356,20 +402,48 @@
             }
         });
 
-        $('#ordersTable').on('click', '.pickup-btn', function () {
+        $('#ordersTable tbody').on('click', '.pickup-btn', function () {
+
+            const button = $(this);
+            const row = table.row(button.closest('tr')).data()
+
             const orderId = $(this).data('order-id');
             const customerName = $(this).data('customer-name');
-            const deliveryDate = $(this).data('delivery-date');
             const orderDbId = $(this).data('order-db-id');
+            const totalAmount = parseFloat($(this).data('total-amount')).toFixed(2); // convert to decimal format
+            const advancePayment = parseFloat($(this).data('advance-payment')).toFixed(2); // convert to decimal format
             const dueAmount = parseFloat($(this).data('due')).toFixed(2); // convert to decimal format
 
             $('#modalOrderId').text(orderId);
             $('#modalCustomerName').html(customerName);
-            $('#modalDeliveryDate').text(deliveryDate);
             $('#modalOrderDbId').val(orderDbId);
+            $('#modalTotalAmount').text(totalAmount);
+            $('#modalAdvancePayment').text(advancePayment);
             $('#modalDueAmount').text(dueAmount);
             $('#confirmPickupBtn').data('order-db-id', orderDbId);
             $('#amountReceived').val(dueAmount); // Auto-fill with due
+
+            // Clear existing product list
+            $('#productList').empty();
+
+
+            // Add product details
+            if (row.orderProducts && row.orderProducts.length > 0) {
+                row.orderProducts.forEach(op => {
+                    const item = `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-semibold">${op.productName}</span>
+                        <small class="text-muted d-block">Qty: ${op.quantity}, Price: ${op.price}</small>
+                    </div>
+                    <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
+                </li>
+            `;
+                    $('#productList').append(item);
+                });
+            } else {
+                $('#productList').append(`<li class="list-group-item text-muted">No products found.</li>`);
+            }
         });
 
     });

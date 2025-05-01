@@ -9,6 +9,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,6 +40,7 @@ public class Product extends BaseEntity {
     private boolean enabled;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<CustomerMeasurement> measurements;
 
 //    @ManyToOne

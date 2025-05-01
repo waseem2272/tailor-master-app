@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -41,6 +42,7 @@ public class Order extends BaseEntity {
     private String cabinetNo; // Add this field
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
     // ✅ New fields for pickup and due management

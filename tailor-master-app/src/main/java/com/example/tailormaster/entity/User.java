@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,6 +27,7 @@ public class User extends BaseEntity {
     private String username;
 
 //    @NotBlank(message = "Password is required")
+    @ToString.Exclude
     private String password;
 
     @NotBlank(message = "Full name is required")
@@ -57,6 +59,14 @@ public class User extends BaseEntity {
     @NotBlank(message = "Short Code is required")
     private String shortCode;
 
+    @Lob
+    @Column(name = "logo", columnDefinition = "LONGBLOB")
+    @ToString.Exclude
+    private byte[] logo;
+
+    @ToString.Exclude
+    private String logoContentType; // or logoPath
+
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -66,8 +76,10 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
 //    @NotEmpty(message = "At least one role must be selected.") // Validation annotation
+    @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Order> orders;
 }

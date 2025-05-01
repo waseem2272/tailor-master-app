@@ -16,10 +16,6 @@
             margin: auto;
             padding: 10px;
         }
-        .receipt-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
         .receipt-header h3 {
             margin-bottom: 4px;
             font-weight: bold;
@@ -28,14 +24,14 @@
             font-size: 12px;
         }
         .divider {
-            border-top: 1px dashed #000;
+            border-top: 2px dashed #000;
             margin: 10px 0;
         }
         .item-header, .item-row {
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            border-bottom: 1px dotted #ccc;
+            border-bottom: 2px dotted #ccc;
             padding: 2px 0;
         }
         .item-header {
@@ -69,16 +65,62 @@
                 display: none;
             }
         }
+
+        .receipt-header {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .shop-info {
+            text-align: left;
+            margin-right: 110px; /* Reserve space for logo */
+        }
+
+        .shop-logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .shop-logo img {
+            max-height: 80px;
+            max-width: 100px;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
 <div class="receipt-container">
     <!-- Header -->
-    <div class="receipt-header">
+    <!--<div class="receipt-header">
         <h3 th:text="${user.shopName}">Shop Name</h3>
         <p class="small-text" th:text="${user.shopAddress}">Shop Address</p>
         <p class="small-text">📞 <span th:text="${user.phone1}"></span></p>
+    </div>-->
+    <div class="receipt-header">
+        <!-- Shop Info -->
+        <div class="shop-info">
+            <h3 th:text="${user.shopName}">Shop Name</h3>
+            <p class="small-text">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span th:text="${user.shopAddress}">Shop Address</span>
+            </p>
+            <p class="small-text">
+                <i class="bi bi-telephone-fill"></i>
+                <span th:text="${user.phone1}">Phone</span>
+            </p>
+        </div>
+
+
+        <!-- Shop Logo -->
+        <div class="shop-logo text-end">
+            <img th:src="@{'/users/logo/' + ${user.username}}" alt="" />
+        </div>
     </div>
+
 
     <div class="divider"></div>
 
@@ -95,7 +137,7 @@
     <!-- Items header row -->
     <div class="item-header">
         <div class="col-qty">Qty</div>
-        <div class="col-desc">Description</div>
+        <div class="col-desc">Item</div>
         <div class="col-price">Price</div>
         <div class="col-total">Total</div>
     </div>

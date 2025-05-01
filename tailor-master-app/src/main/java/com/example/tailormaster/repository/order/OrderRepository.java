@@ -18,12 +18,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // Fetch orders by customer ID
-    List<Order> findByCustomerId(Long customerId);
-
-    // Fetch orders by status
-    List<Order> findByStatus(OrderStatus status);
-
     @Query("SELECT o.orderId FROM Order o WHERE o.user.id = :userId ORDER BY o.id DESC")
     List<String> findLastOrderIdForUser(@Param("userId") Long userId, Pageable pageable);
 
@@ -34,11 +28,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         OR o.customer.phoneNumber LIKE %:search%)
     AND (:startDate IS NULL OR o.orderDate >= :startDate)
     AND (:endDate IS NULL OR o.orderDate <= :endDate)
+    AND (:orderStatus IS NULL OR o.status = :orderStatus)
     """)
-    Page<Order> findBySearchAndDateRange(
+    Page<Order> findBySearchAndDateRangeAndStatus(
             @Param("search") String search,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
+            @Param("orderStatus") OrderStatus orderStatus,
             Pageable pageable
     );
 
@@ -56,6 +52,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('COMPLETED')")
     Long countCompletedOrders();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('CANCELLED')")
+    Long countCancelledOrders();
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('COMPLETED') AND o.pickupDate IS NULL AND o.pickupStatus IN ('NOT_PICKED_UP')")
     Long countOrdersReadyForPickup();

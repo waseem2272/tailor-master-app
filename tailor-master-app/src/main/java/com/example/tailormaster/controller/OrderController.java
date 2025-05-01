@@ -14,6 +14,8 @@ import com.example.tailormaster.validation.Validation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,8 @@ import java.util.stream.Collectors;
 @SessionAttributes("orderDto")
 public class OrderController {
 
+    private static final Logger logger = LogManager.getLogger(OrderController.class);
+
     private final CustomerService customerService;
     private final ProductService productService;
     private final CustomerMeasurementService customerMeasurementService;
@@ -46,7 +50,9 @@ public class OrderController {
 
     @GetMapping
     public String listOrders(Model model) {
+        logger.info("User accessed the orders list page.");
         model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+        model.addAttribute("orderStatusList", OrderStatus.values());
         return "order/orders"; // Redirects to orders.html
     }
 
@@ -59,14 +65,21 @@ public class OrderController {
             @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
             @RequestParam(value = "order[0][dir]", required = false) String sortDirection,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "orderStatus", required = false) OrderStatus orderStatus,
+            @RequestParam(value = "paymentStatus", required = false) String paymentStatus) {
 
         try {
-            Map<String, Object> response = orderService.getPaginatedOrders(draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate);
+            logger.info("Fetching paginated orders for datatable - draw: {}, start: {}, length: {}, search: {}, column: {}, direction: {}, startDate: {}, endDate: {}",
+                    draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate);
+            Map<String, Object> response = orderService.getPaginatedOrders(draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate, orderStatus, paymentStatus);
+            logger.debug("Successfully fetched {} orders for datatable.", ((List<?>) response.get("data")).size());
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request parameters for orders datatable: {}", e.getMessage());
             return ResponseEntity.badRequest().body(createErrorResponse("Invalid request parameters: " + e.getMessage()));
         } catch (Exception e) {
+            logger.error("An unexpected error occurred while fetching orders for datatable: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(createErrorResponse("An unexpected error occurred. Please try again."));
         }
@@ -82,16 +95,18 @@ public class OrderController {
     // Show create order form
     @GetMapping("/create/{id}")
     public String showCreateOrderForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
-
+        logger.info("Displaying create order form for customer ID: {}", id);
         try {
             // Decrypt and validate customer ID
             Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
             if (customerId == null) {
+                logger.warn("Invalid or missing customer ID for create order form.");
                 return "redirect:/customers";
             }
 
             // Fetch customer details (since ID is valid)
             Customer customer = customerService.getCustomerById(customerId);
+            logger.debug("Fetched customer details for ID {}: {}", customerId, customer);
 
             CustomerOrderDto orderDto = new CustomerOrderDto();
             orderDto.setOrderDate(LocalDate.now());
@@ -100,7 +115,7 @@ public class OrderController {
             return populateModel(model, customerId, orderDto, customer);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while preparing the create order form for customer ID {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order, please try again.");
             return "redirect:/customers"; // Handle invalid decryption cases
         }
@@ -113,43 +128,49 @@ public class OrderController {
                               Model model,
                               @RequestParam("encryptedCustomerId") String encryptedCustomerId,
                               Principal principal) {
+        logger.info("Attempting to create a new order for customer ID: {}", encryptedCustomerId);
         try {
             // Decrypt and validate customer ID
             Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
             if (customerId == null) {
+                logger.warn("Invalid or missing customer ID during order creation.");
                 return "redirect:/customers";
             }
 
             // Fetch customer details (since ID is valid)
             Customer customer = customerService.getCustomerById(customerId);
-
+            logger.debug("Fetched customer details for order creation (ID {}): {}", customerId, customer);
             // Perform validation checks
             validateOrder(orderDto, result);
             if (result.hasErrors()) {
+                logger.warn("Validation errors occurred during order creation for customer ID {}: {}", customerId, result.getAllErrors());
                 model.addAttribute("org.springframework.validation.BindingResult.orderDto", result);
                 return populateModel(model, customerId, orderDto, customer);
             }
 
             Optional<User> user = userService.findByUsername(principal.getName());
             if (user.isEmpty()) {
+                logger.error("User not found with username: {}", principal.getName());
                 redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
                 return "redirect:/customers";
             }
-
+            logger.debug("User found: {}", user.get().getUsername());
             // Generate Order ID
             String orderId = generateOrderId(user.get());
-
+            logger.debug("Generated order ID: {}", orderId);
             // Save Order Logic
             Order order = buildOrder(orderDto, customerId);
             order.setUser(user.get());
             order.setOrderId(orderId);
 
             Order savedOrder = orderService.save(order);
+            logger.info("Order created successfully: {}", savedOrder);
 
             redirectAttributes.addFlashAttribute("successMessage", "Order created successfully!");
             redirectAttributes.addFlashAttribute("orderId", savedOrder.getId());
             return "redirect:/orders";
         } catch (Exception e) {
+            logger.error("An error occurred while creating an order for customer ID {}: {}", encryptedCustomerId, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating an order, please try again.");
             return "redirect:/customers";
         }
@@ -210,7 +231,9 @@ public class OrderController {
 
     private void validateOrder(UpdateCustomerOrderDto orderDto, BindingResult result) {
 
-        if (result.hasErrors()) {return;}
+        if (result.hasErrors()) {
+            return;
+        }
 
         if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
             result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
@@ -307,49 +330,74 @@ public class OrderController {
             // Decrypt and validate customer ID
             Long orderId = validation.decryptAndValidateId(id);
             if (orderId == null) {
+                logger.warn("Invalid order ID provided for details.");
                 redirectAttributes.addFlashAttribute("errorMessage", "Invalid order ID.");
                 return "redirect:/orders";
             }
 
             Order order = orderService.findById(orderId);
+            if (order == null) {
+                logger.warn("Order not found with ID: {}", orderId);
+                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+                return "redirect:/orders";
+            }
+            logger.info("Displaying order details: {}", order);
             model.addAttribute("order", order);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-
+            return "order/order-details";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while fetching details for order ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while fetching order details.");
+            return "redirect:/orders";
         }
-        return "order/order-details";
     }
 
     private String generateOrderId(User user) {
-        int orderNumber = orderService.getNextOrderNumberForUser(user.getId());
-        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
-        return String.format("%s-%s-%03d", user.getShortCode(), datePart, orderNumber);
+        try {
+            int orderNumber = orderService.getNextOrderNumberForUser(user.getId());
+            String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+            String orderId = String.format("%s-%s-%03d", user.getShortCode(), datePart, orderNumber);
+            logger.debug("Generated order ID: {} for user: {}", orderId, user.getUsername());
+            return orderId;
+        } catch (Exception e) {
+            logger.error("Error generating order ID for user {}: {}", user.getUsername(), e.getMessage(), e);
+            throw new RuntimeException("Error generating order ID.", e);
+        }
     }
 
     @GetMapping("/edit/{id}")
     public String showEditOrderForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        logger.info("Displaying edit order form for ID: {}", id);
         try {
             // Decrypt and validate order ID
             Long orderId = validation.validateAndFetchOrder(id, redirectAttributes);
             if (orderId == null) {
+                logger.warn("Invalid order ID provided for editing.");
                 return "redirect:/orders";
             }
 
             Order order = orderService.findById(orderId);
+            if (order == null) {
+                logger.warn("Order not found with ID {} for editing.", orderId);
+                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+                return "redirect:/orders";
+            }
+            List<Map<String, Object>> orderProducts = orderService.getOrderProducts(order);
+            logger.info("Fetched order details for edit: {}: and order products: {}", order, orderProducts);
             UpdateCustomerOrderDto orderUpdateDto = populateOrderUpdateDto(order);
             model.addAttribute("orderDto", orderUpdateDto);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             return "order/update";
 
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating order: " + e.getMessage());
+            logger.error("An error occurred while preparing the edit order form for ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while preparing the edit order: " + e.getMessage());
             return "redirect:/orders"; // Keep only one return statement
         }
     }
 
     private UpdateCustomerOrderDto populateOrderUpdateDto(Order order) {
+        logger.debug("Populating UpdateCustomerOrderDto for order ID: {}", order.getId());
         UpdateCustomerOrderDto orderUpdateDto = new UpdateCustomerOrderDto();
 
         // Set order details
@@ -372,9 +420,8 @@ public class OrderController {
             orderProductDto.setPrice(orderProduct.getProduct().getPrice());
             return orderProductDto;
         }).collect(Collectors.toList());
-
         orderUpdateDto.setOrderProducts(orderProductDtos);
-
+        logger.debug("Successfully populated UpdateCustomerOrderDto with {} product(s).", orderProductDtos.size());
         return orderUpdateDto;
     }
 
@@ -385,20 +432,27 @@ public class OrderController {
             Model model,
             RedirectAttributes redirectAttributes,
             @RequestParam("encryptedOrderId") String encryptedOrderId) {
-
+        logger.info("Attempting to update order with encrypted order ID: {}", encryptedOrderId);
         try {
             // Decrypt and validate order ID
             Long orderId = validation.validateAndFetchOrder(encryptedOrderId, redirectAttributes);
             if (orderId == null) {
+                logger.warn("Invalid order ID provided for update: {}", encryptedOrderId);
                 return "redirect:/orders";
             }
-
+            logger.debug("Decrypted order ID for update: {}", orderId);
             // Fetch order details (since ID is valid)
             Order order = orderService.findById(orderId);
-
+            if (order == null) {
+                logger.warn("Order not found with ID {} for update.", orderId);
+                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+                return "redirect:/orders";
+            }
+//            logger.info("Fetched order for update (ID {}): {}", orderId, order);
             // Perform validation checks
             validateOrder(orderUpdateDto, bindingResult);
             if (bindingResult.hasErrors()) {
+                logger.warn("Validation errors occurred during order update for ID {}: {}", orderId, bindingResult.getAllErrors());
                 model.addAttribute("org.springframework.validation.BindingResult.orderDto", bindingResult);
                 UpdateCustomerOrderDto orderUpdateDto1 = populateOrderUpdateDto(order);
                 model.addAttribute("orderDto", orderUpdateDto1);
@@ -406,13 +460,13 @@ public class OrderController {
                 return "order/update";
             }
 
-            Order updateOrder = orderService.updateOrder(orderId, orderUpdateDto);
-
+            Order updatedOrder = orderService.updateOrder(orderId, orderUpdateDto);
+            logger.info("Order updated successfully: {}", updatedOrder);
             redirectAttributes.addFlashAttribute("successMessage", "Order updated successfully!");
-            redirectAttributes.addFlashAttribute("orderId", updateOrder.getId());
+            redirectAttributes.addFlashAttribute("orderId", updatedOrder.getId());
             return "redirect:/orders";
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occurred while updating order with encrypted ID {}: {}", encryptedOrderId, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating an order, please try again.");
             return "redirect:/orders";
         }
@@ -421,24 +475,31 @@ public class OrderController {
     @PostMapping("/update-order-status")
     @ResponseBody
     public ResponseEntity<?> updateOrderStatus(@RequestBody OrderStatusUpdateDto dto) {
+        logger.info("Attempting to update order status for order ID: {}", dto.getOrderId());
         try {
             Order order = orderService.findById(dto.getOrderId());
 
             if (order == null) {
+                logger.warn("Order not found with ID {} for status update.", dto.getOrderId());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
             }
+            logger.debug("Fetched order for status update (ID {}): {}", dto.getOrderId(), order);
 
             order.setStatus(dto.getStatus());
-
+            logger.debug("Updated order status to: {}", dto.getStatus());
             if (dto.getStatus() == OrderStatus.COMPLETED) {
                 order.setCabinetNo(dto.getCabinetNo());
+                logger.debug("Set cabinet number to: {}", dto.getCabinetNo());
             } else {
                 order.setCabinetNo(null); // Clear cabinet number if status is not COMPLETED
+                logger.debug("Cleared cabinet number as status is not COMPLETED.");
             }
 
-            orderService.save(order);
+            orderService.updateOrderStatus(order);
+            logger.info("Order status updated successfully for ID: {}", dto.getOrderId());
             return ResponseEntity.ok("Order status updated successfully!");
         } catch (Exception e) {
+            logger.error("An error occurred while updating order status for ID {}: {}", dto.getOrderId(), e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating order status: " + e.getMessage());
         }
     }
@@ -446,22 +507,35 @@ public class OrderController {
     @PostMapping("/pickup")
     @ResponseBody
     public ResponseEntity<Map<String, String>> markOrderAsPickedUp(@RequestBody PickupRequest request) {
+        logger.info("Attempting to mark order as picked up with ID: {} and amount received: {}", request.getOrderId(), request.getAmountReceived());
         return handleOrderRequest(request.getOrderId(), request.getAmountReceived(), "Order updated successfully.",
                 orderService::markOrderAsPickedUp);
     }
 
     @GetMapping("/pending-payments")
     public String showPendingPayments(Model model) {
-        List<Order> pendingPayments = orderService.getOrdersWithOutstandingDue();
-        model.addAttribute("pendingPayments", pendingPayments);
-        model.addAttribute("activePage", "orders/pending-payments");
-        model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-        return "order/pending-payments";
+        logger.info("User accessed the pending payments page.");
+        try {
+            List<Order> pendingPayments = orderService.getOrdersWithOutstandingDue();
+            logger.debug("Fetched {} orders with pending payments.", pendingPayments.size());
+
+            model.addAttribute("pendingPayments", pendingPayments);
+            model.addAttribute("activePage", "orders/pending-payments");
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            return "order/pending-payments";
+        } catch (Exception e) {
+            logger.error("Error fetching pending payments: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "Error fetching pending payments.");
+            model.addAttribute("activePage", "orders/pending-payments");
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            return "order/pending-payments"; // Or handle differently
+        }
     }
 
     @PostMapping("/pending-payments/pay")
     @ResponseBody
     public ResponseEntity<Map<String, String>> processPayment(@RequestBody PendingPaymentRequest request) {
+        logger.info("Attempting to process payment of {} for order ID: {}", request.getPaymentAmount(), request.getOrderId());
         return handleOrderRequest(request.getOrderId(), request.getPaymentAmount(), "Payment successful.",
                 orderService::processPayment);
     }
@@ -472,24 +546,31 @@ public class OrderController {
     private ResponseEntity<Map<String, String>> handleOrderRequest(String encryptedOrderId, BigDecimal amount,
                                                                    String successMessage,
                                                                    BiConsumer<Order, BigDecimal> orderProcessor) {
+        logger.debug("Handling order request for encrypted ID: {}, amount: {}, success message: {}", encryptedOrderId, amount, successMessage);
         try {
             Long decryptedOrderId = validation.validateAndFetchOrder(encryptedOrderId);
             if (decryptedOrderId == null) {
+                logger.warn("Invalid order ID provided: {}", encryptedOrderId);
                 return errorResponse(HttpStatus.NOT_FOUND, "Order not found!");
             }
+            logger.debug("Decrypted order ID: {}", decryptedOrderId);
 
             Order order = orderService.findById(decryptedOrderId);
             if (order == null) {
+                logger.warn("Order not found with ID: {}", decryptedOrderId);
                 return errorResponse(HttpStatus.NOT_FOUND, "Order not found!");
             }
+            logger.debug("Fetched order for processing (ID {}): {}", decryptedOrderId, order);
 
             // ✅ Process the order (payment or pickup)
             orderProcessor.accept(order, amount);
-
+            logger.info("Order request processed successfully for ID: {}", decryptedOrderId);
             return ResponseEntity.ok(Collections.singletonMap("message", successMessage));
         } catch (IllegalArgumentException e) {
+            logger.warn("Illegal argument exception during order request for ID {}: {}", encryptedOrderId, e.getMessage());
             return errorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
+            logger.error("An unexpected error occurred during order request for ID {}: {}", encryptedOrderId, e.getMessage(), e);
             return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing request.");
         }
     }
@@ -498,6 +579,7 @@ public class OrderController {
      * ✅ Utility method to create error responses.
      */
     private ResponseEntity<Map<String, String>> errorResponse(HttpStatus status, String message) {
+        logger.warn("Creating error response with status {} and message: {}", status, message);
         return ResponseEntity.status(status).body(Collections.singletonMap("error", message));
     }
 

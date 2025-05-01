@@ -55,6 +55,7 @@
                         <th>Order ID</th>
                         <th>Customer</th>
                         <th>Total Amount</th>
+                        <th>Advance Payment</th>
                         <th>Paid Amount</th>
                         <th>Outstanding Due</th>
                         <th>Actions</th>
@@ -68,7 +69,9 @@
                             <small class="text-muted" th:text="${order.customer.phoneNumber}"></small>
                         </td>
 
-                        <td th:text="${order.duePayment}"></td>
+<!--                        <td th:text="${order.duePayment}"></td>-->
+                        <td th:text="${order.totalProductAmount}"></td>
+                        <td th:text="${order.advancePayment}"></td>
                         <td th:text="${order.paidAmount}"></td>
                         <td class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></td>
                         <td>

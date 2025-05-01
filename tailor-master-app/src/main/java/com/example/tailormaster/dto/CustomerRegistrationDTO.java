@@ -9,10 +9,11 @@ import com.example.tailormaster.validation.products.ValidateSelectedProducts;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.*;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class CustomerRegistrationDTO {
 
     @Valid

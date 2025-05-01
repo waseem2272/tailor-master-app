@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,5 +36,6 @@ public class Customer extends BaseEntity {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @ToString.Exclude
     private List<CustomerMeasurement> measurements;
 }

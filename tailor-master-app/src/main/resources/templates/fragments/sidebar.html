@@ -4,17 +4,15 @@
 
 <div th:fragment="sidebar">
     <div class="sidebar" id="sidebar">
-        <h4 class="text-center py-3">Test Tailors</h4>
+        <div class="sidebar-brand text-center py-3 px-2 mb-3">
+            <i class="bi bi-scissors text-primary fs-3 d-block mb-1"></i>
+            <h5 class="fw-bold text-uppercase mb-0" th:text="${shopName}">Shop Name</h5>
+        </div>
+        <div class="mx-3 mb-3" style="height: 1px; background: linear-gradient(to right, #ffffff, #ffffff);"></div>
         <a th:href="@{/dashboard}"
            th:classappend="${activePage == 'dashboard'} ? 'active'">
             <i class="bi bi-speedometer2 me-2"></i> Dashboard
         </a>
-
-        <!--<a th:href="@{/users/profile}"
-           sec:authorize="hasRole('ROLE_ADMIN')"
-           th:classappend="${activePage == 'profile'} ? 'active'">
-            <i class="bi bi-person-circle me-2"></i> My Profile
-        </a>-->
 
         <a th:href="@{/products}"
            sec:authorize="hasRole('ROLE_ADMIN')"
@@ -39,10 +37,6 @@
            th:classappend="${activePage == 'orders/pending-payments'} ? 'active'">
             <i class="bi bi-cash-coin me-2"></i> Pending Payments
         </a>
-
-        <!--<a th:href="@{/logout}" class="text-danger">
-            <i class="bi bi-box-arrow-right me-2"></i> Logout
-        </a>-->
     </div>
 </div>
 

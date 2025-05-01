@@ -1,12 +1,24 @@
 package com.example.tailormaster.controller;
 
+import com.example.tailormaster.entity.User;
+import com.example.tailormaster.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.Optional;
+
 @ControllerAdvice
 public class GlobalControllerAdvice {
+
+    private final UserService userService;
+
+    public GlobalControllerAdvice(UserService userService) {
+        this.userService = userService;
+    }
 
     @ModelAttribute
     public void addAttributes(Model model, HttpServletRequest request) {
@@ -24,5 +36,16 @@ public class GlobalControllerAdvice {
         } else if (uri.contains("/users/profile")) {
             model.addAttribute("activePage", "profile");
         }
+
+        // Get logged-in user and add shop name or whole user to model
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+            String username = auth.getName();
+            Optional<User> user = userService.findByUsername(username);
+            //                model.addAttribute("loggedInUser", user); // Add full user object if needed
+            // Or just shop name
+            user.ifPresent(value -> model.addAttribute("shopName", value.getShopName()));
+        }
     }
 }
+

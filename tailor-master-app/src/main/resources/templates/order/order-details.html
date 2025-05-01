@@ -54,10 +54,9 @@
                                     <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'yyyy-MM-dd')}"></span></p>
 
                                     <!-- Order Status (Only for COMPLETED and CANCELLED) -->
-                                    <p th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED
-                or order.status == T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
-                                        <strong>Order Status:</strong>
-                                        <span th:classappend="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED} ? 'badge bg-success' : 'badge bg-danger'"
+                                    <p th:if="${order.status?.name() == 'COMPLETED' or order.status?.name() == 'CANCELLED'}">
+                                    <strong>Order Status:</strong>
+                                        <span th:classappend="${order.status?.name() == 'COMPLETED'} ? 'badge bg-success' : 'badge bg-danger'"
                                               th:text="${order.status}">
             </span>
                                     </p>
@@ -71,11 +70,11 @@
                                     <p><strong>Outstanding Due:</strong> <span class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></span></p>
 
                                     <!-- Payment Status (Show if Order is COMPLETED OR Outstanding Due > 0) -->
-                                    <p th:if="${order.status == T(com.example.tailormaster.enums.OrderStatus).COMPLETED
-            and order.pickupStatus == T(com.example.tailormaster.enums.PickupStatus).PICKED_UP}">
+                                    <p th:if="${order.status?.name() == 'COMPLETED'
+            and order.pickupStatus?.name() == 'PICKED_UP'}">
                                         <strong>Payment Status:</strong>
-                                        <span th:classappend="${order.paidAmount == order.duePayment} ? 'badge bg-success' : 'badge bg-warning text-dark'"
-                                              th:text="${order.paidAmount == order.duePayment} ? 'Paid' : 'Partially Paid'"></span>
+                                        <span th:classappend="${order.paidAmount == order.totalProductAmount} ? 'badge bg-success' : 'badge bg-warning text-dark'"
+                                              th:text="${order.paidAmount == order.totalProductAmount} ? 'Paid' : 'Partially Paid'"></span>
                                     </p>
 
                                 </div>
@@ -83,12 +82,12 @@
 
                             <!-- Status Update Section (Appears Only for Active Orders) -->
                             <div class="row align-items-center mb-3"
-                                 th:if="${order.status != T(com.example.tailormaster.enums.OrderStatus).COMPLETED and
-                             order.status != T(com.example.tailormaster.enums.OrderStatus).CANCELLED}">
+                                 th:if="${order.status?.name() != 'COMPLETED' and
+                             order.status?.name() != 'CANCELLED'}">
                                 <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
                                     <label for="orderStatus" class="fw-bold me-2">Order Status</label>
                                     <select id="orderStatus" name="status" class="form-select w-auto">
-                                        <option th:each="status : ${T(com.example.tailormaster.enums.OrderStatus).values()}"
+                                        <option th:each="status : ${order.status?.values()}"
                                                 th:value="${status}" th:text="${status}"
                                                 th:selected="${order.status == status}">
                                         </option>
@@ -151,10 +150,10 @@
                     <i class="bi bi-receipt"></i> View Customer Receipt
                 </a>
 
-                <a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='tailor')}"
+                <!--<a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='tailor')}"
                    class="btn btn-success me-2">
                     <i class="bi bi-receipt"></i> View Tailor Receipt
-                </a>
+                </a>-->
                 <a th:href="@{/orders}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle"></i> Back to Orders
                 </a>

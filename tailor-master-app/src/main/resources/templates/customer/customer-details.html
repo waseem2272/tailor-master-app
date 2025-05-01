@@ -6,6 +6,19 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+    <!-- Add this CSS somewhere (either page <style> or global) -->
+    <style>
+        .collapse-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .collapsed .collapse-toggle-icon {
+            transform: rotate(0deg);
+        }
+        .collapse.show + .card-body .collapse-toggle-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -83,6 +96,106 @@
                 </div>
             </div>
 
+            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-book me-2"></i> Customer Ledger
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Summary Bar -->
+                    <div class="row text-center mb-4">
+                        <div class="col-md-3 mb-2">
+                            <div class="p-3 border rounded bg-light">
+                                <h6 class="text-muted mb-1">Total Orders</h6>
+                                <h5 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"></h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="p-3 border rounded bg-light">
+                                <h6 class="text-muted mb-1">Total Credit</h6>
+                                <h5 class="fw-bold text-success mb-0"
+                                    th:text="${#numbers.formatDecimal(totalCredit, 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="p-3 border rounded bg-light">
+                                <h6 class="text-muted mb-1">Total Debit</h6>
+                                <h5 class="fw-bold text-danger mb-0"
+                                    th:text="${#numbers.formatDecimal(totalDebit, 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="p-3 border rounded bg-light">
+                                <h6 class="text-muted mb-1">Outstanding Balance</h6>
+                                <h5 class="fw-bold mb-0"
+                                    th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? 'text-success' : 'text-danger'"
+                                    th:text="${#numbers.formatDecimal(totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:each="orderEntry : ${orderLedgerMap}" class="mb-3">
+                        <div class="card shadow-sm rounded-3">
+                            <div class="card-header d-flex justify-content-between align-items-center bg-success-subtle text-success-emphasis"
+                                 style="cursor: pointer;"
+                                 data-bs-toggle="collapse"
+                                 th:data-bs-target="'#collapse__' + ${orderEntry.key}"
+                                 th:aria-controls="'collapse__' + ${orderEntry.key}"
+                                 aria-expanded="true">
+
+                                <div>
+                                    <h6 class="mb-0" th:text="'Order: ' + ${orderEntry.key}"></h6>
+                                    <small>
+                                        Remaining Balance:
+                                        <span th:text="${#numbers.formatDecimal(orderBalances[orderEntry.key], 1, 'COMMA', 2, 'POINT')}"
+                                              th:classappend="${orderBalances[orderEntry.key] >= 0} ? 'text-success' : 'text-danger'">
+                            </span>
+                                    </small>
+                                </div>
+                                <div>
+                                    <i class="bi bi-chevron-down collapse-toggle-icon"
+                                       th:id="'icon__' + ${orderEntry.key}"></i>
+                                </div>
+                            </div>
+
+                            <div th:id="'collapse__' + ${orderEntry.key}" class="collapse show">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped mb-0">
+                                            <thead class="table-light">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Date</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Description</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="entry, iterStat : ${orderEntry.value}">
+                                                <td th:text="${iterStat.index + 1}"></td>
+                                                <td th:text="${#temporals.format(entry.paymentDate, 'yyyy-MM-dd')}"></td>
+                                                <td>
+                                        <span th:text="${entry.paymentType}"
+                                              th:classappend="${entry.paymentType == 'CREDIT'} ? 'text-success' : 'text-danger'">
+                                        </span>
+                                                </td>
+                                                <td th:text="${#numbers.formatDecimal(entry.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                                <td th:text="${entry.remarks}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- card-body -->
+            </div>
 
         </div>
     </div>
@@ -97,5 +210,26 @@
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+<script>
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (header) {
+        header.addEventListener('click', function () {
+            const icon = header.querySelector('i');
+            const targetId = header.getAttribute('data-bs-target');
+            const target = document.querySelector(targetId);
+
+            target.addEventListener('shown.bs.collapse', function () {
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            });
+
+            target.addEventListener('hidden.bs.collapse', function () {
+                icon.classList.remove('bi-chevron-up');
+                icon.classList.add('bi-chevron-down');
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>
