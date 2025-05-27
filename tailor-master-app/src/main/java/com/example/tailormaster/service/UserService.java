@@ -81,6 +81,10 @@ public class UserService {
         existingUser.setShopAddress(updatedUser.getShopAddress());
         existingUser.setShortCode(updatedUser.getShortCode());
 
+        if (updatedUser.getLogo() != null && updatedUser.getLogoContentType() != null) {
+            existingUser.setLogo(updatedUser.getLogo());
+            existingUser.setLogoContentType(updatedUser.getLogoContentType());
+        }
         userRepository.save(existingUser);
     }
 }

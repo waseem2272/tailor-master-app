@@ -1,84 +1,24 @@
-2025-05-02 00:04:36 [] WARN  org.apache.catalina.util.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [425] milliseconds.
-2025-05-02 00:04:36 [ANONYMOUS] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'ANONYMOUS' is requesting: GET /tailor-master/login
-2025-05-02 00:04:36 [ANONYMOUS] INFO  com.example.tailormaster.controller.AuthController - Accessed login page
-2025-05-02 00:04:45 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
-2025-05-02 00:04:45 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 2000.00
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 2000.00
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 48
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 48
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 41
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 41
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
-2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
-2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
-2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
-2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
-2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false)
-2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: [CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true), chest=null, sleeveLength=null, shoulder=null, hips=22, waist=34, barcode=LedgerTest303219988776-6fccaec9-e05e-459b-8f12-70f13381b24a), CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), chest=34, sleeveLength=32, shoulder=23, hips=null, waist=null, barcode=LedgerTest303219988776-1b6b5e86-06cd-4c1e-b7e4-e43ce15cd165)]
-2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
-2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
-2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
-2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
-2025-05-02 00:09:44 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-05-02 00:09:47 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
-2025-05-02 00:09:47 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-05-02 00:09:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
-2025-05-02 00:09:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
-2025-05-02 00:10:09 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
-2025-05-02 00:10:09 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 7816 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
-2025-05-02 00:10:09 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
-2025-05-02 00:10:09 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2025-05-02 00:10:09 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2025-05-02 00:10:14 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-05-02 00:10:14 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 445 ms. Found 9 JPA repository interfaces.
-2025-05-02 00:10:16 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2025-05-02 00:10:17 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
-2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
-2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
-2025-05-02 00:10:17 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7620 ms
-2025-05-02 00:10:18 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-05-02 00:10:18 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
-2025-05-02 00:10:18 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
-2025-05-02 00:10:19 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-05-02 00:10:19 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-05-02 00:10:21 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@49637bee
-2025-05-02 00:10:21 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2025-05-02 00:10:21 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+2025-05-28 00:16:24 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-28 00:16:24 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 12996 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-28 00:16:24 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-28 00:16:24 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-28 00:16:24 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-28 00:16:27 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28 00:16:27 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 274 ms. Found 11 JPA repository interfaces.
+2025-05-28 00:16:29 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-28 00:16:29 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-28 00:16:29 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-28 00:16:29 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-28 00:16:29 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-28 00:16:29 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4316 ms
+2025-05-28 00:16:29 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-28 00:16:29 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-28 00:16:29 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-28 00:16:30 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-28 00:16:30 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-28 00:16:31 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@140de2bb
+2025-05-28 00:16:31 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-28 00:16:31 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
 	Database driver: undefined/unknown
 	Database version: 8.0.28
@@ -86,29 +26,284 @@
 	Isolation level: undefined/unknown
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2025-05-02 00:10:25 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-05-02 00:10:25 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-05-02 00:10:26 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-05-02 00:10:31 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-05-02 00:10:31 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
-2025-05-02 00:10:31 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
-2025-05-02 00:10:33 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
-2025-05-02 00:10:33 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2025-05-02 00:10:33 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
-2025-05-02 00:10:33 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 26.114 seconds (process running for 30.075)
-2025-05-02 00:16:25 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-05-02 00:16:25 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2025-05-02 00:16:25 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
-2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
-2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
-2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false)
-2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: [CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true), chest=null, sleeveLength=null, shoulder=null, hips=22, waist=34, barcode=LedgerTest303219988776-6fccaec9-e05e-459b-8f12-70f13381b24a), CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), chest=34, sleeveLength=32, shoulder=23, hips=null, waist=null, barcode=LedgerTest303219988776-1b6b5e86-06cd-4c1e-b7e4-e43ce15cd165)]
-2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
-2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
-2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
-2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
-2025-05-02 00:27:26 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-05-02 00:27:29 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
-2025-05-02 00:27:29 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-05-02 00:27:29 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2025-05-02 00:27:30 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-28 00:16:34 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-28 00:16:34 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 00:16:35 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-28 00:16:38 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28 00:16:38 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-28 00:16:38 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-28 00:16:40 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-28 00:16:40 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-28 00:16:40 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-28 00:16:40 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 16.761 seconds (process running for 22.525)
+2025-05-28 00:16:45 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28 00:16:45 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-28 00:16:45 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-05-28 00:16:45 [] WARN  org.apache.catalina.util.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [135] milliseconds.
+2025-05-28 00:16:45 [ANONYMOUS] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'ANONYMOUS' is requesting: GET /tailor-master/login
+2025-05-28 00:16:46 [ANONYMOUS] INFO  com.example.tailormaster.controller.AuthController - Accessed login page
+2025-05-28 00:16:54 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
+2025-05-28 00:16:54 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 15000.00
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 15000.00
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:16:55 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=10, InProgress=2, Completed=41, Ready for Pickup=7}
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=10, InProgress=2, Completed=41, Ready for Pickup=7}
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 51
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 51
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 54
+2025-05-28 00:16:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 54
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - User accessed the labor list page.
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Retrieved labors: [Labor(name=TestLabor, contact=03001122334, skills=Stitching, joinDate=2025-05-03, status=ACTIVE), Labor(name=LaborTest3, contact=03221122333, skills=Stitching, joinDate=2025-05-04, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=update, joinDate=null, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=Finishing, joinDate=2025-05-01, status=ACTIVE)] 
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:17:07 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:17:19 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-28 00:17:20 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-28 00:19:10 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-28 00:19:12 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-28 00:19:12 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 00:19:12 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-28 00:19:12 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-28 00:19:22 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-28 00:19:22 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 10444 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-28 00:19:22 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-28 00:19:22 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-28 00:19:22 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-28 00:19:24 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-28 00:19:24 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 175 ms. Found 11 JPA repository interfaces.
+2025-05-28 00:19:25 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-28 00:19:25 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-28 00:19:25 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-28 00:19:25 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-28 00:19:25 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-28 00:19:25 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3052 ms
+2025-05-28 00:19:25 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-28 00:19:25 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-28 00:19:25 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-28 00:19:26 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-28 00:19:26 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-28 00:19:27 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2d49dde0
+2025-05-28 00:19:27 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-28 00:19:27 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-28 00:19:29 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-28 00:19:29 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 00:19:30 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-28 00:19:33 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-28 00:19:33 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-28 00:19:33 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-28 00:19:35 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-28 00:19:35 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-28 00:19:35 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-28 00:19:35 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 14.198 seconds (process running for 17.127)
+2025-05-28 00:19:46 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-28 00:19:46 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-28 00:19:46 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-05-28 00:19:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-28 00:19:46 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - User accessed the labor list page.
+2025-05-28 00:19:46 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Retrieved labors: [Labor(name=TestLabor, contact=03001122334, skills=Stitching, joinDate=2025-05-03, status=ACTIVE), Labor(name=LaborTest3, contact=03221122333, skills=Stitching, joinDate=2025-05-04, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=update, joinDate=null, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=Finishing, joinDate=2025-05-01, status=ACTIVE)] 
+2025-05-28 00:19:47 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:19:48 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:19:48 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:19:48 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:20:07 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors/details/hndwCr2Y87sLX20faRlMGXPUtGIA-xPCol_BbmYlS08=
+2025-05-28 00:20:07 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Displaying details for labor ID (encrypted): hndwCr2Y87sLX20faRlMGXPUtGIA-xPCol_BbmYlS08=
+2025-05-28 00:20:07 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Fetched labor details: Labor(name=LaborTest3, contact=03221122333, skills=Stitching, joinDate=2025-05-04, status=ACTIVE)
+2025-05-28 00:20:08 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:20:08 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:20:08 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:20:08 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:20:40 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/details/2RW20-15E1Po21eyhSEQc5Mhe-GsP1e1E8eXKs6CAMw=
+2025-05-28 00:20:40 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Displaying order details: Order(customer=Customer(fullName=Test Customer 3, phoneNumber=03224499840, enabled=false), orderDate=2025-04-10, deliveryDate=2025-04-11, advancePayment=0.00, duePayment=4000.00, totalProductAmount=4000.00, orderId=GT-250410-001, user=User(username=abdullateef, fullName=Ahmed Raza, fathersName=null, phone1=03453759863, phone2=, dateOfBirth=2000-01-01, shopName=Jinan Gents Tailor, proprietorName=Ahmed Raza, shopAddress=Shop No. 1, Apple Residency, Opp Adam Square Monak Jee Street, Soldier Bazar No. 2, Karachi., shortCode=JGT, enabled=true), status=PENDING, cabinetNo=null, pickupStatus=NOT_PICKED_UP, pickupDate=null, pickedUpWithDue=false, outstandingDueAmount=0.00, paidAmount=0.00)
+2025-05-28 00:20:41 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:20:41 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:20:41 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 12
+2025-05-28 00:20:41 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 12
+2025-05-28 00:20:51 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: POST /tailor-master/orders/update-order-status
+2025-05-28 00:20:51 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Attempting to update order status for order ID: 66
+2025-05-28 00:20:51 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Order Status updated with ID: 66
+2025-05-28 00:20:51 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Order status updated successfully for ID: 66
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/details/2RW20-15E1Po21eyhSEQc5Mhe-GsP1e1E8eXKs6CAMw=
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Displaying order details: Order(customer=Customer(fullName=Test Customer 3, phoneNumber=03224499840, enabled=false), orderDate=2025-04-10, deliveryDate=2025-04-11, advancePayment=0.00, duePayment=4000.00, totalProductAmount=4000.00, orderId=GT-250410-001, user=User(username=abdullateef, fullName=Ahmed Raza, fathersName=null, phone1=03453759863, phone2=, dateOfBirth=2000-01-01, shopName=Jinan Gents Tailor, proprietorName=Ahmed Raza, shopAddress=Shop No. 1, Apple Residency, Opp Adam Square Monak Jee Street, Soldier Bazar No. 2, Karachi., shortCode=JGT, enabled=true), status=COMPLETED, cabinetNo=14, pickupStatus=NOT_PICKED_UP, pickupDate=null, pickedUpWithDue=false, outstandingDueAmount=0.00, paidAmount=0.00)
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:20:56 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:01 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders
+2025-05-28 00:21:01 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - User accessed the orders list page.
+2025-05-28 00:21:01 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:21:01 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-28 00:21:01 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:21:02 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:21:02 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:02 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 1, start: 0, length: 10, search: , column: 0, direction: asc, startDate: null, endDate: null
+2025-05-28 00:21:02 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 1, start: 0, length: 10, filtered: 54, total: 54
+2025-05-28 00:21:07 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-28 00:21:07 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 2, start: 0, length: 10, search: GT-250410-001, column: 0, direction: asc, startDate: null, endDate: null
+2025-05-28 00:21:07 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 2, start: 0, length: 10, filtered: 1, total: 54
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 15000.00
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 15000.00
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
+2025-05-28 00:21:15 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=9, InProgress=2, Completed=42, Ready for Pickup=8}
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=9, InProgress=2, Completed=42, Ready for Pickup=8}
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 54
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 54
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 51
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 51
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
+2025-05-28 00:21:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
+2025-05-28 00:21:18 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders
+2025-05-28 00:21:18 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - User accessed the orders list page.
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 1, start: 0, length: 10, search: , column: 0, direction: asc, startDate: null, endDate: null
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:19 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 1, start: 0, length: 10, filtered: 54, total: 54
+2025-05-28 00:21:22 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-28 00:21:22 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 2, start: 0, length: 10, search: GT-250410-001, column: 0, direction: asc, startDate: null, endDate: null
+2025-05-28 00:21:22 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 2, start: 0, length: 10, filtered: 1, total: 54
+2025-05-28 00:21:29 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: POST /tailor-master/orders/pickup
+2025-05-28 00:21:29 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Attempting to mark order as picked up with ID: oPElOmw0rbTqTrrT--fVAPJ_K9PkbrqhMZW7Jz5kz9w= and amount received: 4000
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Attempting the Order: Order(customer=Customer(fullName=Test Customer 3, phoneNumber=03224499840, enabled=false), orderDate=2025-04-10, deliveryDate=2025-04-11, advancePayment=0.00, duePayment=4000.00, totalProductAmount=4000.00, orderId=GT-250410-001, user=User(username=abdullateef, fullName=Ahmed Raza, fathersName=null, phone1=03453759863, phone2=, dateOfBirth=2000-01-01, shopName=Jinan Gents Tailor, proprietorName=Ahmed Raza, shopAddress=Shop No. 1, Apple Residency, Opp Adam Square Monak Jee Street, Soldier Bazar No. 2, Karachi., shortCode=JGT, enabled=true), status=COMPLETED, cabinetNo=14, pickupStatus=NOT_PICKED_UP, pickupDate=null, pickedUpWithDue=false, outstandingDueAmount=0.00, paidAmount=0.00) mark as picked up with amount received: 4000
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Order with ID 66 marked as picked up. Amount received: 4000, Outstanding due: 0.00
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Order request processed successfully for ID: 66
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 3, start: 0, length: 10, search: GT-250410-001, column: 0, direction: asc, startDate: null, endDate: null
+2025-05-28 00:21:30 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 3, start: 0, length: 10, filtered: 1, total: 54
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/details/w5xmxMReWV1VlLFQod4SX3nXfgmzi8FMDF4u29jh64Y=
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Displaying order details: Order(customer=Customer(fullName=Test Customer 3, phoneNumber=03224499840, enabled=false), orderDate=2025-04-10, deliveryDate=2025-04-11, advancePayment=0.00, duePayment=4000.00, totalProductAmount=4000.00, orderId=GT-250410-001, user=User(username=abdullateef, fullName=Ahmed Raza, fathersName=null, phone1=03453759863, phone2=, dateOfBirth=2000-01-01, shopName=Jinan Gents Tailor, proprietorName=Ahmed Raza, shopAddress=Shop No. 1, Apple Residency, Opp Adam Square Monak Jee Street, Soldier Bazar No. 2, Karachi., shortCode=JGT, enabled=true), status=COMPLETED, cabinetNo=14, pickupStatus=PICKED_UP, pickupDate=2025-05-28T00:21:30, pickedUpWithDue=false, outstandingDueAmount=0.00, paidAmount=4000.00)
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:21:37 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 19000.00
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 19000.00
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=9, InProgress=2, Completed=42, Ready for Pickup=7}
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=9, InProgress=2, Completed=42, Ready for Pickup=7}
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 51
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 51
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 54
+2025-05-28 00:21:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 54
+2025-05-28 00:22:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-28 00:22:46 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - User accessed the labor list page.
+2025-05-28 00:22:46 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Retrieved labors: [Labor(name=TestLabor, contact=03001122334, skills=Stitching, joinDate=2025-05-03, status=ACTIVE), Labor(name=LaborTest3, contact=03221122333, skills=Stitching, joinDate=2025-05-04, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=update, joinDate=null, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=Finishing, joinDate=2025-05-01, status=ACTIVE)] 
+2025-05-28 00:22:48 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:22:48 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:22:48 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:22:48 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:22:54 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors/details/gdziBUdG22_W2AkKkzHsFCzUYN12F0SgEwCQEald_vc=
+2025-05-28 00:22:54 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Displaying details for labor ID (encrypted): gdziBUdG22_W2AkKkzHsFCzUYN12F0SgEwCQEald_vc=
+2025-05-28 00:22:54 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Fetched labor details: Labor(name=LaborTest4, contact=03002211223, skills=update, joinDate=null, status=ACTIVE)
+2025-05-28 00:22:55 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:22:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:22:55 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:22:55 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:29:05 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-28 00:29:05 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - User accessed the labor list page.
+2025-05-28 00:29:05 [abdullateef] INFO  com.example.tailormaster.controller.labor.LaborController - Retrieved labors: [Labor(name=TestLabor, contact=03001122334, skills=Stitching, joinDate=2025-05-03, status=ACTIVE), Labor(name=LaborTest3, contact=03221122333, skills=Stitching, joinDate=2025-05-04, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=update, joinDate=null, status=ACTIVE), Labor(name=LaborTest4, contact=03002211223, skills=Finishing, joinDate=2025-05-01, status=ACTIVE)] 
+2025-05-28 00:29:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-28 00:29:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-28 00:29:06 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 11
+2025-05-28 00:29:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 11
+2025-05-28 00:53:18 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-28 00:53:20 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-28 00:53:20 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-28 00:53:21 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-28 00:53:21 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

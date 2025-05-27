@@ -10,7 +10,96 @@
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-box-seam-fill me-2"></i> Update Product
+            </h2>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+            <form id="updateProductForm" th:action="@{/products/update}" th:object="${product}" method="post" onsubmit="return validateForm()">
+                <input type="hidden" name="encryptedProductId"
+                       th:if="${thymeleafUtil != null}"
+                       th:value="${thymeleafUtil.encryptId(product.id)}"/>
+
+                <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                        <i class="bi bi-info-circle me-2"></i> Product Information
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                <input type="text" id="name" th:field="*{name}" class="form-control" required>
+                                <div th:if="${#fields.hasErrors('name')}" class="text-danger error-message">
+                                    <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
+                                </div>
+                                <div id="nameError" class="text-danger error-message"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="type" class="form-label">Product Type <span class="text-danger">*</span></label>
+                                <select id="type" th:field="*{type}" class="form-select" required>
+                                    <option value="">Select Product Type</option>
+                                    <option th:each="productType : ${T(com.example.tailormaster.entity.product.ProductType).values()}"
+                                            th:value="${productType}" th:text="${productType}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('type')}" class="text-danger error-message">
+                                    <div th:each="error : ${#fields.errors('type')}" th:text="${error}"></div>
+                                </div>
+                                <div id="typeError" class="text-danger error-message"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+                                <input type="number" id="price" th:field="*{price}" class="form-control" step="0.01" required>
+                                <div th:if="${#fields.hasErrors('price')}" class="text-danger error-message">
+                                    <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
+                                </div>
+                                <div id="priceError" class="text-danger error-message"></div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select id="enabled" th:field="*{enabled}" class="form-select" required>
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="button" class="btn btn-success shadow rounded-pill px-4" id="openModal">
+                                    <i class="bi bi-check-circle"></i> Update
+                                </button>
+                                <a th:href="@{/products}" class="btn btn-secondary shadow rounded-pill px-4">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!--<div class="content">
     <div class="main-content container-fluid">
         <div class="row justify-content-center mt-4">
             <div class="col-lg-8">
@@ -18,7 +107,7 @@
                     <h2 class="text-center mb-3">Update Product</h2>
                     <hr class="mb-4"/>
 
-                    <!-- Error Alert (consistent style) -->
+                    &lt;!&ndash; Error Alert (consistent style) &ndash;&gt;
                     <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
@@ -96,7 +185,7 @@
             </div>
         </div>
     </div>
-</div>
+</div>-->
 
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">

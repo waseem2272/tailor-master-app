@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Measurement</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <style>
+        @media print {
+            .form-control-plaintext {
+                display: inline;
+                padding: 0;
+                margin: 0;
+                border: none;
+            }
+
+            strong {
+                border-bottom: 1px solid #000 !important;
+            }
+
+            /* Fix print-inline row */
+            .row.print-inline {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-between !important;
+            }
+
+            /* Ensure each col-md-6 behaves properly in print */
+            .row.print-inline > .col-md-6 {
+                flex: 0 0 49% !important;  /* slightly less than 50% to avoid wrapping */
+                max-width: 49% !important;
+                padding: 0 !important;
+            }
+
+            /* Ensure tables take full width inside columns */
+            .row.print-inline table {
+                width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            .row.print-inline td,
+            .row.print-inline th {
+                word-break: break-word !important;
+                font-size: 12pt;
+            }
+
+            .row.print-inline p {
+                margin-bottom: 0.4rem !important;
+            }
+
+            .row.print-inline strong {
+                display: inline-block;
+                width: 100%;
+                border-bottom: 1px solid #000;
+                padding-bottom: 2px;
+            }
+
+            .receipt-header {
+                page-break-inside: avoid;
+            }
+
+            .not-disabled-label {
+                color: #212529 !important;
+                opacity: 1 !important;
+            }
+
+            input[type="checkbox"][disabled] {
+                appearance: none;
+                -webkit-appearance: none;
+                width: 14px;
+                height: 14px;
+                border: 1px solid #000;
+                display: inline-block;
+                position: relative;
+            }
+
+            input[type="checkbox"][disabled]:checked::after {
+                position: absolute;
+                top: -2px;
+                left: 2px;
+                font-size: 12px;
+                color: black;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+    </style>
+
+
+</head>
+<body>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid d-flex justify-content-center">
+
+            <div class="receipt-header p-4 mt-4 rounded-4 border shadow-sm bg-light w-100"
+                 style="direction: rtl; text-align: right; max-width: 900px;">
+
+                <div class="row">
+                    <div class="col text-center">
+                        <div class="receipt-title fw-bold fs-4">کسٹمر کی ناپ</div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p>کسٹمر کا نام: <strong style="border-bottom: 1px solid #000;" th:text="${order.customer.fullName}"></strong></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>فون نمبر: <strong style="border-bottom: 1px solid #000;" th:text="${order.customer.phoneNumber}"></strong></p>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-4">
+                        <p>سیریل نمبر: <strong style="border-bottom: 1px solid #000;" th:text="${order.customer.id}"></strong></p>
+                    </div>
+                </div>
+
+                <!-- Ensure all fields stay in the same row -->
+                <div class="row mt-2 print-inline">
+                    <div class="col-md-3">
+                        <p>آرڈر: <strong th:text="${order.orderId}"></strong></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p>مقدار: <strong th:text="${quantity}"></strong></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p>بکنگ: <strong th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></strong></p>
+                    </div>
+                    <div class="col-md-3">
+                        <p>ڈیلیوری: <strong th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></strong></p>
+                    </div>
+                </div>
+                <hr/>
+
+                <div class="row mt-2" style="direction: rtl; text-align: right; max-width: 900px;">
+
+                    <div th:if="${measurement != null}">
+                        <div class="row print-inline">
+                            <div class="col-md-3">
+                                <div class="form-check mb-3" th:if="${measurement.frontPocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="${measurement.frontPocket}" id="frontPocket">
+                                    <label class="form-check-label not-disabled-label" for="frontPocket">فرنٹ پاکٹ</label>
+                                </div>
+                                <div class="form-check mb-3" th:if="${measurement.oneSidePocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.oneSidePocket}" id="oneSidePocket">
+                                    <label class="form-check-label not-disabled-label" for="oneSidePocket">1 سائیڈپاکیٹ</label>
+                                </div>
+                                <div class="form-check mb-3" th:if="${measurement.twoSidePocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.twoSidePocket}" id="twoSidePocket">
+                                    <label class="form-check-label not-disabled-label" for="twoSidePocket">2 سائیڈپاکیٹ</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check mb-3" th:if="${measurement.shalwarZipPocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.shalwarZipPocket}" id="shalwarZipPocket">
+                                    <label class="form-check-label not-disabled-label" for="shalwarZipPocket">شلوار زپ پاکٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.shalwarSadaPocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.shalwarSadaPocket}" id="shalwarSadaPocket">
+                                    <label class="form-check-label not-disabled-label" for="shalwarSadaPocket">شلوار سادہ پاکٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.twoPajamaPocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.twoPajamaPocket}" id="twoPajamaPocket">
+                                    <label class="form-check-label not-disabled-label" for="twoPajamaPocket">2 پاجامہ پاکٹ</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3" th:if="${measurement.singleSilai}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.singleSilai}" id="singleSilai">
+                                    <label class="form-check-label not-disabled-label" for="singleSilai">سنگل سلائی</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.doubleSilai}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.doubleSilai}" id="doubleSilai">
+                                    <label class="form-check-label not-disabled-label" for="doubleSilai">ڈبل سلائی</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.chamakSilai}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.chamakSilai}" id="chamakSilai">
+                                    <label class="form-check-label not-disabled-label" for="chamakSilai">چمک سلائی</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3" th:if="${measurement.flopPocket}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.flopPocket}" id="flopPocket">
+                                    <label class="form-check-label not-disabled-label" for="flopPocket">فلاپ پاکیٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.normalButton}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.normalButton}" id="normalButton">
+                                    <label class="form-check-label not-disabled-label" for="normalButton">نارمل بٹن</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3" th:if="${measurement.touchButton}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.touchButton}" id="touchButton">
+                                    <label class="form-check-label not-disabled-label" for="touchButton">ٹچ بٹن</label>
+                                </div>
+
+                                <div class="form-check mb-3" th:if="${measurement.metalButton}">
+                                    <input class="form-check-input" type="checkbox" disabled
+                                           th:checked="*{measurement.metalButton}" id="metalButton">
+                                    <label class="form-check-label not-disabled-label" for="metalButton">میٹل بٹن</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <div class="row print-inline">
+
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td>قمیض لمبائی</td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.qameezLength}"></p>
+                                        </td>
+                                        <td colspan="2">
+                                            <p class="form-control-plaintext" th:text="${measurement.qameezType == 'gol_daman' ? 'گول دامن' : (measurement.qameezType == 'chakor_daman' ? 'چکور دامن' : '---')}">---</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>بازو</td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.bazoo}"></p>
+                                        </td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.kuhni}"></p>
+                                        </td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.aarmHole}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>کف</td>
+                                        <td colspan="3">
+                                            <p class="form-control-plaintext" th:text="*{measurement.kuff}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>گول موری</td>
+                                        <td colspan="3">
+                                            <p class="form-control-plaintext" th:text="*{measurement.golMoori}"></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>گلا</td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.galla}"></p>
+                                        </td>
+                                        <td colspan="2">
+                                            <p class="form-control-plaintext" th:text="${measurement.gallaType == 'shirt_collar' ? 'شرٹ کالر' : (measurement.gallaType == 'sherwani_been' ? 'شیروانی بین' : '---')}">---</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>تیرا</td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.tera}"></p>
+                                        </td>
+                                        <td>پٹی لمبائی</td>
+                                        <td>
+                                            <p class="form-control-plaintext" th:text="*{measurement.patiLambai}"></p>
+                                        </td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-md-6">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>چھاتی</td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.chati}"></p>
+                                            </td>
+                                            <td colspan="2">
+                                                <p class="form-control-plaintext" th:text="*{measurement.chati360}"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>کمر</td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.kamar}"></p>
+                                            </td>
+                                            <td colspan="2">
+                                                <p class="form-control-plaintext" th:text="*{measurement.kamar360}"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>دامن</td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.daman}"></p>
+                                            </td>
+                                            <td colspan="2">
+                                                <p class="form-control-plaintext" th:text="*{measurement.daman360}"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>شلوار</td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.shalwar}"></p>
+                                            </td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.shalwarGher}"></p>
+                                            </td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.shalwarPaincha}"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>پاجامہ</td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.pajama}"></p>
+                                            </td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.pajamaWaist}"></p>
+                                            </td>
+                                            <td>
+                                                <p class="form-control-plaintext" th:text="*{measurement.pajamaPaincha}"></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4">
+                                                <p class="form-control-plaintext" th:text="${measurement.lasticPlusDori == 'full_lastic_plus_dori' ? 'فل لاسٹک + ڈوری' : (measurement.lasticPlusDori == 'half_lastic_plus_dori' ? 'ہاف لاسٹک + ڈوری' : '---')}">---</p>
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3"></div>
+                            <label class="form-label">دیگر:</label>
+                            <p th:text="*{measurement.deegar}"></p>
+                        </div>
+
+                    </div>
+
+                    <div th:if="${measurement == null}">
+                        <p class="text-muted">No measurements available for this customer.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="text-center no-print mt-4">
+            <button class="btn btn-success me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary me-2">
+                <i class="bi bi-arrow-left-circle"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -13,21 +13,21 @@ import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Utility;
 import com.example.tailormaster.validation.Validation;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -92,46 +92,14 @@ public class CustomerController {
 
     // create customer
     @PostMapping("/create")
-    public String createCustomer(
-            @Valid @ModelAttribute CustomerRegistrationDTO registrationDTO,
-            BindingResult result,
+    public String createCustomer(CustomerRegistrationDTO registrationDTO,
             @RequestParam(value = "productIds", required = false) Long[] productIds,
             RedirectAttributes redirectAttributes,
             Model model) {
 
         logger.info("Creating customer with registration data: {}", registrationDTO);
 
-        // Validate selected products
-        if (productIds == null || productIds.length == 0) {
-            result.rejectValue("products", Utility.PRODUCT_ERROR_CODE, Utility.PRODUCT_ERROR_MESSAGE);
-        }
-
-        // Validate measurements dynamically based on selected products
-        Map<Long, CustomerMeasurement> customerMeasurements = registrationDTO.getCustomerMeasurements();
-        // Store only selected ones
-        if (productIds != null) {
-            for (Long productId : productIds) {
-                CustomerMeasurement measurement = customerMeasurements.get(productId);
-                if (measurement == null) {
-                    result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
-                } else {
-                    Product product = productService.getProductById(productId);
-                    validation.validateMeasurement(product, measurement, result);
-                }
-            }
-        }
         Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
-        // If validation fails, return with error messages
-        if (result.hasErrors()) {
-            CustomerRegistrationDTO tempRegistrationDTO = populateCustomerRegistrationDTO(registrationDTO);
-
-            // Extract selected product IDs
-//            Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
-            tempRegistrationDTO.setSelectedProductIds(selectedProductIds);
-            model.addAttribute("registrationDTO", tempRegistrationDTO);
-            model.addAttribute("org.springframework.validation.BindingResult.registrationDTO", result);
-            return "customer/create";
-        }
 
         try {
             // Save customer details
@@ -140,7 +108,8 @@ public class CustomerController {
             // Save measurements for each selected product
             for (Long productId : selectedProductIds) {
                 Product product = productService.getProductById(productId);
-                saveCustomerMeasurement(savedCustomer, product, customerMeasurements.get(productId));
+                CustomerMeasurement measurement = Utility.populateCustomerMeasurement(savedCustomer, product, registrationDTO);
+                measurementService.saveMeasurement(measurement);
             }
 
             // Success message
@@ -156,33 +125,6 @@ public class CustomerController {
         }
     }
 
-    // generate barcode
-    private static String generateBarcode(Customer savedCustomer) {
-        return savedCustomer.getFullName() + savedCustomer.getPhoneNumber() + "-" + UUID.randomUUID();
-    }
-
-    // Utility method to save customer measurements
-    private void saveCustomerMeasurement(Customer customer, Product product, CustomerMeasurement providedMeasurement) {
-        try {
-            CustomerMeasurement measurement = new CustomerMeasurement();
-            measurement.setCustomer(customer);
-            measurement.setProduct(product);
-            measurement.setChest(providedMeasurement.getChest());
-            measurement.setSleeveLength(providedMeasurement.getSleeveLength());
-            measurement.setShoulder(providedMeasurement.getShoulder());
-            measurement.setHips(providedMeasurement.getHips());
-            measurement.setWaist(providedMeasurement.getWaist());
-
-            // Generate barcode
-            String barcode = generateBarcode(customer);
-            measurement.setBarcode(barcode);
-
-            measurementService.saveMeasurement(measurement);
-        } catch (Exception e) {
-            logger.error("Error saving customer measurement", e);
-        }
-    }
-
     private CustomerRegistrationDTO populateCustomerRegistrationDTO() {
         try {
             CustomerRegistrationDTO registrationDTO = new CustomerRegistrationDTO();
@@ -192,29 +134,6 @@ public class CustomerController {
             for (Product product : registrationDTO.getProducts()) {
                 CustomerMeasurement customerMeasurement = new CustomerMeasurement();
                 registrationDTO.addCustomerMeasurement(product.getId(), customerMeasurement);
-            }
-            return registrationDTO;
-        } catch (Exception e) {
-            logger.error("Error populating customer registration DTO", e);
-            return new CustomerRegistrationDTO();
-        }
-    }
-
-    private CustomerRegistrationDTO populateCustomerRegistrationDTO(CustomerRegistrationDTO existingDTO) {
-        try {
-            CustomerRegistrationDTO registrationDTO = new CustomerRegistrationDTO();
-            registrationDTO.setCustomer(existingDTO.getCustomer());
-            registrationDTO.setProducts(productService.getAllActiveProducts());
-
-            // Retain already entered customer measurements
-            for (Product product : registrationDTO.getProducts()) {
-                if (existingDTO.getCustomerMeasurements().containsKey(product.getId())) {
-                    // Keep the entered values
-                    registrationDTO.addCustomerMeasurement(product.getId(), existingDTO.getCustomerMeasurements().get(product.getId()));
-                } else {
-                    // Otherwise, initialize a new empty measurement
-                    registrationDTO.addCustomerMeasurement(product.getId(), new CustomerMeasurement());
-                }
             }
             return registrationDTO;
         } catch (Exception e) {
@@ -240,7 +159,11 @@ public class CustomerController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
-            CustomerRegistrationDTO registrationDTO = populateEditCustomerRegistrationDTO(customer);
+
+            // Fetch all active products
+            List<Product> allActiveProducts = productService.getAllActiveProducts();
+
+            CustomerRegistrationDTO registrationDTO = Utility.populateCustomerRegistrationDTO(allActiveProducts, customer, measurementService.getSingleMeasurement(customerId));
             model.addAttribute("registrationDTO", registrationDTO);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             logger.info("Populated CustomerRegistrationDTO for edit form: {}", registrationDTO);
@@ -253,46 +176,9 @@ public class CustomerController {
         }
     }
 
-    private CustomerRegistrationDTO populateEditCustomerRegistrationDTO(Customer customer) {
-        CustomerRegistrationDTO registrationDTO = new CustomerRegistrationDTO();
-
-        // Set customer info
-        registrationDTO.setCustomer(customer);
-
-        // Fetch all active products
-        List<Product> allActiveProducts = productService.getAllActiveProducts();
-
-        // Fetch products the customer has selected
-        Set<Long> selectedProductIds = customer.getMeasurements()
-                .stream()
-                .map(measurement -> measurement.getProduct().getId())
-                .collect(Collectors.toSet());
-
-        // Ensure all active products are listed, marking selected ones
-        List<Product> productsList = new ArrayList<>();
-        for (Product product : allActiveProducts) {
-            productsList.add(product); // Add all active products (both selected & unselected)
-        }
-        registrationDTO.setProducts(productsList);
-
-        // Populate customer measurements
-        Map<Long, CustomerMeasurement> measurementMap = new HashMap<>();
-        for (CustomerMeasurement measurement : customer.getMeasurements()) {
-            measurementMap.put(measurement.getProduct().getId(), measurement);
-        }
-        registrationDTO.setCustomerMeasurements(measurementMap);
-
-        // Pass the selected product IDs for Thymeleaf to check the right boxes
-        registrationDTO.setSelectedProductIds(selectedProductIds);
-
-        return registrationDTO;
-    }
-
     // update customer
     @PostMapping("/update")
-    public String updateCustomer(
-            @Valid @ModelAttribute CustomerRegistrationDTO registrationDTO,
-            BindingResult result,
+    public String updateCustomer(CustomerRegistrationDTO registrationDTO,
             @RequestParam(value = "productIds", required = false) Long[] productIds,
             @RequestParam("encryptedCustomerId") String encryptedCustomerId,
             RedirectAttributes redirectAttributes,
@@ -306,52 +192,10 @@ public class CustomerController {
                 return "redirect:/customers";
             }
             logger.debug("Decrypted customer ID for update: {}", customerId);
-
-            // Validate selected products
-            if (productIds == null || productIds.length == 0) {
-                logger.warn("No products selected for customer update.");
-                result.rejectValue("products", Utility.PRODUCT_ERROR_CODE, Utility.PRODUCT_ERROR_MESSAGE);
-            }
-
-            List<Product> selectedProducts = new ArrayList<>();
-            logger.debug("Selected product IDs: {}", productIds);
-
-            // Validate measurements dynamically based on selected products
-            Map<Long, CustomerMeasurement> customerMeasurements = registrationDTO.getCustomerMeasurements();
-            logger.debug("Customer measurements provided: {}", customerMeasurements);
-            // Store only selected ones
-            if (productIds != null) {
-                for (Long productId : productIds) {
-                    CustomerMeasurement measurement = customerMeasurements.get(productId);
-                    if (measurement == null) {
-                        logger.warn("Measurement missing for selected product ID: {}", productId);
-                        result.rejectValue("customerMeasurements", "error.measurements", "Measurements are required for the selected product.");
-                    } else {
-                        Product product = productService.getProductById(productId);
-                        validation.validateMeasurement(product, measurement, result);
-                        selectedProducts.add(product);
-                    }
-                }
-            }
-            logger.debug("Number of selected products after validation: {}", selectedProducts.size());
             // set decrypted customer id
             registrationDTO.getCustomer().setId(customerId);
 
-            // If validation fails, return with error messages
-            if (result.hasErrors()) {
-                logger.warn("Validation errors occurred during customer update for ID {}: {}", customerId, result.getAllErrors());
-                CustomerRegistrationDTO tempRegistrationDTO = populateCustomerRegistrationDTO(registrationDTO);
-
-                // Extract selected product IDs
-                Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
-                tempRegistrationDTO.setSelectedProductIds(selectedProductIds);
-                model.addAttribute("registrationDTO", tempRegistrationDTO);
-                model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-                model.addAttribute("org.springframework.validation.BindingResult.registrationDTO", result);
-                return "customer/update";
-            }
-
-            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, selectedProducts);
+            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, productIds);
             logger.info("Customer updated successfully with ID: {}", updatedCustomer.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
             redirectAttributes.addFlashAttribute("customerId", updatedCustomer.getId());
@@ -385,19 +229,9 @@ public class CustomerController {
             model.addAttribute("customer", customer);
             logger.info("Fetched customer details: {}", customer);
             // Fetch customer measurements
-            List<CustomerMeasurement> measurements = customer.getMeasurements();
-            model.addAttribute("measurements", measurements);
-            logger.info("Fetched measurement details: {}", measurements);
-            // Fetch product details (orders/products associated with the customer)
-            // Fetch products from measurements
-            List<Product> productsList = new ArrayList<>();
-            if (measurements != null) {
-                for (CustomerMeasurement measurement : measurements) {
-                    if (measurement.getProduct() != null) {
-                        productsList.add(measurement.getProduct());
-                    }
-                }
-            }
+            CustomerMeasurement measurement = measurementService.getSingleMeasurement(customerId);
+            model.addAttribute("measurement", measurement);
+            logger.info("Fetched measurement details: {}", measurement);
 
             // customer ledger
             Map<String, List<CustomerPaymentLedger>> orderLedgerMap = new LinkedHashMap<>();
@@ -429,7 +263,7 @@ public class CustomerController {
             model.addAttribute("orderLedgerMap", orderLedgerMap);
             model.addAttribute("orderBalances", orderBalances);
 
-            model.addAttribute("products", productsList);
+//            model.addAttribute("products", productsList);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
         } catch (Exception e) {

@@ -4,14 +4,24 @@
 
 <div th:fragment="sidebar">
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand text-center py-3 px-2 mb-3">
+        <!--<div class="sidebar-brand text-center py-3 px-2 mb-3">
             <i class="bi bi-scissors text-primary fs-3 d-block mb-1"></i>
             <h5 class="fw-bold text-uppercase mb-0" th:text="${shopName}">Shop Name</h5>
+        </div>-->
+        <div class="sidebar-brand py-3 px-2 mb-3">
+            <img th:src="@{/images/jinan-tailor-sidebar-logo.png}" alt="Logo" style="max-height: 90px;">
         </div>
+
         <div class="mx-3 mb-3" style="height: 1px; background: linear-gradient(to right, #ffffff, #ffffff);"></div>
         <a th:href="@{/dashboard}"
            th:classappend="${activePage == 'dashboard'} ? 'active'">
             <i class="bi bi-speedometer2 me-2"></i> Dashboard
+        </a>
+
+        <a th:href="@{/labors}"
+           sec:authorize="hasRole('ROLE_ADMIN')"
+           th:classappend="${activePage == 'labors'} ? 'active'">
+            <i class="bi bi-person-workspace me-2"></i> Labor Management
         </a>
 
         <a th:href="@{/products}"

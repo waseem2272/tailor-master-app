@@ -3,9 +3,11 @@ package com.example.tailormaster.validation;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.Order;
+import com.example.tailormaster.entity.labor.Labor;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.entity.product.ProductType;
 import com.example.tailormaster.service.customer.CustomerService;
+import com.example.tailormaster.service.labor.LaborService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.util.AESUtil;
 import io.micrometer.common.util.StringUtils;
@@ -14,12 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @Service
 public class Validation {
 
     private final CustomerService customerService;
     private final OrderService orderService;
+    private final LaborService laborService;
 
     public void validateMeasurement(Product product, CustomerMeasurement measurement, BindingResult result) {
         if (product.getType() == ProductType.QAMEEZ) { // Qameez
@@ -98,6 +103,22 @@ public class Validation {
         }
 
         return orderId;
+    }
+
+    public Long validateAndFetchLabor(String encryptedLaborId, RedirectAttributes redirectAttributes) {
+        Long laborId = decryptAndValidateId(encryptedLaborId);
+        if (laborId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid Labor ID.");
+            return null;
+        }
+
+        Optional<Labor> labor = laborService.getLaborById(laborId);
+        if (labor.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Labor not found.");
+            return null;
+        }
+
+        return laborId;
     }
 
 }

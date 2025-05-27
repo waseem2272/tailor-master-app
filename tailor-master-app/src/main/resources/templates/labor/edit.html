@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Labor</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <form th:action="@{/labors/update}" th:object="${labor}" method="post" id="laborForm" class="needs-validation" novalidate>
+                <input type="hidden" name="encryptedLaborId"
+                       th:if="${thymeleafUtil != null}"
+                       th:value="${thymeleafUtil.encryptId(labor.id)}">
+
+                <h2 class="page-title d-flex align-items-center mb-4">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Labor
+                </h2>
+                <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+                <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                        <i class="bi bi-info-circle me-2"></i> Labor Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" id="name" name="name" th:field="*{name}" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" class="form-control" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Invalid Name.</div>
+                            </div>
+
+                            <!-- Contact -->
+                            <div class="col-md-6 mb-3">
+                                <label for="contact" class="form-label">Contact <span class="text-danger">*</span></label>
+                                <input type="text" id="contact" name="contact" th:field="*{contact}" pattern="^03[0-9]{9}$" th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'" class="form-control" placeholder="e.g., 03001234567" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('contact')}" th:errors="*{contact}">Invalid contact.</div>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="col-md-6 mb-3">
+                                <label for="skills" class="form-label">Skills</label>
+                                <input type="text" id="skills" name="skills" th:field="*{skills}" class="form-control">
+                            </div>
+
+                            <!-- Join Date -->
+                            <div class="col-md-6 mb-3">
+                                <label for="joinDate" class="form-label">Join Date</label>
+                                <input type="date" id="joinDate" name="joinDate" th:value="${#temporals.format(labor.joinDate, 'yyyy-MM-dd')}"
+                                       class="form-control">
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select id="status" name="status" th:field="*{status}" class="form-select">
+                                    <option th:each="s : ${labor.status?.values()}" th:value="${s}" th:text="${s}">Active</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="button" class="btn btn-success" id="openConfirmationModal"><i class="bi bi-check-circle me-1"></i> Update</button>
+                    <a th:href="@{/labors}" class="btn btn-secondary"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                </div>
+            </form>
+
+            <!-- Confirmation Modal -->
+            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4 shadow">
+                        <div class="modal-header bg-success text-white rounded-top-4">
+                            <h5 class="modal-title" id="confirmationModalLabel">Confirm Update</h5>
+                            <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to update this Labor with the provided details?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+                            <button type="button" class="btn btn-success" id="confirmSubmit"><i class="bi bi-check-circle me-1"></i>Yes, Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/create-customer.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const openModalBtn = document.getElementById("openConfirmationModal");
+        const confirmBtn = document.getElementById("confirmSubmit");
+        const form = document.getElementById("laborForm");
+
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+        openModalBtn.addEventListener("click", function () {
+            if (form.checkValidity()) {
+                confirmationModal.show();
+            } else {
+                form.classList.add('was-validated');
+            }
+        });
+
+        confirmBtn.addEventListener("click", function () {
+            form.submit();
+        });
+    });
+
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+
+
+</body>
+</html>

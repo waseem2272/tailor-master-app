@@ -6,172 +6,151 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            color: #000;
+            background-color: #f8f9fa;
         }
-        .receipt-container {
-            width: 320px;
-            margin: auto;
-            padding: 10px;
+
+        .receipt-card {
+            background: #fff;
+            padding: 20px;
+            margin: 40px auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+
         .receipt-header h3 {
-            margin-bottom: 4px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
-        .small-text {
-            font-size: 12px;
+
+        .shop-logo img {
+            max-height: 80px;
+            max-width: 100%;
         }
-        .divider {
-            border-top: 2px dashed #000;
-            margin: 10px 0;
-        }
+
         .item-header, .item-row {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            border-bottom: 2px dotted #ccc;
-            padding: 2px 0;
+            font-size: 14px;
+            padding: 4px 0;
+            border-bottom: 1px dotted #ccc;
         }
+
         .item-header {
             font-weight: bold;
-            border-bottom: 1px solid #000;
+            border-bottom: 2px solid #000;
         }
+
         .col-qty { width: 15%; text-align: center; }
         .col-desc { width: 40%; text-align: left; }
         .col-price { width: 20%; text-align: right; }
         .col-total { width: 25%; text-align: right; }
-        .bold {
-            font-weight: bold;
-        }
-        .totals-section {
-            margin-top: 10px;
-            font-size: 13px;
-        }
+
         .totals-section p {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
+
         .footer-text {
             text-align: center;
             margin-top: 10px;
             font-size: 12px;
             font-style: italic;
         }
+
         @media print {
             .no-print {
                 display: none;
             }
         }
-
-        .receipt-header {
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        .shop-info {
-            text-align: left;
-            margin-right: 110px; /* Reserve space for logo */
-        }
-
-        .shop-logo {
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-
-        .shop-logo img {
-            max-height: 80px;
-            max-width: 100px;
-            display: block;
-        }
-
     </style>
 </head>
 <body>
-<div class="receipt-container">
-    <!-- Header -->
-    <!--<div class="receipt-header">
-        <h3 th:text="${user.shopName}">Shop Name</h3>
-        <p class="small-text" th:text="${user.shopAddress}">Shop Address</p>
-        <p class="small-text">📞 <span th:text="${user.phone1}"></span></p>
-    </div>-->
-    <div class="receipt-header">
-        <!-- Shop Info -->
-        <div class="shop-info">
-            <h3 th:text="${user.shopName}">Shop Name</h3>
-            <p class="small-text">
-                <i class="bi bi-geo-alt-fill"></i>
-                <span th:text="${user.shopAddress}">Shop Address</span>
-            </p>
-            <p class="small-text">
-                <i class="bi bi-telephone-fill"></i>
-                <span th:text="${user.phone1}">Phone</span>
-            </p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card receipt-card">
+
+                <div class="text-center mb-3">
+                    <div class="shop-logo mb-2">
+                        <img th:if="${logoBase64 != null && logoMimeType != null}"
+                             th:src="'data:' + ${logoMimeType} + ';base64,' + ${logoBase64}"
+                             alt="Shop Logo"
+                             class="img-fluid">
+                    </div>
+                    <hr/>
+<!--                    <h5 class="mb-1" th:text="${user.shopName}">Shop Name</h5>-->
+                    <p class="small fw-semibold text-dark">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span th:text="${user.shopAddress}">Shop Address</span>
+                    </p>
+                    <p class="small fw-semibold text-dark">
+                        <span>ہمارے پاس مناسب قیمت پربہترین کوالٹی کا کپڑا دستیاب ہےـ</span>
+                    </p>
+                </div>
+
+                <hr/>
+
+                <div class="row align-items-start mb-3">
+                    <!-- Left Side: Text Info -->
+                    <div class="col-5 small">
+                        <p>S. No. <strong th:text="${order.customer.id}"></strong></p>
+                        <p>Order ID: <strong th:text="${order.orderId}"></strong></p>
+                        <p>Order Date: <strong th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></strong></p>
+                        <p>Delivery Date: <strong th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></strong></p>
+                        <p>Customer: <strong th:text="${order.customer.fullName}"></strong></p>
+                        <p>Phone: <strong th:text="${order.customer.phoneNumber}"></strong></p>
+                    </div>
+
+                    <!-- Right Side: Logo Image -->
+                    <div class="col-7 text-end">
+                        <img th:src="@{/images/disclaimer-pica.png}" alt="Logo"/>
+                    </div>
+                </div>
+
+
+                <div class="item-header">
+                    <div class="col-qty">Qty</div>
+                    <div class="col-desc">Item</div>
+                    <div class="col-price">Price</div>
+                    <div class="col-total">Total</div>
+                </div>
+
+                <div th:each="item : ${order.orderProducts}">
+                    <div class="item-row">
+                        <div class="col-qty" th:text="${item.quantity}"></div>
+                        <div class="col-desc" th:text="${item.product.name}"></div>
+                        <div class="col-price" th:text="${item.product.price}"></div>
+                        <div class="col-total" th:text="${item.quantity * item.product.price}"></div>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div class="totals-section mb-3">
+                    <p><span>Total:</span> <span th:text="${order.totalProductAmount}"></span></p>
+                    <p><span>Advance:</span> <span th:text="${order.advancePayment}"></span></p>
+                    <p class="fw-bold"><span>Due:</span> <span th:text="${order.duePayment}"></span></p>
+                </div>
+
+                <div class="footer-text">
+                    <p>Thanks for your order!</p>
+                    <p>ہماری دکان پر آنے کا شکریہ</p>
+                </div>
+
+                <div class="text-center no-print mt-4">
+                    <button class="btn btn-success me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+                    <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary me-2">
+                        <i class="bi bi-arrow-left-circle"></i> Back
+                    </a>
+                </div>
+
+            </div>
         </div>
-
-
-        <!-- Shop Logo -->
-        <div class="shop-logo text-end">
-            <img th:src="@{'/users/logo/' + ${user.username}}" alt="" />
-        </div>
-    </div>
-
-
-    <div class="divider"></div>
-
-    <div class="small-text">
-        <p>Order ID: <strong th:text="${order.orderId}"></strong></p>
-        <p>Date: <strong th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></strong></p>
-        <p>Delivery: <strong th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></strong></p>
-        <p>Customer: <strong th:text="${order.customer.fullName}"></strong></p>
-        <p>Phone: <strong th:text="${order.customer.phoneNumber}"></strong></p>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Items header row -->
-    <div class="item-header">
-        <div class="col-qty">Qty</div>
-        <div class="col-desc">Item</div>
-        <div class="col-price">Price</div>
-        <div class="col-total">Total</div>
-    </div>
-
-    <!-- Items -->
-    <div th:each="item : ${order.orderProducts}">
-        <div class="item-row">
-            <div class="col-qty" th:text="${item.quantity}"></div>
-            <div class="col-desc" th:text="${item.product.name}"></div>
-            <div class="col-price" th:text="${item.product.price}"></div>
-            <div class="col-total" th:text="${item.quantity * item.product.price}"></div>
-        </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="totals-section" th:if="${receiptType == 'customer'}">
-        <p><span>Total:</span> <span th:text="${order.totalProductAmount}"></span></p>
-        <p><span>Advance:</span> <span th:text="${order.advancePayment}"></span></p>
-        <p class="bold"><span>Due:</span> <span th:text="${order.duePayment}"></span></p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="footer-text">
-        <p>Thanks for your order!</p>
-        <p>ہماری دکان پر آنے کا شکریہ</p>
-    </div>
-
-    <div class="text-center no-print mt-4">
-        <button class="btn btn-success me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
-        <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary me-2">
-            <i class="bi bi-arrow-left-circle"></i> Back
-        </a>
     </div>
 </div>
 

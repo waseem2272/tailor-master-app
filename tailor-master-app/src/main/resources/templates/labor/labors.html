@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Labor Management</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="content">
+    <div class="main-content container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-workspace me-2"></i> Labors
+            </h2>
+            <a th:href="@{/labors/create}" class="btn btn-success rounded-pill shadow-sm">
+                <i class="bi bi-plus-circle"></i> Create New Labor
+            </a>
+        </div>
+
+        <!-- Success Alert -->
+        <div th:if="${successMessage}" class="row justify-content-center">
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                    <span th:text="${successMessage}"></span>
+                </div>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div th:if="${errorMessage}" class="row justify-content-center">
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-success border-bottom border-3">
+            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                <i class="bi bi-people me-2"></i> Labors List
+            </div>
+            <div class="card-body">
+                <table id="laborsTable" class="table table-bordered table-hover table-striped">
+                    <thead class="table-success text-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Join Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="labor, iterStat : ${labors}">
+                        <td th:text="${labor.name}"></td>
+                        <td th:text="${labor.contact}"></td>
+                        <td th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></td>
+
+                        <td>
+                            <a class="btn btn-info btn-sm" th:href="@{'/labors/details/' + ${thymeleafUtil.encryptId(labor.id)}}">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            <a class="btn btn-warning btn-sm" th:href="@{'/labors/edit/' + ${thymeleafUtil.encryptId(labor.id)}}">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <button class="btn btn-success btn-sm pay-btn" data-bs-toggle="modal"
+                                    data-bs-target="#addPaymentModal"
+                                    data-labor-id="${labor.id}"
+                                    data-labor-name="${labor.name}">
+                                <i class="bi bi-cash-coin"></i> Make Payment
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/labor-payments/add}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPaymentModalLabel">Add Labor Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="laborId" th:value="${labor.id}" />
+
+                    <div class="mb-3">
+                        <label for="paymentDate" class="form-label">Payment Date</label>
+                        <input type="date" class="form-control" name="paymentDate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" step="0.01" class="form-control" name="amount" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="remarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" name="remarks" rows="2"></textarea>
+                    </div>
+
+                    <input type="hidden" name="type" value="DEBIT"/> &lt;!&ndash; Always a payment &ndash;&gt;
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>-->
+
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+<script>
+    $(document).ready(function () {
+        $('#laborsTable').DataTable();
+    });
+</script>
+</body>
+</html>

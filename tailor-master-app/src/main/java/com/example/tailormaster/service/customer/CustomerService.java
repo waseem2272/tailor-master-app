@@ -6,7 +6,9 @@ import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.customer.CustomerRepository;
+import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.ThymeleafUtil;
+import com.example.tailormaster.validation.Utility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -17,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -27,9 +27,11 @@ public class CustomerService {
     private static final Logger logger = LogManager.getLogger(CustomerService.class);
 
     private final CustomerRepository customerRepository;
+    private final ProductService productService;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, ProductService productService) {
         this.customerRepository = customerRepository;
+        this.productService = productService;
     }
 
     public Customer getCustomerById(Long id) {
@@ -45,8 +47,16 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, List<Product> selectedProducts) {
+    public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, Long[] productIds) {
         Long customerId = registrationDTO.getCustomer().getId();
+
+        Set<Product> products = new HashSet<>();
+
+        for (Long productId : productIds) {
+            Product product = productService.getProductById(productId);
+            products.add(product);
+        }
+
         logger.info("Updating customer with ID: {}", customerId);
 
         Customer existingCustomer = customerRepository.findById(customerId)
@@ -59,15 +69,14 @@ public class CustomerService {
         existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
         existingCustomer.getMeasurements().clear();
 
-        for (Product product : selectedProducts) {
-            CustomerMeasurement measurement = registrationDTO.getCustomerMeasurements().get(product.getId());
-            if (measurement != null) {
+        for (Product product : products) {
+            CustomerMeasurement measurement = new CustomerMeasurement();
                 measurement.setCustomer(existingCustomer);
                 measurement.setProduct(product);
-                existingCustomer.getMeasurements().add(measurement);
-            }
-        }
 
+            CustomerMeasurement measurement1 = Utility.populateCustomerMeasurement(measurement, registrationDTO);
+            existingCustomer.getMeasurements().add(measurement1);
+        }
         Customer updatedCustomer = customerRepository.save(existingCustomer);
         logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
         return updatedCustomer;

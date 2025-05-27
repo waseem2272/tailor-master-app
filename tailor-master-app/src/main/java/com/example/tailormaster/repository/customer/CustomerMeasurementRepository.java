@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CustomerMeasurementRepository extends JpaRepository<CustomerMeasurement, Long> {
     List<CustomerMeasurement> findByCustomerId(Long customerId); // Correct method
+
+    CustomerMeasurement findTopByCustomerIdOrderByIdDesc(Long customerId);
 }

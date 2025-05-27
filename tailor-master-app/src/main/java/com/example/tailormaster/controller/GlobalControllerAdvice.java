@@ -35,6 +35,8 @@ public class GlobalControllerAdvice {
             model.addAttribute("activePage", "dashboard");
         } else if (uri.contains("/users/profile")) {
             model.addAttribute("activePage", "profile");
+        } else if (uri.contains("/labors")) {
+            model.addAttribute("activePage", "labors");
         }
 
         // Get logged-in user and add shop name or whole user to model

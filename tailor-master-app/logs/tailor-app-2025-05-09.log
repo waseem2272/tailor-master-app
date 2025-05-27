@@ -1,0 +1,798 @@
+2025-05-09 00:00:49 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:00:51 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:00:51 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:00:51 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-09 00:00:51 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-09 00:01:04 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-09 00:01:05 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 17436 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:01:05 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:01:05 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-09 00:01:05 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-09 00:01:07 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:01:07 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 179 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:01:08 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:01:08 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:01:08 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:01:08 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:01:08 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:01:08 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3135 ms
+2025-05-09 00:01:08 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:01:08 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-09 00:01:08 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:01:09 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:01:09 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-09 00:01:10 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@541720bd
+2025-05-09 00:01:10 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-09 00:01:10 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:01:12 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:01:12 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:01:13 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-09 00:01:16 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:01:16 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:01:16 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:01:17 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:01:18 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:01:18 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:01:18 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 14.135 seconds (process running for 16.869)
+2025-05-09 00:03:56 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:03:56 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:03:56 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 154 ms
+2025-05-09 00:03:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/BgkgV61irBNd2Msb1qhizwhEJT17bTsDDNeODtpEbhI=
+2025-05-09 00:03:57 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): BgkgV61irBNd2Msb1qhizwhEJT17bTsDDNeODtpEbhI=
+2025-05-09 00:03:57 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:03:57 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:03:59 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:03:59 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:03:59 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:03:59 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:16:28 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:16:31 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:16:31 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:16:31 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-09 00:16:32 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-09 00:16:50 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-09 00:16:50 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 17980 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:16:50 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:16:50 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-09 00:16:50 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-09 00:16:54 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:16:54 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 527 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:16:56 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:16:56 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:16:56 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:16:56 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:16:56 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:16:56 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 6402 ms
+2025-05-09 00:16:57 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:16:57 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-09 00:16:57 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:16:59 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:17:00 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-09 00:17:01 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1e3a4760
+2025-05-09 00:17:01 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-09 00:17:01 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:17:03 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:17:04 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:17:05 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-09 00:17:12 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:17:12 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:17:12 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:17:15 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:17:15 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:17:15 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:17:15 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 27.235 seconds (process running for 31.073)
+2025-05-09 00:18:02 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:18:02 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:18:02 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-05-09 00:18:02 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/zeaaRK6nDf2UTXd-Zflvy2IwTm5OvaMT3_fcin4SB-M=
+2025-05-09 00:18:03 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): zeaaRK6nDf2UTXd-Zflvy2IwTm5OvaMT3_fcin4SB-M=
+2025-05-09 00:18:03 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:18:03 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:18:03 [abdullateef] ERROR com.example.tailormaster.controller.CustomerController - Error loading customer edit form for ID (encrypted) zeaaRK6nDf2UTXd-Zflvy2IwTm5OvaMT3_fcin4SB-M=: Cannot invoke "com.example.tailormaster.entity.CustomerMeasurement.isFrontPocket()" because "customerMeasurement" is null
+java.lang.NullPointerException: Cannot invoke "com.example.tailormaster.entity.CustomerMeasurement.isFrontPocket()" because "customerMeasurement" is null
+	at com.example.tailormaster.validation.Utility.populateCustomerRegistrationDTO(Utility.java:84) ~[classes/:?]
+	at com.example.tailormaster.controller.CustomerController.showEditCustomerForm(CustomerController.java:163) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:257) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:190) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.40.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.40.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at com.example.tailormaster.filter.LoggingMDCFilter.doFilter(LoggingMDCFilter.java:30) ~[classes/:?]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.csrf.CsrfFilter.doFilterInternal(CsrfFilter.java:117) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:243) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) [spring-security-config-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at java.base/java.lang.Thread.run(Thread.java:833) [?:?]
+2025-05-09 00:18:03 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:18:05 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:21:45 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:21:47 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:21:48 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:21:48 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-09 00:21:48 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-09 00:22:02 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-09 00:22:02 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 15436 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:22:02 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:22:02 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-09 00:22:02 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-09 00:22:04 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:22:04 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 194 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:22:05 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:22:05 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:22:05 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:22:05 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:22:06 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:22:06 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3306 ms
+2025-05-09 00:22:06 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:22:06 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-09 00:22:06 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:22:07 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:22:07 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-09 00:22:08 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1a99c8c9
+2025-05-09 00:22:08 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-09 00:22:08 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:22:10 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:22:11 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:22:11 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-09 00:22:15 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:22:15 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:22:15 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:22:16 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:22:16 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:22:16 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:22:16 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 14.821 seconds (process running for 17.657)
+2025-05-09 00:22:33 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:22:33 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:22:33 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-05-09 00:22:33 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/fgGFvhOLdbKDZFDb0-2t3I8FkdRn8rkSEsivO147Aps=
+2025-05-09 00:22:34 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): fgGFvhOLdbKDZFDb0-2t3I8FkdRn8rkSEsivO147Aps=
+2025-05-09 00:22:34 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:22:34 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:22:35 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:22:35 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:22:35 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:22:35 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:22:37 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/ukw-IfUs1frPmMYbR6hnZMDq-ioBPJi8NkQE4FNkbuw=
+2025-05-09 00:22:37 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): ukw-IfUs1frPmMYbR6hnZMDq-ioBPJi8NkQE4FNkbuw=
+2025-05-09 00:22:37 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:22:37 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:22:42 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:22:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:22:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:22:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:22:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:24:03 [] INFO  org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 1 deletion, 0 modifications)
+2025-05-09 00:24:03 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:24:03 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:04 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:24:04 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:04 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:24:04 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-09 00:24:04 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-09 00:24:04 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 15436 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:24:04 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:24:05 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:24:05 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 106 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:24:05 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:24:05 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:05 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:24:05 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:24:05 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:24:05 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1015 ms
+2025-05-09 00:24:05 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:24:05 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:24:05 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:24:05 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-05-09 00:24:05 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@22c71689
+2025-05-09 00:24:05 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-05-09 00:24:05 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:24:06 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:24:06 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:24:07 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:24:07 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:24:07 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:24:07 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:24:07 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:07 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:24:07 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 3.296 seconds (process running for 129.15)
+2025-05-09 00:24:07 [] INFO  org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-09 00:24:09 [] INFO  org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-05-09 00:24:09 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:24:09 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:10 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:24:10 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:10 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:24:10 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-05-09 00:24:10 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-05-09 00:24:10 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 15436 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:24:10 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:24:11 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:24:11 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 104 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:24:11 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:24:11 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:11 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:24:11 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:24:11 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:24:11 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1053 ms
+2025-05-09 00:24:11 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:24:11 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:24:11 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:24:11 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2025-05-09 00:24:11 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@59a10144
+2025-05-09 00:24:11 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2025-05-09 00:24:11 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:24:12 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:24:12 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:24:12 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:24:12 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:24:12 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:24:13 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:24:13 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:24:13 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:24:13 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 2.731 seconds (process running for 134.338)
+2025-05-09 00:24:13 [] INFO  org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-09 00:24:17 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:24:17 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:24:17 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-05-09 00:24:17 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/ukw-IfUs1frPmMYbR6hnZMDq-ioBPJi8NkQE4FNkbuw=
+2025-05-09 00:24:17 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): ukw-IfUs1frPmMYbR6hnZMDq-ioBPJi8NkQE4FNkbuw=
+2025-05-09 00:24:17 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:24:17 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:24:19 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true)], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:24:20 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:24:20 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:24:20 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:24:20 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:24:30 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/lxOFOQW6xuKX-B33J-bqtK8JVHWUyI1-Ioy7op_bDRQ=
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): lxOFOQW6xuKX-B33J-bqtK8JVHWUyI1-Ioy7op_bDRQ=
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:24:36 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/Kgjylruw1ErpQIv1mSLcVSy9T5RMs4mpzkJ9xtw4u2w=
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): Kgjylruw1ErpQIv1mSLcVSy9T5RMs4mpzkJ9xtw4u2w=
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true)], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:24:38 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:27:40 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:27:41 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:27:41 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:27:41 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-05-09 00:27:41 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2025-05-09 00:27:56 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-09 00:27:56 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 10244 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:27:56 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:27:56 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-09 00:27:56 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-09 00:27:58 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:27:58 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 179 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:27:59 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:27:59 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:27:59 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:27:59 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:27:59 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:27:59 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3158 ms
+2025-05-09 00:28:00 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:28:00 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-09 00:28:00 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:28:00 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:28:01 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-09 00:28:01 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7df84895
+2025-05-09 00:28:01 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-09 00:28:01 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:28:04 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:28:04 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:28:05 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-09 00:28:08 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:28:08 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:28:08 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:28:09 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:28:09 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:28:09 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:28:09 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 14.396 seconds (process running for 17.043)
+2025-05-09 00:28:13 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:28:13 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:28:13 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-05-09 00:28:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:28:14 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/P9Wd-1SUiRr_5lobWNe0lXxI2-0q9QCH0z9NL0C_MA0=
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): P9Wd-1SUiRr_5lobWNe0lXxI2-0q9QCH0z9NL0C_MA0=
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:28:16 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:28:18 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/QEncV6BwFu4DJGcwzpZX_d16m2787bj1aPQZhXQhmWw=
+2025-05-09 00:28:18 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): QEncV6BwFu4DJGcwzpZX_d16m2787bj1aPQZhXQhmWw=
+2025-05-09 00:28:18 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:28:18 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:28:21 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true)], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:28:22 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:28:22 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:28:22 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:28:22 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:29:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: POST /tailor-master/customers/update
+2025-05-09 00:29:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Attempting to update customer with encrypted ID: HFWOpl8AaluwP4YeZa_Iu5NlQGAsxkA6sDvghLNkAYM=
+2025-05-09 00:29:42 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 1
+2025-05-09 00:29:44 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 2
+2025-05-09 00:29:46 [abdullateef] INFO  com.example.tailormaster.service.customer.CustomerService - Updating customer with ID: 49
+2025-05-09 00:31:08 [] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m2s873ms243µs800ns).
+2025-05-09 00:31:08 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Customer updated successfully with ID: 49
+2025-05-09 00:31:08 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:31:09 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:31:09 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:31:10 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:31:10 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:31:10 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:31:10 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:43:40 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/ijkh7apQ6RsgSFGfO0NgyeDRvn7-JuUPFzQKkivaTQc=
+2025-05-09 00:43:40 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): ijkh7apQ6RsgSFGfO0NgyeDRvn7-JuUPFzQKkivaTQc=
+2025-05-09 00:43:40 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:43:40 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:43:42 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:43:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:43:42 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:43:42 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:43:43 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/97-H3q1zOTfxzgAs9GzcNmXMIssFw7-q2ODivyaRlWM=
+2025-05-09 00:43:43 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): 97-H3q1zOTfxzgAs9GzcNmXMIssFw7-q2ODivyaRlWM=
+2025-05-09 00:43:43 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:43:43 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:43:50 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true)], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:43:50 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:43:50 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:43:50 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:43:50 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:44:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: POST /tailor-master/customers/update
+2025-05-09 00:44:06 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Attempting to update customer with encrypted ID: Qj_UpUaEnhTSOx4uS9XA6I4KkstQk2weOSeSW4yFz-U=
+2025-05-09 00:44:47 [] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m9s4ms138µs800ns).
+2025-05-09 00:44:51 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 1
+2025-05-09 00:44:53 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 2
+2025-05-09 00:44:57 [abdullateef] INFO  com.example.tailormaster.service.customer.CustomerService - Updating customer with ID: 49
+2025-05-09 00:54:09 [] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m21s478ms131µs300ns).
+2025-05-09 00:54:09 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Customer updated successfully with ID: 49
+2025-05-09 00:54:09 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:54:11 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:57:00 [] INFO  org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 2 class path changes (0 additions, 2 deletions, 0 modifications)
+2025-05-09 00:57:00 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:57:00 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:57:02 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:57:02 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:57:02 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:57:02 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-09 00:57:03 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-09 00:57:04 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 10244 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:57:04 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:57:05 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:57:06 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 208 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:57:06 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:57:06 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:57:06 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:57:06 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:57:06 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:57:06 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2671 ms
+2025-05-09 00:57:07 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:57:07 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:57:07 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:57:07 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-05-09 00:57:07 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@d146a75
+2025-05-09 00:57:07 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-05-09 00:57:07 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:57:08 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:57:08 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:57:08 [] WARN  org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customerController': Resolution of declared constructors on bean Class [com.example.tailormaster.controller.CustomerController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@662c9620] failed
+2025-05-09 00:57:08 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:57:08 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-05-09 00:57:08 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-05-09 00:57:08 [] INFO  org.apache.catalina.core.StandardService - Stopping service [Tomcat]
+2025-05-09 00:57:08 [] INFO  org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-05-09 00:57:08 [] ERROR org.springframework.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customerController': Resolution of declared constructors on bean Class [com.example.tailormaster.controller.CustomerController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@662c9620] failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:384) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1316) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1211) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:563) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:523) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:336) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:289) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:334) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1122) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1093) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1030) ~[spring-beans-6.2.1.jar:6.2.1]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:987) ~[spring-context-6.2.1.jar:6.2.1]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.1.jar:6.2.1]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.1.jar:3.4.1]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) [spring-boot-3.4.1.jar:3.4.1]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) [spring-boot-3.4.1.jar:3.4.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) [spring-boot-3.4.1.jar:3.4.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) [spring-boot-3.4.1.jar:3.4.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) [spring-boot-3.4.1.jar:3.4.1]
+	at com.example.tailormaster.TailorMasterAppApplication.main(TailorMasterAppApplication.java:12) [classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) [spring-boot-devtools-3.4.1.jar:3.4.1]
+Caused by: java.lang.NoClassDefFoundError: com/example/tailormaster/service/customer/CustomerService
+	at java.base/java.lang.Class.getDeclaredConstructors0(Native Method) ~[?:?]
+	at java.base/java.lang.Class.privateGetDeclaredConstructors(Class.java:3373) ~[?:?]
+	at java.base/java.lang.Class.getDeclaredConstructors(Class.java:2555) ~[?:?]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:379) ~[spring-beans-6.2.1.jar:6.2.1]
+	... 25 more
+Caused by: java.lang.ClassNotFoundException: com.example.tailormaster.service.customer.CustomerService
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[?:?]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[?:?]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:520) ~[?:?]
+	at java.base/java.lang.Class.forName0(Native Method) ~[?:?]
+	at java.base/java.lang.Class.forName(Class.java:467) ~[?:?]
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121) ~[spring-boot-devtools-3.4.1.jar:3.4.1]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:520) ~[?:?]
+	at java.base/java.lang.Class.getDeclaredConstructors0(Native Method) ~[?:?]
+	at java.base/java.lang.Class.privateGetDeclaredConstructors(Class.java:3373) ~[?:?]
+	at java.base/java.lang.Class.getDeclaredConstructors(Class.java:2555) ~[?:?]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:379) ~[spring-beans-6.2.1.jar:6.2.1]
+	... 25 more
+2025-05-09 00:57:12 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 10244 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-09 00:57:12 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-09 00:57:14 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-09 00:57:15 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 575 ms. Found 12 JPA repository interfaces.
+2025-05-09 00:57:16 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-09 00:57:16 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:57:16 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-09 00:57:16 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-09 00:57:16 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat-1].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-09 00:57:16 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4005 ms
+2025-05-09 00:57:16 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-09 00:57:16 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-09 00:57:16 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-09 00:57:16 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2025-05-09 00:57:16 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5b0e3c1c
+2025-05-09 00:57:16 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2025-05-09 00:57:16 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-09 00:57:17 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-09 00:57:17 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:57:17 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-09 00:57:17 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-09 00:57:17 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-09 00:57:18 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-09 00:57:18 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-09 00:57:18 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-09 00:57:18 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 6.232 seconds (process running for 1765.552)
+2025-05-09 00:57:18 [] INFO  org.springframework.boot.devtools.autoconfigure.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-05-09 00:57:24 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat-1].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-09 00:57:24 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-09 00:57:24 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-05-09 00:57:24 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:57:25 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:57:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/9NfN6R3Ia7GUIvB6A8-TfKlX23SKmfjMNeKa_WclnPs=
+2025-05-09 00:57:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): 9NfN6R3Ia7GUIvB6A8-TfKlX23SKmfjMNeKa_WclnPs=
+2025-05-09 00:57:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false)
+2025-05-09 00:57:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: null
+2025-05-09 00:57:27 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:57:27 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:57:27 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:57:27 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:57:28 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/edit/Ppe0Eqa2okqrDXnpp8of_LvVO75s6AhfneSeSNh6GEs=
+2025-05-09 00:57:28 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying edit form for customer ID (encrypted): Ppe0Eqa2okqrDXnpp8of_LvVO75s6AhfneSeSNh6GEs=
+2025-05-09 00:57:28 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all active products.
+2025-05-09 00:57:28 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Retrieved 2 active products.
+2025-05-09 00:57:33 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Populated CustomerRegistrationDTO for edit form: CustomerRegistrationDTO(customer=Customer(fullName=NewCustomer3, phoneNumber=03224499844, enabled=false), frontPocket=false, oneSidePocket=false, twoSidePocket=false, shalwarZipPocket=false, shalwarSadaPocket=false, twoPajamaPocket=false, singleSilai=false, doubleSilai=false, chamakSilai=false, flopPocket=false, normalButton=false, touchButton=false, metalButton=false, qameezLength=null, qameezType=null, bazoo=null, kuhni=null, aarmHole=null, kuff=null, golMoori=null, galla=null, gallaType=null, tera=null, patiLambai=null, chati=null, chati360=null, kamar=null, kamar360=null, daman=null, daman360=null, shalwar=null, shalwarGher=null, shalwarPaincha=null, pajama=null, pajamaWaist=null, pajamaPaincha=null, lasticPlusDori=null, deegar=null, measurement=null, products=[Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true)], customerMeasurements={}, selectedProductIds=[])
+2025-05-09 00:57:34 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:57:34 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:57:34 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:57:34 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:57:44 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: POST /tailor-master/customers/update
+2025-05-09 00:57:44 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Attempting to update customer with encrypted ID: P8BjIgQzDC5AlVQnWoPuv3x9CdAfwUzY3Vo88kmho78=
+2025-05-09 00:57:51 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 1
+2025-05-09 00:57:53 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching product by ID: 2
+2025-05-09 00:57:54 [abdullateef] INFO  com.example.tailormaster.service.customer.CustomerService - Updating customer with ID: 49
+2025-05-09 00:58:06 [abdullateef] ERROR com.example.tailormaster.controller.CustomerController - Error updating customer with encrypted ID P8BjIgQzDC5AlVQnWoPuv3x9CdAfwUzY3Vo88kmho78=: Cannot invoke "java.util.List.stream()" because the return value of "com.example.tailormaster.entity.Customer.getMeasurements()" is null
+java.lang.NullPointerException: Cannot invoke "java.util.List.stream()" because the return value of "com.example.tailormaster.entity.Customer.getMeasurements()" is null
+	at com.example.tailormaster.validation.Utility.populateCustomerMeasurement(Utility.java:205) ~[classes/:?]
+	at com.example.tailormaster.service.customer.CustomerService.updateCustomer(CustomerService.java:80) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359) ~[spring-aop-6.2.1.jar:6.2.1]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.2.1.jar:6.2.1]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.2.1.jar:6.2.1]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380) ~[spring-tx-6.2.1.jar:6.2.1]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.2.1.jar:6.2.1]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.2.1.jar:6.2.1]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:727) ~[spring-aop-6.2.1.jar:6.2.1]
+	at com.example.tailormaster.service.customer.CustomerService$$SpringCGLIB$$0.updateCustomer(<generated>) ~[classes/:?]
+	at com.example.tailormaster.controller.CustomerController.updateCustomer(CustomerController.java:195) ~[classes/:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[?:?]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:257) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:190) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.40.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.40.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at com.example.tailormaster.filter.LoggingMDCFilter.doFilter(LoggingMDCFilter.java:30) ~[classes/:?]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.csrf.CsrfFilter.doFilterInternal(CsrfFilter.java:131) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:243) ~[spring-webmvc-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) [spring-security-config-6.4.2.jar:6.4.2]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) [spring-web-6.2.1.jar:6.2.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) [spring-web-6.2.1.jar:6.2.1]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) [tomcat-embed-core-10.1.40.jar:10.1.40]
+	at java.base/java.lang.Thread.run(Thread.java:833) [?:?]
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-09 00:58:06 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-09 00:59:22 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-09 00:59:23 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-09 00:59:23 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-09 00:59:23 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-05-09 00:59:23 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.

@@ -4,7 +4,6 @@ import com.example.tailormaster.dto.ReceiptDTO;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.repository.UserRepository;
-import com.example.tailormaster.repository.order.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,7 @@ public class ReceiptService {
     
     private final UserRepository userRepository;
 
-    public ReceiptDTO generateReceipt(Order order) {
+    public ReceiptDTO generateOrderReceipt(Order order) {
 
         // Fetch logged-in user details
         String username = getLoggedInUsername();

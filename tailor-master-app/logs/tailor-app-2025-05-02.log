@@ -1,0 +1,711 @@
+2025-05-02 00:04:36 [] WARN  org.apache.catalina.util.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [425] milliseconds.
+2025-05-02 00:04:36 [ANONYMOUS] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'ANONYMOUS' is requesting: GET /tailor-master/login
+2025-05-02 00:04:36 [ANONYMOUS] INFO  com.example.tailormaster.controller.AuthController - Accessed login page
+2025-05-02 00:04:45 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
+2025-05-02 00:04:45 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 2000.00
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 2000.00
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 48
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 48
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 41
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 41
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
+2025-05-02 00:04:46 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/datatable
+2025-05-02 00:05:13 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetching customers data with search value: , sort direction: asc, start date: null, end date: null
+2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
+2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
+2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false)
+2025-05-02 00:05:16 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: [CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true), chest=null, sleeveLength=null, shoulder=null, hips=22, waist=34, barcode=LedgerTest303219988776-6fccaec9-e05e-459b-8f12-70f13381b24a), CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), chest=34, sleeveLength=32, shoulder=23, hips=null, waist=null, barcode=LedgerTest303219988776-1b6b5e86-06cd-4c1e-b7e4-e43ce15cd165)]
+2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 00:05:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 00:09:44 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 00:09:47 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 00:09:47 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 00:09:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-05-02 00:09:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2025-05-02 00:10:09 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 00:10:09 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 7816 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 00:10:09 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 00:10:09 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 00:10:09 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 00:10:14 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 00:10:14 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 445 ms. Found 9 JPA repository interfaces.
+2025-05-02 00:10:16 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 00:10:17 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 00:10:17 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 00:10:17 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7620 ms
+2025-05-02 00:10:18 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 00:10:18 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 00:10:18 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 00:10:19 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 00:10:19 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 00:10:21 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@49637bee
+2025-05-02 00:10:21 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 00:10:21 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 00:10:25 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 00:10:25 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 00:10:26 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 00:10:31 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 00:10:31 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 00:10:31 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 00:10:33 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 00:10:33 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 00:10:33 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 00:10:33 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 26.114 seconds (process running for 30.075)
+2025-05-02 00:16:25 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 00:16:25 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 00:16:25 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/customers/details/cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
+2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Displaying details for customer ID (encrypted): cD4omn-nurNL56sv6iDl0a6pLsBTZby0ntGD4HR5eL8=
+2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched customer details: Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false)
+2025-05-02 00:16:26 [abdullateef] INFO  com.example.tailormaster.controller.CustomerController - Fetched measurement details: [CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true), chest=null, sleeveLength=null, shoulder=null, hips=22, waist=34, barcode=LedgerTest303219988776-6fccaec9-e05e-459b-8f12-70f13381b24a), CustomerMeasurement(customer=Customer(fullName=LedgerTest3, phoneNumber=03219988776, enabled=false), product=Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), chest=34, sleeveLength=32, shoulder=23, hips=null, waist=null, barcode=LedgerTest303219988776-1b6b5e86-06cd-4c1e-b7e4-e43ce15cd165)]
+2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 00:16:28 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 00:27:26 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 00:27:29 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 00:27:29 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 00:27:29 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 00:27:30 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:02:15 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:02:16 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 19168 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:02:16 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:02:16 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:02:16 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:02:18 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:02:18 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 297 ms. Found 9 JPA repository interfaces.
+2025-05-02 01:02:19 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:02:19 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:02:19 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:02:19 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:02:20 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:02:20 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3879 ms
+2025-05-02 01:02:20 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:02:20 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:02:20 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:02:21 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:02:21 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:02:22 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3d202403
+2025-05-02 01:02:22 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:02:22 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:02:24 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:02:25 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:02:26 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:02:31 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:02:31 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:02:31 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:02:32 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:02:32 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:02:32 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:02:32 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 17.632 seconds (process running for 20.83)
+2025-05-02 01:20:22 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:20:24 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:20:24 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:20:24 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:20:24 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:20:38 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:20:38 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 7072 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:20:38 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:20:38 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:20:38 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:20:41 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:20:41 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 178 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:20:42 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:20:42 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:20:42 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:20:42 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:20:42 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:20:42 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3838 ms
+2025-05-02 01:20:42 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:20:42 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:20:42 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:20:43 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:20:43 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:20:44 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@76eae250
+2025-05-02 01:20:44 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:20:44 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:20:46 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:20:46 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:20:47 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:20:51 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:20:51 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:20:51 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:20:52 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:20:52 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:20:52 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:20:52 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 15.199 seconds (process running for 18.351)
+2025-05-02 01:28:06 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:28:07 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:28:08 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:28:08 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:28:09 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:28:22 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:28:22 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 9860 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:28:22 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:28:22 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:28:22 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:28:24 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:28:25 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 398 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:28:27 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:28:27 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:28:27 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:28:27 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:28:27 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:28:27 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 5507 ms
+2025-05-02 01:28:28 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:28:29 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:28:29 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:28:30 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:28:30 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:28:31 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3d7a96ec
+2025-05-02 01:28:31 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:28:31 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:28:36 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:28:36 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:28:38 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:28:43 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:28:43 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:28:43 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:28:44 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:28:44 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:28:44 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:28:44 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 24.232 seconds (process running for 27.232)
+2025-05-02 01:37:08 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:37:08 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:37:08 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-05-02 01:37:08 [] WARN  org.apache.catalina.util.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [138] milliseconds.
+2025-05-02 01:37:08 [ANONYMOUS] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'ANONYMOUS' is requesting: GET /tailor-master/login
+2025-05-02 01:37:08 [ANONYMOUS] INFO  com.example.tailormaster.controller.AuthController - Accessed login page
+2025-05-02 01:47:36 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:47:37 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:47:37 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:47:37 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:47:37 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:47:54 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:47:54 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 10640 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:47:54 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:47:55 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:47:55 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:47:57 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:47:57 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 358 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:47:59 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:48:00 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:48:00 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:48:00 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:48:00 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:48:00 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 5316 ms
+2025-05-02 01:48:01 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:48:01 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:48:01 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:48:02 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:48:02 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:48:03 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3c04447a
+2025-05-02 01:48:03 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:48:03 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:48:05 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:48:06 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:48:07 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:48:11 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:48:11 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:48:11 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:48:12 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:48:12 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:48:12 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:48:12 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 18.776 seconds (process running for 22.56)
+2025-05-02 01:48:14 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:48:15 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:48:15 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:48:15 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:48:15 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:48:25 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:48:25 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 6576 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:48:25 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:48:25 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:48:25 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:48:28 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:48:29 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 323 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:48:31 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:48:31 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:48:31 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:48:31 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:48:32 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:48:32 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 6467 ms
+2025-05-02 01:48:32 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:48:32 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:48:33 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:48:33 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:48:33 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:48:34 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@340db208
+2025-05-02 01:48:34 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:48:35 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:48:37 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:48:38 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:48:38 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:48:43 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:48:43 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:48:43 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:48:44 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:48:44 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:48:44 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:48:44 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 20.941 seconds (process running for 23.834)
+2025-05-02 01:48:47 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:48:47 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:48:47 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-05-02 01:48:47 [ANONYMOUS] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'ANONYMOUS' is requesting: GET /tailor-master/login
+2025-05-02 01:48:47 [ANONYMOUS] INFO  com.example.tailormaster.controller.AuthController - Accessed login page
+2025-05-02 01:48:56 [] WARN  org.apache.catalina.util.SessionIdGeneratorBase - Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [183] milliseconds.
+2025-05-02 01:48:56 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard
+2025-05-02 01:48:56 [abdullateef] INFO  com.example.tailormaster.controller.AuthController - User 'abdullateef' accessed the dashboard
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-orders
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/total-customers
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/revenue-this-month
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total customers.
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/pending-payments
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested total orders.
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/monthly-revenue-trends
+2025-05-02 01:48:57 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested pending payments.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested revenue-this-month.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested monthly-revenue-trends.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total pending payments: 7
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Pending payments: 7
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Revenue this month: 2000.00
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Revenue this month: 2000.00
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Monthly revenue trends fetched successfully
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/order-status-counts
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested order-status-counts.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Order status counts: {Cancelled=1, Pending=7, InProgress=1, Completed=39, Ready for Pickup=7}
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/recent-orders
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested recent-orders.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/customers/top
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Recent orders fetched: 5 orders
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Recent orders fetched: 5
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested top customers.
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Top customers fetched: 5
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Top customers fetched: 5
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total customers: 41
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Total orders: 48
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total orders: 48
+2025-05-02 01:48:58 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Total customers: 41
+2025-05-02 01:49:05 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:49:06 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:49:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:49:06 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:49:06 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:51:48 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:51:49 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:51:50 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:51:50 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:51:50 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:51:59 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:51:59 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 9668 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:51:59 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:51:59 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:51:59 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:52:01 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:52:01 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 230 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:52:02 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:52:02 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:52:02 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:52:02 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:52:02 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:52:02 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3532 ms
+2025-05-02 01:52:03 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:52:03 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:52:03 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:52:04 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:52:04 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:52:05 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6297a5b9
+2025-05-02 01:52:05 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:52:05 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:52:09 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:52:09 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:52:10 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:52:16 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:52:16 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:52:16 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:52:17 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:52:17 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:52:17 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:52:17 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 19.993 seconds (process running for 22.874)
+2025-05-02 01:52:20 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:52:20 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:52:20 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-05-02 01:52:20 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:52:21 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:52:21 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:52:21 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:52:21 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:52:46 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:52:47 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:52:47 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:52:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:52:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:52:55 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:52:56 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 5112 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:52:56 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:52:56 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:52:56 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:52:58 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:52:59 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 274 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:53:00 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:53:00 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:53:00 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:53:00 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:53:00 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:53:00 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4574 ms
+2025-05-02 01:53:01 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:53:01 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:53:01 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:53:01 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:53:01 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:53:02 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3f2ec2b7
+2025-05-02 01:53:02 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:53:02 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:53:04 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:53:05 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:53:05 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:53:09 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:53:09 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:53:09 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:53:10 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:53:10 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:53:10 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:53:10 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 15.828 seconds (process running for 18.404)
+2025-05-02 01:53:22 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:53:22 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:53:22 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-05-02 01:53:22 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:53:24 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:53:24 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:53:24 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:53:24 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:53:35 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:53:36 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:53:36 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:53:36 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:53:36 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:53:42 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:53:42 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 6896 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:53:42 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:53:42 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:53:42 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:53:44 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:53:44 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 315 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:53:46 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:53:46 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:53:46 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:53:46 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:53:46 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:53:46 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3917 ms
+2025-05-02 01:53:46 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:53:47 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:53:47 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:53:47 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:53:47 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:53:48 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2eebc8fd
+2025-05-02 01:53:48 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:53:48 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:53:50 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:53:50 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:53:51 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:53:55 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:53:55 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:53:55 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:53:57 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:53:57 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:53:57 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:53:57 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 16.353 seconds (process running for 18.733)
+2025-05-02 01:54:00 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:54:00 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:54:00 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-05-02 01:54:00 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:54:01 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:54:02 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:54:02 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:54:02 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:55:11 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:55:12 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:55:14 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:55:14 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:55:14 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:55:21 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:55:21 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 14860 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:55:21 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:55:21 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:55:21 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:55:23 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:55:23 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 169 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:55:24 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:55:24 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:55:24 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:55:24 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:55:24 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:55:24 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3084 ms
+2025-05-02 01:55:25 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:55:25 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:55:25 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:55:25 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:55:25 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:55:26 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@559988a1
+2025-05-02 01:55:26 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:55:26 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:55:28 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:55:28 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:55:29 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:55:32 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:55:32 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:55:32 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:55:33 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:55:33 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:55:33 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:55:33 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 13.118 seconds (process running for 15.801)
+2025-05-02 01:55:38 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:55:38 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:55:38 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-05-02 01:55:38 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:55:39 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:55:39 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:55:39 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:55:39 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:58:38 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:58:41 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:58:41 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:58:41 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:58:41 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:58:49 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:58:49 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 15036 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:58:49 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:58:49 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:58:49 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 01:58:51 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 01:58:52 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 177 ms. Found 12 JPA repository interfaces.
+2025-05-02 01:58:53 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 01:58:53 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:58:53 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 01:58:53 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 01:58:53 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 01:58:53 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3278 ms
+2025-05-02 01:58:53 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 01:58:53 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 01:58:53 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 01:58:54 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 01:58:54 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 01:58:55 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@42def4ca
+2025-05-02 01:58:55 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 01:58:55 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 01:58:59 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 01:58:59 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:59:01 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 01:59:07 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 01:59:07 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 01:59:07 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 01:59:08 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 01:59:08 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 01:59:08 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 01:59:08 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 20.199 seconds (process running for 22.892)
+2025-05-02 01:59:16 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 01:59:16 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 01:59:16 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-05-02 01:59:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 01:59:17 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 01:59:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 01:59:17 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 01:59:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 01:59:49 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 01:59:50 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 01:59:50 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 01:59:50 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 01:59:50 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-02 01:59:58 [] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-05-02 01:59:58 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Starting TailorMasterAppApplication using Java 17.0.2 with PID 18708 (E:\Development-Workspaces\tailor-master-app\tailor-master-app\target\classes started by wajiz.pk in E:\Development-Workspaces\tailor-master-app\tailor-master-app)
+2025-05-02 01:59:58 [] INFO  com.example.tailormaster.TailorMasterAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-02 01:59:58 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-05-02 01:59:58 [] INFO  org.springframework.boot.devtools.env.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-05-02 02:00:00 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-02 02:00:00 [] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 169 ms. Found 12 JPA repository interfaces.
+2025-05-02 02:00:01 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-05-02 02:00:01 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-02 02:00:01 [] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-02 02:00:01 [] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-05-02 02:00:01 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring embedded WebApplicationContext
+2025-05-02 02:00:01 [] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3296 ms
+2025-05-02 02:00:02 [] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-02 02:00:02 [] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-05-02 02:00:02 [] INFO  org.hibernate.cache.internal.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-02 02:00:02 [] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-02 02:00:03 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-02 02:00:03 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@321223dc
+2025-05-02 02:00:03 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-02 02:00:03 [] INFO  org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.28
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-02 02:00:06 [] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-02 02:00:06 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 02:00:07 [] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-02 02:00:10 [] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-02 02:00:10 [] INFO  org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-05-02 02:00:10 [] WARN  org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-05-02 02:00:11 [] INFO  org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-02 02:00:11 [] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-02 02:00:11 [] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/tailor-master'
+2025-05-02 02:00:11 [] INFO  com.example.tailormaster.TailorMasterAppApplication - Started TailorMasterAppApplication in 14.453 seconds (process running for 16.983)
+2025-05-02 02:00:16 [] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/tailor-master] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-02 02:00:16 [] INFO  org.springframework.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-02 02:00:16 [] INFO  org.springframework.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-05-02 02:00:16 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 02:00:17 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 02:00:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 02:00:17 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 02:00:17 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 02:00:25 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders
+2025-05-02 02:00:25 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - User accessed the orders list page.
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/orders/datatable
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.controller.OrderController - Fetching paginated orders for datatable - draw: 1, start: 0, length: 10, search: , column: 0, direction: asc, startDate: null, endDate: null
+2025-05-02 02:00:26 [abdullateef] INFO  com.example.tailormaster.service.order.OrderService - Fetched paginated orders with custom payment filter - draw: 1, start: 0, length: 10, filtered: 48, total: 48
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/products
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.controller.ProductController - User accessed the product list page.
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.service.product.ProductService - Fetching all products.
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.controller.ProductController - Retrieved products: [Product(type=QAMEEZ, name=قميض, description=, price=2000.00, enabled=true), Product(type=SHALWAR, name=شلوار, description=, price=500.00, enabled=true), Product(type=QAMEEZ, name=Test, description=, price=10.00, enabled=false), Product(type=QAMEEZ, name=testUI, description=, price=10.00, enabled=false), Product(type=QAMEEZ, name=My Luv2Shop, description=, price=10.00, enabled=false), Product(type=QAMEEZ, name=Waseem Ahmed, description=, price=20.00, enabled=false)] 
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 02:00:30 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 02:00:32 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/labors
+2025-05-02 02:00:32 [abdullateef] INFO  com.example.tailormaster.filter.LoggingInterceptor - User 'abdullateef' is requesting: GET /tailor-master/dashboard/notifications/upcoming-deliveries
+2025-05-02 02:00:32 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Requested upcoming deliveries.
+2025-05-02 02:00:32 [abdullateef] INFO  com.example.tailormaster.service.dashboard.DashboardService - Upcoming deliveries fetched: 8
+2025-05-02 02:00:32 [abdullateef] INFO  com.example.tailormaster.controller.dashboard.DashboardController - Upcoming deliveries fetched: 8
+2025-05-02 02:01:30 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-02 02:01:32 [] INFO  org.springframework.boot.web.embedded.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-05-02 02:01:33 [] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-02 02:01:33 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-02 02:01:33 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

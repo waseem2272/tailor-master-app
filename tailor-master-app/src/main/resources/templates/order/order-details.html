@@ -145,15 +145,15 @@
 
             <div class="text-center mt-4">
 
-                <a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='customer')}"
+                <a th:href="@{/orders/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
                    class="btn btn-success me-2">
-                    <i class="bi bi-receipt"></i> View Customer Receipt
+                    <i class="bi bi-receipt"></i> Generate Order Receipt
                 </a>
 
-                <!--<a th:href="@{/orders/generate-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)}, type='tailor')}"
+                <a th:href="@{/orders/generate-measurement/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
                    class="btn btn-success me-2">
-                    <i class="bi bi-receipt"></i> View Tailor Receipt
-                </a>-->
+                    <i class="bi bi-receipt"></i> Generate Measurement
+                </a>
                 <a th:href="@{/orders}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle"></i> Back to Orders
                 </a>

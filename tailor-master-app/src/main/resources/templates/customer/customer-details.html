@@ -17,6 +17,10 @@
         .collapse.show + .card-body .collapse-toggle-icon {
             transform: rotate(180deg);
         }
+        .not-disabled-label {
+            color: #212529 !important; /* Default Bootstrap text color */
+            opacity: 1 !important;     /* Remove any transparency */
+        }
     </style>
 
 </head>
@@ -51,36 +55,248 @@
             <!-- Products & Measurements -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-rulers me-2"></i> Products & Measurements
+                    <i class="bi bi-rulers me-2"></i>کسٹمرکی ناپ
                 </div>
                 <div class="card-body">
-                    <div class="row g-4">
-                        <div th:each="product : ${products}" class="col-md-6">
-                            <div class="card border-success border-bottom border-3 shadow-sm">
-                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        <span class="fw-bold" th:text="${product.name}"></span>
-                                    </div>
+                    <div th:if="${measurement != null}">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="${measurement.frontPocket}" id="frontPocket">
+                                <label class="form-check-label not-disabled-label" for="frontPocket">فرنٹ پاکٹ</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.oneSidePocket}" id="oneSidePocket">
+                                <label class="form-check-label not-disabled-label" for="oneSidePocket">1 سائیڈپاکیٹ</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.twoSidePocket}" id="twoSidePocket">
+                                <label class="form-check-label not-disabled-label" for="twoSidePocket">2 سائیڈپاکیٹ</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.shalwarZipPocket}" id="shalwarZipPocket">
+                                <label class="form-check-label not-disabled-label" for="shalwarZipPocket">شلوار زپ پاکٹ</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.shalwarSadaPocket}" id="shalwarSadaPocket">
+                                <label class="form-check-label not-disabled-label" for="shalwarSadaPocket">شلوار سادہ پاکٹ</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.twoPajamaPocket}" id="twoPajamaPocket">
+                                <label class="form-check-label not-disabled-label" for="twoPajamaPocket">2 پاجامہ پاکٹ</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.singleSilai}" id="singleSilai">
+                                <label class="form-check-label not-disabled-label" for="singleSilai">سنگل سلائی</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.doubleSilai}" id="doubleSilai">
+                                <label class="form-check-label not-disabled-label" for="doubleSilai">ڈبل سلائی</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.chamakSilai}" id="chamakSilai">
+                                <label class="form-check-label not-disabled-label" for="chamakSilai">چمک سلائی</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.flopPocket}" id="flopPocket">
+                                <label class="form-check-label not-disabled-label" for="flopPocket">فلاپ پاکیٹ</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.normalButton}" id="normalButton">
+                                <label class="form-check-label not-disabled-label" for="normalButton">نارمل بٹن</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.touchButton}" id="touchButton">
+                                <label class="form-check-label not-disabled-label" for="touchButton">ٹچ بٹن</label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" disabled
+                                       th:checked="*{measurement.metalButton}" id="metalButton">
+                                <label class="form-check-label not-disabled-label" for="metalButton">میٹل بٹن</label>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="qameezLength" class="form-label">قمیض لمبائی</label>
+                                    <input type="text" id="qameezLength" name="qameezLength" th:field="*{measurement.qameezLength}" class="form-control" readonly>
                                 </div>
-                                <div class="card-body">
-                                    <div th:each="measurement : ${measurements}" th:if="${measurement.product.id == product.id}">
+                                <div class="col-md-5">
+                                    <label class="form-label"></label>
+                                    <p class="form-control-plaintext" th:text="${measurement.qameezType == 'gol_daman' ? 'گول دامن' : (measurement.qameezType == 'chakor_daman' ? 'چکور دامن' : '---')}">---</p>
+                                </div>
+                            </div>
 
-                                        <div th:if="${product.type.name() == 'QAMEEZ'}">
-                                            <p><strong>سینہ:</strong> <span th:text="${measurement.chest}"></span></p>
-                                            <p><strong>آستینیں:</strong> <span th:text="${measurement.sleeveLength}"></span></p>
-                                            <p><strong>کندھا:</strong> <span th:text="${measurement.shoulder}"></span></p>
-                                        </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="bazoo" class="form-label">بازو</label>
+                                    <input type="text" id="bazoo" name="bazoo" th:field="*{measurement.bazoo}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="kuhni" class="form-label"></label>
+                                    <input type="text" id="kuhni" name="kuhni" th:field="*{measurement.kuhni}" class="form-control" placeholder="کہنی" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="aarmHole" class="form-label"></label>
+                                    <input type="text" id="aarmHole" name="aarmHole" th:field="*{measurement.aarmHole}" class="form-control" placeholder="آرم ہول" readonly>
+                                </div>
+                            </div>
 
-                                        <div th:if="${product.type.name() == 'SHALWAR'}">
-                                            <p><strong>Hips:</strong> <span th:text="${measurement.hips}"></span></p>
-                                            <p><strong>Waist:</strong> <span th:text="${measurement.waist}"></span></p>
-                                        </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="kuff" class="form-label">کف</label>
+                                    <input type="text" id="kuff" name="kuff" th:field="*{measurement.kuff}" class="form-control" readonly>
+                                </div>
+                            </div>
 
-                                    </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="golMoori" class="form-label">گول موری</label>
+                                    <input type="text" id="golMoori" name="golMoori" th:field="*{measurement.golMoori}" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="galla" class="form-label">گلا</label>
+                                    <input type="text" id="galla" name="galla" th:field="*{measurement.galla}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label"></label>
+                                    <p class="form-control-plaintext" th:text="${measurement.gallaType == 'shirt_collar' ? 'شرٹ کالر' : (measurement.gallaType == 'sherwani_been' ? 'شیروانی بین' : '---')}">---</p>
+
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="tera" class="form-label">تیرا</label>
+                                    <input type="text" id="tera" name="tera" th:field="*{measurement.tera}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="patiLambai" class="form-label">پٹی لمبائی</label>
+                                    <input type="text" id="patiLambai" name="patiLambai" th:field="*{measurement.patiLambai}" class="form-control" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="chati" class="form-label">چھاتی</label>
+                                    <input type="text" id="chati" name="chati" th:field="*{measurement.chati}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="chati360" class="form-label"></label>
+                                    <input type="text" id="chati360" name="chati360" th:field="*{measurement.chati360}" class="form-control" placeholder="360" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="kamar" class="form-label">کمر</label>
+                                    <input type="text" id="kamar" name="kamar" th:field="*{measurement.kamar}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="kamar360" class="form-label"></label>
+                                    <input type="text" id="kamar360" name="kamar360" th:field="*{measurement.kamar360}" class="form-control" placeholder="360" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label for="daman" class="form-label">دامن</label>
+                                    <input type="text" id="daman" name="daman" th:field="*{measurement.daman}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="daman360" class="form-label"></label>
+                                    <input type="text" id="daman360" name="daman360" th:field="*{measurement.daman360}" class="form-control" placeholder="360" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="shalwar" class="form-label">شلوار</label>
+                                    <input type="text" id="shalwar" name="shalwar" th:field="*{measurement.shalwar}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="shalwarGher" class="form-label"></label>
+                                    <input type="text" id="shalwarGher" name="shalwarGher" th:field="*{measurement.shalwarGher}" class="form-control" placeholder="گھیر" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="shalwarPaincha" class="form-label"></label>
+                                    <input type="text" id="shalwarPaincha" name="shalwarPaincha" th:field="*{measurement.shalwarPaincha}" class="form-control" placeholder="پائنچہ" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label for="pajama" class="form-label">پاجامہ</label>
+                                    <input type="text" id="pajama" name="pajama" th:field="*{measurement.pajama}" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="pajamaWaist" class="form-label"></label>
+                                    <input type="text" id="pajamaWaist" name="pajamaWaist" th:field="*{measurement.pajamaWaist}" class="form-control" placeholder="ویسٹ" readonly>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="pajamaPaincha" class="form-label"></label>
+                                    <input type="text" id="pajamaPaincha" name="pajamaPaincha" th:field="*{measurement.pajamaPaincha}" class="form-control" placeholder="پائنچہ" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="form-label"></label>
+                                    <p class="form-control-plaintext" th:text="${measurement.lasticPlusDori == 'full_lastic_plus_dori' ? 'فل لاسٹک + ڈوری' : (measurement.lasticPlusDori == 'half_lastic_plus_dori' ? 'ہاف لاسٹک + ڈوری' : '---')}">---</p>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <label for="deegar" class="form-label">دیگر</label>
+                            <textarea id="deegar" th:field="*{measurement.deegar}" class="form-control" readonly
+                                      rows="3"></textarea>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div th:if="${measurement == null}">
+                        <p class="text-muted">No measurements available for this customer.</p>
                     </div>
 
                     <div class="d-flex justify-content-center gap-2 mt-4">
@@ -92,7 +308,6 @@
                             <i class="bi bi-arrow-left-circle"></i> Back to Customers
                         </a>
                     </div>
-
                 </div>
             </div>
 

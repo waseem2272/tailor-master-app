@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Labor Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-fill me-2"></i> Labor Details
+            </h2>
+
+            <!-- Customer Information -->
+            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-info-circle me-2"></i> Labor Information
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <span th:text="${labor.name}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Phone:</strong> <span th:text="${labor.contact}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Skills:</strong> <span th:text="${labor.skills}"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Join Date:</strong> <span th:text="${labor.joinDate}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products & Measurements -->
+            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-rulers me-2"></i>کسٹمرکی ناپ
+                </div>
+                <div class="card-body">
+
+
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+<script>
+    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (header) {
+        header.addEventListener('click', function () {
+            const icon = header.querySelector('i');
+            const targetId = header.getAttribute('data-bs-target');
+            const target = document.querySelector(targetId);
+
+            target.addEventListener('shown.bs.collapse', function () {
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            });
+
+            target.addEventListener('hidden.bs.collapse', function () {
+                icon.classList.remove('bi-chevron-up');
+                icon.classList.add('bi-chevron-down');
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>

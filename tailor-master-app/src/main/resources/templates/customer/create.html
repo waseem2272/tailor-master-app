@@ -14,7 +14,7 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <form th:action="@{/customers/create}" th:object="${registrationDTO}" method="post" onsubmit="return validateForm()">
+            <form th:action="@{/customers/create}" th:object="${registrationDTO}" method="post">
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi bi-person-fill-add me-2"></i> Create Customer
                 </h2>
@@ -36,16 +36,16 @@
                             <div class="col-md-6 mb-3">
                                 <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
                                 <input type="text" id="fullName" name="fullName" th:field="*{customer.fullName}" class="form-control" placeholder="Enter full name" required>
-                                <div th:if="${#fields.hasErrors('customer.fullName')}" class="text-danger small">
+                                <!--<div th:if="${#fields.hasErrors('customer.fullName')}" class="text-danger small">
                                     <span th:each="error : ${#fields.errors('customer.fullName')}" th:text="${error}"></span>
-                                </div>
+                                </div>-->
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phoneNumber" class="form-label">Phone Number <span class="text-danger">*</span></label>
                                 <input type="text" id="phoneNumber" name="phoneNumber" th:field="*{customer.phoneNumber}" class="form-control" placeholder="Enter phone number" required>
-                                <div th:if="${#fields.hasErrors('customer.phoneNumber')}" class="text-danger small">
+                                <!--<div th:if="${#fields.hasErrors('customer.phoneNumber')}" class="text-danger small">
                                     <span th:each="error : ${#fields.errors('customer.phoneNumber')}" th:text="${error}"></span>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -55,96 +55,279 @@
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-rulers me-2"></i> Products and Measurements
                     </div>
+
                     <div class="card-body">
-                        <h5 class="fw-bold">Select Products <span class="text-danger">*</span></h5>
-                        <hr/>
                         <div class="row">
                             <div class="col-md-4 mb-2" th:each="product : ${registrationDTO.products}">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input product-checkbox" type="checkbox"
                                            th:id="'product_' + ${product.id}"
                                            th:value="${product.id}" name="productIds[]"
-                                           th:checked="${registrationDTO.selectedProductIds != null and #lists.contains(registrationDTO.selectedProductIds, product.id)}"
-                                           onchange="toggleMeasurements(this)">
+                                           checked disabled>
+
+                                    <!-- Hidden field to submit value -->
+                                    <input type="hidden" name="productIds[]" th:value="${product.id}" />
                                     <label class="form-check-label fw-bold fs-5" th:for="'product_' + ${product.id}"
                                            th:text="${product.name}"></label>
                                 </div>
                             </div>
                         </div>
-                        <p id="productError" class="text-danger fw-bold"></p>
 
-                        <h5 class="mt-4 fw-bold">Product Measurements</h5>
+                        <h5 class="mt-4 fw-bold">کسٹمرکی ناپ</h5>
                         <hr/>
-                        <div th:each="product : ${registrationDTO.products}" class="measurement-fields"
-                             th:data-product-id="${product.id}"
-                             th:style="${registrationDTO.selectedProductIds.contains(product.id) ? 'display:block;' : 'display:none;'}">
-                            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        <span class="fw-bold" th:text="${product.name}"></span>
-                                    </div>
-                                    <!-- Optional close button (if you want hide measurement card feature)
-                                    <button type="button" class="btn-close btn-close-white" aria-label="Close"
-                                            onclick="closeMeasurement([[${product.id}]])"></button>
-                                    -->
+
+                        <div class="row">
+                            <div class="col-md-2">
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{frontPocket}" id="frontPocket">
+                                    <label class="form-check-label" for="frontPocket">فرنٹ پاکٹ</label>
                                 </div>
-                                <div class="card-body">
-                                    <div th:if="${product.type.name() == 'QAMEEZ'}">
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label th:for="'chest_'+ ${product.id}" class="form-label">سینہ <span class="text-danger">*</span></label>
-                                                <input type="text" th:id="'chest_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].chest'"
-                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.chest}" class="form-control" placeholder="Enter chest size">
-                                                <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].chest')}" class="text-danger">
-                                                    <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].chest')}" th:text="${error}"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label th:for="'shoulder_'+ ${product.id}" class="form-label">کندھا <span class="text-danger">*</span></label>
-                                                <input type="text" th:id="'shoulder_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].shoulder'"
-                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.shoulder}" class="form-control" placeholder="Enter shoulder length">
-                                                <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].shoulder')}" class="text-danger">
-                                                    <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].shoulder')}" th:text="${error}"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label th:for="'sleeveLength_'+ ${product.id}" class="form-label">آستینیں <span class="text-danger">*</span></label>
-                                                <input type="text" th:id="'sleeveLength_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].sleeveLength'"
-                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.sleeveLength}" class="form-control" placeholder="Enter sleeves length">
-                                                <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].sleeveLength')}" class="text-danger">
-                                                    <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].sleeveLength')}" th:text="${error}"></span>
-                                                </div>
-                                            </div>
-                                        </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{oneSidePocket}" id="oneSidePocket">
+                                    <label class="form-check-label" for="oneSidePocket">1 سائیڈپاکیٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{twoSidePocket}" id="twoSidePocket">
+                                    <label class="form-check-label" for="twoSidePocket">2 سائیڈپاکیٹ</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{shalwarZipPocket}" id="shalwarZipPocket">
+                                    <label class="form-check-label" for="shalwarZipPocket">شلوار زپ پاکٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{shalwarSadaPocket}" id="shalwarSadaPocket">
+                                    <label class="form-check-label" for="shalwarSadaPocket">شلوار سادہ پاکٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{twoPajamaPocket}" id="twoPajamaPocket">
+                                    <label class="form-check-label" for="twoPajamaPocket">2 پاجامہ پاکٹ</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{singleSilai}" id="singleSilai">
+                                    <label class="form-check-label" for="singleSilai">سنگل سلائی</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{doubleSilai}" id="doubleSilai">
+                                    <label class="form-check-label" for="doubleSilai">ڈبل سلائی</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{chamakSilai}" id="chamakSilai">
+                                    <label class="form-check-label" for="chamakSilai">چمک سلائی</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{flopPocket}" id="flopPocket">
+                                    <label class="form-check-label" for="flopPocket">فلاپ پاکیٹ</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{normalButton}" id="normalButton">
+                                    <label class="form-check-label" for="normalButton">نارمل بٹن</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{touchButton}" id="touchButton">
+                                    <label class="form-check-label" for="touchButton">ٹچ بٹن</label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:field="*{metalButton}" id="metalButton">
+                                    <label class="form-check-label" for="metalButton">میٹل بٹن</label>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="qameezLength" class="form-label">قمیض لمبائی</label>
+                                        <input type="text" id="qameezLength" name="qameezLength" th:field="*{qameezLength}" class="form-control">
                                     </div>
-                                    <div th:if="${product.type.name() == 'SHALWAR'}">
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label th:for="'hips_'+ ${product.id}" class="form-label">Hips <span class="text-danger">*</span></label>
-                                                <input type="text" th:id="'hips_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].hips'"
-                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.hips}" class="form-control" placeholder="Enter hips size">
-                                                <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].hips')}" class="text-danger">
-                                                    <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].hips')}" th:text="${error}"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label th:for="'waist_'+ ${product.id}" class="form-label">Waist <span class="text-danger">*</span></label>
-                                                <input type="text" th:id="'waist_'+ ${product.id}" th:name="'customerMeasurements[' + ${product.id} + '].waist'"
-                                                       th:value="${registrationDTO.customerMeasurements.get(product.id)?.waist}" class="form-control" placeholder="Enter waist size">
-                                                <div th:if="${#fields.hasErrors('customerMeasurements[' + product.id + '].waist')}" class="text-danger">
-                                                    <span th:each="error : ${#fields.errors('customerMeasurements[' + product.id + '].waist')}" th:text="${error}"></span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-5">
+                                        <label for="qameezType" class="form-label"></label>
+                                        <select id="qameezType" name="qameezType" th:field="*{qameezType}" class="form-select rounded-pill">
+                                            <option value="" selected>Select</option>
+                                            <option th:value="gol_daman">گول دامن</option>
+                                            <option th:value="chakor_daman">چکور دامن</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="bazoo" class="form-label">بازو</label>
+                                        <input type="text" id="bazoo" name="bazoo" th:field="*{bazoo}" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="kuhni" class="form-label"></label>
+                                        <input type="text" id="kuhni" name="kuhni" th:field="*{kuhni}" class="form-control" placeholder="کہنی">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="aarmHole" class="form-label"></label>
+                                        <input type="text" id="aarmHole" name="aarmHole" th:field="*{aarmHole}" class="form-control" placeholder="آرم ہول">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="kuff" class="form-label">کف</label>
+                                        <input type="text" id="kuff" name="kuff" th:field="*{kuff}" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="golMoori" class="form-label">گول موری</label>
+                                        <input type="text" id="golMoori" name="golMoori" th:field="*{golMoori}" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="galla" class="form-label">گلا</label>
+                                        <input type="text" id="galla" name="galla" th:field="*{galla}" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="gallaType" class="form-label"></label>
+                                        <select id="gallaType" name="gallaType" th:field="*{gallaType}" class="form-select rounded-pill">
+                                            <option value="" selected>Select</option>
+                                            <option th:value="shirt_collar">شرٹ کالر</option>
+                                            <option th:value="sherwani_been">شیروانی بین</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="tera" class="form-label">تیرا</label>
+                                        <input type="text" id="tera" name="tera" th:field="*{tera}" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="patiLambai" class="form-label">پٹی لمبائی</label>
+                                        <input type="text" id="patiLambai" name="patiLambai" th:field="*{patiLambai}" class="form-control">
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="chati" class="form-label">چھاتی</label>
+                                        <input type="text" id="chati" name="chati" th:field="*{chati}" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="chati360" class="form-label"></label>
+                                        <input type="text" id="chati360" name="chati360" th:field="*{chati360}" class="form-control" placeholder="360">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="kamar" class="form-label">کمر</label>
+                                        <input type="text" id="kamar" name="kamar" th:field="*{kamar}" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="kamar360" class="form-label"></label>
+                                        <input type="text" id="kamar360" name="kamar360" th:field="*{kamar360}" class="form-control" placeholder="360">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="daman" class="form-label">دامن</label>
+                                        <input type="text" id="daman" name="daman" th:field="*{daman}" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label for="daman360" class="form-label"></label>
+                                        <input type="text" id="daman360" name="daman360" th:field="*{daman360}" class="form-control" placeholder="360">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="shalwar" class="form-label">شلوار</label>
+                                        <input type="text" id="shalwar" name="shalwar" th:field="*{shalwar}" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="shalwarGher" class="form-label"></label>
+                                        <input type="text" id="shalwarGher" name="shalwarGher" th:field="*{shalwarGher}" class="form-control" placeholder="گھیر">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="shalwarPaincha" class="form-label"></label>
+                                        <input type="text" id="shalwarPaincha" name="shalwarPaincha" th:field="*{shalwarPaincha}" class="form-control" placeholder="پائنچہ">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="pajama" class="form-label">پاجامہ</label>
+                                        <input type="text" id="pajama" name="pajama" th:field="*{pajama}" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="pajamaWaist" class="form-label"></label>
+                                        <input type="text" id="pajamaWaist" name="pajamaWaist" th:field="*{pajamaWaist}" class="form-control" placeholder="ویسٹ">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="pajamaPaincha" class="form-label"></label>
+                                        <input type="text" id="pajamaPaincha" name="pajamaPaincha" th:field="*{pajamaPaincha}" class="form-control" placeholder="پائنچہ">
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label for="lasticPlusDori" class="form-label">لاسٹک + ڈوری</label>
+                                        <select id="lasticPlusDori" name="lasticPlusDori" th:field="*{lasticPlusDori}" class="form-select rounded-pill">
+                                            <option value="" selected>Select</option>
+                                            <option th:value="full_lastic_plus_dori">فل لاسٹک + ڈوری</option>
+                                            <option th:value="half_lastic_plus_dori">ہاف لاسٹک + ڈوری</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="deegar" class="form-label">دیگر</label>
+                                <textarea id="deegar" th:field="*{deegar}" class="form-control"
+                                          rows="3"></textarea>
+                            </div>
+
                         </div>
 
                     </div>
                 </div>
-
 
                 <div class="text-center mt-4">
                     <button type="button" class="btn btn-success" id="openConfirmationModal"><i class="bi bi-check-circle me-1"></i> Create</button>

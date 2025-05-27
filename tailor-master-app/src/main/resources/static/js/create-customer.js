@@ -29,37 +29,37 @@ function validateForm() {
     }
 
     // Validate if at least one product is selected
-    const productCheckboxes = document.querySelectorAll('.product-checkbox');
-    const isProductSelected = [...productCheckboxes].some(checkbox => checkbox.checked);
-    const productErrorContainer = document.getElementById("productError");
-
-    if (!isProductSelected) {
-        productErrorContainer.innerText = "Please select at least one product.";
-        productErrorContainer.style.color = "red";
-        productErrorContainer.style.fontSize = "12px";
-        isValid = false;
-    } else {
-        productErrorContainer.innerText = ""; // Clear error message if valid
-    }
-
-    // Validate measurement fields for selected products
-    document.querySelectorAll('.measurement-fields').forEach(measurementField => {
-        const productId = measurementField.getAttribute('data-product-id');
-        const checkbox = document.querySelector(`.product-checkbox[value="${productId}"]`);
-
-        if (checkbox && checkbox.checked && measurementField.style.display !== 'none') {
-            const inputs = measurementField.querySelectorAll('input');
-
-            inputs.forEach(input => {
-                removeError(input); // Remove previous error messages
-
-                if (input.value.trim() === '') {
-                    showError(input, `${input.placeholder.split("Enter")[1]} is required.`);
-                    isValid = false;
-                }
-            });
-        }
-    });
+    // const productCheckboxes = document.querySelectorAll('.product-checkbox');
+    // const isProductSelected = [...productCheckboxes].some(checkbox => checkbox.checked);
+    // const productErrorContainer = document.getElementById("productError");
+    //
+    // if (!isProductSelected) {
+    //     productErrorContainer.innerText = "Please select at least one product.";
+    //     productErrorContainer.style.color = "red";
+    //     productErrorContainer.style.fontSize = "12px";
+    //     isValid = false;
+    // } else {
+    //     productErrorContainer.innerText = ""; // Clear error message if valid
+    // }
+    //
+    // // Validate measurement fields for selected products
+    // document.querySelectorAll('.measurement-fields').forEach(measurementField => {
+    //     const productId = measurementField.getAttribute('data-product-id');
+    //     const checkbox = document.querySelector(`.product-checkbox[value="${productId}"]`);
+    //
+    //     if (checkbox && checkbox.checked && measurementField.style.display !== 'none') {
+    //         const inputs = measurementField.querySelectorAll('input');
+    //
+    //         inputs.forEach(input => {
+    //             removeError(input); // Remove previous error messages
+    //
+    //             if (input.value.trim() === '') {
+    //                 showError(input, `${input.placeholder.split("Enter")[1]} is required.`);
+    //                 isValid = false;
+    //             }
+    //         });
+    //     }
+    // });
 
     return isValid;
 }
