@@ -1,12 +1,10 @@
 package com.example.tailormaster.entity.labor;
 
 import com.example.tailormaster.entity.BaseEntity;
+import com.example.tailormaster.enums.LaborPaymentType;
 import com.example.tailormaster.enums.PaymentType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +14,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LaborPayment extends BaseEntity {
 
     @ManyToOne(optional = false)
@@ -27,10 +26,10 @@ public class LaborPayment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentType paymentType;    // DEBIT or CREDIT
+    private LaborPaymentType paymentType;
 
-    @Column(nullable = false)
-    private BigDecimal amount;
+    private BigDecimal workAmount;
+    private BigDecimal deductions;
 
     private String remarks;
 }

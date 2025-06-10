@@ -3,6 +3,7 @@
 <head>
     <title>Labor Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
@@ -18,6 +19,28 @@
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-person-fill me-2"></i> Labor Details
             </h2>
+
+            <!-- Success Alert -->
+            <div th:if="${successMessage}" class="row justify-content-center">
+                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${errorMessage}" class="row justify-content-center">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
 
             <!-- Customer Information -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
@@ -36,58 +59,309 @@
                             <p><strong>Skills:</strong> <span th:text="${labor.skills}"></span></p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Join Date:</strong> <span th:text="${labor.joinDate}"></span></p>
+                            <p><strong>Join Date:</strong> <span
+                                    th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></span></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Products & Measurements -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-rulers me-2"></i>کسٹمرکی ناپ
+                <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center rounded-top-4">
+                    <span><i class="bi bi-cash-coin me-2"></i> Payment Details</span>
+                    <button class="btn btn-light btn-sm" th:attr="data-labor-id=${labor.id}" onclick="openAddPaymentModal(this)">
+                        <i class="bi bi-plus-circle me-1"></i> Make Payment
+                    </button>
                 </div>
                 <div class="card-body">
+                    <div class="row justify-content-center text-center mb-4">
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded bg-success bg-opacity-10">
+                                <h5 class="text-success mb-2">
+                                    <i class="bi bi-cash-coin me-1"></i> Total Paid
+                                </h5>
+                                <h3 class="fw-bold text-success mb-0"
+                                    th:text="${#numbers.formatDecimal(totalPaid, 1, 'COMMA', 2, 'POINT')}">
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="row text-center mb-2">
+                        <div class="col-md-4 mb-2">
+                            <div class="p-3 border rounded bg-primary bg-opacity-10">
+                                <h6 class="text-primary mb-1">
+                                    <i class="bi bi-wallet2 me-1"></i> Regular
+                                </h6>
+                                <h5 class="fw-bold text-primary mb-0"
+                                    th:text="${#numbers.formatDecimal(regularPaid, 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
 
+                        <div class="col-md-4 mb-2">
+                            <div class="p-3 border rounded bg-info bg-opacity-10">
+                                <h6 class="text-info mb-1">
+                                    <i class="bi bi-piggy-bank me-1"></i> Advance
+                                </h6>
+                                <h5 class="fw-bold text-info mb-0"
+                                    th:text="${#numbers.formatDecimal(advancePaid, 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <div class="p-3 border rounded bg-danger bg-opacity-10">
+                                <h6 class="text-danger mb-1">
+                                    <i class="bi bi-arrow-down-circle me-1"></i> Borrowed
+                                </h6>
+                                <h5 class="fw-bold text-danger mb-0"
+                                    th:text="${#numbers.formatDecimal(borrowPaid, 1, 'COMMA', 2, 'POINT')}">
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-center text-center">
+                        <div class="col-md-6 mb-2">
+                            <div class="p-4 border rounded"
+                                 th:classappend="${remainingBalance > 0} ? ' bg-success bg-opacity-10' : ' bg-danger bg-opacity-10'">
+                                <h5 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'" class="mb-2">
+                                    <i class="bi bi-calculator me-1"></i> Remaining Balance
+                                </h5>
+                                <h3 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'"
+                                    class="fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(remainingBalance, 1, 'COMMA', 2, 'POINT')}">
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
+            <div class="card shadow-sm border-success border-bottom border-3">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-clock-history me-2"></i> Payment History
+                </div>
+                <div class="card-body">
+                    <table id="laborPaymentsTable" class="table table-bordered table-hover table-striped">
+                        <thead class="table-success text-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Payment Type</th>
+                            <th>Payment Date</th>
+                            <th>Amount</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="payment, iterStat : ${payments}">
+                                <td th:text="${iterStat.count}"></td>
+                                <td th:text="${payment.paymentType.name()}"></td>
+                                <td th:text="${#temporals.format(payment.paymentDate, 'dd-MMM-yyyy')}"></td>
+                                <td th:text="${payment.workAmount > 0 ? payment.workAmount : payment.deductions}"></td>
+                                <td th:text="${payment.remarks} ?: '—'"></td>
+                                <td>
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-warning btn-sm"
+                                       th:attr="data-id=${payment.id}"
+                                       onclick="editPayment(this)">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-danger btn-sm ms-1"
+                                       th:attr="data-id=${payment.id}"
+                                       onclick="deletePayment(this)">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
     </div>
 </div>
+
+<!-- Shared Modal for Create/Update -->
+<div class="modal fade" id="makePaymentModal" tabindex="-1" aria-labelledby="makePaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" th:object="${laborPayment}" id="laborPaymentForm" class="needs-validation" novalidate>
+            <input type="hidden" name="laborId" th:value="${labor.id}" />
+
+            <input type="hidden" name="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" id="paymentId" name="id" th:field="*{id}"/>
+
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header bg-success text-white rounded-top-4">
+                    <h5 class="modal-title" id="makePaymentModalLabel">Make Payment</h5>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+                    <div class="mb-3">
+                        <label for="paymentType" class="form-label">Payment Type <span class="text-danger">*</span></label>
+                        <select id="paymentType" name="paymentType" class="form-select rounded-pill" required>
+                            <option value="" disabled selected>Select</option>
+                            <option th:each="type : ${paymentTypes}" th:value="${type}" th:text="${type}"></option>
+                        </select>
+                        <div class="invalid-feedback">Please select a payment type.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
+                        <input type="number" min="0.01" step="0.01" class="form-control" id="amount" name="amount" required>
+                        <div class="invalid-feedback">Please enter a valid amount greater than 0.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="remarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="submitBtn">
+                        <i class="bi bi-check-circle"></i> Confirm Payment
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 <!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
 <script>
-    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (header) {
-        header.addEventListener('click', function () {
-            const icon = header.querySelector('i');
-            const targetId = header.getAttribute('data-bs-target');
-            const target = document.querySelector(targetId);
-
-            target.addEventListener('shown.bs.collapse', function () {
-                icon.classList.remove('bi-chevron-down');
-                icon.classList.add('bi-chevron-up');
-            });
-
-            target.addEventListener('hidden.bs.collapse', function () {
-                icon.classList.remove('bi-chevron-up');
-                icon.classList.add('bi-chevron-down');
-            });
-        });
+    $(document).ready(function () {
+        $('#laborPaymentsTable').DataTable();
     });
 </script>
 
+<script>
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                const submitBtn = form.querySelector('#submitBtn');
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // ✅ Disable the button after successful validation
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    function openAddPaymentModal(button) {
+        const laborId = button.getAttribute('data-labor-id');
+
+        // Clear previous values
+        document.getElementById('paymentId').value = '';
+        document.getElementById('paymentType').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('remarks').value = '';
+
+        // Set modal title
+        document.getElementById('makePaymentModalLabel').innerText = 'Make Payment';
+
+        // Set form action
+        const form = document.getElementById('laborPaymentForm');
+        form.action = contextPath + 'labors/payments';
+
+        // Set the laborId hidden field
+        document.querySelector('input[name="laborId"]').value = laborId;
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('makePaymentModal'));
+        modal.show();
+    }
+
+    function editPayment(button) {
+        const paymentId = button.getAttribute('data-id');
+
+        fetch(contextPath + `labors/payments/get/${paymentId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch payment details');
+                }
+                return response.json();
+            })
+            .then(payment => {
+                // Populate modal form fields
+                document.getElementById('paymentId').value = payment.id;
+                document.getElementById('paymentType').value = payment.paymentType;
+                document.getElementById('amount').value = payment.workAmount > 0 ? payment.workAmount : payment.deductions;
+                document.getElementById('remarks').value = payment.remarks || '';
+
+                // Update modal title
+                document.getElementById('makePaymentModalLabel').innerText = 'Edit Payment';
+
+                // Set form action (POST URL for update)
+                const form = document.getElementById('laborPaymentForm');
+                form.action = contextPath + 'labors/payments/update';
+
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('makePaymentModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error loading payment details:', error);
+                alert('Could not load payment information. Please try again.');
+            });
+    }
+
+    function deletePayment(button) {
+        const paymentId = button.getAttribute('data-id');
+
+        if (confirm('Are you sure you want to delete this payment?')) {
+            fetch(contextPath + `labors/payments/delete/${paymentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Failed to delete payment. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting payment:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+    }
+
+
+
+</script>
 
 </body>
 </html>

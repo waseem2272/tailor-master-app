@@ -35,6 +35,8 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
                                 "/login",
                                 "/update-password",
                                 "/users/register",
+                                "/labors/payments",
+                                "/labors/payments/update",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",

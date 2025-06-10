@@ -2,7 +2,6 @@ package com.example.tailormaster.repository.order;
 
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.enums.OrderStatus;
-import com.example.tailormaster.enums.PickupStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -61,8 +59,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(o.paidAmount), 0) FROM Order o WHERE MONTH(o.pickupDate) = MONTH(CURRENT_DATE) AND YEAR(o.pickupDate) = YEAR(CURRENT_DATE)")
     BigDecimal getRevenueThisMonth();
-
-    List<Order> findByPickupDateBetweenAndStatusAndPickupStatus(LocalDateTime startDate, LocalDateTime endDate, OrderStatus status, PickupStatus pickupStatus);
 
     List<Order> findTop5ByOrderByCreatedAtDesc();
 

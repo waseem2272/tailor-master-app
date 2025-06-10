@@ -1,6 +1,9 @@
 package com.example.tailormaster.controller.labor;
 
 import com.example.tailormaster.entity.labor.Labor;
+import com.example.tailormaster.entity.labor.LaborPayment;
+import com.example.tailormaster.enums.LaborPaymentType;
+import com.example.tailormaster.service.labor.LaborPaymentService;
 import com.example.tailormaster.service.labor.LaborService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Validation;
@@ -8,12 +11,16 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +32,7 @@ public class LaborController {
     private static final Logger logger = LogManager.getLogger(LaborController.class);
 
     private final LaborService laborService;
+    private final LaborPaymentService laborPaymentService;
     private final Validation validation;
 
     @GetMapping
@@ -32,7 +40,8 @@ public class LaborController {
         logger.info("User accessed the labor list page.");
         try {
             List<Labor> labors = laborService.getAllLabors();
-            model.addAttribute("labors", labors);
+            model.addAttribute("labors",  labors);
+            model.addAttribute("balanceMap", laborPaymentService.getLaborBalances());
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             logger.info("Retrieved labors: {} ", labors);
         } catch (Exception e) {
@@ -76,8 +85,7 @@ public class LaborController {
         logger.info("Displaying update labor form for labor ID: {}", id);
 
         try {
-
-            // Decrypt and validate customer ID
+            // Decrypt and validate labor ID
             Long laborId = validation.validateAndFetchLabor(id, redirectAttributes);
             if (laborId == null) {
                 logger.warn("Invalid labor ID provided for edit: {}", id);
@@ -171,8 +179,37 @@ public class LaborController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Labor not found.");
                 return "redirect:/labors";
             }
+
+            List<LaborPayment> payments = laborPaymentService.getPaymentsForLabor(laborId);
+
+            LaborPayment laborPayment = new LaborPayment();
+            laborPayment.setLabor(labor.get());
+
+            BigDecimal regularPaid = laborPaymentService.getTotalRegularPaidByLaborId(laborId);
+            BigDecimal advancePaid = laborPaymentService.getTotalAdvancePaidByLaborId(laborId);
+            BigDecimal borrowPaid = laborPaymentService.getTotalBorrowPaidByLaborId(laborId);
+
+            BigDecimal totalPaid = laborPaymentService.getTotalPaidByLaborId(laborId);
+
+//            BigDecimal remainingBalance = laborPaymentService.getLaborBalance(laborId);
+            BigDecimal remainingBalance = regularPaid.subtract(totalPaid);
+
             model.addAttribute("labor", labor.get());
+            model.addAttribute("payments", payments);
+            model.addAttribute("totalPaid", totalPaid);
+            model.addAttribute("regularPaid", regularPaid);
+            model.addAttribute("advancePaid", advancePaid);
+            model.addAttribute("borrowPaid", borrowPaid);
+            model.addAttribute("remainingBalance", remainingBalance);
+            model.addAttribute("laborPayment", laborPayment); // for the modal form
+            model.addAttribute("paymentTypes", LaborPaymentType.values());
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            model.addAttribute("isUpdate", false); // to toggle behavior in form
             logger.info("Fetched labor details: {}", labor.get());
+            logger.info("Fetched labor payment details: {}", payments);
+            logger.info("Fetched labor payment details breakup: Regular Paid :: {}, Advance Paid :: {}, " +
+                    " Borrowed :: {}, Total Paid :: {}, Remaining Balance :: {}",
+                    regularPaid, advancePaid, borrowPaid, totalPaid, remainingBalance);
 
         } catch (Exception e) {
             logger.error("Error loading labor details for ID (encrypted) {}: {}", id, e.getMessage(), e);
@@ -181,4 +218,79 @@ public class LaborController {
         }
         return "labor/labor-details";
     }
+
+    @PostMapping("/payments")
+    public String saveLaborPayment(@RequestParam BigDecimal amount,
+                                   @ModelAttribute("laborPayment") LaborPayment laborPayment,
+                                   @RequestParam("laborId") String laborId,
+                                   RedirectAttributes redirectAttributes) {
+
+        logger.info("Creating Labor payment: {}", laborPayment);
+        try {
+
+            Labor labor = laborService.getLaborById(Long.parseLong(laborId))
+                    .orElseThrow(() -> new IllegalArgumentException("Labor not found."));
+
+            laborPayment.setLabor(labor);
+            laborPayment.setPaymentDate(LocalDate.now());
+            LaborPayment savedLaborPayment = laborPaymentService.savePayment(amount, laborPayment);
+            logger.info("Labor payment saved successfully: {}", savedLaborPayment);
+            redirectAttributes.addFlashAttribute("successMessage", "Payment recorded successfully.");
+        } catch (Exception e) {
+            logger.error("Error saving labor payment for labor ID {}: {}", laborId, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error saving labor payment: " + e.getMessage());
+            return "redirect:/labors";
+        }
+        return "redirect:/labors/details/" + new ThymeleafUtil().encryptId(laborPayment.getLabor().getId()); // Redirect back to labor details
+    }
+
+    @GetMapping("/payments/get/{id}")
+    @ResponseBody
+    public ResponseEntity<LaborPayment> getLaborPayment(@PathVariable Long id) {
+        logger.info("Request for update labor payment for labor payment ID: {}", id);
+
+        Optional<LaborPayment> laborPayment = laborPaymentService.getLaborPayment(id);
+        logger.info("Fetched labor payment for labor payment: {}", laborPayment);
+        return laborPayment.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/payments/update")
+    public String updateLaborPayment(@RequestParam BigDecimal amount,
+                                     @ModelAttribute("laborPayment") LaborPayment laborPayment,
+                                     @RequestParam("laborId") Long laborId,
+                                     RedirectAttributes redirectAttributes) {
+        logger.info("Request for update labor payment for labor payment ID: {}", laborPayment.getId());
+        try {
+            Labor labor = laborService.getLaborById(laborId)
+                    .orElseThrow(() -> new IllegalArgumentException("Labor not found."));
+
+            laborPayment.setLabor(labor);
+            laborPayment.setPaymentDate(LocalDate.now());
+            LaborPayment updatedPayment = laborPaymentService.savePayment(amount, laborPayment);
+            logger.info("Labor payment updated successfully with details: {}", updatedPayment);
+            redirectAttributes.addFlashAttribute("successMessage", "Payment updated successfully.");
+        } catch (Exception e) {
+            logger.error("Error updating labor payment for labor payment ID {}: {}", laborPayment.getId(), e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating labor payment: " + e.getMessage());
+            return "redirect:/labors";
+        }
+        return "redirect:/labors/details/" + new ThymeleafUtil().encryptId(laborPayment.getLabor().getId());
+    }
+
+    @DeleteMapping("/payments/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deletePayment(@PathVariable Long id) {
+        logger.info("Request for delete labor payment for labor payment ID: {}", id);
+        try {
+            laborPaymentService.deleteById(id); // make sure this method exists
+            logger.info("Labor payment deleted successfully with labor payment ID: {}", id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.error("Failed to delete payment with ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Delete failed");
+        }
+    }
+
+
 }

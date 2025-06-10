@@ -55,6 +55,7 @@
                         <th>Name</th>
                         <th>Contact</th>
                         <th>Join Date</th>
+                        <th>Balance</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -63,7 +64,9 @@
                         <td th:text="${labor.name}"></td>
                         <td th:text="${labor.contact}"></td>
                         <td th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></td>
-
+                        <td th:text="${#numbers.formatDecimal(balanceMap[labor.id], 1, 'COMMA', 2, 'POINT')}"
+                            th:classappend="${balanceMap[labor.id] < 0} ? 'text-danger'">
+                        </td>
                         <td>
                             <a class="btn btn-info btn-sm" th:href="@{'/labors/details/' + ${thymeleafUtil.encryptId(labor.id)}}">
                                 <i class="bi bi-eye"></i> Details
@@ -71,12 +74,6 @@
                             <a class="btn btn-warning btn-sm" th:href="@{'/labors/edit/' + ${thymeleafUtil.encryptId(labor.id)}}">
                                 <i class="bi bi-pencil-square"></i> Edit
                             </a>
-                            <button class="btn btn-success btn-sm pay-btn" data-bs-toggle="modal"
-                                    data-bs-target="#addPaymentModal"
-                                    data-labor-id="${labor.id}"
-                                    data-labor-name="${labor.name}">
-                                <i class="bi bi-cash-coin"></i> Make Payment
-                            </button>
                         </td>
                     </tr>
                     </tbody>
@@ -85,43 +82,6 @@
         </div>
     </div>
 </div>
-
-<!--<div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form th:action="@{/labor-payments/add}" method="post">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addPaymentModalLabel">Add Labor Payment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="laborId" th:value="${labor.id}" />
-
-                    <div class="mb-3">
-                        <label for="paymentDate" class="form-label">Payment Date</label>
-                        <input type="date" class="form-control" name="paymentDate" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="remarks" class="form-label">Remarks</label>
-                        <textarea class="form-control" name="remarks" rows="2"></textarea>
-                    </div>
-
-                    <input type="hidden" name="type" value="DEBIT"/> &lt;!&ndash; Always a payment &ndash;&gt;
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Save</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>-->
 
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>

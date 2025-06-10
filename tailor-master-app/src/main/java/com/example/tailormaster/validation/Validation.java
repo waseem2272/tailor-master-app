@@ -4,9 +4,11 @@ import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.labor.Labor;
+import com.example.tailormaster.entity.labor.LaborPayment;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.entity.product.ProductType;
 import com.example.tailormaster.service.customer.CustomerService;
+import com.example.tailormaster.service.labor.LaborPaymentService;
 import com.example.tailormaster.service.labor.LaborService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.util.AESUtil;
@@ -25,6 +27,7 @@ public class Validation {
     private final CustomerService customerService;
     private final OrderService orderService;
     private final LaborService laborService;
+    private final LaborPaymentService laborPaymentService;
 
     public void validateMeasurement(Product product, CustomerMeasurement measurement, BindingResult result) {
         if (product.getType() == ProductType.QAMEEZ) { // Qameez
@@ -119,6 +122,22 @@ public class Validation {
         }
 
         return laborId;
+    }
+
+    public Long validateAndFetchLaborPayment(String encryptedLaborPaymentId, RedirectAttributes redirectAttributes) {
+        Long laborPaymentId = decryptAndValidateId(encryptedLaborPaymentId);
+        if (laborPaymentId == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid Labor Payment ID.");
+            return null;
+        }
+
+        Optional<LaborPayment> laborPayment = laborPaymentService.getLaborPayment(laborPaymentId);
+        if (laborPayment.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Labor Payment not found.");
+            return null;
+        }
+
+        return laborPaymentId;
     }
 
 }

@@ -48,10 +48,10 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
-                                    <p><strong>Order Date:</strong> <span th:text="${order.orderDate}"></span></p>
-                                    <p><strong>Delivery Date:</strong> <span th:text="${order.deliveryDate}"></span></p>
+                                    <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy')}"></span></p>
+                                    <p><strong>Delivery Date:</strong> <span th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}"></span></p>
                                     <p><strong>Pickup Status:</strong> <span th:text="${order.pickupStatus}"></span></p>
-                                    <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'yyyy-MM-dd')}"></span></p>
+                                    <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy')}"></span></p>
 
                                     <!-- Order Status (Only for COMPLETED and CANCELLED) -->
                                     <p th:if="${order.status?.name() == 'COMPLETED' or order.status?.name() == 'CANCELLED'}">

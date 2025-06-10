@@ -84,44 +84,6 @@
             </div>
         </div>
 
-        <!--<div class="card shadow rounded-4">
-            <div class="card-body p-3">
-                <div class="table-responsive">
-                    <table id="productsTable" class="table table-striped align-middle">
-                        <thead class="table-success">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Created Date</th>
-                            <th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="product, iterStat : ${products}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${product.name}"></td>
-                            <td th:text="${product.description}"></td>
-                            <td th:text="${product.price}"></td>
-                            <td>
-                                <span th:classappend="${product.enabled} ? 'badge bg-success' : 'badge bg-secondary'"
-                                      th:text="${product.enabled} ? 'Active' : 'Inactive'"></span>
-                            </td>
-                            <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}"></td>
-                            <td>
-                                <a th:href="@{'/products/update/' + ${thymeleafUtil.encryptId(product.id)}}"
-                                   class="btn btn-warning btn-sm rounded-pill shadow-sm">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>-->
     </div>
 </div>
 <div th:replace="~{fragments/notification-modal :: notification}"></div>

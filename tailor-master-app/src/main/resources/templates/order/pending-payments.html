@@ -171,6 +171,7 @@
         });
 
         document.getElementById("confirmPayment").addEventListener("click", function () {
+            const confirmBtn = this;
             const orderId = document.getElementById("orderId").value;
             const paymentAmount = parseFloat(document.getElementById("paymentAmount").value);
             const outstandingDue = parseFloat(document.getElementById("modalOutstandingDue").innerText);
@@ -196,6 +197,10 @@
                 });
                 return;
             }
+
+            // 🔹 Disable button to prevent double click
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "Processing...";
 
             // 🔹 AJAX Request
             fetch(contextPath + `orders/pending-payments/pay`, {
@@ -233,6 +238,8 @@
                         title: "Something went wrong!",
                         text: "Payment could not be processed. Please try again.",
                     });
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = "Confirm Payment";
                 });
         });
 

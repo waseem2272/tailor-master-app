@@ -319,36 +319,55 @@
                 <div class="card-body">
 
                     <!-- Summary Bar -->
-                    <div class="row text-center mb-4">
-                        <div class="col-md-3 mb-2">
-                            <div class="p-3 border rounded bg-light">
-                                <h6 class="text-muted mb-1">Total Orders</h6>
-                                <h5 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"></h5>
+                    <!-- Total Orders - Centered -->
+                    <div class="row justify-content-center text-center mb-4">
+                        <div class="col-md-6">
+                            <div class="p-4 border rounded bg-light">
+                                <h5 class="text-muted mb-2">
+                                    <i class="bi bi-bag-check me-1"></i> Total Orders
+                                </h5>
+                                <h3 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"></h3>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <div class="p-3 border rounded bg-light">
-                                <h6 class="text-muted mb-1">Total Credit</h6>
+                    </div>
+
+                    <!-- Credit & Debit -->
+                    <div class="row text-center mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 border rounded bg-success bg-opacity-10">
+                                <h6 class="text-success mb-1">
+                                    <i class="bi bi-arrow-down-square me-1"></i> Total Credit
+                                </h6>
                                 <h5 class="fw-bold text-success mb-0"
                                     th:text="${#numbers.formatDecimal(totalCredit, 1, 'COMMA', 2, 'POINT')}">
                                 </h5>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <div class="p-3 border rounded bg-light">
-                                <h6 class="text-muted mb-1">Total Debit</h6>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 border rounded bg-danger bg-opacity-10">
+                                <h6 class="text-danger mb-1">
+                                    <i class="bi bi-arrow-up-square me-1"></i> Total Debit
+                                </h6>
                                 <h5 class="fw-bold text-danger mb-0"
                                     th:text="${#numbers.formatDecimal(totalDebit, 1, 'COMMA', 2, 'POINT')}">
                                 </h5>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <div class="p-3 border rounded bg-light">
-                                <h6 class="text-muted mb-1">Outstanding Balance</h6>
-                                <h5 class="fw-bold mb-0"
-                                    th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? 'text-success' : 'text-danger'"
-                                    th:text="${#numbers.formatDecimal(totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT')}">
+                    </div>
+
+                    <!-- Outstanding Balance - Centered -->
+                    <div class="row justify-content-center text-center">
+                        <div class="col-md-6 mb-2">
+                            <div class="p-4 border rounded"
+                                 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' bg-success bg-opacity-10' : ' bg-danger bg-opacity-10'">
+                                <h5 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'" class="mb-2">
+                                    <i class="bi bi-currency-exchange me-1"></i> Outstanding Balance
                                 </h5>
+                                <h3 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'"
+                                    class="fw-bold mb-0"
+                                    th:text="${#numbers.formatDecimal(totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT')}">
+                                </h3>
                             </div>
                         </div>
                     </div>

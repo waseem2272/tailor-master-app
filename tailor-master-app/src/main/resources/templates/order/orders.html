@@ -401,6 +401,7 @@
             const paymentAmount = parseFloat(this.value);
             const due = parseFloat(document.getElementById("modalDueAmount").innerText);
             const errorElement = document.getElementById("amountReceivedError");
+            errorElement.innerText = "";
 
             if (isNaN(paymentAmount) || paymentAmount <= 0) {
                 errorElement.innerText = "Received amount must be greater than 0.";
@@ -459,6 +460,8 @@
 
     $('#confirmPickupBtn').on('click', function () {
 
+        const confirmPickupBtn = this;
+
         var csrfToken = $("meta[name='_csrf']").attr("content");
         var csrfHeader = $("meta[name='_csrf_header']").attr("content");
 
@@ -489,6 +492,10 @@
             return false;
         }
 
+        // 🔹 Disable button to prevent double click
+        confirmPickupBtn.disabled = true;
+        confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+
         $.ajax({
             url: contextPath + "orders/pickup",
             method: "POST",
@@ -508,6 +515,8 @@
                     showConfirmButton: false,
                     timer: 3500
                 });
+                confirmPickupBtn.disabled = false;
+                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
                 $('#ordersTable').DataTable().ajax.reload(null, false);
             },
             error: function (xhr) {
@@ -521,6 +530,9 @@
                     title: 'Error updating order',
                     text: errorMessage
                 });
+
+                confirmPickupBtn.disabled = false;
+                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
             }
         });
     });
