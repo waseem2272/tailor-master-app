@@ -192,7 +192,7 @@ public class ReceiptController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/orders";
             }
-            logger.debug("Fetched customer for measurement generation: {}", customer);
+            logger.info("Fetched customer for measurement generation: {}", customer);
             // get measurement
 
             CustomerMeasurement measurement = customerMeasurementService.getSingleMeasurement(customer.getId());
