@@ -22,9 +22,11 @@ import javax.sql.DataSource;
 public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private final DataSource dataSource;
+    private final TrialCheckSuccessHandler trialCheckSuccessHandler;
 
-    public SecurityConfig(DataSource dataSource) {
+    public SecurityConfig(DataSource dataSource, TrialCheckSuccessHandler trialCheckSuccessHandler) {
         this.dataSource = dataSource;
+        this.trialCheckSuccessHandler = trialCheckSuccessHandler;
     }
 
     @Bean
@@ -46,7 +48,8 @@ public class SecurityConfig extends SecurityConfigurerAdapter<DefaultSecurityFil
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .successHandler(trialCheckSuccessHandler) // << Here
+//                        .defaultSuccessUrl("/dashboard", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

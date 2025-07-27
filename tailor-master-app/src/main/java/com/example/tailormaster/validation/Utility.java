@@ -223,4 +223,22 @@ public class Utility {
         return null;
     }
 
+    public static String generateShortCode(String shopName) {
+        if (shopName == null || shopName.trim().isEmpty()) {
+            return "";
+        }
+
+        String[] words = shopName.trim().split("\\s+");
+        StringBuilder shortCode = new StringBuilder();
+
+        int limit = Math.min(words.length, 3);
+        for (int i = 0; i < limit; i++) {
+            if (!words[i].isEmpty()) {
+                shortCode.append(Character.toUpperCase(words[i].charAt(0)));
+            }
+        }
+
+        return shortCode.toString();
+    }
+
 }

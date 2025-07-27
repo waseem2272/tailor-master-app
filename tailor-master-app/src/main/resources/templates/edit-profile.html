@@ -47,12 +47,12 @@
                                 <div th:if="${#fields.hasErrors('phone2')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
                             </div>
 
-                            <div class="col-md-6">
+                            <!--<div class="col-md-6">
                                 <label for="dateOfBirth" class="form-label">Date of Birth</label>
                                 <input type="date" class="form-control shadow-sm" id="dateOfBirth"
                                        th:value="${user?.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'yyyy-MM-dd') : ''}"
                                        th:field="*{dateOfBirth}">
-                            </div>
+                            </div>-->
 
                             <div class="col-md-6">
                                 <label for="shopName" class="form-label">Shop Name <span class="text-danger">*</span></label>
@@ -66,11 +66,11 @@
                                 <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
                             </div>
 
-                            <div class="col-md-6">
+                            <!--<div class="col-md-6">
                                 <label for="shortCode" class="form-label">Short Code <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control shadow-sm" id="shortCode" th:field="*{shortCode}" placeholder="Enter short code">
                                 <div th:if="${#fields.hasErrors('shortCode')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shortCode')}" th:text="${error}"></div>
-                            </div>
+                            </div>-->
 
                             <div class="col-md-12">
                                 <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>

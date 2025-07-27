@@ -4,6 +4,7 @@ import com.example.tailormaster.entity.Role;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.repository.RoleRepository;
 import com.example.tailormaster.repository.UserRepository;
+import com.example.tailormaster.validation.Utility;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,14 +73,18 @@ public class UserService {
 
         // Updating allowed fields only
         existingUser.setFullName(updatedUser.getFullName());
-        existingUser.setFathersName(updatedUser.getFathersName());
+//        existingUser.setFathersName(updatedUser.getFathersName());
         existingUser.setPhone1(updatedUser.getPhone1());
         existingUser.setPhone2(updatedUser.getPhone2());
-        existingUser.setDateOfBirth(updatedUser.getDateOfBirth());
+//        existingUser.setDateOfBirth(updatedUser.getDateOfBirth());
         existingUser.setShopName(updatedUser.getShopName());
         existingUser.setProprietorName(updatedUser.getProprietorName());
         existingUser.setShopAddress(updatedUser.getShopAddress());
-        existingUser.setShortCode(updatedUser.getShortCode());
+
+        // get shortcode
+        String shortCode = Utility.generateShortCode(existingUser.getShopName());
+
+        existingUser.setShortCode(shortCode);
 
         if (updatedUser.getLogo() != null && updatedUser.getLogoContentType() != null) {
             existingUser.setLogo(updatedUser.getLogo());

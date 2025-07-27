@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @ControllerAdvice
@@ -46,7 +48,23 @@ public class GlobalControllerAdvice {
             Optional<User> user = userService.findByUsername(username);
             //                model.addAttribute("loggedInUser", user); // Add full user object if needed
             // Or just shop name
-            user.ifPresent(value -> model.addAttribute("shopName", value.getShopName()));
+//            user.ifPresent(value -> model.addAttribute("shopName", value.getShopName()));
+
+            user.ifPresent(tempUser -> {
+                // Add shop name to model
+                model.addAttribute("shopName", tempUser.getShopName());
+
+                // Trial message logic
+                LocalDate today = LocalDate.now();
+                LocalDate trialEnd = tempUser.getTrialEndsAt();
+
+                if (trialEnd != null) {
+                    long daysRemaining = ChronoUnit.DAYS.between(today, trialEnd);
+                    if (daysRemaining >= 0 && daysRemaining <= 5) {
+                        model.addAttribute("trialMessage", "Your free trial will expire in " + daysRemaining + " day(s). Please contact us to continue using the application.");
+                    }
+                }
+            });
         }
     }
 }

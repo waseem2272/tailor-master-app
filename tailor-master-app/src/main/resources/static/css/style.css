@@ -7,7 +7,8 @@
     left: 0;
     top: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease-in-out;
+    /*transition: transform 0.3s ease-in-out;*/
+    transition: all 0.3s ease;
     z-index: 1050;
 }
 
@@ -37,19 +38,23 @@
     color: #fff;
 }
 
-.hamburger-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background: #ffffff;
-    border: none;
-    padding: 8px 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    cursor: pointer;
-    z-index: 1100;
-    display: none; /* show only on small screens */
+.sidebar.collapsed {
+    margin-left: -250px; /* Hides it */
 }
+
+/*.hamburger-btn {*/
+/*    position: fixed;*/
+/*    top: 15px;*/
+/*    left: 15px;*/
+/*    background: #ffffff;*/
+/*    border: none;*/
+/*    padding: 8px 10px;*/
+/*    border-radius: 5px;*/
+/*    box-shadow: 0 0 5px rgba(0,0,0,0.1);*/
+/*    cursor: pointer;*/
+/*    z-index: 1100;*/
+/*    display: none; !* show only on small screens *!*/
+/*}*/
 
 .content {
     margin-left: 260px;
@@ -79,9 +84,13 @@ body.sidebar-open .sidebar {
         margin-left: 0;
     }
 
-    .hamburger-btn {
-        display: none; /* Hidden on large screens */
+    body.sidebar-expanded .content {
+        margin-left: 250px;
     }
+
+    /*.hamburger-btn {*/
+    /*    display: none; !* Hidden on large screens *!*/
+    /*}*/
 }
 
 @media (max-width: 992px) {
@@ -97,9 +106,9 @@ body.sidebar-open .sidebar {
         margin-left: 0;
     }
 
-    .hamburger-btn {
-        display: block;
-    }
+    /*.hamburger-btn {*/
+    /*    display: block;*/
+    /*}*/
 }
 
 .badge-counter {

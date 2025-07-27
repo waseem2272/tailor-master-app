@@ -3,6 +3,7 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.RegisterUserForm;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.UserService;
+import com.example.tailormaster.validation.Utility;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -82,7 +84,8 @@ public class RegisterController {
                 logger.debug("Logo set for user.");
             }
 
-            String selectedRole = registerUserForm.getRole();
+//            String selectedRole = registerUserForm.getRole();
+            String selectedRole = "ROLE_ADMIN";
             userService.registerUser(user, selectedRole);
             logger.info("User registration successful for username: {}", user.getUsername());
             redirectAttributes.addFlashAttribute("success", "Registration successful. You can now log in.");
@@ -133,14 +136,21 @@ public class RegisterController {
         user.setUsername(registerUserForm.getUsername());
         user.setPassword(registerUserForm.getPassword());
         user.setFullName(registerUserForm.getFullName());
-        user.setFathersName(registerUserForm.getFathersName());
+//        user.setFathersName(registerUserForm.getFathersName());
         user.setPhone1(registerUserForm.getPhone1());
         user.setPhone2(registerUserForm.getPhone2());
-        user.setDateOfBirth(registerUserForm.getDateOfBirth());
+//        user.setDateOfBirth(registerUserForm.getDateOfBirth());
         user.setShopName(registerUserForm.getShopName());
         user.setProprietorName(registerUserForm.getProprietorName());
         user.setShopAddress(registerUserForm.getShopAddress());
-        user.setShortCode(registerUserForm.getShortCode());
+
+        user.setTrialStartedAt(LocalDate.now());
+        user.setTrialEndsAt(LocalDate.now().plusMonths(1));
+
+        // get shortcode
+        String shortCode = Utility.generateShortCode(registerUserForm.getShopName());
+
+        user.setShortCode(shortCode);
         return user;
     }
 
