@@ -76,12 +76,23 @@
             <div class="card receipt-card">
 
                 <div class="text-center mb-3">
-                    <div class="shop-logo mb-2">
+                    <!--<div class="shop-logo mb-2">
                         <img th:if="${logoBase64 != null && logoMimeType != null}"
                              th:src="'data:' + ${logoMimeType} + ';base64,' + ${logoBase64}"
                              alt="Shop Logo"
                              class="img-fluid">
+                    </div>-->
+                    <div class="shop-logo mb-2" th:if="${user.logo != null}">
+                        <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" style="max-height: 120px; max-width: 120px;">
                     </div>
+                    <!--<div class="shop-logo mb-2 text-center">
+                        <img th:if="${logoBase64 != null && logoMimeType != null}"
+                             th:src="'data:' + ${logoMimeType} + ';base64,' + ${logoBase64}"
+                             alt="Shop Logo"
+                             style="width: 100%; max-width: 3140px; height: auto;">
+                    </div>-->
+
+
                     <hr/>
 <!--                    <h5 class="mb-1" th:text="${user.shopName}">Shop Name</h5>-->
                     <p class="small fw-semibold text-dark">
@@ -95,22 +106,32 @@
 
                 <hr/>
 
-                <div class="row align-items-start mb-3">
-                    <!-- Left Side: Text Info -->
-                    <div class="col-5 small">
-                        <p>S. No. <strong th:text="${order.customer.id}"></strong></p>
+                <div class="row align-items-start mb-3 small">
+                    <!-- Row 1 -->
+                    <div class="col-6">
+                        <p>S. No.: <strong th:text="${order.customer.id}"></strong></p>
+                    </div>
+                    <div class="col-6">
                         <p>Order ID: <strong th:text="${order.orderId}"></strong></p>
-                        <p>Order Date: <strong th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></strong></p>
-                        <p>Delivery Date: <strong th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></strong></p>
-                        <p>Customer: <strong th:text="${order.customer.fullName}"></strong></p>
-                        <p>Phone: <strong th:text="${order.customer.phoneNumber}"></strong></p>
                     </div>
 
-                    <!-- Right Side: Logo Image -->
-                    <!--<div class="col-7 text-end">
-                        <img th:src="@{/images/disclaimer-pica.png}" alt="Logo"/>
-                    </div>-->
+                    <!-- Row 2 -->
+                    <div class="col-6">
+                        <p>Order Date: <strong th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></strong></p>
+                    </div>
+                    <div class="col-6">
+                        <p>Delivery Date: <strong th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></strong></p>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="col-6">
+                        <p>Customer: <strong th:text="${order.customer.fullName}"></strong></p>
+                    </div>
+                    <div class="col-6">
+                        <p>Phone: <strong th:text="${order.customer.phoneNumber}"></strong></p>
+                    </div>
                 </div>
+
 
 
                 <div class="item-header">

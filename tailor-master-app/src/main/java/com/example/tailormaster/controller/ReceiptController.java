@@ -70,6 +70,7 @@ public class ReceiptController {
 
             model.addAttribute("logoBase64", logoBase64);
             model.addAttribute("logoMimeType", logoMimeType);
+            model.addAttribute("logo", receiptDTO.getUser().getLogo());
             model.addAttribute("order", order1);
             model.addAttribute("user", receiptDTO.getUser());
             model.addAttribute("quantity", order.getOrderProducts().get(0).getQuantity());
