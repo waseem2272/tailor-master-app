@@ -1,6 +1,7 @@
 package com.example.tailormaster.entity.labor;
 
 import com.example.tailormaster.entity.BaseEntity;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.enums.LaborStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -32,5 +33,9 @@ public class Labor extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private LaborStatus status = LaborStatus.ACTIVE;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
 

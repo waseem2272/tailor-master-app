@@ -1,6 +1,7 @@
 package com.example.tailormaster.repository.customerledger;
 
 import com.example.tailormaster.entity.Order;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.enums.PaymentType;
@@ -23,10 +24,11 @@ public interface CustomerPaymentRepository extends JpaRepository<CustomerPayment
     SELECT COALESCE(SUM(o.amount), 0)
     FROM CustomerPaymentLedger o
     WHERE o.paymentType = :paymentType
+    AND o.customer.user = :user
       AND MONTH(o.paymentDate) = MONTH(CURRENT_DATE)
       AND YEAR(o.paymentDate) = YEAR(CURRENT_DATE)
 """)
-    BigDecimal getRevenueThisMonth(@Param("paymentType") PaymentType paymentType);
+    BigDecimal getRevenueThisMonth(@Param("paymentType") PaymentType paymentType, @Param("user") User user);
 
     @Query("""
     SELECT
@@ -34,6 +36,7 @@ public interface CustomerPaymentRepository extends JpaRepository<CustomerPayment
         COALESCE(SUM(o.amount), 0) AS total
     FROM CustomerPaymentLedger o
     WHERE o.paymentType = :paymentType
+    AND o.customer.user = :user
       AND o.paymentDate BETWEEN :startDate AND :endDate
     GROUP BY FUNCTION('DATE_FORMAT', o.paymentDate, '%Y-%m')
     ORDER BY FUNCTION('DATE_FORMAT', o.paymentDate, '%Y-%m')
@@ -41,7 +44,8 @@ public interface CustomerPaymentRepository extends JpaRepository<CustomerPayment
     List<Map<String, Object>> getMonthlyRevenueTrends(
             @Param("paymentType") PaymentType paymentType,
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate
+            @Param("endDate") LocalDate endDate,
+            @Param("user") User user
     );
 
 }

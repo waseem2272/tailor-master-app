@@ -1,5 +1,7 @@
 package com.example.tailormaster.entity;
 
+import com.example.tailormaster.entity.labor.Labor;
+import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.validation.OptionalPhoneValidation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -88,4 +90,16 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Product> products;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Customer> customers;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<Labor> labors;
 }

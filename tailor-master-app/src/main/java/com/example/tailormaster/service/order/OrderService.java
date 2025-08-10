@@ -13,6 +13,7 @@ import com.example.tailormaster.enums.PickupStatus;
 import com.example.tailormaster.repository.customerledger.CustomerPaymentRepository;
 import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -44,10 +45,12 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final CustomerPaymentRepository customerPaymentRepository;
     private final ThymeleafUtil thymeleafUtil;
+    private final AuthenticatedUserService authenticatedUserService;
 
     // Save an order
     public Order save(Order order) {
         try {
+            order.setUser(authenticatedUserService.getCurrentUser());
             Order savedOrder = orderRepository.save(order);
 
             // 1. Create a CREDIT entry for the full order amount
@@ -82,6 +85,7 @@ public class OrderService {
 
     public void updateOrderStatus(Order order) {
         try {
+            order.setUser(authenticatedUserService.getCurrentUser());
             Order savedOrder = orderRepository.save(order);
             logger.info("Order Status updated with ID: {}", savedOrder.getId());
         } catch (Exception e) {
@@ -93,7 +97,7 @@ public class OrderService {
     // Get order by ID
     public Order findById(Long id) {
         try {
-            Optional<Order> order = orderRepository.findById(id);
+            Optional<Order> order = orderRepository.findByIdAndUser(id, authenticatedUserService.getCurrentUser());
             return order.orElse(null);
         } catch (Exception e) {
             logger.error("Error finding order with ID {}: {}", id, e.getMessage(), e);
@@ -143,7 +147,7 @@ public class OrderService {
     public Order updateOrder(Long orderId, UpdateCustomerOrderDto orderDto) {
         try {
             // Fetch the existing order
-            Order order = orderRepository.findById(orderId)
+            Order order = orderRepository.findByIdAndUser(orderId, authenticatedUserService.getCurrentUser())
                     .orElseThrow(() -> {
                         logger.warn("Order not found with ID: {}", orderId);
                         return new EntityNotFoundException("Order not found with ID: " + orderId);
@@ -170,7 +174,7 @@ public class OrderService {
 
             // Update product selections
             for (OrderProductDto productDto : orderDto.getOrderProducts()) {
-                Product product = productRepository.findById(productDto.getId())
+                Product product = productRepository.findByIdAndUser(productDto.getId(), authenticatedUserService.getCurrentUser())
                         .orElseThrow(() -> {
                             logger.warn("Product not found with ID: {}", productDto.getId());
                             return new EntityNotFoundException("Product not found with ID: " + productDto.getId());
@@ -194,6 +198,7 @@ public class OrderService {
             }
 
             // Save the updated order
+            order.setUser(authenticatedUserService.getCurrentUser());
             Order updatedOrder = orderRepository.save(order);
 
             // Record ledger entries
@@ -258,6 +263,7 @@ public class OrderService {
                     startDate,
                     endDate,
                     orderStatus,
+                    authenticatedUserService.getCurrentUser(),
                     pageable
             );
 
@@ -378,6 +384,7 @@ public class OrderService {
             order.setOutstandingDueAmount(outstandingDueAmount);
             order.setPaidAmount(advancePayment.add(amountReceived.max(BigDecimal.ZERO)));
 
+            order.setUser(authenticatedUserService.getCurrentUser());
             orderRepository.save(order);
 
             // ✅ Insert payment entry for amount received (CREDIT)
@@ -396,19 +403,6 @@ public class OrderService {
             payment.setPaymentDate(LocalDate.now());
             customerPaymentRepository.save(payment);
 
-            // ✅ Insert debit entry if any outstanding due remains (DEBIT)
-//            if (outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0) {
-//                CustomerPaymentLedger dueEntry = new CustomerPaymentLedger();
-//                dueEntry.setCustomer(order.getCustomer());
-//                dueEntry.setOrder(order);
-//                dueEntry.setPaymentType(PaymentType.CREDIT); // DEBIT means customer still owes
-//                dueEntry.setRemarks("Remaining due after partial pickup payment");
-//                dueEntry.setAmount(outstandingDueAmount);
-//                dueEntry.setPaymentDate(LocalDate.now());
-//                customerPaymentRepository.save(dueEntry);
-//
-//            }
-
             logger.info("Order with ID {} marked as picked up. Amount received: {}, Outstanding due: {}", order.getId(), amountReceived, outstandingDueAmount);
         } catch (IllegalArgumentException e) {
             logger.warn("Invalid input for marking order {} as picked up: {}", order.getId(), e.getMessage());
@@ -421,7 +415,7 @@ public class OrderService {
 
     public List<Order> getOrdersWithOutstandingDue() {
         try {
-            List<Order> orders = orderRepository.findOrdersWithOutstandingDue();
+            List<Order> orders = orderRepository.findOrdersWithOutstandingDue(authenticatedUserService.getCurrentUser());
             logger.debug("Fetched {} orders with outstanding due.", orders.size());
             return orders;
         } catch (Exception e) {
@@ -451,6 +445,7 @@ public class OrderService {
                 order.setStatus(OrderStatus.COMPLETED);
             }
 
+            order.setUser(authenticatedUserService.getCurrentUser());
             Order updatedOrder = orderRepository.save(order);
 
             // ✅ Insert CREDIT entry (payment received)
@@ -476,7 +471,7 @@ public class OrderService {
 
     public Long getTotalOrdersCount() {
         try {
-            long count = orderRepository.count();
+            long count = orderRepository.countByUser(authenticatedUserService.getCurrentUser());
             logger.debug("Total orders count: {}", count);
             return count;
         } catch (Exception e) {
@@ -487,7 +482,7 @@ public class OrderService {
 
     public Long getPendingPaymentsCount() {
         try {
-            long count = orderRepository.countPendingPayments();
+            long count = orderRepository.countPendingPayments(authenticatedUserService.getCurrentUser());
             logger.debug("Pending payments count: {}", count);
             return count;
         } catch (Exception e) {
@@ -498,7 +493,7 @@ public class OrderService {
 
     public Long getOrdersInProgressCount() {
         try {
-            long count = orderRepository.countOrdersInProgress();
+            long count = orderRepository.countOrdersInProgress(authenticatedUserService.getCurrentUser());
             logger.debug("Orders in progress count: {}", count);
             return count;
         } catch (Exception e) {
@@ -509,7 +504,7 @@ public class OrderService {
 
     public Long getCompletedOrdersCount() {
         try {
-            long count = orderRepository.countCompletedOrders();
+            long count = orderRepository.countCompletedOrders(authenticatedUserService.getCurrentUser());
             logger.debug("Completed orders count: {}", count);
             return count;
         } catch (Exception e) {
@@ -520,7 +515,7 @@ public class OrderService {
 
     public Long getOrdersReadyForPickupCount() {
         try {
-            long count = orderRepository.countOrdersReadyForPickup();
+            long count = orderRepository.countOrdersReadyForPickup(authenticatedUserService.getCurrentUser());
             logger.debug("Orders ready for pickup count: {}", count);
             return count;
         } catch (Exception e) {
@@ -532,11 +527,11 @@ public class OrderService {
     public Map<String, Long> getOrderStatusCounts() {
         try {
             Map<String, Long> statusCounts = new LinkedHashMap<>();
-            statusCounts.put("Cancelled", orderRepository.countCancelledOrders());
-            statusCounts.put("Pending", orderRepository.countPendingOrders());
-            statusCounts.put("InProgress", orderRepository.countOrdersInProgress());
-            statusCounts.put("Completed", orderRepository.countCompletedOrders());
-            statusCounts.put("Ready for Pickup", orderRepository.countOrdersReadyForPickup());
+            statusCounts.put("Cancelled", orderRepository.countCancelledOrders(authenticatedUserService.getCurrentUser()));
+            statusCounts.put("Pending", orderRepository.countPendingOrders(authenticatedUserService.getCurrentUser()));
+            statusCounts.put("InProgress", orderRepository.countOrdersInProgress(authenticatedUserService.getCurrentUser()));
+            statusCounts.put("Completed", orderRepository.countCompletedOrders(authenticatedUserService.getCurrentUser()));
+            statusCounts.put("Ready for Pickup", orderRepository.countOrdersReadyForPickup(authenticatedUserService.getCurrentUser()));
             logger.debug("Fetched order status counts: {}", statusCounts);
             return statusCounts;
         } catch (Exception e) {
@@ -547,7 +542,7 @@ public class OrderService {
 
     public List<Order> getTop5ByOrderByCreatedAtDesc() {
         try {
-            List<Order> top5Orders = orderRepository.findTop5ByOrderByCreatedAtDesc();
+            List<Order> top5Orders = orderRepository.findTop5ByUserOrderByCreatedAtDesc(authenticatedUserService.getCurrentUser());
             logger.debug("Fetched top 5 recent orders.");
             return top5Orders;
         } catch (Exception e) {
@@ -559,7 +554,7 @@ public class OrderService {
     public List<Map<String, Object>> getTopCustomers() {
         try {
             Pageable topFive = PageRequest.of(0, 5);
-            List<Object[]> results = orderRepository.findTopCustomersWithDetails(topFive);
+            List<Object[]> results = orderRepository.findTopCustomersWithDetails(authenticatedUserService.getCurrentUser(), topFive);
 
             List<Map<String, Object>> topCustomers = results.stream().map(obj -> {
                 Map<String, Object> map = new HashMap<>();
@@ -586,7 +581,7 @@ public class OrderService {
 
             // Fetch orders that are either upcoming or overdue but still not completed
             List<Order> upcomingOrOverdueOrders = orderRepository
-                    .findByDeliveryDateLessThanEqualAndStatusNotIn(threeDaysLater, excludedStatuses);
+                    .findByUserAndDeliveryDateLessThanEqualAndStatusNotIn(authenticatedUserService.getCurrentUser(), threeDaysLater, excludedStatuses);
 
             // Optional: sort by delivery date ascending
             upcomingOrOverdueOrders.sort(Comparator.comparing(Order::getDeliveryDate));

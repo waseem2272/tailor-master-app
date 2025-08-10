@@ -1,11 +1,10 @@
 package com.example.tailormaster.service.customerledger;
 
-import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
-import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.enums.PaymentType;
-import com.example.tailormaster.enums.PickupStatus;
 import com.example.tailormaster.repository.customerledger.CustomerPaymentRepository;
+import com.example.tailormaster.service.customer.CustomerService;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -25,10 +23,8 @@ public class CustomerPaymentLedgerService {
     private static final Logger logger = LogManager.getLogger(CustomerPaymentLedgerService.class);
 
     private final CustomerPaymentRepository customerPaymentRepository;
-
-    public List<CustomerPaymentLedger> findByCustomerId(Long customerId) {
-        return customerPaymentRepository.findByCustomerId(customerId);
-    }
+    private final CustomerService customerService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public List<CustomerPaymentLedger> findByCustomerIdOrderByOrderIdAscPaymentDateAsc(Long customerId) {
         return customerPaymentRepository.findByCustomerId(customerId);
@@ -36,7 +32,7 @@ public class CustomerPaymentLedgerService {
 
     public BigDecimal getRevenueThisMonth() {
         try {
-            BigDecimal revenue = customerPaymentRepository.getRevenueThisMonth(PaymentType.DEBIT);
+            BigDecimal revenue = customerPaymentRepository.getRevenueThisMonth(PaymentType.DEBIT, authenticatedUserService.getCurrentUser());
             logger.debug("Revenue this month: {}", revenue);
             return revenue;
         } catch (Exception e) {
@@ -57,7 +53,7 @@ public class CustomerPaymentLedgerService {
 
             // Call repository method (make sure this method groups by year-month in the query)
             List<Map<String, Object>> rawResults = customerPaymentRepository.getMonthlyRevenueTrends(
-                    PaymentType.DEBIT, startDate, endDate
+                    PaymentType.DEBIT, startDate, endDate, authenticatedUserService.getCurrentUser()
             );
 
             // Convert raw DB results to month -> revenue map

@@ -7,8 +7,10 @@ import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.customer.CustomerRepository;
 import com.example.tailormaster.service.product.ProductService;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Utility;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -22,25 +24,23 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
     private static final Logger logger = LogManager.getLogger(CustomerService.class);
 
     private final CustomerRepository customerRepository;
     private final ProductService productService;
-
-    public CustomerService(CustomerRepository customerRepository, ProductService productService) {
-        this.customerRepository = customerRepository;
-        this.productService = productService;
-    }
+    private final AuthenticatedUserService authenticatedUserService;
 
     public Customer getCustomerById(Long id) {
         logger.debug("Fetching customer by ID: {}", id);
-        return customerRepository.findById(id).orElse(null);
+        return customerRepository.findByIdAndUser(id, authenticatedUserService.getCurrentUser()).orElse(null);
     }
 
     public Customer createCustomer(Customer customer) {
         logger.info("Creating customer: {}", customer.getFullName());
+        customer.setUser(authenticatedUserService.getCurrentUser());
         Customer savedCustomer = customerRepository.save(customer);
         logger.debug("Customer created with ID: {}", savedCustomer.getId());
         return savedCustomer;
@@ -59,7 +59,7 @@ public class CustomerService {
 
         logger.info("Updating customer with ID: {}", customerId);
 
-        Customer existingCustomer = customerRepository.findById(customerId)
+        Customer existingCustomer = customerRepository.findByIdAndUser(customerId, authenticatedUserService.getCurrentUser())
                 .orElseThrow(() -> {
                     logger.error("Customer not found with ID: {}", customerId);
                     return new IllegalArgumentException("Customer not found");
@@ -77,6 +77,7 @@ public class CustomerService {
             CustomerMeasurement measurement1 = Utility.populateCustomerMeasurement(measurement, registrationDTO);
             existingCustomer.getMeasurements().add(measurement1);
         }
+        existingCustomer.setUser(authenticatedUserService.getCurrentUser());
         Customer updatedCustomer = customerRepository.save(existingCustomer);
         logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
         return updatedCustomer;
@@ -84,7 +85,7 @@ public class CustomerService {
 
     public void deleteCustomer(Long id) {
         logger.info("Deleting customer with ID: {}", id);
-        customerRepository.deleteById(id);
+        customerRepository.deleteByIdAndUser(id, authenticatedUserService.getCurrentUser());
         logger.debug("Customer deleted successfully");
     }
 
@@ -130,14 +131,26 @@ public class CustomerService {
 
             Page<Customer> result;
             if (search != null && !search.isEmpty() && startDate != null && endDate != null) {
-                result = customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseAndCreatedAtBetween(
-                        search, search, startDate.atStartOfDay(), endDate.atTime(23, 59, 59), pageable);
+                result = customerRepository.searchByUserAndSearchAndCreatedAtBetween(
+                        authenticatedUserService.getCurrentUser(),
+                        search,
+                        startDate.atStartOfDay(),
+                        endDate.atTime(23, 59, 59),
+                        pageable
+                );
+
             } else if (search != null && !search.isEmpty()) {
-                result = customerRepository.findByFullNameContainingIgnoreCaseOrPhoneNumberContainingIgnoreCase(search, search, pageable);
+                result = customerRepository.searchByUserAndFullNameOrPhoneNumber(authenticatedUserService.getCurrentUser(), search, pageable);
             } else if (startDate != null && endDate != null) {
-                result = customerRepository.findByCreatedAtBetween(startDate.atStartOfDay(), endDate.atTime(23, 59, 59), pageable);
+                result = customerRepository.findByUserAndCreatedAtBetweenCustom(
+                        authenticatedUserService.getCurrentUser(),
+                        startDate.atStartOfDay(),
+                        endDate.atTime(23, 59, 59),
+                        pageable
+                );
+
             } else {
-                result = customerRepository.findAll(pageable);
+                result = customerRepository.findAllByUser(authenticatedUserService.getCurrentUser(), pageable);
             }
 
             logger.debug("Customer page fetched: {} items", result.getNumberOfElements());
@@ -150,7 +163,7 @@ public class CustomerService {
     }
 
     public long getTotalCustomerCount() {
-        long count = customerRepository.count();
+        long count = customerRepository.countByUser(authenticatedUserService.getCurrentUser());
         logger.debug("Total customer count: {}", count);
         return count;
     }

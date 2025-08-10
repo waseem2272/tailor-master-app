@@ -3,6 +3,7 @@ package com.example.tailormaster.service.labor;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.labor.Labor;
 import com.example.tailormaster.repository.labor.LaborRepository;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -19,9 +20,11 @@ public class LaborService {
     private static final Logger logger = LogManager.getLogger(LaborService.class);
 
     private final LaborRepository laborRepository;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public Labor saveLabor(Labor labor) {
         logger.info("Creating Labor: {}", labor.getName());
+        labor.setUser(authenticatedUserService.getCurrentUser());
         Labor savedLabor = laborRepository.save(labor);
         logger.debug("Labor created with ID: {}", savedLabor.getId());
         return laborRepository.save(labor);
@@ -35,10 +38,10 @@ public class LaborService {
                 .orElseThrow(() -> new RuntimeException("Labor not found with ID: " + labor.getId()));
 
         Labor populateLabor = populateLabor(labor, existingLabor);
-
+        populateLabor.setUser(existingLabor.getUser());
         Labor savedLabor = laborRepository.save(populateLabor);
         logger.info("Labor updated with ID: {}", savedLabor.getId());
-        return laborRepository.save(labor);
+        return savedLabor;
     }
 
     private Labor populateLabor(Labor labor, Labor existingLabor) {
@@ -51,14 +54,14 @@ public class LaborService {
     }
 
     public List<Labor> getAllLabors() {
-        return laborRepository.findAll();
+        return laborRepository.findAllByUser(authenticatedUserService.getCurrentUser());
     }
 
     public Optional<Labor> getLaborById(Long id) {
-        return laborRepository.findById(id);
+        return laborRepository.findByIdAndUser(id, authenticatedUserService.getCurrentUser());
     }
 
     public void deleteLabor(Long id) {
-        laborRepository.deleteById(id);
+        laborRepository.deleteByIdAndUser(id, authenticatedUserService.getCurrentUser());
     }
 }

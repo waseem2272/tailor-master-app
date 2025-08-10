@@ -2,6 +2,7 @@ package com.example.tailormaster.service.product;
 
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.product.ProductRepository;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,11 +17,12 @@ public class ProductService {
     private static final Logger logger = LogManager.getLogger(ProductService.class);
 
     private final ProductRepository productRepository;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public List<Product> getAllProducts() {
         logger.info("Fetching all products.");
         try {
-            List<Product> products = productRepository.findAll();
+            List<Product> products = productRepository.findAllByUser(authenticatedUserService.getCurrentUser());
             logger.debug("Retrieved {} products.", products.size());
             return products;
         } catch (Exception e) {
@@ -32,7 +34,7 @@ public class ProductService {
     public List<Product> getAllActiveProducts() {
         logger.info("Fetching all active products.");
         try {
-            List<Product> activeProducts = productRepository.findAllActiveProducts();
+            List<Product> activeProducts = productRepository.findAllActiveProductsByUser(authenticatedUserService.getCurrentUser());
             logger.info("Retrieved {} active products.", activeProducts.size());
             return activeProducts;
         } catch (Exception e) {
@@ -44,7 +46,7 @@ public class ProductService {
     public Product getProductById(Long id) {
         logger.info("Fetching product by ID: {}", id);
         try {
-            Product product = productRepository.findById(id)
+            Product product = productRepository.findByIdAndUser(id, authenticatedUserService.getCurrentUser())
                     .orElseThrow(() -> {
                         logger.warn("Product not found with ID: {}", id);
                         return new RuntimeException("Product not found with id: " + id);
@@ -67,6 +69,7 @@ public class ProductService {
                 logger.warn("Product with the name '{}' already exists.", product.getName());
                 throw new RuntimeException("Product with the same name already exists.");
             }
+            product.setUser(authenticatedUserService.getCurrentUser());
             Product savedProduct = productRepository.save(product);
             logger.info("Product created successfully with ID: {}", savedProduct.getId());
         } catch (RuntimeException e) {
@@ -86,6 +89,7 @@ public class ProductService {
             product.setPrice(updatedProduct.getPrice());
             product.setDescription(updatedProduct.getDescription());
             product.setEnabled(updatedProduct.isEnabled());
+            product.setUser(authenticatedUserService.getCurrentUser());
             Product savedProduct = productRepository.save(product);
             logger.debug("Product with ID {} updated successfully: {}", id, savedProduct);
         } catch (RuntimeException e) {

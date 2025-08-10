@@ -2,6 +2,7 @@ package com.example.tailormaster.entity.product;
 
 import com.example.tailormaster.entity.BaseEntity;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -44,7 +45,7 @@ public class Product extends BaseEntity {
     @ToString.Exclude
     private List<CustomerMeasurement> measurements;
 
-//    @ManyToOne
-//    @JoinColumn(name = "category_id")
-//    private ProductCategory category;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
