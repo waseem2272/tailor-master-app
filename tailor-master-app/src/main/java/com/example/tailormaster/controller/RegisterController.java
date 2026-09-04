@@ -4,7 +4,6 @@ import com.example.tailormaster.dto.RegisterUserForm;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.validation.Utility;
-import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
@@ -13,10 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.validation.BindingResult;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -197,8 +196,7 @@ public class RegisterController {
     // Handle profile update
     @PostMapping("/profile/update")
     public String updateProfile(
-            @Valid @ModelAttribute("user") User user,
-            BindingResult result,
+            @ModelAttribute("user") User user,
             @RequestParam("logoFile") MultipartFile logoFile,
             RedirectAttributes redirectAttributes,
             Model model) {
@@ -209,22 +207,20 @@ public class RegisterController {
         if (!logoFile.isEmpty()) {
             String contentType = logoFile.getContentType();
             if (!("image/png".equals(contentType) || "image/jpeg".equals(contentType) || "image/jpg".equals(contentType))) {
-                result.rejectValue("logo", "error.user", "Only PNG, JPG, or JPEG files are allowed.");
+                redirectAttributes.addFlashAttribute("error", "Only PNG, JPG, or JPEG files are allowed.");
+                model.addAttribute("user", user);
+                return "edit-profile";
             } else {
                 try {
                     user.setLogo(logoFile.getBytes());
                     user.setLogoContentType(contentType);
                 } catch (IOException e) {
                     logger.error("Error reading uploaded logo for user {}: {}", user.getUsername(), e.getMessage());
-                    result.rejectValue("logo", "error.user", "Failed to read the uploaded logo.");
+                    redirectAttributes.addFlashAttribute("error", "Failed to read the uploaded logo.");
+                    model.addAttribute("user", user);
+                    return "edit-profile";
                 }
             }
-        }
-
-        if (result.hasErrors()) {
-            logger.warn("Validation errors during profile update: {}", result.getAllErrors());
-            model.addAttribute("user", user);
-            return "edit-profile"; // Make sure this is the correct Thymeleaf view name
         }
 
         try {

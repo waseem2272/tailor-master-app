@@ -10,6 +10,12 @@
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
+    <style>
+        .badge-completed {
+            background-color: #6f42c1 !important;
+        }
+    </style>
+
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -54,27 +60,49 @@
                                     <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy')}"></span></p>
 
                                     <!-- Order Status (Only for COMPLETED and CANCELLED) -->
-                                    <p th:if="${order.status?.name() == 'COMPLETED' or order.status?.name() == 'CANCELLED'}">
-                                    <strong>Order Status:</strong>
-                                        <span th:classappend="${order.status?.name() == 'COMPLETED'} ? 'badge bg-success' : 'badge bg-danger'"
+                                    <p th:if="${order.status?.name() == 'COMPLETED'
+           or order.status?.name() == 'CANCELLED'
+           or order.status?.name() == 'DELIVERED'}">
+
+                                        <strong>Order Status:</strong>
+
+                                        <span th:classappend="${order.status?.name() == 'COMPLETED'
+                           ? 'badge badge-completed'
+                           : (order.status?.name() == 'DELIVERED'
+                              ? 'badge bg-success'
+                              : 'badge bg-danger')}"
                                               th:text="${order.status}">
-            </span>
+    </span>
+
                                     </p>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <p><strong>Total Amount:</strong> <span th:text="${order.totalProductAmount}"></span></p>
-                                    <p><strong>Advance Payment:</strong> <span th:text="${order.advancePayment}"></span></p>
-                                    <p><strong>Due Amount:</strong> <span th:text="${order.duePayment}"></span></p>
-                                    <p><strong>Paid Amount:</strong> <span th:text="${order.paidAmount}"></span></p>
-                                    <p><strong>Outstanding Due:</strong> <span class="text-danger fw-bold" th:text="${order.outstandingDueAmount}"></span></p>
+                                    <p><strong>Total Amount:</strong> <span class="format-amount" th:text="${order.totalProductAmount}"></span></p>
+                                    <p><strong>Advance Payment:</strong> <span class="format-amount" th:text="${order.advancePayment}"></span></p>
+                                    <p><strong>Due Amount:</strong> <span class="format-amount" th:text="${order.duePayment}"></span></p>
+                                    <p><strong>Paid Amount:</strong> <span class="format-amount" th:text="${order.paidAmount}"></span></p>
+                                    <p><strong>Outstanding Due:</strong> <span class="text-danger fw-bold format-amount" th:text="${order.outstandingDueAmount}"></span></p>
 
                                     <!-- Payment Status (Show if Order is COMPLETED OR Outstanding Due > 0) -->
-                                    <p th:if="${order.status?.name() == 'COMPLETED'
-            and order.pickupStatus?.name() == 'PICKED_UP'}">
+                                    <p th:if="${(order.status?.name() == 'COMPLETED' or order.status?.name() == 'DELIVERED')
+and order.pickupStatus?.name() == 'PICKED_UP'}">
                                         <strong>Payment Status:</strong>
-                                        <span th:classappend="${order.paidAmount == order.totalProductAmount} ? 'badge bg-success' : 'badge bg-warning text-dark'"
-                                              th:text="${order.paidAmount == order.totalProductAmount} ? 'Paid' : 'Partially Paid'"></span>
+
+                                        <span th:classappend="${
+                                            order.paidAmount == order.totalProductAmount
+                                            ? 'badge bg-success'
+                                            : (order.totalProductAmount == order.outstandingDueAmount
+                                                ? 'badge bg-danger'
+                                                : 'badge bg-warning text-dark')
+                                        }"
+                                                                                  th:text="${
+                                            order.paidAmount == order.totalProductAmount
+                                            ? 'Paid'
+                                            : (order.totalProductAmount == order.outstandingDueAmount
+                                                ? 'Unpaid'
+                                                : 'Partially Paid')
+                                        }"></span>
                                     </p>
 
                                 </div>
@@ -83,7 +111,7 @@
                             <!-- Status Update Section (Appears Only for Active Orders) -->
                             <div class="row align-items-center mb-3"
                                  th:if="${order.status?.name() != 'COMPLETED' and
-                             order.status?.name() != 'CANCELLED'}">
+                             order.status?.name() != 'CANCELLED' and order.status?.name() != 'DELIVERED'}">
                                 <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
                                     <label for="orderStatus" class="fw-bold me-2">Order Status</label>
                                     <select id="orderStatus" name="status" class="form-select w-auto">
@@ -124,18 +152,29 @@
                             <tr>
                                 <th>#</th>
                                 <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
+                                <th>Silai</th>
+                                <th>Silai Amount</th>
+                                <th>Qty</th>
+                                <th>Subtotal</th>
+                                <th>Additional Notes</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr th:each="item, i : ${order.orderProducts}">
                                 <td th:text="${i.count}"></td>
                                 <td th:text="${item.product.name}"></td>
+                                <td th:text="${item.silaiType}"></td>
+                                <td class="format-amount" th:text="${item.silaiAmount}"></td>
                                 <td th:text="${item.quantity}"></td>
-                                <td th:text="${item.product.price}"></td>
-                                <td th:text="${item.quantity * item.product.price}"></td>
+                                <td class="format-amount" th:text="${item.subtotal}"></td>
+                                <td th:text="${item.additionalNotes}"></td>
+                                <td>
+                                    <a th:href="@{/receipts/generate-measurement/{id}(id=${thymeleafUtil.encryptId(item.id)})}"
+                                       class="btn btn-success me-2">
+                                        <i class="bi bi-receipt"></i> Generate Measurement
+                                    </a>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -145,14 +184,9 @@
 
             <div class="text-center mt-4">
 
-                <a th:href="@{/orders/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
+                <a th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
                    class="btn btn-success me-2">
                     <i class="bi bi-receipt"></i> Generate Order Receipt
-                </a>
-
-                <a th:href="@{/orders/generate-measurement/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
-                   class="btn btn-success me-2">
-                    <i class="bi bi-receipt"></i> Generate Measurement
                 </a>
                 <a th:href="@{/orders}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle"></i> Back to Orders
@@ -170,6 +204,7 @@
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>

@@ -59,4 +59,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     long countByUser(User currentUser);
 
     Page<Customer> findAllByUser(User currentUser, Pageable pageable);
+
+    @Query("SELECT c FROM Customer c " +
+            "LEFT JOIN FETCH c.measurements m " +
+            "LEFT JOIN FETCH m.product p " +
+            "LEFT JOIN FETCH m.field f " +
+            "WHERE c.id = :id AND c.user = :user")
+    Optional<Customer> findByIdWithMeasurements(@Param("id") Long id, User user);
+
 }

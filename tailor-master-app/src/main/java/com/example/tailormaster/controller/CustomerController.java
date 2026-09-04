@@ -1,18 +1,21 @@
 package com.example.tailormaster.controller;
 
-import com.example.tailormaster.dto.CustomerRegistrationDTO;
+import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.enums.PaymentType;
+import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.customerledger.CustomerPaymentLedgerService;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.ThymeleafUtil;
-import com.example.tailormaster.validation.Utility;
 import com.example.tailormaster.validation.Validation;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,14 +23,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -43,6 +46,7 @@ public class CustomerController {
     private final CustomerMeasurementService measurementService;
     private final Validation validation;
     private final CustomerPaymentLedgerService customerPaymentLedgerService;
+    private final ProductMeasurementFieldRepository fieldRepository;
 
     // List all customers
     @GetMapping
@@ -76,76 +80,60 @@ public class CustomerController {
         }
     }
 
-    // Show create customer form
     @GetMapping("/create")
-    public String showCreateCustomerForm(Model model) {
+    public String showCreateForm(Model model) {
         try {
-            model.addAttribute("customer", new Customer());
-            CustomerRegistrationDTO registrationDTO = populateCustomerRegistrationDTO();
-            model.addAttribute("registrationDTO", registrationDTO);
-            return "customer/create";
-        } catch (Exception e) {
-            logger.error("Error loading customer creation form", e);
+            CustomerWizardDTO form = new CustomerWizardDTO();
+            model.addAttribute("form", form);
+            model.addAttribute("products", productService.getAllActiveProducts());
+            return "customer/create-customer-wizard";
+        } catch (Exception ex) {
+            logger.error("Error while showing create customer form: {}", ex.getMessage(), ex);
+            model.addAttribute("errorMessage", "Something went wrong while loading the form.");
             return "redirect:/customers";
         }
     }
 
-    // create customer
+    // Used by front-end (AJAX) to fetch fields for a product
+    @GetMapping("/{productId}/fields")
+    @ResponseBody
+    public List<Map<String, Object>> getFields(@PathVariable Long productId) {
+        List<ProductMeasurementField> fields = fieldRepository.findByProductIdOrderByIdAsc(productId);
+        return fields.stream().map(f -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id", f.getId());
+            m.put("fieldName", f.getFieldName());
+            m.put("fieldType", f.getFieldType());  // TEXT | NUMBER | DROPDOWN
+            m.put("options", f.getOptions());      // comma-separated
+            return m;
+        }).collect(Collectors.toList());
+    }
+
     @PostMapping("/create")
-    public String createCustomer(CustomerRegistrationDTO registrationDTO,
-            @RequestParam(value = "productIds", required = false) Long[] productIds,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-
-        logger.info("Creating customer with registration data: {}", registrationDTO);
-
-        Set<Long> selectedProductIds = productIds != null ? Set.of(productIds) : new HashSet<>();
+    public String createCustomer(@Valid @ModelAttribute("customer") CustomerWizardDTO form,
+                                 BindingResult bindingResult,
+                                 Model model,
+                                 RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "customer/create-customer-wizard";
+        }
 
         try {
-            // Save customer details
-            Customer savedCustomer = customerService.createCustomer(registrationDTO.getCustomer());
-
-            // Save measurements for each selected product
-            for (Long productId : selectedProductIds) {
-                Product product = productService.getProductById(productId);
-                CustomerMeasurement measurement = Utility.populateCustomerMeasurement(savedCustomer, product, registrationDTO);
-                measurementService.saveMeasurement(measurement);
-            }
-
-            // Success message
-            logger.info("Customer created successfully with ID: {}", savedCustomer.getId());
-            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully.");
-            redirectAttributes.addFlashAttribute("customerId", savedCustomer.getId());
+            Customer savedCustomer = customerService.createCustomerWithMeasurements(form);
+            logger.info("Customer created successfully: {}", savedCustomer);
+            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully!");
             return "redirect:/customers";
-
-        } catch (Exception e) {
-            logger.error("Error creating customer", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while creating the customer.");
-            return "redirect:/customer/create";
+        } catch (Exception ex) {
+            logger.error("Error while creating customer: {}", ex.getMessage(), ex);
+            model.addAttribute("errorMessage", "Failed to create customer. Please try again.");
+            return "customer/create-customer-wizard";
         }
     }
 
-    private CustomerRegistrationDTO populateCustomerRegistrationDTO() {
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         try {
-            CustomerRegistrationDTO registrationDTO = new CustomerRegistrationDTO();
-            registrationDTO.setProducts(productService.getAllActiveProducts());
 
-            // Create a new CustomerMeasurement for each product
-            for (Product product : registrationDTO.getProducts()) {
-                CustomerMeasurement customerMeasurement = new CustomerMeasurement();
-                registrationDTO.addCustomerMeasurement(product.getId(), customerMeasurement);
-            }
-            return registrationDTO;
-        } catch (Exception e) {
-            logger.error("Error populating customer registration DTO", e);
-            return new CustomerRegistrationDTO();
-        }
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
-        logger.info("Displaying edit form for customer ID (encrypted): {}", id);
-        try {
             // Decrypt and validate customer ID
             Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
             if (customerId == null) {
@@ -160,52 +148,120 @@ public class CustomerController {
                 return "redirect:/customers";
             }
 
-            // Fetch all active products
-            List<Product> allActiveProducts = productService.getAllActiveProducts();
+            // just pass customer
+//            model.addAttribute("customer", customer);
+//            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            // Map Customer → DTO
+            CustomerWizardDTO form = customerService.mapToWizardDTO(customer);
 
-            CustomerRegistrationDTO registrationDTO = Utility.populateCustomerRegistrationDTO(allActiveProducts, customer, measurementService.getSingleMeasurement(customerId));
-            model.addAttribute("registrationDTO", registrationDTO);
+            model.addAttribute("form", form);
+            model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", true); // 🔑 flag for Thymeleaf
+            model.addAttribute("customerId", customerId);
+
+            return "customer/create-customer-wizard"; // reuse same template
+        } catch (Exception ex) {
+            logger.error("Error while showing edit customer form: {}", ex.getMessage(), ex);
+            redirectAttributes.addFlashAttribute("errorMessage", "Something went wrong while loading edit form.");
+            return "redirect:/customers";
+        }
+    }
+
+    @PostMapping("/{id}/edit")
+    public String updateCustomer(@PathVariable Long id,
+                                 @Valid @ModelAttribute("form") CustomerWizardDTO form,
+                                 BindingResult bindingResult,
+                                 RedirectAttributes redirectAttributes,
+                                 Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", true);
+            model.addAttribute("customerId", id);
+            return "customer/create-customer-wizard";
+        }
+
+        try {
+            Customer updatedCustomer = customerService.updateCustomerWithMeasurements(id, form);
+            logger.info("Customer updated successfully: {}", updatedCustomer);
+            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
+            return "redirect:/customers";
+        } catch (Exception ex) {
+            logger.error("Error while updating customer: {}", ex.getMessage(), ex);
+            model.addAttribute("errorMessage", "Failed to update customer. Please try again.");
+            model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", true);
+            model.addAttribute("customerId", id);
+            return "customer/create-customer-wizard";
+        }
+    }
+
+    /*@GetMapping("/edit/{id}")
+    public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+        logger.info("Displaying edit form for customer ID (encrypted): {}", id);
+        try {
+//            // Decrypt and validate customer ID
+            Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
+            if (customerId == null) {
+                logger.warn("Invalid customer ID provided for edit: {}", id);
+                return "redirect:/customers";
+            }
+
+            Customer customer = customerService.getCustomerById(customerId);
+            if (customer == null) {
+                logger.warn("Customer not found with ID {} for editing.", customerId);
+                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                return "redirect:/customers";
+            }
+
+//            // Fetch all active products
+//            List<Product> allActiveProducts = productService.getAllActiveProducts();
+//
+//            CustomerRegistrationDTO registrationDTO = Utility.populateCustomerRegistrationDTO(allActiveProducts, customer, measurementService.getMeasurement(customerId));
+//            model.addAttribute("registrationDTO", registrationDTO);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             logger.info("Populated CustomerRegistrationDTO for edit form: {}", registrationDTO);
             return "customer/update";
-
+//
         } catch (Exception e) {
             logger.error("Error loading customer edit form for ID (encrypted) {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Error loading customer edit: " + e.getMessage());
             return "redirect:/customers"; // Keep only one return statement
         }
-    }
+
+        return null;
+    }*/
 
     // update customer
-    @PostMapping("/update")
-    public String updateCustomer(CustomerRegistrationDTO registrationDTO,
-            @RequestParam(value = "productIds", required = false) Long[] productIds,
-            @RequestParam("encryptedCustomerId") String encryptedCustomerId,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-        logger.info("Attempting to update customer with encrypted ID: {}", encryptedCustomerId);
-        try {
-            // Decrypt and validate customer ID
-            Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
-            if (customerId == null) {
-                logger.warn("Invalid customer ID provided for update: {}", encryptedCustomerId);
-                return "redirect:/customers";
-            }
-            logger.debug("Decrypted customer ID for update: {}", customerId);
-            // set decrypted customer id
-            registrationDTO.getCustomer().setId(customerId);
-
-            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, productIds);
-            logger.info("Customer updated successfully with ID: {}", updatedCustomer.getId());
-            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
-            redirectAttributes.addFlashAttribute("customerId", updatedCustomer.getId());
-            return "redirect:/customers";
-        } catch (Exception e) {
-            logger.error("Error updating customer with encrypted ID {}: {}", encryptedCustomerId, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
-            return "redirect:/customers";
-        }
-    }
+//    @PostMapping("/update")
+//    public String updateCustomer(CustomerRegistrationDTO registrationDTO,
+//            @RequestParam(value = "productIds", required = false) Long[] productIds,
+//            @RequestParam("encryptedCustomerId") String encryptedCustomerId,
+//            RedirectAttributes redirectAttributes,
+//            Model model) {
+//        logger.info("Attempting to update customer with encrypted ID: {}", encryptedCustomerId);
+//        try {
+//            // Decrypt and validate customer ID
+//            Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
+//            if (customerId == null) {
+//                logger.warn("Invalid customer ID provided for update: {}", encryptedCustomerId);
+//                return "redirect:/customers";
+//            }
+//            logger.debug("Decrypted customer ID for update: {}", customerId);
+//            // set decrypted customer id
+//            registrationDTO.getCustomer().setId(customerId);
+//
+//            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, productIds);
+//            logger.info("Customer updated successfully with ID: {}", updatedCustomer.getId());
+//            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
+//            redirectAttributes.addFlashAttribute("customerId", updatedCustomer.getId());
+//            return "redirect:/customers";
+//        } catch (Exception e) {
+//            logger.error("Error updating customer with encrypted ID {}: {}", encryptedCustomerId, e.getMessage(), e);
+//            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
+//            return "redirect:/customers";
+//        }
+//        return null;
+//    }
 
     @GetMapping("/details/{id}")
     public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
@@ -226,16 +282,16 @@ public class CustomerController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
-            model.addAttribute("customer", customer);
-            logger.info("Fetched customer details: {}", customer);
-            // Fetch customer measurements
-            CustomerMeasurement measurement = measurementService.getSingleMeasurement(customerId);
-            model.addAttribute("measurement", measurement);
-            logger.info("Fetched measurement details: {}", measurement);
+            // Measurements are already fetched via relation (assuming FetchType.EAGER or proper fetch join in service)
+            List<CustomerMeasurement> measurements = customer.getMeasurements();
 
+            // Group measurements by product
+            Map<Product, List<CustomerMeasurement>> productMeasurementsMap = measurements.stream()
+                    .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
             // customer ledger
             Map<String, List<CustomerPaymentLedger>> orderLedgerMap = new LinkedHashMap<>();
             Map<String, BigDecimal> orderBalances = new HashMap<>();
+            Map<String, OrderStatus> orderStatuses = new HashMap<>();
 
             // Initialize total variables for credits and debits
             BigDecimal totalCredit = BigDecimal.ZERO;
@@ -246,6 +302,8 @@ public class CustomerController {
             for (CustomerPaymentLedger payment : ledgerEntries) {
                 String orderId = payment.getOrder().getOrderId();
                 orderLedgerMap.computeIfAbsent(orderId, k -> new ArrayList<>()).add(payment);
+                // Order status
+                orderStatuses.put(orderId, payment.getOrder().getStatus());
 
                 // Calculate balance
                 BigDecimal balance = orderBalances.getOrDefault(orderId, BigDecimal.ZERO);
@@ -262,8 +320,11 @@ public class CustomerController {
             model.addAttribute("totalDebit", totalDebit);
             model.addAttribute("orderLedgerMap", orderLedgerMap);
             model.addAttribute("orderBalances", orderBalances);
+            model.addAttribute("orderStatuses", orderStatuses);
 
-//            model.addAttribute("products", productsList);
+            model.addAttribute("customer", customer);
+            model.addAttribute("productMeasurementsMap", productMeasurementsMap);
+            logger.info("Fetched customer details: {}", customer);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
         } catch (Exception e) {

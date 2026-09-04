@@ -1,24 +1,20 @@
 package com.example.tailormaster.repository.customerledger;
 
-import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
-import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.enums.PaymentType;
-import com.example.tailormaster.enums.PickupStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 public interface CustomerPaymentRepository extends JpaRepository<CustomerPaymentLedger, Long> {
 
-    List<CustomerPaymentLedger> findByCustomerId(Long customerId);
+    List<CustomerPaymentLedger> findByCustomerIdOrderByPaymentDateDesc(Long customerId);
 
     @Query("""
     SELECT COALESCE(SUM(o.amount), 0)

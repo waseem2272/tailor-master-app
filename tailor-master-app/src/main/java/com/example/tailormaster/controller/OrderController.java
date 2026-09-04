@@ -122,7 +122,7 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public String createOrder(@Valid @ModelAttribute("orderDto") CustomerOrderDto orderDto,
+    public String createOrder(@ModelAttribute("orderDto") CustomerOrderDto orderDto,
                               BindingResult result,
                               RedirectAttributes redirectAttributes,
                               Model model,
@@ -176,56 +176,134 @@ public class OrderController {
         }
     }
 
-    private void validateOrder(CustomerOrderDto orderDto, BindingResult result) {
+    private void validateOrder(CustomerOrderDto orderDto,
+                               BindingResult result) {
 
         if (result.hasErrors()) {
             return;
         }
 
-        if (orderDto.getOrderProducts() == null || orderDto.getOrderProducts().isEmpty()) {
-            result.rejectValue("orderProducts", "error.orderProducts", "At least one product must be selected.");
+        if (orderDto.getOrderProducts() == null ||
+                orderDto.getOrderProducts().isEmpty()) {
+
+            result.rejectValue(
+                    "orderProducts",
+                    "error.orderProducts",
+                    "At least one product must be selected."
+            );
+
             return;
         }
 
+
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
-            OrderProductDto product = orderDto.getOrderProducts().get(i);
 
-            // Validate Quantity
-            if (product.getQuantity() == null || product.getQuantity() < 1) {
-                result.rejectValue("orderProducts[" + i + "].quantity",
+        for (int i = 0;
+             i < orderDto.getOrderProducts().size();
+             i++) {
+
+            OrderProductDto product =
+                    orderDto.getOrderProducts().get(i);
+
+
+            // Quantity
+            if (product.getQuantity() == null ||
+                    product.getQuantity() < 1) {
+
+                result.rejectValue(
+                        "orderProducts[" + i + "].quantity",
                         "error.orderProducts[" + i + "].quantity",
-                        "Quantity must be at least 1.");
+                        "Quantity must be at least 1."
+                );
+
+                continue;
             }
 
-            // Validate Product Price
-            if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-                result.rejectValue("orderProducts[" + i + "].price",
-                        "error.orderProducts[" + i + "].price",
-                        "Price must be greater than zero.");
+
+            // Silai amount
+            if (product.getSilaiAmount() == null ||
+                    product.getSilaiAmount().compareTo(
+                            BigDecimal.ZERO) < 0) {
+
+                result.rejectValue(
+                        "orderProducts[" + i + "].silaiAmount",
+                        "error.orderProducts[" + i + "].silaiAmount",
+                        "Invalid Silai amount."
+                );
+
+                continue;
             }
 
-            // Calculate Total Amount
-            if (product.getPrice() != null && product.getQuantity() != null) {
-                totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity())));
-            }
+
+            // Calculate item amount
+            BigDecimal itemAmount =
+                    product.getSilaiAmount()
+                            .multiply(
+                                    BigDecimal.valueOf(
+                                            product.getQuantity()
+                                    )
+                            );
+
+            totalAmount =
+                    totalAmount.add(itemAmount);
         }
 
-        // Validate Total Amount
-        if (orderDto.getTotalProductAmount().compareTo(totalAmount) != 0) {
-            result.rejectValue("totalProductAmount", "error.totalProductAmount", "Total amount is incorrect.");
+
+        // Validate total
+        if (orderDto.getTotalProductAmount() == null ||
+                orderDto.getTotalProductAmount()
+                        .compareTo(totalAmount) != 0) {
+
+            result.rejectValue(
+                    "totalProductAmount",
+                    "error.totalProductAmount",
+                    "Total amount is incorrect."
+            );
         }
 
-        // Validate Advance Payment
-        if (orderDto.getAdvancePayment().compareTo(totalAmount) > 0) {
-            result.rejectValue("advancePayment", "error.advancePayment", "Advance payment cannot exceed total amount.");
+
+        // Advance
+        BigDecimal advance =
+                orderDto.getAdvancePayment() != null
+                        ? orderDto.getAdvancePayment()
+                        : BigDecimal.ZERO;
+
+
+        if (advance.compareTo(BigDecimal.ZERO) < 0) {
+
+            result.rejectValue(
+                    "advancePayment",
+                    "error.advancePayment",
+                    "Advance payment cannot be negative."
+            );
         }
 
-        // Validate Due Payment
-        BigDecimal expectedDuePayment = totalAmount.subtract(orderDto.getAdvancePayment());
-        if (orderDto.getDuePayment().compareTo(expectedDuePayment) != 0) {
-            result.rejectValue("duePayment", "error.duePayment", "Due payment is incorrect.");
+
+        if (advance.compareTo(totalAmount) > 0) {
+
+            result.rejectValue(
+                    "advancePayment",
+                    "error.advancePayment",
+                    "Advance payment cannot exceed total amount."
+            );
+        }
+
+
+        // Due
+        BigDecimal expectedDue =
+                totalAmount.subtract(advance);
+
+
+        if (orderDto.getDuePayment() == null ||
+                orderDto.getDuePayment()
+                        .compareTo(expectedDue) != 0) {
+
+            result.rejectValue(
+                    "duePayment",
+                    "error.duePayment",
+                    "Due payment is incorrect."
+            );
         }
     }
 
@@ -253,16 +331,16 @@ public class OrderController {
             }
 
             // Validate Product Price
-            if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-                result.rejectValue("orderProducts[" + i + "].price",
-                        "error.orderProducts[" + i + "].price",
-                        "Price must be greater than zero.");
-            }
+//            if (product.getPrice() == null || product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+//                result.rejectValue("orderProducts[" + i + "].price",
+//                        "error.orderProducts[" + i + "].price",
+//                        "Price must be greater than zero.");
+//            }
 
             // Calculate Total Amount
-            if (product.getPrice() != null && product.getQuantity() != null) {
-                totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity())));
-            }
+//            if (product.getPrice() != null && product.getQuantity() != null) {
+//                totalAmount = totalAmount.add(product.getPrice().multiply(BigDecimal.valueOf(product.getQuantity())));
+//            }
         }
 
         // Validate Total Amount
@@ -282,10 +360,19 @@ public class OrderController {
         }
     }
 
+
+
     private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
         List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
-        List<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).toList();
+        Set<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).collect(Collectors.toSet());
         orderDto.setCustomer(customer);
+
+        List<ProductDto> productDtos = products.stream()
+                .map(p -> new ProductDto(p.getId(), p.getName(), p.getSingleSilai(), p.getDoubleSilai()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("productDtos", productDtos);
+
         model.addAttribute("orderDto", orderDto);
 //        model.addAttribute("customer", customer);
         model.addAttribute("products", products);
@@ -309,10 +396,13 @@ public class OrderController {
         // Convert OrderProductDto list to OrderProduct entities
         List<OrderProduct> orderProducts = orderDto.getOrderProducts().stream().map(opDto -> {
             OrderProduct orderProduct = new OrderProduct();
-            Product product = productService.getProductById(opDto.getId());
+            Product product = productService.getProductById(opDto.getProductId());
             orderProduct.setProduct(product);
             orderProduct.setQuantity(opDto.getQuantity());
-            orderProduct.setSubtotal(product.getPrice().multiply(new BigDecimal(opDto.getQuantity())));
+            orderProduct.setSubtotal(opDto.getSilaiAmount().multiply(new BigDecimal(opDto.getQuantity())));
+            orderProduct.setSilaiType(opDto.getSilaiType());
+            orderProduct.setAdditionalNotes(opDto.getAdditionalNotes());
+            orderProduct.setSilaiAmount(opDto.getSilaiAmount());
             orderProduct.setOrder(order);
             return orderProduct;
         }).collect(Collectors.toList());
@@ -417,7 +507,7 @@ public class OrderController {
             orderProductDto.setId(orderProduct.getProduct().getId());
             orderProductDto.setName(orderProduct.getProduct().getName());
             orderProductDto.setQuantity(orderProduct.getQuantity());
-            orderProductDto.setPrice(orderProduct.getProduct().getPrice());
+//            orderProductDto.setPrice(orderProduct.getProduct().getPrice());
             return orderProductDto;
         }).collect(Collectors.toList());
         orderUpdateDto.setOrderProducts(orderProductDtos);

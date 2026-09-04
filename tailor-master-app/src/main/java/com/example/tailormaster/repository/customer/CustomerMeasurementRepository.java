@@ -1,6 +1,7 @@
 package com.example.tailormaster.repository.customer;
 
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,5 +9,10 @@ import java.util.List;
 public interface CustomerMeasurementRepository extends JpaRepository<CustomerMeasurement, Long> {
     List<CustomerMeasurement> findByCustomerId(Long customerId); // Correct method
 
-    CustomerMeasurement findTopByCustomerIdOrderByIdDesc(Long customerId);
+    List<CustomerMeasurement> findByCustomerIdAndProductIdOrderByCreatedAtDesc(
+            Long customerId,
+            Long productId
+    );
+
+    void deleteByCustomerId(Long id);
 }

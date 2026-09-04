@@ -65,13 +65,6 @@ public class DashboardService {
         return revenue;
     }
 
-    public long getOrdersReadyForPickup() {
-        logger.debug("Fetching orders ready for pickup count");
-        long count = orderService.getOrdersReadyForPickupCount();
-        logger.info("Orders ready for pickup: {}", count);
-        return count;
-    }
-
     public List<Map<String, Object>> getMonthlyRevenueTrendsForLast6Months() {
         logger.debug("Fetching monthly revenue trends for last 6 months");
         List<Map<String, Object>> trends = customerPaymentLedgerService.getMonthlyRevenueTrendsForLast6Months();

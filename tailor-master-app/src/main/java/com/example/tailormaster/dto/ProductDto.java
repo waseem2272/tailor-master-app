@@ -10,12 +10,13 @@ import java.math.BigDecimal;
 public class ProductDto {
     private Long id;
     private String name;
-    private String description;
-    private BigDecimal price;
+    private BigDecimal singleSilai;
+    private BigDecimal doubleSilai;
 
-    public ProductDto(Long id, String name, BigDecimal price) {
+    public ProductDto(Long id, String name, BigDecimal singleSilai, BigDecimal doubleSilai) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.singleSilai = singleSilai;
+        this.doubleSilai = doubleSilai;
     }
 }

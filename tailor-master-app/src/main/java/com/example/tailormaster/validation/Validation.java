@@ -1,12 +1,9 @@
 package com.example.tailormaster.validation;
 
 import com.example.tailormaster.entity.Customer;
-import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.labor.Labor;
 import com.example.tailormaster.entity.labor.LaborPayment;
-import com.example.tailormaster.entity.product.Product;
-import com.example.tailormaster.entity.product.ProductType;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.labor.LaborPaymentService;
 import com.example.tailormaster.service.labor.LaborService;
@@ -28,17 +25,6 @@ public class Validation {
     private final OrderService orderService;
     private final LaborService laborService;
     private final LaborPaymentService laborPaymentService;
-
-    public void validateMeasurement(Product product, CustomerMeasurement measurement, BindingResult result) {
-        if (product.getType() == ProductType.QAMEEZ) { // Qameez
-            validateField(measurement.getChest(), "customerMeasurements[" + product.getId() + "].chest", Utility.CHEST, result);
-            validateField(measurement.getSleeveLength(), "customerMeasurements[" + product.getId() + "].sleeveLength", Utility.SLEEVE, result);
-            validateField(measurement.getShoulder(), "customerMeasurements[" + product.getId() + "].shoulder", Utility.SHOULDER, result);
-        } else if (product.getType() == ProductType.SHALWAR) { // Shalwar
-            validateField(measurement.getHips(), "customerMeasurements[" + product.getId() + "].hips", Utility.HIPS, result);
-            validateField(measurement.getWaist(), "customerMeasurements[" + product.getId() + "].waist", Utility.WAIST, result);
-        }
-    }
 
     /**
      * Helper method to validate individual measurement fields.

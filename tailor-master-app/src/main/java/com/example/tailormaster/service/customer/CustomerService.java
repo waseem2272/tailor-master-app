@@ -1,15 +1,17 @@
 package com.example.tailormaster.service.customer;
 
 import com.example.tailormaster.dto.CustomerDTO;
-import com.example.tailormaster.dto.CustomerRegistrationDTO;
+import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
+import com.example.tailormaster.repository.customer.CustomerMeasurementRepository;
 import com.example.tailormaster.repository.customer.CustomerRepository;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.AuthenticatedUserService;
 import com.example.tailormaster.util.ThymeleafUtil;
-import com.example.tailormaster.validation.Utility;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +35,131 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final ProductService productService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final ProductMeasurementFieldRepository fieldRepository;
+    private final CustomerMeasurementRepository customerMeasurementRepository;
+
+    @Transactional
+    public Customer createCustomerWithMeasurements(CustomerWizardDTO dto) {
+        // Step 1: Customer
+        Customer customer = new Customer();
+        customer.setFullName(dto.getFullName());
+        customer.setPhoneNumber(dto.getPhoneNumber());
+        customer.setEnabled(dto.isEnabled());
+        customer.setUser(authenticatedUserService.getCurrentUser());
+
+        // Persist early to have an ID for FK (optional, but safe)
+        customer = customerRepository.save(customer);
+
+        // Step 2 & 3: For each selected product, save measurements for its fields
+        for (Long productId : dto.getSelectedProductIds()) {
+            Product product = productService.getProductById(productId);
+
+            Map<Long, String> productFieldMap = dto.getMeasurements().get(productId);
+            if (productFieldMap == null) continue;
+
+            Map<Long, ProductMeasurementField> fieldById = loadFieldMapForProduct(productId);
+
+            for (Map.Entry<Long, String> e : productFieldMap.entrySet()) {
+                Long fieldId = e.getKey();
+                String value = e.getValue();
+
+                // Skip totally empty values
+                if (value == null || value.isBlank()) continue;
+
+                ProductMeasurementField field = fieldById.get(fieldId);
+                if (field == null) continue; // unknown field id
+
+                CustomerMeasurement cm = new CustomerMeasurement();
+                cm.setCustomer(customer);
+                cm.setProduct(product);
+                cm.setField(field);
+                cm.setValue(value);
+                // Because Customer is owning side only of OneToMany without mapping here,
+                // we just rely on CustomerMeasurementRepository (via cascade) or leave JPA to persist via flush.
+                // Here, customerRepository.save(customer) at end is enough because of cascade on Customer?
+                // Your Customer has cascade on measurements, so add to list:
+                if (customer.getMeasurements() == null) {
+                    customer.setMeasurements(new ArrayList<>());
+                }
+                customer.getMeasurements().add(cm);
+            }
+        }
+
+        return customerRepository.save(customer);
+    }
+
+    public CustomerWizardDTO mapToWizardDTO(Customer customer) {
+        CustomerWizardDTO dto = new CustomerWizardDTO();
+        dto.setFullName(customer.getFullName());
+        dto.setPhoneNumber(customer.getPhoneNumber());
+        dto.setEnabled(customer.isEnabled());
+
+        // Products
+        List<Long> productIds = customer.getMeasurements().stream()
+                .map(cm -> cm.getProduct().getId())
+                .distinct()
+                .toList();
+        dto.setSelectedProductIds(productIds);
+
+        // Measurements
+        Map<Long, Map<Long, String>> measurementMap = new HashMap<>();
+        for (CustomerMeasurement cm : customer.getMeasurements()) {
+            measurementMap
+                    .computeIfAbsent(cm.getProduct().getId(), k -> new HashMap<>())
+                    .put(cm.getField().getId(), cm.getValue());
+        }
+        dto.setMeasurements(measurementMap);
+
+        return dto;
+    }
+
+    @Transactional
+    public Customer updateCustomerWithMeasurements(Long id, CustomerWizardDTO dto) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // Update basic info
+        customer.setFullName(dto.getFullName());
+        customer.setPhoneNumber(dto.getPhoneNumber());
+        customer.setEnabled(dto.isEnabled());
+
+        // Clear old measurements
+        customerMeasurementRepository.deleteByCustomerId(id);
+        customer.getMeasurements().clear();
+
+        // Re-insert products + measurements
+        for (Long productId : dto.getSelectedProductIds()) {
+            Product product = productService.getProductById(productId);
+            Map<Long, String> productFieldMap = dto.getMeasurements().get(productId);
+            if (productFieldMap == null) continue;
+
+            Map<Long, ProductMeasurementField> fieldById = loadFieldMapForProduct(productId);
+
+            for (Map.Entry<Long, String> e : productFieldMap.entrySet()) {
+                String value = e.getValue();
+                if (value == null || value.isBlank()) continue;
+
+                ProductMeasurementField field = fieldById.get(e.getKey());
+                if (field == null) continue;
+
+                CustomerMeasurement cm = new CustomerMeasurement();
+                cm.setCustomer(customer);
+                cm.setProduct(product);
+                cm.setField(field);
+                cm.setValue(value);
+
+                customer.getMeasurements().add(cm);
+            }
+        }
+
+        return customerRepository.save(customer);
+    }
+
+    private Map<Long, ProductMeasurementField> loadFieldMapForProduct(Long productId) {
+        List<ProductMeasurementField> fields = fieldRepository.findByProductIdOrderByIdAsc(productId);
+        return fields.stream()
+                .collect(Collectors.toMap(ProductMeasurementField::getId, f -> f));
+    }
 
     public Customer getCustomerById(Long id) {
         logger.debug("Fetching customer by ID: {}", id);
@@ -46,42 +174,42 @@ public class CustomerService {
         return savedCustomer;
     }
 
-    @Transactional
-    public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, Long[] productIds) {
-        Long customerId = registrationDTO.getCustomer().getId();
-
-        Set<Product> products = new HashSet<>();
-
-        for (Long productId : productIds) {
-            Product product = productService.getProductById(productId);
-            products.add(product);
-        }
-
-        logger.info("Updating customer with ID: {}", customerId);
-
-        Customer existingCustomer = customerRepository.findByIdAndUser(customerId, authenticatedUserService.getCurrentUser())
-                .orElseThrow(() -> {
-                    logger.error("Customer not found with ID: {}", customerId);
-                    return new IllegalArgumentException("Customer not found");
-                });
-
-        existingCustomer.setFullName(registrationDTO.getCustomer().getFullName());
-        existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
-        existingCustomer.getMeasurements().clear();
-
-        for (Product product : products) {
-            CustomerMeasurement measurement = new CustomerMeasurement();
-                measurement.setCustomer(existingCustomer);
-                measurement.setProduct(product);
-
-            CustomerMeasurement measurement1 = Utility.populateCustomerMeasurement(measurement, registrationDTO);
-            existingCustomer.getMeasurements().add(measurement1);
-        }
-        existingCustomer.setUser(authenticatedUserService.getCurrentUser());
-        Customer updatedCustomer = customerRepository.save(existingCustomer);
-        logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
-        return updatedCustomer;
-    }
+//    @Transactional
+//    public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, Long[] productIds) {
+//        Long customerId = registrationDTO.getCustomer().getId();
+//
+//        Set<Product> products = new HashSet<>();
+//
+//        for (Long productId : productIds) {
+//            Product product = productService.getProductById(productId);
+//            products.add(product);
+//        }
+//
+//        logger.info("Updating customer with ID: {}", customerId);
+//
+//        Customer existingCustomer = customerRepository.findByIdAndUser(customerId, authenticatedUserService.getCurrentUser())
+//                .orElseThrow(() -> {
+//                    logger.error("Customer not found with ID: {}", customerId);
+//                    return new IllegalArgumentException("Customer not found");
+//                });
+//
+//        existingCustomer.setFullName(registrationDTO.getCustomer().getFullName());
+//        existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
+//        existingCustomer.getMeasurements().clear();
+//
+//        for (Product product : products) {
+//            CustomerMeasurement measurement = new CustomerMeasurement();
+//                measurement.setCustomer(existingCustomer);
+//                measurement.setProduct(product);
+//
+//            CustomerMeasurement measurement1 = Utility.populateCustomerMeasurement(measurement, registrationDTO);
+//            existingCustomer.getMeasurements().add(measurement1);
+//        }
+//        existingCustomer.setUser(authenticatedUserService.getCurrentUser());
+//        Customer updatedCustomer = customerRepository.save(existingCustomer);
+//        logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
+//        return updatedCustomer;
+//    }
 
     public void deleteCustomer(Long id) {
         logger.info("Deleting customer with ID: {}", id);
@@ -166,5 +294,10 @@ public class CustomerService {
         long count = customerRepository.countByUser(authenticatedUserService.getCurrentUser());
         logger.debug("Total customer count: {}", count);
         return count;
+    }
+
+    public Customer getCustomerDetails(Long id) {
+        return customerRepository.findByIdWithMeasurements(id, authenticatedUserService.getCurrentUser())
+                .orElse(null);
     }
 }

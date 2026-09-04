@@ -50,13 +50,6 @@
                 </div>
             </div>
 
-            <!-- Create New Customer Button -->
-            <!--<div class="d-flex justify-content-end mb-3">
-                <a th:href="@{/customers/create}" class="btn btn-success shadow rounded-pill px-4">
-                    <i class="bi bi-plus-circle"></i> Create New Customer
-                </a>
-            </div>-->
-
             <!-- Filters Card -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
@@ -177,7 +170,7 @@
                         return `
                             <a href="${contextPath}orders/create/${data}" class="btn btn-success btn-sm"><i class="bi bi-plus-circle"></i> Create Order</a>
                             <a href="${contextPath}customers/details/${data}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i> Details</a>
-                            <a href="${contextPath}customers/edit/${data}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                            <a href="${contextPath}customers/${data}/edit" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                         `;
                     }
                 }

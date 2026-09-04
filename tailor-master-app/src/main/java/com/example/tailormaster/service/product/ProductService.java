@@ -1,5 +1,6 @@
 package com.example.tailormaster.service.product;
 
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.product.ProductRepository;
 import com.example.tailormaster.util.AuthenticatedUserService;
@@ -65,11 +66,12 @@ public class ProductService {
     public void createProduct(Product product) {
         logger.info("Creating a new product: {}", product);
         try {
-            if (productRepository.existsByName(product.getName())) {
+            User currentUser = authenticatedUserService.getCurrentUser();
+            if (productRepository.existsByNameAndUser(product.getName(), currentUser)) {
                 logger.warn("Product with the name '{}' already exists.", product.getName());
                 throw new RuntimeException("Product with the same name already exists.");
             }
-            product.setUser(authenticatedUserService.getCurrentUser());
+            product.setUser(currentUser);
             Product savedProduct = productRepository.save(product);
             logger.info("Product created successfully with ID: {}", savedProduct.getId());
         } catch (RuntimeException e) {
@@ -86,8 +88,9 @@ public class ProductService {
         try {
             Product product = getProductById(id);
             product.setName(updatedProduct.getName());
-            product.setPrice(updatedProduct.getPrice());
-            product.setDescription(updatedProduct.getDescription());
+            product.setSingleSilai(updatedProduct.getSingleSilai());
+            product.setDoubleSilai(updatedProduct.getDoubleSilai());
+//            product.setDescription(updatedProduct.getDescription());
             product.setEnabled(updatedProduct.isEnabled());
             product.setUser(authenticatedUserService.getCurrentUser());
             Product savedProduct = productRepository.save(product);

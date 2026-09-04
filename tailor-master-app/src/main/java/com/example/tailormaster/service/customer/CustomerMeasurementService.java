@@ -22,8 +22,8 @@ public class CustomerMeasurementService {
         return measurementRepository.findByCustomerId(customerId);
     }
 
-    public CustomerMeasurement getSingleMeasurement(Long customerId) {
-        return measurementRepository.findTopByCustomerIdOrderByIdDesc(customerId);
+    public List<CustomerMeasurement> getMeasurement(Long customerId, Long productId) {
+        return measurementRepository.findByCustomerIdAndProductIdOrderByCreatedAtDesc(customerId, productId);
     }
 
 }

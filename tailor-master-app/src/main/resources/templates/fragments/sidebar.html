@@ -11,38 +11,53 @@
         <div class="mx-3 mb-3" style="height: 1px; background: linear-gradient(to right, #ffffff, #ffffff);"></div>
         <a th:href="@{/dashboard}"
            th:classappend="${activePage == 'dashboard'} ? 'active'">
-            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            <i class="bi bi-speedometer2 me-2"></i> ڈیش بورڈ
         </a>
 
         <a th:href="@{/products}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'products'} ? 'active'">
-            <i class="bi bi-box-seam me-2"></i> Products
+            <i class="bi bi-box-seam me-2"></i> کپڑے/پروڈکٹس
         </a>
 
         <a th:href="@{/customers}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'customers'} ? 'active'">
-            <i class="bi bi-people me-2"></i> Customers
+            <i class="bi bi-people me-2"></i> گاہک
         </a>
 
         <a th:href="@{/orders}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'orders'} ? 'active'">
-            <i class="bi bi-bag-check me-2"></i> Orders
+            <i class="bi bi-bag-check me-2"></i> آرڈر
         </a>
 
         <a th:href="@{/orders/pending-payments}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'orders/pending-payments'} ? 'active'">
-            <i class="bi bi-cash-coin me-2"></i> Pending Payments
+            <i class="bi bi-cash-stack me-2"></i> بقیہ ادائیگیاں
         </a>
 
         <a th:href="@{/labors}"
            sec:authorize="hasRole('ROLE_ADMIN')"
            th:classappend="${activePage == 'labors'} ? 'active'">
-            <i class="bi bi-person-workspace me-2"></i> Labor Management
+            <i class="bi bi-person-workspace me-2"></i> کاریگر مینجمنٹ
         </a>
+        <!-- پروفائل -->
+        <a th:href="@{/users/profile}"
+           th:classappend="${activePage == 'profile'} ? 'active'"
+           class="nav-link">
+            <i class="bi bi-person-workspace me-2"></i>
+            میرا پروفائل
+        </a>
+
+        <!-- لاگ آؤٹ -->
+        <a th:href="@{/logout}" class="nav-link">
+            <i class="bi bi-box-arrow-right me-2"></i>
+            سسٹم بند کریں
+        </a>
+
+
     </div>
 </div>
 

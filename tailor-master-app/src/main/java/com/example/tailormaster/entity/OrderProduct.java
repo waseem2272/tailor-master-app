@@ -15,13 +15,21 @@ import java.math.BigDecimal;
 public class OrderProduct extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private int quantity;
+
+    private BigDecimal silaiAmount;
+
     private BigDecimal subtotal;
+
+    private String silaiType;
+
+    @Column(columnDefinition = "TEXT")
+    private String additionalNotes;
 }

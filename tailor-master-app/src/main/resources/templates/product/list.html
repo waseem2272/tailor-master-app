@@ -15,14 +15,14 @@
     <div class="main-content container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-box-seam-fill me-2"></i> Products
+                <i class="bi bi-box-seam-fill me-2"></i> کپڑوں کے ڈیزائن
             </h2>
             <a th:href="@{/products/create}" class="btn btn-success rounded-pill shadow-sm">
-                <i class="bi bi-plus-circle"></i> Create New Product
+                <i class="bi bi-plus-circle"></i> نیا ڈیزائن بنائیں
             </a>
         </div>
 
-        <!-- Success Alert -->
+        <!-- کامیابی کا پیغام -->
         <div th:if="${successMessage}" class="row justify-content-center">
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
                 <div class="d-flex align-items-center">
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <!-- Error Alert -->
+        <!-- غلطی کا پیغام -->
         <div th:if="${errorMessage}" class="row justify-content-center">
             <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
                 <div class="d-flex align-items-center">
@@ -46,36 +46,35 @@
 
         <div class="card shadow-sm border-success border-bottom border-3">
             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                <i class="bi bi-box-seam me-2"></i> Products List
+                <i class="bi bi-box-seam me-2"></i> کپڑوں کے ڈیزائن کی فہرست
             </div>
             <div class="card-body">
                 <table id="productsTable" class="table table-bordered table-hover table-striped">
                     <thead class="table-success text-dark">
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Status</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
+                        <th>ڈیزائن کا نام</th>
+                        <th>سنگل سلائی</th>
+                        <th>ڈبل سلائی</th>
+                        <th>بننے کی تاریخ</th>
+                        <th>کاروائیاں</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="product, iterStat : ${products}">
                         <td th:text="${iterStat.index + 1}"></td>
                         <td th:text="${product.name}"></td>
-                        <td th:text="${product.description}"></td>
-                        <td th:text="${product.price}"></td>
-                        <td>
-                                <span th:classappend="${product.enabled} ? 'badge bg-success' : 'badge bg-secondary'"
-                                      th:text="${product.enabled} ? 'Active' : 'Inactive'"></span>
-                        </td>
+                        <td class="format-amount" th:text="${product.singleSilai}"></td>
+                        <td class="format-amount" th:text="${product.doubleSilai}"></td>
                         <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}"></td>
                         <td>
                             <a th:href="@{'/products/update/' + ${thymeleafUtil.encryptId(product.id)}}"
-                               class="btn btn-warning btn-sm rounded-pill shadow-sm">
-                                <i class="bi bi-pencil-square"></i> Edit
+                               class="btn btn-warning btn-sm rounded-pill shadow-sm" title="ترمیم کریں">
+                                <i class="bi bi-pencil-square"></i>ترمیم کریں
+                            </a>
+                            <a th:href="@{'/products/' + ${thymeleafUtil.encryptId(product.id)} + '/measurements'}"
+                               class="btn btn-info btn-sm rounded-pill shadow-sm" title="ناپ کا انتظام کریں">
+                                <i class="bi bi-rulers"></i>ناپ کا انتظام کریں
                             </a>
                         </td>
                     </tr>
@@ -85,6 +84,7 @@
         </div>
 
     </div>
+
 </div>
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 <!--<div th:replace="~{fragments/footer :: footer}"></div>-->
@@ -93,6 +93,7 @@
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>

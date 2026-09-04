@@ -15,7 +15,7 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-box-seam-fill me-2"></i> Update Product
+                <i class="bi bi-box-seam-fill me-2"></i> ڈیزائن میں تبدیلی کریں
             </h2>
             <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
                 <div class="d-flex align-items-center">
@@ -24,7 +24,7 @@
                 </div>
                 <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <p class="text-danger fw-bold">Fields marked as * are required</p>
+            <p class="text-danger fw-bold">جن خانوں پر * لگا ہے وہ لازمی ہیں</p>
 
             <form id="updateProductForm" th:action="@{/products/update}" th:object="${product}" method="post" onsubmit="return validateForm()">
                 <input type="hidden" name="encryptedProductId"
@@ -33,59 +33,34 @@
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Product Information
+                        <i class="bi bi-info-circle me-2"></i> ڈیزائن کی معلومات
                     </div>
 
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                <label for="name" class="form-label">ڈیزائن کا نام <span class="text-danger">*</span></label>
                                 <input type="text" id="name" th:field="*{name}" class="form-control" required>
-                                <div th:if="${#fields.hasErrors('name')}" class="text-danger error-message">
-                                    <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
-                                </div>
                                 <div id="nameError" class="text-danger error-message"></div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="type" class="form-label">Product Type <span class="text-danger">*</span></label>
-                                <select id="type" th:field="*{type}" class="form-select" required>
-                                    <option value="">Select Product Type</option>
-                                    <option th:each="productType : ${T(com.example.tailormaster.entity.product.ProductType).values()}"
-                                            th:value="${productType}" th:text="${productType}"></option>
-                                </select>
-                                <div th:if="${#fields.hasErrors('type')}" class="text-danger error-message">
-                                    <div th:each="error : ${#fields.errors('type')}" th:text="${error}"></div>
-                                </div>
-                                <div id="typeError" class="text-danger error-message"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
-                                <input type="number" id="price" th:field="*{price}" class="form-control" step="0.01" required>
-                                <div th:if="${#fields.hasErrors('price')}" class="text-danger error-message">
-                                    <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
-                                </div>
-                                <div id="priceError" class="text-danger error-message"></div>
+                                <label for="singleSilai" class="form-label">سنگل سلائی کا ریٹ <span class="text-danger">*</span></label>
+                                <input type="number" id="singleSilai" th:field="*{singleSilai}" class="form-control" step="0.01" required>
+                                <div id="singleSilaiError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
-                                <select id="enabled" th:field="*{enabled}" class="form-select" required>
-                                    <option value="true">Active</option>
-                                    <option value="false">Inactive</option>
-                                </select>
+                                <label for="doubleSilai" class="form-label">ڈبل سلائی کا ریٹ <span class="text-danger">*</span></label>
+                                <input type="number" id="doubleSilai" th:field="*{doubleSilai}" class="form-control" step="0.01" required>
+                                <div id="doubleSilaiError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="text-center">
                                 <button type="button" class="btn btn-success shadow rounded-pill px-4" id="openModal">
-                                    <i class="bi bi-check-circle"></i> Update
+                                    <i class="bi bi-check-circle"></i> اپڈیٹ کریں
                                 </button>
                                 <a th:href="@{/products}" class="btn btn-secondary shadow rounded-pill px-4">
-                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                    <i class="bi bi-x-circle me-1"></i> واپس جائیں
                                 </a>
                             </div>
                         </div>
@@ -97,95 +72,8 @@
 
         </div>
     </div>
+
 </div>
-
-<!--<div class="content">
-    <div class="main-content container-fluid">
-        <div class="row justify-content-center mt-4">
-            <div class="col-lg-8">
-                <div class="card border-success border-bottom border-3 shadow rounded-4 p-4">
-                    <h2 class="text-center mb-3">Update Product</h2>
-                    <hr class="mb-4"/>
-
-                    &lt;!&ndash; Error Alert (consistent style) &ndash;&gt;
-                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
-                            <span th:text="${errorMessage}"></span>
-                        </div>
-                        <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                    <p class="text-danger fw-bold">Fields marked with * are required.</p>
-
-                    <form id="updateProductForm" th:action="@{/products/update}" th:object="${product}" method="post" onsubmit="return validateForm()">
-                        <input type="hidden" name="encryptedProductId"
-                               th:if="${thymeleafUtil != null}"
-                               th:value="${thymeleafUtil.encryptId(product.id)}"/>
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
-                            <input type="text" id="name" th:field="*{name}" class="form-control rounded-3 shadow-sm" required>
-                            <div th:if="${#fields.hasErrors('name')}" class="text-danger small mt-1">
-                                <div th:each="error : ${#fields.errors('name')}" th:text="${error}"></div>
-                            </div>
-                            <div id="nameError" class="text-danger small mt-1"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Product Type <span class="text-danger">*</span></label>
-                            <select id="type" th:field="*{type}" class="form-select rounded-3 shadow-sm" required>
-                                <option value="">Select Product Type</option>
-                                <option th:each="productType : ${T(com.example.tailormaster.entity.product.ProductType).values()}"
-                                        th:value="${productType}"
-                                        th:text="${productType}"></option>
-                            </select>
-                            <div th:if="${#fields.hasErrors('type')}" class="text-danger small mt-1">
-                                <div th:each="error : ${#fields.errors('type')}" th:text="${error}"></div>
-                            </div>
-                            <div id="typeError" class="text-danger small mt-1"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
-                            <input type="number" id="price" th:field="*{price}" class="form-control rounded-3 shadow-sm" step="0.01" required>
-                            <div th:if="${#fields.hasErrors('price')}" class="text-danger small mt-1">
-                                <div th:each="error : ${#fields.errors('price')}" th:text="${error}"></div>
-                            </div>
-                            <div id="priceError" class="text-danger small mt-1"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea id="description" th:field="*{description}" class="form-control rounded-3 shadow-sm" rows="3"></textarea>
-                            <div th:if="${#fields.hasErrors('description')}" class="text-danger small mt-1">
-                                <div th:each="error : ${#fields.errors('description')}" th:text="${error}"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="enabled" class="form-label">Status <span class="text-danger">*</span></label>
-                            <select id="enabled" th:field="*{enabled}" class="form-select rounded-3 shadow-sm" required>
-                                <option value="true">Active</option>
-                                <option value="false">Inactive</option>
-                            </select>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-success shadow rounded-pill px-4" id="openModal">
-                                <i class="bi bi-check-circle"></i> Update
-                            </button>
-                            <a th:href="@{/products}" class="btn btn-secondary shadow rounded-pill px-4">
-                                <i class="bi bi-x-circle me-1"></i> Cancel
-                            </a>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>-->
 
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -235,25 +123,24 @@
 
     function validateForm() {
         let isValid = true;
-        const name = document.getElementById("name");
-        const price = document.getElementById("price");
-        const type = document.getElementById("type");
-
         document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
+
+        const name = document.getElementById("name");
+        const singleSilai = document.getElementById("singleSilai");
+        const doubleSilai = document.getElementById("doubleSilai");
 
         if (name.value.trim() === "") {
             showError(name, "Product name is required.");
             isValid = false;
         }
-        if (price.value.trim() === "" || parseFloat(price.value) <= 0) {
-            showError(price, "Price must be greater than 0.");
+        if (singleSilai.value.trim() === "" || parseFloat(singleSilai.value) <= 0) {
+            showError(singleSilai, "Single Silai must be greater than 0.");
             isValid = false;
         }
-        if (type.value.trim() === "") {
-            showError(type, "Please select a product type.");
+        if (doubleSilai.value.trim() === "" || parseFloat(doubleSilai.value) <= 0) {
+            showError(doubleSilai, "Double Silai must be greater than 0.");
             isValid = false;
         }
-
         return isValid;
     }
 

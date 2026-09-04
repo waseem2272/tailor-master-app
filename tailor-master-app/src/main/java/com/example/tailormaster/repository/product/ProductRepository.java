@@ -11,11 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    boolean existsByName(String name);
+    boolean existsByNameAndUser(String name, User user);
 
     // active products
-    @Query("SELECT p FROM Product p WHERE p.enabled = true")
-    List<Product> findAllActiveProducts();
+    @Query("select p from Product p where p.enabled = true")
+    List<Product> findAllEnabled();
 
     List<Product> findAllByUser(User user);
 

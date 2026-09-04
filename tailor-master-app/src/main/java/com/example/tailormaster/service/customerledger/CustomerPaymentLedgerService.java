@@ -27,7 +27,7 @@ public class CustomerPaymentLedgerService {
     private final AuthenticatedUserService authenticatedUserService;
 
     public List<CustomerPaymentLedger> findByCustomerIdOrderByOrderIdAscPaymentDateAsc(Long customerId) {
-        return customerPaymentRepository.findByCustomerId(customerId);
+        return customerPaymentRepository.findByCustomerIdOrderByPaymentDateDesc(customerId);
     }
 
     public BigDecimal getRevenueThisMonth() {

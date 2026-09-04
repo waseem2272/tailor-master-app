@@ -40,7 +40,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Pageable pageable
     );
 
-    @Query("SELECT o FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0 AND o.user = :user")
+    @Query("SELECT o FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0 AND o.user = :user ORDER BY o.createdAt DESC ")
     List<Order> findOrdersWithOutstandingDue(@Param("user") User user);
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0 AND o.user = :user")
@@ -55,11 +55,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('COMPLETED') AND o.user = :user")
     Long countCompletedOrders(@Param("user") User user);
 
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('DELIVERED') AND o.user = :user")
+    Long countDeliveredOrders(@Param("user") User user);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('CANCELLED') AND o.user = :user")
     Long countCancelledOrders(@Param("user") User user);
-
-    @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('COMPLETED') AND o.pickupDate IS NULL AND o.pickupStatus IN ('NOT_PICKED_UP') AND o.user = :user")
-    Long countOrdersReadyForPickup(@Param("user") User user);
 
     @Query("SELECT COALESCE(SUM(o.paidAmount), 0) FROM Order o WHERE MONTH(o.pickupDate) = MONTH(CURRENT_DATE) AND YEAR(o.pickupDate) = YEAR(CURRENT_DATE) AND o.user = :user")
     BigDecimal getRevenueThisMonth(@Param("user") User user);
@@ -69,7 +69,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("""
     SELECT o.customer.fullName, o.customer.phoneNumber, COUNT(o), SUM(o.paidAmount)
     FROM Order o
-    WHERE o.status = 'COMPLETED' AND o.pickupStatus = 'PICKED_UP' AND o.paidAmount IS NOT NULL
+    WHERE o.status IN('COMPLETED', 'DELIVERED') AND o.pickupStatus = 'PICKED_UP' AND o.paidAmount IS NOT NULL
         AND o.user = :currentUser
     GROUP BY o.customer.fullName, o.customer.phoneNumber
     ORDER BY SUM(o.paidAmount) DESC

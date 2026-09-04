@@ -8,18 +8,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
     <style>
-        /*body {
-            background-color: #f8f9fc; !* Soft light blue background *!
-        }*/
-        /*.card {
-            transition: transform 0.1s ease-in-out;
-            border-radius: 0.75rem;
+        .badge-completed {
+            background-color: #6f42c1 !important;
         }
-
-        .card:hover {
-            transform: scale(1.05);
-            !*transition: transform 0.1s ease-in-out; !* Smooth transition *!*!
-        }*/
 
         .text-gray-800 {
             color: #5a5c69 !important;
@@ -68,18 +59,18 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                <i class="bi bi-speedometer2 me-2"></i> ڈیش بورڈ
             </h2>
 
             <div class="row">
-                <!-- Total Customers -->
+                <!-- کل گاہک -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary custom-shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Total Customers
+                                        کل گاہک
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCustomers">0</div>
                                 </div>
@@ -91,14 +82,14 @@
                     </div>
                 </div>
 
-                <!-- Total Orders -->
+                <!-- کل آرڈرز -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-success custom-shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Total Orders
+                                        کل آرڈرز
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalOrders">0</div>
                                 </div>
@@ -110,52 +101,14 @@
                     </div>
                 </div>
 
-                <!-- Orders in Progress -->
-                <!--<div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Orders in Progress
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="ordersInProgress">0</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-hourglass-split fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
-
-                <!-- Completed Orders -->
-                <!--<div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Completed Orders
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="completedOrders">0</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-check-circle-fill fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>-->
-
-                <!-- Pending Payments -->
+                <!-- بقیہ ادائیگیاں -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-danger custom-shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                        Pending Payments
+                                        بقیہ ادائیگیاں
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingPayments">0</div>
                                 </div>
@@ -167,14 +120,14 @@
                     </div>
                 </div>
 
-                <!-- Revenue This Month -->
+                <!-- اس ماہ کی آمدنی -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-dark custom-shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                        Revenue This Month
+                                        اس ماہ کی آمدنی
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="revenueThisMonth">0</div>
                                 </div>
@@ -188,11 +141,11 @@
             </div>
 
             <div class="row mt-2">
-                <!-- Revenue Chart -->
+                <!-- آمدنی کا گراف -->
                 <div class="col-md-8 d-flex">
                     <div class="card shadow border-success border-bottom border-3 w-100 h-100 d-flex flex-column">
                         <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                            <i class="bi bi-activity me-2"></i> Revenue Trend (Last 6 Months)
+                            <i class="bi bi-activity me-2"></i> پچھلے 6 ماہ کی آمدنی
                         </div>
                         <div class="card-body flex-grow-1">
                             <div style="height: 300px; max-height: 300px;">
@@ -202,11 +155,11 @@
                     </div>
                 </div>
 
-                <!-- Order Status Chart -->
+                <!-- آرڈر کی صورتحال -->
                 <div class="col-md-4 d-flex mt-2">
                     <div class="card shadow border-success border-bottom border-3 w-100 h-100 d-flex flex-column">
                         <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                            <i class="bi bi-pie-chart me-2"></i> Order Status Breakdown
+                            <i class="bi bi-pie-chart me-2"></i> آرڈرز کی تقسیم
                         </div>
                         <div class="card-body flex-grow-1">
                             <div style="height: 300px; max-height: 300px;">
@@ -217,9 +170,10 @@
                 </div>
             </div>
 
+            <!-- حالیہ آرڈرز -->
             <div class="card border-success border-bottom border-3 shadow-sm mt-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-clock-history me-2"></i> Recent Orders
+                    <i class="bi bi-clock-history me-2"></i> حالیہ آرڈرز
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -227,24 +181,25 @@
                             <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Order Date</th>
-                                <th>Status</th>
-                                <th>Total Amount</th>
+                                <th>آرڈر نمبر</th>
+                                <th>گاہک</th>
+                                <th>تاریخ</th>
+                                <th>صورتحال</th>
+                                <th>کل رقم</th>
                             </tr>
                             </thead>
                             <tbody id="recentOrdersBody">
-                            <tr><td colspan="5" class="text-center">Loading...</td></tr>
+                            <tr><td colspan="6" class="text-center">لوڈ ہو رہا ہے...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <!-- بہترین گاہک -->
             <div class="card border-success border-bottom border-3 shadow-sm mt-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-star-fill me-2"></i> Top Customers
+                    <i class="bi bi-star-fill me-2"></i> بہترین گاہک
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -252,10 +207,10 @@
                             <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Total Orders</th>
-                                <th>Total Paid</th>
+                                <th>نام</th>
+                                <th>فون نمبر</th>
+                                <th>کل آرڈرز</th>
+                                <th>کل ادائیگی</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -269,23 +224,8 @@
         </div>
     </div>
 </div>
-<div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="notificationModalLabel">Upcoming Deliveries</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="notificationList">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>-->
 
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
@@ -294,61 +234,47 @@
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/chart.umd.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // Load Total Customers
+        // کل گاہک لوڈ کریں
         fetch(contextPath + "dashboard/total-customers")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("totalCustomers").innerText = data;
+                document.getElementById("totalCustomers").innerText = formatNumber(data);
             })
-            .catch(error => console.error("Error fetching total customers:", error));
+            .catch(error => console.error("کل گاہک لوڈ کرنے میں مسئلہ:", error));
 
-        // Load Total Orders
+        // کل آرڈرز لوڈ کریں
         fetch(contextPath + "dashboard/total-orders")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("totalOrders").innerText = data;
+                document.getElementById("totalOrders").innerText = formatNumber(data);
             })
-            .catch(error => console.error("Error fetching total orders:", error));
+            .catch(error => console.error("کل آرڈرز لوڈ کرنے میں مسئلہ:", error));
 
-        // Load Pending Payments
+        // بقیہ ادائیگیاں لوڈ کریں
         fetch(contextPath + "dashboard/pending-payments")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("pendingPayments").innerText = data;
+                document.getElementById("pendingPayments").innerText = formatNumber(data);
             })
-            .catch(error => console.error("Error fetching pending payments:", error));
+            .catch(error => console.error("بقیہ ادائیگیاں لوڈ کرنے میں مسئلہ:", error));
 
-        // Load Orders in progress
-        /*fetch(contextPath + "dashboard/orders-in-progress")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("ordersInProgress").innerText = data;
-            })
-            .catch(error => console.error("Error fetching orders in progress:", error));*/
-
-        // Load completed orders
-        /*fetch(contextPath + "dashboard/completed-orders")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("completedOrders").innerText = data;
-            })
-            .catch(error => console.error("Error fetching completed orders:", error));*/
-
-        // Load revenue this month
+        // اس ماہ کی آمدنی
         fetch(contextPath + "dashboard/revenue-this-month")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("revenueThisMonth").innerText = data;
+                document.getElementById("revenueThisMonth").innerText = formatAmount(data);
             })
-            .catch(error => console.error("Error fetching Revenue this month:", error));
+            .catch(error => console.error("اس ماہ کی آمدنی لوڈ کرنے میں مسئلہ:", error));
 
 
+        // ماہانہ آمدنی کا رجحان
         fetch(contextPath + 'dashboard/monthly-revenue-trends')
             .then(response => response.json())
             .then(data => {
@@ -361,7 +287,7 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Monthly Revenue (PKR)',
+                            label: 'ماہانہ آمدنی (PKR)',
                             data: revenueData,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 2,
@@ -382,33 +308,33 @@
                         plugins: {
                             title: {
                                 display: true,
-                                text: 'Monthly Revenue Trend (Last 6 Months)'
+                                text: 'ماہانہ آمدنی کا رجحان (گزشتہ 6 ماہ)'
                             }
                         }
                     }
                 });
             });
 
-        // Order status breakdown
+        // آرڈرز کی صورتحال
         fetch(contextPath + 'dashboard/order-status-counts')
             .then(response => response.json())
             .then(data => {
                 const labels = Object.keys(data);
                 const counts = Object.values(data);
                 const backgroundColors = [
-                    'rgba(220, 53, 69, 0.8)',       // Cancelled (Bootstrap Danger - Red)
-                    'rgba(108, 117, 125, 0.8)',     // Pending (Bootstrap Secondary - Grey)
-                    'rgba(0, 123, 255, 0.8)',       // In Progress (Bootstrap Primary - Blue)
-                    'rgba(40, 167, 69, 0.8)',       // Completed (Bootstrap Success - Green)
-                    'rgba(255, 193, 7, 0.8)'        // Ready for Pickup (Bootstrap Warning - Yellow)
+                    'rgba(220, 53, 69, 0.75)',   // cancelled
+                    'rgba(108, 117, 125, 0.75)', // pending
+                    'rgba(13, 110, 253, 0.75)',  // in_progress
+                    'rgba(111, 66, 193, 0.75)',  // completed
+                    'rgba(40, 167, 69, 0.8)',   // delivered
                 ];
 
                 const borderColors = [
-                    'rgba(220, 53, 69, 1)',         // Cancelled (Border)
-                    'rgba(108, 117, 125, 1)',       // Pending
-                    'rgba(0, 123, 255, 1)',         // In Progress
-                    'rgba(40, 167, 69, 1)',         // Completed
-                    'rgba(255, 193, 7, 1)'          // Ready for Pickup
+                    'rgba(220, 53, 69, 1)',   // cancelled
+                    'rgba(108, 117, 125, 1)', // pending
+                    'rgba(13, 110, 253, 1)',  // in_progress
+                    'rgba(111, 66, 193, 1)',  // completed
+                    'rgba(40, 167, 69, 1)',   // delivered
                 ];
 
 
@@ -418,7 +344,7 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Order Status',
+                            label: 'آرڈرز کی صورتحال',
                             data: counts,
                             backgroundColor: backgroundColors,
                             borderColor: borderColors,
@@ -434,13 +360,14 @@
                             },
                             title: {
                                 display: true,
-                                text: 'Order Status Breakdown'
+                                text: 'آرڈرز کی صورتحال کی تقسیم'
                             }
                         }
                     }
                 });
             });
 
+        // حالیہ آرڈرز
         fetch('dashboard/recent-orders')
             .then(response => response.json())
             .then(data => {
@@ -448,32 +375,39 @@
                 tbody.innerHTML = '';
 
                 if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No recent orders found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">کوئی حالیہ آرڈر نہیں ملا۔</td></tr>';
                     return;
                 }
 
                 data.forEach((order, index) => {
-                    let badgeClass = "badge bg-secondary"; // Default badge (gray)
+                    let badgeClass = "badge bg-secondary";
                     if (order.status === "PENDING") {
-                        badgeClass = "badge bg-secondary";
+                        badgeClass = "badge bg-secondary"; // زیر التواء
                     } else if (order.status === "IN_PROGRESS") {
-                        badgeClass = "badge bg-primary";
+                        badgeClass = "badge bg-primary";   // جاری
                     } else if (order.status === "COMPLETED") {
-                        badgeClass = "badge bg-success";
+                        badgeClass = "badge badge-completed";   // مکمل
+                    } else if (order.status === "DELIVERED") {
+                        badgeClass = "badge bg-success";   // مکمل
                     } else if (order.status === "CANCELLED") {
-                        badgeClass = "badge bg-danger";
+                        badgeClass = "badge bg-danger";    // منسوخ
                     }
                     const row = `
                     <tr>
                         <td>${index + 1}</td>
                         <td>${order.orderId}</td>
                         <td>${order.customer}</td>
-                        <td>${new Date(order.orderDate).toLocaleDateString('en-GB', {
-                        day: '2-digit', month: 'short', year: 'numeric'
-                    })}</td>
+                        <td>${(() => {
+                        const date = new Date(order.orderDate);
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = date.toLocaleString('en-US', { month: 'short' });
+                        const year = date.getFullYear();
+
+                        return `${day}-${month}-${year}`;
+                    })()}</td>
 
                         <td><span class="${badgeClass}">${order.status}</span></td>
-                        <td>${order.totalAmount}</td>
+                        <td>${formatAmount(order.totalAmount)}</td>
                     </tr>
                 `;
                     tbody.insertAdjacentHTML('beforeend', row);
@@ -481,9 +415,10 @@
             })
             .catch(err => {
                 document.getElementById('recentOrdersBody').innerHTML =
-                    '<tr><td colspan="5" class="text-danger text-center">Failed to load orders.</td></tr>';
+                    '<tr><td colspan="6" class="text-danger text-center">آرڈرز لوڈ کرنے میں ناکام۔</td></tr>';
             });
 
+        // بہترین گاہک
         fetch(contextPath + 'dashboard/customers/top')
             .then(res => res.json())
             .then(data => {
@@ -496,31 +431,23 @@
                     row.innerHTML = `
                 <td>${index + 1}</td>
                 <td>
-                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Customer: ${cust.name}">
                         ${cust.name}
-                    </span>
                 </td>
                 <td>
-                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Phone: ${cust.phone}">
                         ${cust.phone}
-                    </span>
                 </td>
                 <td>
-                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="${cust.totalOrders} Orders">
-                        ${cust.totalOrders}
-                    </span>
+                        ${formatNumber(cust.totalOrders)}
                 </td>
                 <td>
-                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Rs. ${cust.totalPaid}">
-                        Rs. ${cust.totalPaid}
-                    </span>
+                    ${formatAmount(cust.totalPaid)}
                 </td>
             `;
 
                     tbody.appendChild(row);
                 });
 
-                // Enable Bootstrap tooltips
+                // Bootstrap Tooltips فعال کریں
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
             });
@@ -528,6 +455,7 @@
 
     });
 </script>
+
 
 </body>
 </html>

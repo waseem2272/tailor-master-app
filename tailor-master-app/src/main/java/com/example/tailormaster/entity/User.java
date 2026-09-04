@@ -2,16 +2,13 @@ package com.example.tailormaster.entity;
 
 import com.example.tailormaster.entity.labor.Labor;
 import com.example.tailormaster.entity.product.Product;
-import com.example.tailormaster.validation.OptionalPhoneValidation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,15 +35,11 @@ public class User extends BaseEntity {
 //    private String fathersName;
 
     @NotBlank(message = "Phone Number 1 is required")
-    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 1 must be 11 digits and start with 03")
+//    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 1 must be 11 digits and start with 03")
     private String phone1;
 
-    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 2 must be 11 digits and start with 03",
-            groups = {OptionalPhoneValidation.class})
+//    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 2 must be 11 digits and start with 03")
     private String phone2;
-
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")  // Ensure correct format
-//    private LocalDate dateOfBirth;
 
     @NotBlank(message = "Shop Name is required")
     private String shopName;

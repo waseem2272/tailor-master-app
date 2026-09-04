@@ -10,6 +10,12 @@
 
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <style>
+        .badge-completed {
+            background-color: #6f42c1 !important;
+        }
+    </style>
 </head>
 <body>
 <!-- Sidebar -->
@@ -31,14 +37,9 @@
                            class="btn btn-light btn-sm ms-2">
                             <i class="bi bi-eye"></i> View Details
                         </a>
-                        <a th:if="${orderId}" th:href="@{/orders/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
+                        <a th:if="${orderId}" th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
                            class="btn btn-light btn-sm ms-2">
                             <i class="bi bi-receipt"></i> Generate Order Receipt
-                        </a>
-
-                        <a th:if="${orderId}" th:href="@{/orders/generate-measurement/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
-                           class="btn btn-light btn-sm ms-2">
-                            <i class="bi bi-receipt"></i> Generate Measurement
                         </a>
                     </div>
                     <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -92,8 +93,8 @@
                                 <select id="paymentStatus" name="orderStatus" class="form-select rounded-pill">
                                     <option value="" selected>All</option>
                                     <option th:value="paid">Paid</option>
+                                    <option th:value="unpaid">Unpaid</option>
                                     <option th:value="partial_paid">Partial Paid</option>
-                                    <option th:value="ready_for_pickup">Ready for Pickup</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -281,7 +282,8 @@
                         let badgeClass = {
                             "PENDING": "badge bg-secondary",
                             "IN_PROGRESS": "badge bg-primary",
-                            "COMPLETED": "badge bg-success",
+                            "COMPLETED": "badge badge-completed",
+                            "DELIVERED": "badge bg-success",
                             "CANCELLED": "badge bg-danger"
                         }[data] || "";
                         return `<span class="${badgeClass}">${data}</span>`;
@@ -298,14 +300,18 @@
                         let paidAmount = data.paidAmount;
                         let orderStatus = data.status;
                         let pickedUpStatus = data.pickupStatus;
+                        let outstandingDueAmount = data.outstandingDueAmount;
 
                         let badgeClass = "secondary"; // Default badge (gray)
                         let paymentStatus = `<span class="badge bg-secondary">N/A</span>`; // Default
 
-                        if (orderStatus === "COMPLETED" && pickedUpStatus === "PICKED_UP") {
-                            if (totalProductAmount !== paidAmount) {
+                        if ((orderStatus === "COMPLETED" || orderStatus === "DELIVERED") && pickedUpStatus === "PICKED_UP") {
+                            if (totalProductAmount !== paidAmount && totalProductAmount !== outstandingDueAmount) {
                                 badgeClass = "warning text-dark"; // Yellow badge for partial payment
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
+                            } else if (totalProductAmount === outstandingDueAmount) {
+                                badgeClass = "danger"; // Yellow badge for partial payment
+                                paymentStatus = `<span class="badge bg-${badgeClass}">Unpaid</span>`;
                             } else {
                                 badgeClass = "success"; // Green badge for full payment
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Paid</span>`;
@@ -322,9 +328,9 @@
                     "searchable": false,
                     "render": function (data, type, row) {
                         let encryptedId = row.encryptedId;
-                        let editButton = (row.status !== "COMPLETED" && row.status !== "CANCELLED")
-                            ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
-                            : "";
+                        // let editButton = (row.status !== "COMPLETED" && row.status !== "CANCELLED")
+                        //     ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
+                        //     : "";
 
                         let pickupButton = (row.status === "COMPLETED" && row.pickupStatus === "NOT_PICKED_UP")
                             ? `<button
@@ -347,7 +353,6 @@
                         <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
                             <i class="bi bi-eye"></i> Details
                         </a>
-                        ${editButton}
                         ${pickupButton}
                     </div>
                 `;
@@ -397,20 +402,20 @@
             updateFilterBadge();
         });
 
-        document.getElementById("amountReceived").addEventListener("input", function () {
-            const paymentAmount = parseFloat(this.value);
-            const due = parseFloat(document.getElementById("modalDueAmount").innerText);
-            const errorElement = document.getElementById("amountReceivedError");
-            errorElement.innerText = "";
-
-            if (isNaN(paymentAmount) || paymentAmount <= 0) {
-                errorElement.innerText = "Received amount must be greater than 0.";
-            } else if (paymentAmount > due) {
-                errorElement.innerText = "Received amount cannot be more than outstanding due.";
-            } else {
-                errorElement.innerText = ""; // No errors
-            }
-        });
+        // document.getElementById("amountReceived").addEventListener("input", function () {
+        //     const paymentAmount = parseFloat(this.value);
+        //     const due = parseFloat(document.getElementById("modalDueAmount").innerText);
+        //     const errorElement = document.getElementById("amountReceivedError");
+        //     errorElement.innerText = "";
+        //
+        //     if (isNaN(paymentAmount) || paymentAmount <= 0) {
+        //         errorElement.innerText = "Received amount must be greater than 0.";
+        //     } else if (paymentAmount > due) {
+        //         errorElement.innerText = "Received amount cannot be more than outstanding due.";
+        //     } else {
+        //         errorElement.innerText = ""; // No errors
+        //     }
+        // });
 
         $('#ordersTable tbody').on('click', '.pickup-btn', function () {
 
@@ -444,7 +449,7 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <span class="fw-semibold">${op.productName}</span>
-                        <small class="text-muted d-block">Qty: ${op.quantity}, Price: ${op.price}</small>
+                        <small class="text-muted d-block">Qty: ${op.quantity}, Silai Type: ${op.silaiType}, Amount: ${op.amount}</small>
                     </div>
                     <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
                 </li>
@@ -476,21 +481,23 @@
                 text: 'Amount received cannot be greater than due.'
             });
             return false;
-        } else if (amountReceived < 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Amount',
-                text: 'Amount received cannot be less than 0.'
-            });
-            return false;
-        } else if (amountReceived === 0) {  // ✅ Added Zero Validation
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Amount',
-                text: 'Amount received must be greater than 0.'
-            });
-            return false;
         }
+        // else if (amountReceived < 0) {
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Invalid Amount',
+        //         text: 'Amount received cannot be less than 0.'
+        //     });
+        //     return false;
+        // }
+        // else if (amountReceived === 0) {  // ✅ Added Zero Validation
+        //     Swal.fire({
+        //         icon: 'warning',
+        //         title: 'Invalid Amount',
+        //         text: 'Amount received must be greater than 0.'
+        //     });
+        //     return false;
+        // }
 
         // 🔹 Disable button to prevent double click
         confirmPickupBtn.disabled = true;

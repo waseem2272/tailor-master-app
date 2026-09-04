@@ -5,6 +5,7 @@ import com.example.tailormaster.dto.UpdateCustomerOrderDto;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.OrderProduct;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.entity.product.Product;
@@ -184,14 +185,14 @@ public class OrderService {
                     // Update existing order product
                     OrderProduct existingOrderProduct = existingProductsMap.get(productDto.getId());
                     existingOrderProduct.setQuantity(productDto.getQuantity());
-                    existingOrderProduct.setSubtotal(productDto.getPrice().multiply(new BigDecimal(productDto.getQuantity()))); // Ensure this is calculated correctly
+//                    existingOrderProduct.setSubtotal(productDto.getPrice().multiply(new BigDecimal(productDto.getQuantity()))); // Ensure this is calculated correctly
                 } else {
                     // Add new product if it's not already in the order
                     OrderProduct newOrderProduct = new OrderProduct();
                     newOrderProduct.setOrder(order);
                     newOrderProduct.setProduct(product);
                     newOrderProduct.setQuantity(productDto.getQuantity());
-                    newOrderProduct.setSubtotal(productDto.getPrice().multiply(new BigDecimal(productDto.getQuantity())));
+//                    newOrderProduct.setSubtotal(productDto.getPrice().multiply(new BigDecimal(productDto.getQuantity())));
 
                     order.getOrderProducts().add(newOrderProduct);
                 }
@@ -256,14 +257,22 @@ public class OrderService {
                     ? Sort.by(sortBy).descending()
                     : Sort.by(sortBy).ascending();
 
-            Pageable pageable = PageRequest.of(0, 500, Sort.by(Sort.Direction.DESC, "orderDate")); // fetch more to allow in-memory pagination
+            Pageable pageable = PageRequest.of(
+                    0,
+                    500,
+                    Sort.by(
+                            Sort.Order.desc("orderDate"),
+                            Sort.Order.desc("id")
+                    )
+            ); // fetch more to allow in-memory pagination
 
+            User currentUser = authenticatedUserService.getCurrentUser();
             Page<Order> orderPage = orderRepository.findBySearchAndDateRangeAndStatus(
                     (searchValue != null && !searchValue.isEmpty()) ? searchValue : null,
                     startDate,
                     endDate,
                     orderStatus,
-                    authenticatedUserService.getCurrentUser(),
+                    currentUser,
                     pageable
             );
 
@@ -278,14 +287,15 @@ public class OrderService {
                     .map(this::mapOrderToResponse)
                     .toList();
 
+            long countOrders = orderRepository.countByUser(currentUser);
             Map<String, Object> response = new HashMap<>();
             response.put("draw", draw);
-            response.put("recordsTotal", orderRepository.count());
+            response.put("recordsTotal", countOrders);
             response.put("recordsFiltered", filtered.size());
             response.put("data", orderList);
 
             logger.info("Fetched paginated orders with custom payment filter - draw: {}, start: {}, length: {}, filtered: {}, total: {}",
-                    draw, start, length, filtered.size(), orderRepository.count());
+                    draw, start, length, filtered.size(), countOrders);
 
             return response;
 
@@ -302,6 +312,7 @@ public class OrderService {
         if (paymentStatus == null) return true;
 
         BigDecimal total = order.getTotalProductAmount();
+        BigDecimal outstandingDueAmount = order.getOutstandingDueAmount();
         BigDecimal paid = order.getPaidAmount();
         PickupStatus pickupStatus = order.getPickupStatus();
 
@@ -309,10 +320,10 @@ public class OrderService {
 
         return switch (paymentStatus.toLowerCase()) {
             case "paid" -> paid.compareTo(total) == 0;
+            case "unpaid" -> outstandingDueAmount.compareTo(total) == 0;
             case "partial_paid" -> pickupStatus == PickupStatus.PICKED_UP && paid.compareTo(total) < 0
-                    && order.getStatus().equals(OrderStatus.COMPLETED);
-            case "ready_for_pickup" -> pickupStatus == PickupStatus.NOT_PICKED_UP
-                    && order.getStatus().equals(OrderStatus.COMPLETED);
+                    && (order.getStatus().equals(OrderStatus.COMPLETED) ||
+                    order.getStatus().equals(OrderStatus.DELIVERED));
             default -> true;
         };
     }
@@ -339,6 +350,7 @@ public class OrderService {
                 ? order.getPickupStatus().name()
                 : "NOT_PICKED_UP");
         orderMap.put("orderProducts", orderProductList);
+        orderMap.put("outstandingDueAmount", order.getOutstandingDueAmount());
 
         return orderMap;
     }
@@ -351,7 +363,8 @@ public class OrderService {
             Map<String, Object> opMap = new HashMap<>();
             opMap.put("productName", op.getProduct().getName());
             opMap.put("quantity", op.getQuantity());
-            opMap.put("price", op.getProduct().getPrice());
+            opMap.put("silaiType", op.getSilaiType());
+            opMap.put("amount", op.getSilaiAmount());
             opMap.put("subtotal", op.getSubtotal());
             return opMap;
         }).toList();
@@ -365,11 +378,18 @@ public class OrderService {
             BigDecimal advancePayment = order.getAdvancePayment();
 
             // ✅ Validate amount received
-            if (amountReceived.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Amount received must be greater than 0.");
-            }
+//            if (amountReceived.compareTo(BigDecimal.ZERO) <= 0) {
+//                throw new IllegalArgumentException("Amount received must be greater than 0.");
+//            }
             if (amountReceived.compareTo(dueAmount) > 0) {
                 throw new IllegalArgumentException("Amount received cannot be greater than due.");
+            }
+
+            // set due amount to zero if received amount is equals to due
+            if (amountReceived.compareTo(dueAmount) == 0) {
+                order.setDuePayment(BigDecimal.ZERO);
+            } else {
+                order.setDuePayment(dueAmount.subtract(amountReceived));
             }
 
             // ✅ Calculate Outstanding Due
@@ -378,7 +398,7 @@ public class OrderService {
             order.setPickupStatus(PickupStatus.PICKED_UP);
             order.setPickedUpWithDue(outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0); // TRUE if any due remains
             order.setPickupDate(LocalDateTime.now());
-            order.setStatus(OrderStatus.COMPLETED);
+            order.setStatus(OrderStatus.DELIVERED);
 
             // ✅ Update the outstanding due amount field
             order.setOutstandingDueAmount(outstandingDueAmount);
@@ -395,6 +415,8 @@ public class OrderService {
 
             if (amountReceived.compareTo(dueAmount) == 0) {
                 payment.setRemarks("Full payment received at pickup");
+            } else if (amountReceived.compareTo(BigDecimal.ZERO) == 0) {
+                payment.setRemarks("No payment received at pickup");
             } else {
                 payment.setRemarks("Partial payment received at pickup");
             }
@@ -437,12 +459,16 @@ public class OrderService {
                 throw new IllegalArgumentException("Payment amount cannot exceed outstanding due.");
             }
 
+            if (order.getOutstandingDueAmount().compareTo(paymentAmount) == 0) {
+                order.setDuePayment(BigDecimal.ZERO);
+            }
+
             // Process payment
             order.setPaidAmount(order.getPaidAmount().add(paymentAmount));
             order.setOutstandingDueAmount(outstandingDue.subtract(paymentAmount));
 
             if (order.getOutstandingDueAmount().compareTo(BigDecimal.ZERO) == 0) {
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(OrderStatus.DELIVERED);
             }
 
             order.setUser(authenticatedUserService.getCurrentUser());
@@ -513,17 +539,6 @@ public class OrderService {
         }
     }
 
-    public Long getOrdersReadyForPickupCount() {
-        try {
-            long count = orderRepository.countOrdersReadyForPickup(authenticatedUserService.getCurrentUser());
-            logger.debug("Orders ready for pickup count: {}", count);
-            return count;
-        } catch (Exception e) {
-            logger.error("Error getting orders ready for pickup count: {}", e.getMessage(), e);
-            throw new RuntimeException("Error getting orders ready for pickup count.", e);
-        }
-    }
-
     public Map<String, Long> getOrderStatusCounts() {
         try {
             Map<String, Long> statusCounts = new LinkedHashMap<>();
@@ -531,7 +546,7 @@ public class OrderService {
             statusCounts.put("Pending", orderRepository.countPendingOrders(authenticatedUserService.getCurrentUser()));
             statusCounts.put("InProgress", orderRepository.countOrdersInProgress(authenticatedUserService.getCurrentUser()));
             statusCounts.put("Completed", orderRepository.countCompletedOrders(authenticatedUserService.getCurrentUser()));
-            statusCounts.put("Ready for Pickup", orderRepository.countOrdersReadyForPickup(authenticatedUserService.getCurrentUser()));
+            statusCounts.put("Delivered", orderRepository.countDeliveredOrders(authenticatedUserService.getCurrentUser()));
             logger.debug("Fetched order status counts: {}", statusCounts);
             return statusCounts;
         } catch (Exception e) {
@@ -577,7 +592,7 @@ public class OrderService {
         LocalDate threeDaysLater = today.plusDays(3);
 
         try {
-            List<OrderStatus> excludedStatuses = Arrays.asList(OrderStatus.CANCELLED, OrderStatus.COMPLETED);
+            List<OrderStatus> excludedStatuses = Arrays.asList(OrderStatus.CANCELLED, OrderStatus.COMPLETED, OrderStatus.DELIVERED);
 
             // Fetch orders that are either upcoming or overdue but still not completed
             List<Order> upcomingOrOverdueOrders = orderRepository

@@ -92,19 +92,6 @@ public class DashboardController {
         }
     }
 
-    @GetMapping("/orders-ready-for-pickup")
-    public ResponseEntity<Long> getOrdersReadyForPickup() {
-        logger.info("Requested orders ready-for-pickup.");
-        try {
-            Long ordersReadyForPickup = dashboardService.getOrdersReadyForPickup();
-            logger.info("Orders ready for pickup: {}", ordersReadyForPickup);
-            return ResponseEntity.ok(ordersReadyForPickup);
-        } catch (Exception e) {
-            logger.error("Error fetching orders ready for pickup: {}", e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @GetMapping("/revenue-this-month")
     public ResponseEntity<BigDecimal> getRevenueThisMonth() {
         logger.info("Requested revenue-this-month.");
