@@ -21,7 +21,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -246,12 +248,25 @@ public class LaborController {
 
     @GetMapping("/payments/get/{id}")
     @ResponseBody
-    public ResponseEntity<LaborPayment> getLaborPayment(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getLaborPayment(@PathVariable Long id) {
+
         logger.info("Request for update labor payment for labor payment ID: {}", id);
 
         Optional<LaborPayment> laborPayment = laborPaymentService.getLaborPayment(id);
-        logger.info("Fetched labor payment for labor payment: {}", laborPayment);
-        return laborPayment.map(ResponseEntity::ok)
+
+        return laborPayment
+                .map(payment -> {
+
+                    Map<String, Object> response = new HashMap<>();
+
+                    response.put("id", payment.getId());
+                    response.put("paymentType", payment.getPaymentType().name());
+                    response.put("workAmount", payment.getWorkAmount());
+                    response.put("deductions", payment.getDeductions());
+                    response.put("remarks", payment.getRemarks());
+
+                    return ResponseEntity.ok(response);
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 

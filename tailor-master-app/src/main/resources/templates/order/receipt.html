@@ -35,6 +35,10 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             padding: 25px;
+
+            /* Urdu RTL */
+            direction: rtl;
+            text-align: right;
         }
 
         /* =========================
@@ -110,6 +114,10 @@
 
         .info-value {
             font-weight: 700;
+
+            /* Numbers / English names readable */
+            direction: ltr;
+            unicode-bidi: embed;
         }
 
         /* =========================
@@ -133,6 +141,7 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
+            direction: rtl;
         }
 
         .product-table th {
@@ -141,7 +150,7 @@
             padding: 7px 5px;
             font-size: 12px;
             font-weight: 700;
-            text-align: left;
+            text-align: right;
         }
 
         .product-table td {
@@ -149,39 +158,44 @@
             padding: 7px 5px;
             font-size: 12px;
             vertical-align: middle;
-            text-align: left;
+            text-align: right;
         }
 
         .product-name {
             width: 36%;
             font-weight: 700;
+            text-align: right !important;
         }
 
         .silai-type {
             width: 22%;
-            text-align: center;
+            text-align: center !important;
         }
 
         .quantity {
             width: 12%;
-            text-align: center;
+            text-align: center !important;
+            direction: ltr;
         }
 
         .silai-price {
             width: 15%;
-            text-align: right;
+            text-align: right !important;
+            direction: ltr;
         }
 
         .item-total {
             width: 15%;
-            text-align: right;
+            text-align: right !important;
             font-weight: 700;
+            direction: ltr;
         }
 
         .notes-row td {
             background: #fafafa;
             padding: 6px 8px;
             font-size: 11px;
+            text-align: right;
         }
 
         .notes-label {
@@ -200,7 +214,8 @@
 
         .totals-section {
             margin-top: 15px;
-            margin-left: auto;
+            margin-right: auto;
+            margin-left: 0;
             width: 280px;
         }
 
@@ -222,6 +237,7 @@
 
         .total-value {
             font-weight: 700;
+            direction: ltr;
         }
 
         .due-row {
@@ -255,6 +271,7 @@
         .receipt-actions {
             text-align: center;
             margin-top: 20px;
+            direction: rtl;
         }
 
         /* =========================
@@ -286,104 +303,200 @@
             .receipt-card {
                 width: 100%;
                 margin: 0 !important;
-                padding: 12px !important;
+                padding: 14px !important;
                 border: 1px solid #000 !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
+
+                direction: rtl;
+                text-align: right;
             }
 
             .no-print {
                 display: none !important;
             }
 
+            /* =========================
+               SHOP HEADER
+            ========================= */
+
             .shop-header {
-                margin-bottom: 8px;
+                margin-bottom: 10px;
             }
 
             .shop-logo img {
-                max-width: 90px;
-                max-height: 65px;
+                max-width: 100px;
+                max-height: 70px;
             }
 
             .shop-address {
-                font-size: 11px;
-                margin: 4px 0 2px;
+                font-size: 13px;
+                margin: 5px 0 3px;
             }
 
             .shop-tagline {
-                font-size: 10px;
+                font-size: 12px;
             }
 
             .receipt-title {
-                margin-top: 7px;
-                padding: 5px 0;
-                font-size: 15px;
+                margin-top: 8px;
+                padding: 6px 0;
+                font-size: 17px;
             }
 
+            /* =========================
+               CUSTOMER / ORDER INFO
+            ========================= */
+
             .info-section {
-                margin-top: 8px;
-                margin-bottom: 8px;
+                margin-top: 10px;
+                margin-bottom: 10px;
             }
 
             .info-title {
-                padding: 5px 8px;
-                font-size: 11px;
-                margin-bottom: 5px;
+                padding: 7px 9px;
+                font-size: 14px;
+                margin-bottom: 6px;
+
+                background: #198754 !important;
+                color: #ffffff !important;
+                border: 1px solid #198754 !important;
+
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .info-grid {
-                gap: 2px 15px;
+                gap: 4px 18px;
             }
 
             .info-item {
-                font-size: 10px;
-                padding: 2px 0;
+                font-size: 12px;
+                padding: 3px 0;
             }
 
+            .info-label {
+                font-size: 12px;
+            }
+
+            .info-value {
+                font-size: 12px;
+            }
+
+            /* =========================
+               PRODUCTS
+            ========================= */
+
             .products-section {
-                margin-top: 8px;
+                margin-top: 10px;
             }
 
             .products-title {
-                padding: 5px 8px;
-                font-size: 11px;
+                padding: 7px 9px;
+                font-size: 14px;
+
+                background: #198754 !important;
+                color: #ffffff !important;
+                border: 1px solid #198754 !important;
+
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .product-table {
+                direction: rtl;
             }
 
             .product-table th {
-                padding: 5px 3px;
-                font-size: 9px;
+                padding: 6px 4px;
+                font-size: 11px;
             }
 
             .product-table td {
-                padding: 5px 3px;
-                font-size: 9px;
+                padding: 6px 4px;
+                font-size: 11px;
             }
+
+            .product-name {
+                font-size: 11px;
+            }
+
+            .silai-type {
+                font-size: 11px;
+            }
+
+            .quantity {
+                font-size: 11px;
+            }
+
+            .silai-price,
+            .item-total {
+                font-size: 11px;
+            }
+
+            /* =========================
+               ADDITIONAL NOTES
+            ========================= */
 
             .notes-row td {
-                padding: 4px 6px;
-                font-size: 8px;
-            }
-
-            .totals-section {
-                margin-top: 8px;
-                width: 230px;
-            }
-
-            .total-row {
-                padding: 3px 0;
+                padding: 5px 7px;
                 font-size: 10px;
             }
 
-            .due-row {
-                font-size: 11px;
-                padding-top: 4px;
+            .notes-label {
+                font-size: 10px;
             }
 
-            .receipt-footer {
-                margin-top: 8px;
-                padding-top: 5px;
-                font-size: 9px;
+            .notes-value {
+                font-size: 10px;
             }
+
+            /* =========================
+               TOTALS
+            ========================= */
+
+            .totals-section {
+                margin-top: 10px;
+                margin-right: auto;
+                margin-left: 0;
+                width: 260px;
+            }
+
+            .total-row {
+                padding: 4px 0;
+                font-size: 12px;
+            }
+
+            .total-label {
+                font-size: 12px;
+            }
+
+            .total-value {
+                font-size: 12px;
+            }
+
+            .due-row {
+                font-size: 14px;
+                padding-top: 5px;
+            }
+
+            /* =========================
+               FOOTER
+            ========================= */
+
+            .receipt-footer {
+                margin-top: 10px;
+                padding-top: 6px;
+                font-size: 11px;
+            }
+
+            .receipt-footer p {
+                margin: 3px 0;
+            }
+
+            /* =========================
+               PREVENT ROW BREAK
+            ========================= */
 
             .product-row,
             .notes-row {
@@ -414,14 +527,14 @@
                  th:if="${user.logo != null}">
 
                 <img th:src="@{'/users/logo/' + ${user.username}}"
-                     alt="Shop Logo">
+                     alt="دکان کا لوگو">
 
             </div>
 
             <p class="shop-address">
                 <i class="bi bi-geo-alt-fill"></i>
                 <span th:text="${user.shopAddress}">
-                    Shop Address
+                    دکان کا پتہ
                 </span>
             </p>
 
@@ -431,7 +544,7 @@
 
             <div class="receipt-title">
                 <i class="bi bi-receipt-cutoff me-1"></i>
-                Order Receipt
+                آرڈر کی رسید
             </div>
 
         </div>
@@ -445,48 +558,48 @@
 
             <div class="info-title">
                 <i class="bi bi-person-fill me-1"></i>
-                Customer & Order Information
+                گاہک اور آرڈر کی معلومات
             </div>
 
             <div class="info-grid">
 
                 <div class="info-item">
-                    <span class="info-label">S. No:</span>
+                    <span class="info-label">نمبر:</span>
                     <span class="info-value"
                           th:text="${order.customer.id}">
                     </span>
                 </div>
 
                 <div class="info-item">
-                    <span class="info-label">Order ID:</span>
+                    <span class="info-label">آرڈر نمبر:</span>
                     <span class="info-value"
                           th:text="${order.orderId}">
                     </span>
                 </div>
 
                 <div class="info-item">
-                    <span class="info-label">Customer:</span>
+                    <span class="info-label">گاہک:</span>
                     <span class="info-value"
                           th:text="${order.customer.fullName}">
                     </span>
                 </div>
 
                 <div class="info-item">
-                    <span class="info-label">Phone:</span>
+                    <span class="info-label">فون نمبر:</span>
                     <span class="info-value"
                           th:text="${order.customer.phoneNumber}">
                     </span>
                 </div>
 
                 <div class="info-item">
-                    <span class="info-label">Order Date:</span>
+                    <span class="info-label">آرڈر کی تاریخ:</span>
                     <span class="info-value"
                           th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}">
                     </span>
                 </div>
 
                 <div class="info-item">
-                    <span class="info-label">Delivery Date:</span>
+                    <span class="info-label">تیاری کی تاریخ:</span>
                     <span class="info-value"
                           th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}">
                     </span>
@@ -505,7 +618,7 @@
 
             <div class="products-title">
                 <i class="bi bi-bag-fill me-1"></i>
-                Order Items
+                آرڈر میں شامل کپڑے
             </div>
 
             <table class="product-table">
@@ -515,23 +628,23 @@
                 <tr>
 
                     <th class="product-name">
-                        Product
+                        کپڑا
                     </th>
 
                     <th class="silai-type">
-                        Silai
+                        سلائی
                     </th>
 
                     <th class="quantity">
-                        Qty
+                        تعداد
                     </th>
 
                     <th class="silai-price">
-                        Silai Amount
+                        سلائی کی رقم
                     </th>
 
                     <th class="item-total">
-                        Total
+                        کل رقم
                     </th>
 
                 </tr>
@@ -583,7 +696,7 @@
 
                             <span class="notes-label">
                                 <i class="bi bi-chat-left-text me-1"></i>
-                                Additional Notes:
+                                اضافی ہدایات:
                             </span>
 
                             <span class="notes-value"
@@ -612,7 +725,7 @@
             <div class="total-row">
 
                 <span class="total-label">
-                    Total Amount:
+                    کل رقم:
                 </span>
 
                 <span class="total-value format-amount"
@@ -625,7 +738,7 @@
             <div class="total-row">
 
                 <span class="total-label">
-                    Advance Payment:
+                    پیشگی رقم:
                 </span>
 
                 <span class="total-value format-amount"
@@ -638,7 +751,7 @@
             <div class="total-row due-row">
 
                 <span class="total-label">
-                    Due Payment:
+                    بقایا رقم:
                 </span>
 
                 <span class="total-value format-amount"
@@ -657,7 +770,7 @@
         <div class="receipt-footer">
 
             <p>
-                <strong>Thanks for your order!</strong>
+                <strong>آپ کے آرڈر کا شکریہ!</strong>
             </p>
 
             <p>
@@ -678,7 +791,7 @@
                     onclick="window.print()">
 
                 <i class="bi bi-printer me-1"></i>
-                Print
+                پرنٹ کریں
 
             </button>
 
@@ -687,7 +800,7 @@
                class="btn btn-secondary">
 
                 <i class="bi bi-arrow-left-circle me-1"></i>
-                Back
+                واپس جائیں
 
             </a>
 

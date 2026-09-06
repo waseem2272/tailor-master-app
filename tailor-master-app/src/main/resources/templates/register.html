@@ -2,126 +2,399 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Register - Tailor Master</title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
     <style>
-        body {
-            background: #f8f9fa;
-        }
-
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
         .form-group {
             margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid py-4">
+
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-success border-bottom border-3 mt-5">
-                <div class="card-header bg-success text-white text-center">
-                    <h3>Sign Up</h3>
+
+        <div class="col-xl-8 col-lg-9 col-md-10">
+
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <!-- ========================= -->
+                <!-- HEADER -->
+                <!-- ========================= -->
+
+                <div class="card-header bg-success text-white text-center py-4 border-0">
+
+                    <div class="mb-2">
+                        <i class="bi bi-person-plus-fill fs-1"></i>
+                    </div>
+
+                    <h3 class="fw-bold mb-1">
+                        نیا اکاؤنٹ بنائیں
+                    </h3>
+
+                    <div class="small opacity-75">
+                        اپنی دکان کی معلومات درج کریں
+                    </div>
+
                 </div>
-                <div class="card-body">
-                    <p class="text-danger fw-bold">Fields marked as * are required</p>
-                    <form method="post" th:action="@{/users/register}" th:object="${user}" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="username" th:field="*{username}"
-                                   placeholder="Enter username" required>
+
+
+                <!-- ========================= -->
+                <!-- BODY -->
+                <!-- ========================= -->
+
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Required fields alert -->
+                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center gap-2 mb-4"
+                         role="alert">
+
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+
+                        <span class="fw-semibold">
+                            <span class="text-danger">*</span>
+                            والے خانے لازمی ہیں
+                        </span>
+
+                    </div>
+
+
+                    <form method="post"
+                          th:action="@{/users/register}"
+                          th:object="${user}"
+                          enctype="multipart/form-data">
+
+
+                        <!-- ========================= -->
+                        <!-- ACCOUNT INFORMATION -->
+                        <!-- ========================= -->
+
+                        <div class="form-section mb-4">
+
+                            <div class="section-heading mb-3">
+                                <div>
+                                    <h5 class="fw-bold mb-0">
+                                        اکاؤنٹ کی معلومات
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        لاگ اِن کے لیے معلومات درج کریں
+                                    </small>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <!-- Username -->
+                                <div class="col-md-6">
+
+                                    <label for="username"
+                                           class="form-label fw-semibold">
+                                        صارف نام
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+
+                                        <input type="text"
+                                               class="form-control border-start-0"
+                                               id="username"
+                                               th:field="*{username}"
+                                               placeholder="صارف نام درج کریں"
+                                               required>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Password -->
+                                <div class="col-md-6">
+
+                                    <label for="password"
+                                           class="form-label fw-semibold">
+                                        پاس ورڈ
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+
+                                        <span class="input-group-text bg-light border-end-0">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+
+                                        <input type="password"
+                                               class="form-control border-start-0"
+                                               id="password"
+                                               th:field="*{password}"
+                                               placeholder="پاس ورڈ درج کریں"
+                                               required>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
 
                         </div>
-                        <div class="form-group">
-                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}"
-                                   placeholder="Enter password" required>
+
+
+                        <hr class="my-4 opacity-25">
+
+
+                        <!-- ========================= -->
+                        <!-- PERSONAL INFORMATION -->
+                        <!-- ========================= -->
+
+                        <div class="form-section mb-4">
+
+                            <div class="section-heading mb-3">
+
+                                <div>
+                                    <h5 class="fw-bold mb-0">
+                                        ذاتی معلومات
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        اپنی بنیادی معلومات درج کریں
+                                    </small>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <!-- Full Name -->
+                                <div class="col-md-6">
+
+                                    <label for="fullName"
+                                           class="form-label fw-semibold">
+                                        پورا نام
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="fullName"
+                                           th:field="*{fullName}"
+                                           placeholder="پورا نام درج کریں"
+                                           required>
+
+                                </div>
+
+
+                                <!-- Phone 1 -->
+                                <div class="col-md-6">
+
+                                    <label for="phone1"
+                                           class="form-label fw-semibold">
+                                        فون نمبر 1
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="phone1"
+                                           th:field="*{phone1}"
+                                           placeholder="فون نمبر 1 درج کریں"
+                                           required>
+
+                                </div>
+
+
+                                <!-- Phone 2 -->
+                                <div class="col-md-6">
+
+                                    <label for="phone2"
+                                           class="form-label fw-semibold">
+                                        فون نمبر 2
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="phone2"
+                                           th:field="*{phone2}"
+                                           placeholder="فون نمبر 2 درج کریں (اختیاری)">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <hr class="my-4 opacity-25">
+
+                        <!-- ========================= -->
+                        <!-- SHOP INFORMATION -->
+                        <!-- ========================= -->
+
+                        <div class="form-section mb-4">
+
+                            <div class="section-heading mb-3">
+
+                                <div>
+                                    <h5 class="fw-bold mb-0">
+                                        دکان کی معلومات
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        اپنی دکان کی معلومات درج کریں
+                                    </small>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row g-3">
+
+                                <!-- Shop Name -->
+                                <div class="col-md-6">
+
+                                    <label for="shopName"
+                                           class="form-label fw-semibold">
+                                        دکان کا نام
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="shopName"
+                                           th:field="*{shopName}"
+                                           placeholder="دکان کا نام درج کریں"
+                                           required>
+
+                                </div>
+
+
+                                <!-- Proprietor Name -->
+                                <div class="col-md-6">
+
+                                    <label for="proprietorName"
+                                           class="form-label fw-semibold">
+                                        مالک کا نام
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <input type="text"
+                                           class="form-control"
+                                           id="proprietorName"
+                                           th:field="*{proprietorName}"
+                                           placeholder="مالک کا نام درج کریں"
+                                           required>
+
+                                </div>
+
+
+                                <!-- Shop Address -->
+                                <div class="col-12">
+
+                                    <label for="shopAddress"
+                                           class="form-label fw-semibold">
+                                        دکان کا پتہ
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    <textarea class="form-control"
+                                              id="shopAddress"
+                                              th:field="*{shopAddress}"
+                                              rows="3"
+                                              placeholder="دکان کا پتہ درج کریں"
+                                              required></textarea>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <hr class="my-4 opacity-25">
+
+                        <!-- ========================= -->
+                        <!-- SHOP LOGO -->
+                        <!-- ========================= -->
+
+                        <div class="form-section mb-4">
+
+                            <div class="logo-upload-box">
+
+                                <label for="logo"
+                                       class="form-label fw-semibold">
+
+                                    دکان کا لوگو
+
+                                    <span class="text-muted small">
+                                        (PNG, JPG, JPEG)
+                                    </span>
+
+                                </label>
+
+
+                                <input type="file"
+                                       class="form-control"
+                                       id="logo"
+                                       name="logo"
+                                       accept="image/png, image/jpeg, image/jpg">
+
+                            </div>
+
+                        </div>
+                        <hr class="my-4 opacity-25">
+
+                        <!-- ========================= -->
+                        <!-- SUBMIT BUTTON -->
+                        <!-- ========================= -->
+
+                        <div class="d-grid mt-4">
+
+                            <button type="submit"
+                                    class="btn btn-success btn-lg rounded-pill shadow">
+
+                                <i class="bi bi-person-plus-fill me-2"></i>
+
+                                اکاؤنٹ بنائیں
+
+                            </button>
 
                         </div>
 
-                        <div class="form-group">
-                            <label for="fullName" class="form-label">Full Name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
-                                   placeholder="Enter full name" required>
-
-                        </div>
-
-                        <!--<div class="form-group">
-                            <label for="fathersName" class="form-label">Father's Name</label>
-                            <input type="text" class="form-control" id="fathersName" th:field="*{fathersName}"
-                                   placeholder="Enter father's name">
-                        </div>-->
-
-                        <div class="form-group">
-                            <label for="phone1" class="form-label">Phone Number 1 <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="phone1" th:field="*{phone1}"
-                                   placeholder="Enter phone number 1" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone2" class="form-label">Phone Number 2</label>
-                            <input type="text" class="form-control" id="phone2" th:field="*{phone2}"
-                                   placeholder="Enter phone number 2 (optional)">
-                        </div>
-
-                        <!--<div class="form-group">
-                            <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" id="dateOfBirth" th:field="*{dateOfBirth}">
-                        </div>-->
-
-                        <div class="form-group">
-                            <label for="shopName" class="form-label">Shop Name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="shopName" th:field="*{shopName}"
-                                   placeholder="Enter shop name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="proprietorName" class="form-label">Proprietor Name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="proprietorName" th:field="*{proprietorName}"
-                                   placeholder="Enter proprietor name" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="shopAddress" th:field="*{shopAddress}"
-                                      placeholder="Enter shop address" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="logo" class="form-label">Shop Logo (PNG, JPG, JPEG)</label>
-                            <input type="file" class="form-control" id="logo" name="logo" accept="image/png, image/jpeg, image/jpg">
-                        </div>
-                        <!--<div class="form-group">
-                            <label for="shortCode" class="form-label">Short Code <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="shortCode" th:field="*{shortCode}"
-                                   placeholder="Enter Short Code" required>
-                        </div>-->
-
-                        <!--<div class="form-group" style="display: none;">
-                            <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
-                            <select class="form-select" id="role" name="role" required>
-                                <option value="" disabled selected>Select Role</option>
-                                <option th:each="role : ${roles}" th:value="${role.name}"
-                                        th:text="${role.name}"></option>
-                            </select>
-                        </div>-->
-                        <button type="submit" class="btn btn-success w-100">Register</button>
                     </form>
+
                 </div>
-                <div class="card-footer text-center">
-                    <p class="mb-0">Already have an account?
-                        <a th:href="@{/login}" class="text-primary">Login</a>
-                    </p>
+
+
+                <!-- ========================= -->
+                <!-- FOOTER -->
+                <!-- ========================= -->
+
+                <div class="card-footer bg-light border-0 text-center py-3">
+
+                    <span class="text-muted">
+                        کیا پہلے سے اکاؤنٹ موجود ہے؟
+                    </span>
+
+                    <a th:href="@{/login}"
+                       class="text-success fw-bold text-decoration-none ms-1">
+                        لاگ اِن کریں
+                        <i class="bi bi-box-arrow-in-left ms-1"></i>
+
+                    </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>

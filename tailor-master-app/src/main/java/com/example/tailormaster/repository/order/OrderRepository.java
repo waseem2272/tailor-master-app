@@ -46,6 +46,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0 AND o.user = :user")
     Long countPendingPayments(@Param("user") User user);
 
+    @Query("""
+    SELECT COUNT(o),
+           COALESCE(SUM(o.outstandingDueAmount), 0)
+    FROM Order o
+    WHERE o.outstandingDueAmount IS NOT NULL
+      AND o.outstandingDueAmount > 0
+      AND o.user = :user
+""")
+    Object[] getPendingPaymentSummary(@Param("user") User user);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('PENDING') AND o.user = :user")
     Long countPendingOrders(@Param("user") User user);
 

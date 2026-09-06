@@ -25,7 +25,7 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-bag-check-fill me-2"></i> Orders
+                <i class="bi bi-bag-check-fill me-2"></i> آرڈرز
             </h2>
             <!-- Success Message Alert -->
             <div th:if="${successMessage}" class="row justify-content-center">
@@ -35,14 +35,16 @@
                         <span th:text="${successMessage}"></span>
                         <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
                            class="btn btn-light btn-sm ms-2">
-                            <i class="bi bi-eye"></i> View Details
+                            <i class="bi bi-eye"></i> تفصیلات دیکھیں
                         </a>
-                        <a th:if="${orderId}" th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
+                        <a th:if="${orderId}"
+                           th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
                            class="btn btn-light btn-sm ms-2">
-                            <i class="bi bi-receipt"></i> Generate Order Receipt
+                            <i class="bi bi-receipt"></i> آرڈر کی رسید بنائیں
                         </a>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
             </div>
 
@@ -53,7 +55,8 @@
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
             </div>
 
@@ -61,11 +64,11 @@
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-search me-2"></i> Filter Orders
+                        <i class="bi bi-search me-2"></i> آرڈر تلاش کریں
                     </div>
                     <button class="btn btn-light btn-sm rounded-pill shadow-sm" type="button" data-bs-toggle="collapse"
                             data-bs-target="#filterSection">
-                        <i class="bi bi-funnel"></i> Toggle Filters
+                        <i class="bi bi-funnel"></i> فلٹر دکھائیں / چھپائیں
                         <span id="filterCountBadge" class="badge bg-danger ms-2 d-none">0</span>
                     </button>
                 </div>
@@ -73,34 +76,34 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-2">
-                                <label for="dateRange" class="form-label fw-semibold">Quick Date Range</label>
+                                <label for="dateRange" class="form-label fw-semibold">فوری تاریخ منتخب کریں</label>
                                 <select id="dateRange" class="form-select rounded-pill">
-                                    <option value="">Select range</option>
-                                    <option value="last7days">Last 7 days</option>
-                                    <option value="thismonth">This month</option>
+                                    <option value="">مدت منتخب کریں</option>
+                                    <option value="last7days">گزشتہ 7 دن</option>
+                                    <option value="thismonth">اس ماہ</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label for="startDate" class="form-label fw-semibold">Start Date</label>
+                                <label for="startDate" class="form-label fw-semibold">شروع کی تاریخ</label>
                                 <input type="date" id="startDate" class="form-control rounded-pill">
                             </div>
                             <div class="col-md-2">
-                                <label for="endDate" class="form-label fw-semibold">End Date</label>
+                                <label for="endDate" class="form-label fw-semibold">آخری تاریخ</label>
                                 <input type="date" id="endDate" class="form-control rounded-pill">
                             </div>
                             <div class="col-md-2">
-                                <label for="paymentStatus" class="form-label fw-semibold">Payment Status</label>
+                                <label for="paymentStatus" class="form-label fw-semibold">ادائیگی کی حالت</label>
                                 <select id="paymentStatus" name="orderStatus" class="form-select rounded-pill">
-                                    <option value="" selected>All</option>
-                                    <option th:value="paid">Paid</option>
-                                    <option th:value="unpaid">Unpaid</option>
-                                    <option th:value="partial_paid">Partial Paid</option>
+                                    <option value="" selected>سب</option>
+                                    <option th:value="paid">مکمل ادائیگی</option>
+                                    <option th:value="unpaid">ادائیگی باقی</option>
+                                    <option th:value="partial_paid">جزوی ادائیگی</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label for="orderStatus" class="form-label fw-semibold">Order Status</label>
+                                <label for="orderStatus" class="form-label fw-semibold">آرڈر کی حالت</label>
                                 <select id="orderStatus" name="orderStatus" class="form-select rounded-pill">
-                                    <option value="" selected>All</option>
+                                    <option value="" selected>سب</option>
                                     <option th:each="status : ${orderStatusList}"
                                             th:value="${status}"
                                             th:text="${status}"></option>
@@ -109,10 +112,10 @@
 
                             <div class="col-md-2 d-flex align-items-end gap-2">
                                 <button id="applyFilters" class="btn btn-success shadow rounded-pill w-100">
-                                    <i class="bi bi-check-circle"></i> Filter
+                                    <i class="bi bi-check-circle"></i> فلٹر لگائیں
                                 </button>
                                 <button id="clearFilters" class="btn btn-secondary shadow rounded-pill w-100">
-                                    <i class="bi bi-x-circle"></i> Clear
+                                    <i class="bi bi-x-circle"></i> صاف کریں
                                 </button>
                             </div>
                         </div>
@@ -122,20 +125,20 @@
 
             <div class="card shadow-sm border-success border-bottom border-3 mt-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-list-check me-2"></i> Orders List
+                    <i class="bi bi-list-check me-2"></i> آرڈرز کی فہرست
                 </div>
                 <div class="card-body">
                     <table id="ordersTable" class="table table-bordered table-hover table-striped">
                         <thead class="table-success text-dark">
                         <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Order Date</th>
-                            <th>Delivery Date</th>
-                            <th>Status</th>
-                            <th>Cabinet No</th>
-                            <th>Payment Status</th>
-                            <th>Actions</th>
+                            <th>آرڈر نمبر</th>
+                            <th>گاہک</th>
+                            <th>آرڈر کی تاریخ</th>
+                            <th>تیاری کی تاریخ</th>
+                            <th>حالت</th>
+                            <th>الماری نمبر</th>
+                            <th>ادائیگی کی حالت</th>
+                            <th>کارروائی</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -147,72 +150,154 @@
 </div>
 
 <!-- Mark as Picked Up Modal -->
-<div class="modal fade" id="pickupModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+<div class="modal fade" id="pickupModal" tabindex="-1"
+     aria-labelledby="pickupModalLabel" aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 shadow">
+        <div class="modal-content rounded-4 shadow pickup-modal" dir="rtl">
+
+            <!-- Header -->
             <div class="modal-header bg-success text-white rounded-top-4">
                 <h5 class="modal-title fw-bold" id="pickupModalLabel">
-                    <i class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up
+                    <i class="bi bi-check2-circle me-2"></i>
+                    آرڈر پک اپ ہو گیا
                 </h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button type="button"
+                        class="btn-close bg-light ms-0"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
+
+            <!-- Body -->
             <div class="modal-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-tag me-2"></i>Order ID:</strong>
-                        <span id="modalOrderId" class="ms-2"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
-                        <span id="modalCustomerName" class="ms-2"></span>
-                    </li>
 
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-calendar-event me-2"></i>Total Amount:</strong>
-                        <span id="modalTotalAmount" class="ms-2"></span>
+                <ul class="list-group list-group-flush px-0">
+
+                    <li class="list-group-item px-0">
+                        <strong>
+                            <i class="bi bi-tag me-2"></i>
+                            آرڈر نمبر:
+                        </strong>
+                        <span id="modalOrderId" class="me-2"></span>
                     </li>
 
-
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-calendar-event me-2"></i>Advance Payment:</strong>
-                        <span id="modalAdvancePayment" class="ms-2"></span>
+                    <li class="list-group-item px-0">
+                        <strong>
+                            <i class="bi bi-person-fill me-2"></i>
+                            گاہک کا نام:
+                        </strong>
+                        <span id="modalCustomerName" class="me-2"></span>
                     </li>
 
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-cash me-2"></i>Due Amount:</strong>
-                        <span id="modalDueAmount" class="ms-2 text-danger fw-bold"></span>
+                    <li class="list-group-item px-0">
+                        <strong>
+                            <i class="bi bi-calendar-event me-2"></i>
+                            کل رقم:
+                        </strong>
+                        <span id="modalTotalAmount" class="me-2"></span>
+                    </li>
+
+                    <li class="list-group-item px-0">
+                        <strong>
+                            <i class="bi bi-calendar-event me-2"></i>
+                            پیشگی رقم:
+                        </strong>
+                        <span id="modalAdvancePayment" class="me-2"></span>
+                    </li>
+
+                    <li class="list-group-item px-0">
+                        <strong>
+                            <i class="bi bi-cash me-2"></i>
+                            بقایا رقم:
+                        </strong>
+                        <span id="modalDueAmount"
+                              class="me-2 text-danger fw-bold"></span>
                     </li>
 
                 </ul>
 
+                <!-- Product Details -->
                 <div id="modalProductDetails" class="mt-4">
-                    <h6 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Products in Order</h6>
-                    <ul class="list-group list-group-flush" id="productList"></ul>
+
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                            <i class="bi bi-box-seam text-primary"></i>
+                        </div>
+
+                        <div>
+                            <h6 class="fw-bold mb-0">آرڈر میں شامل کپڑے</h6>
+                            <small class="text-muted">آرڈر کی تفصیلات</small>
+                        </div>
+                    </div>
+
+                    <div id="productList" class="mt-3">
+                    </div>
+
                 </div>
 
+                <!-- Amount Received -->
                 <div class="mt-4 p-3 bg-light rounded border">
-                    <label for="amountReceived" class="form-label fw-bold">
-                        <i class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup:
-                    </label>
-                    <input type="number" min="0" step="0.01" id="amountReceived" class="form-control fw-bold" placeholder="Enter amount received">
-                    <small class="text-muted ms-1">You can adjust if partial payment is made.</small>
-                </div>
-                <div id="amountReceivedError" class="text-danger mt-1"></div> <!-- Error message appears here -->
 
-                <div class="alert alert-warning mt-3" role="alert">
+                    <label for="amountReceived"
+                           class="form-label fw-bold">
+
+                        <i class="bi bi-cash-coin me-1 text-success"></i>
+                        پک اپ کے وقت وصول کی گئی رقم:
+                    </label>
+
+                    <input type="number"
+                           min="0"
+                           step="0.01"
+                           id="amountReceived"
+                           class="form-control fw-bold"
+                           placeholder="وصول کی گئی رقم درج کریں">
+
+                    <small class="text-muted me-1">
+                        اگر جزوی ادائیگی کی گئی ہو تو رقم تبدیل کی جا سکتی ہے۔
+                    </small>
+
+                </div>
+
+                <!-- Error -->
+                <div id="amountReceivedError"
+                     class="text-danger mt-1">
+                </div>
+
+                <!-- Warning -->
+                <div class="alert alert-warning mt-3"
+                     role="alert">
+
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     پک اپ کرنے سے پہلے، کسٹمر سے بقایا رقم ضرور وصول کر لیں۔
+
                 </div>
+
             </div>
 
+            <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="bi bi-x-circle me-1"></i>
+                    واپس جائیں
+
                 </button>
-                <button type="button" id="confirmPickupBtn" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Confirm Pickup
+
+                <button type="button"
+                        id="confirmPickupBtn"
+                        class="btn btn-success">
+
+                    <i class="bi bi-check-circle me-1"></i>
+                    پک اپ کی تصدیق کریں
+
                 </button>
+
             </div>
+
         </div>
     </div>
 </div>
@@ -272,10 +357,10 @@
                 }
             },
             "columns": [
-                { "data": "orderId" },
-                { "data": "customer" },
-                { "data": "orderDate" },
-                { "data": "deliveryDate" },
+                {"data": "orderId"},
+                {"data": "customer"},
+                {"data": "orderDate"},
+                {"data": "deliveryDate"},
                 {
                     "data": "status",
                     "render": function (data) {
@@ -289,7 +374,7 @@
                         return `<span class="${badgeClass}">${data}</span>`;
                     }
                 },
-                { "data": "cabinetNo" },
+                {"data": "cabinetNo"},
                 {
                     "data": null,
                     "orderable": false,
@@ -303,18 +388,18 @@
                         let outstandingDueAmount = data.outstandingDueAmount;
 
                         let badgeClass = "secondary"; // Default badge (gray)
-                        let paymentStatus = `<span class="badge bg-secondary">N/A</span>`; // Default
+                        let paymentStatus = `<span class="badge bg-secondary">لاگو نہیں</span>`; // Default
 
                         if ((orderStatus === "COMPLETED" || orderStatus === "DELIVERED") && pickedUpStatus === "PICKED_UP") {
                             if (totalProductAmount !== paidAmount && totalProductAmount !== outstandingDueAmount) {
                                 badgeClass = "warning text-dark"; // Yellow badge for partial payment
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">جزوی ادائیگی</span>`;
                             } else if (totalProductAmount === outstandingDueAmount) {
                                 badgeClass = "danger"; // Yellow badge for partial payment
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Unpaid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">ادائیگی باقی</span>`;
                             } else {
                                 badgeClass = "success"; // Green badge for full payment
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Paid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">مکمل ادائیگی</span>`;
                             }
                         }
 
@@ -344,14 +429,14 @@
                                   data-delivery-date="${row.deliveryDate}"
                                   data-bs-toggle="modal"
                                   data-bs-target="#pickupModal">
-                                  <i class="bi bi-check2-circle"></i> Mark as Picked Up
+                                  <i class="bi bi-check2-circle"></i> آرڈر حوالے کریں
                                </button>`
-                                                : "";
+                            : "";
 
                         return `
                     <div class="d-flex flex-wrap gap-2">
                         <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
-                            <i class="bi bi-eye"></i> Details
+                            <i class="bi bi-eye"></i> تفصیلات
                         </a>
                         ${pickupButton}
                     </div>
@@ -402,21 +487,6 @@
             updateFilterBadge();
         });
 
-        // document.getElementById("amountReceived").addEventListener("input", function () {
-        //     const paymentAmount = parseFloat(this.value);
-        //     const due = parseFloat(document.getElementById("modalDueAmount").innerText);
-        //     const errorElement = document.getElementById("amountReceivedError");
-        //     errorElement.innerText = "";
-        //
-        //     if (isNaN(paymentAmount) || paymentAmount <= 0) {
-        //         errorElement.innerText = "Received amount must be greater than 0.";
-        //     } else if (paymentAmount > due) {
-        //         errorElement.innerText = "Received amount cannot be more than outstanding due.";
-        //     } else {
-        //         errorElement.innerText = ""; // No errors
-        //     }
-        // });
-
         $('#ordersTable tbody').on('click', '.pickup-btn', function () {
 
             const button = $(this);
@@ -444,105 +514,79 @@
 
             // Add product details
             if (row.orderProducts && row.orderProducts.length > 0) {
-                row.orderProducts.forEach(op => {
-                    const item = `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="fw-semibold">${op.productName}</span>
-                        <small class="text-muted d-block">Qty: ${op.quantity}, Silai Type: ${op.silaiType}, Amount: ${op.amount}</small>
-                    </div>
-                    <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
-                </li>
-            `;
-                    $('#productList').append(item);
-                });
-            } else {
-                $('#productList').append(`<li class="list-group-item text-muted">No products found.</li>`);
-            }
-        });
+                row.orderProducts.forEach((op, index) => {
+                    const item = ` <div class="border rounded-3 p-3 mb-2"> <div class="d-flex justify-content-between align-items-start"> <!-- Product --> <div class="flex-grow-1"> <div class="d-flex align-items-center mb-2"> <span class="badge bg-primary rounded-pill me-2"> ${index + 1} </span> <span class="fw-bold fs-6"> ${op.productName} </span> </div> <div class="d-flex flex-wrap gap-2"> <!-- Quantity --> <div class="border rounded-2 px-2 py-1 bg-light"> <small class="text-muted d-block"> تعداد </small> <span class="fw-semibold"> ${op.quantity} </span> </div> <!-- Silai Type --> <div class="border rounded-2 px-2 py-1 bg-light"> <small class="text-muted d-block"> سلائی کی قسم </small> <span class="fw-semibold"> ${op.silaiType} </span> </div> <!-- Silai Amount --> <div class="border rounded-2 px-2 py-1 bg-light"> <small class="text-muted d-block"> سلائی فی عدد </small> <span class="fw-semibold"> ${Number(op.amount).toFixed(2)} </span> </div> </div> </div> <!-- Subtotal --> <div class="text-end ms-3"> <small class="text-muted d-block"> کل رقم </small> <span class="fw-bold text-success fs-5"> ${Number(op.subtotal).toFixed(2)} </span> </div> </div> </div> `
+                ; $('#productList').append(item); }); } else { $('#productList').html(
+                    ` <div class="text-center text-muted border rounded-3 p-4"> <i class="bi bi-inbox fs-3 d-block mb-2"></i> کوئی کپڑا نہیں ملا۔ </div> `
+                ); }
+                        });
 
-    });
+                    });
 
-    $('#confirmPickupBtn').on('click', function () {
+                    $('#confirmPickupBtn').on('click', function () {
 
-        const confirmPickupBtn = this;
+                        const confirmPickupBtn = this;
 
-        var csrfToken = $("meta[name='_csrf']").attr("content");
-        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+                        var csrfToken = $("meta[name='_csrf']").attr("content");
+                        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
 
-        let orderDbId = $(this).data('order-db-id');
-        let dueAmount = parseFloat($('#modalDueAmount').text());
-        let amountReceived = parseFloat($('#amountReceived').val() || 0);
+                        let orderDbId = $(this).data('order-db-id');
+                        let dueAmount = parseFloat($('#modalDueAmount').text());
+                        let amountReceived = parseFloat($('#amountReceived').val() || 0);
 
-        if (amountReceived > dueAmount) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Amount',
-                text: 'Amount received cannot be greater than due.'
-            });
-            return false;
-        }
-        // else if (amountReceived < 0) {
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'Invalid Amount',
-        //         text: 'Amount received cannot be less than 0.'
-        //     });
-        //     return false;
-        // }
-        // else if (amountReceived === 0) {  // ✅ Added Zero Validation
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'Invalid Amount',
-        //         text: 'Amount received must be greater than 0.'
-        //     });
-        //     return false;
-        // }
+                        if (amountReceived > dueAmount) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'غلط رقم',
+                                text: 'وصول کی گئی رقم بقایا رقم سے زیادہ نہیں ہو سکتی۔'
+                            });
+                            return false;
+                        }
 
-        // 🔹 Disable button to prevent double click
-        confirmPickupBtn.disabled = true;
-        confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                        // 🔹 Disable button to prevent double click
+                        confirmPickupBtn.disabled = true;
+                        confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> کارروائی جاری ہے...';
 
-        $.ajax({
-            url: contextPath + "orders/pickup",
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                orderId: orderDbId,
-                amountReceived: amountReceived
-            }),
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader(csrfHeader, csrfToken);
-            },
-            success: function (response) {
-                $('#pickupModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Order marked as picked up!',
-                    showConfirmButton: false,
-                    timer: 3500
-                });
-                confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
-                $('#ordersTable').DataTable().ajax.reload(null, false);
-            },
-            error: function (xhr) {
-                let errorMessage = "Something went wrong!";
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;  // ✅ Extracts the correct error message
-                }
+                        $.ajax({
+                            url: contextPath + "orders/pickup",
+                            method: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                orderId: orderDbId,
+                                amountReceived: amountReceived
+                            }),
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader(csrfHeader, csrfToken);
+                            },
+                            success: function (response) {
+                                $('#pickupModal').modal('hide');
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'آرڈر کا پک اپ مکمل ہو گیا!',
+                                    showConfirmButton: false,
+                                    timer: 3500
+                                });
+                                confirmPickupBtn.disabled = false;
+                                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>پک اپ کی تصدیق کریں';
+                                $('#ordersTable').DataTable().ajax.reload(null, false);
+                            },
+                            error: function (xhr) {
+                                let errorMessage = "کچھ غلط ہو گیا!";
+                                if (xhr.responseJSON && xhr.responseJSON.error) {
+                                    errorMessage = xhr.responseJSON.error;  // ✅ Extracts the correct error message
+                                }
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error updating order',
-                    text: errorMessage
-                });
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'آرڈر اپ ڈیٹ کرنے میں مسئلہ',
+                                    text: errorMessage
+                                });
 
-                confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
-            }
-        });
-    });
+                                confirmPickupBtn.disabled = false;
+                                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>پک اپ کی تصدیق کریں';
+                            }
+                        });
+                    });
 
 </script>
 

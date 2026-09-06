@@ -61,7 +61,8 @@ public class GlobalControllerAdvice {
                 if (trialEnd != null) {
                     long daysRemaining = ChronoUnit.DAYS.between(today, trialEnd);
                     if (daysRemaining >= 0 && daysRemaining <= 5) {
-                        model.addAttribute("trialMessage", "Your free trial will expire in " + daysRemaining + " day(s). Please contact us to continue using the application.");
+                        model.addAttribute("trialMessage",
+                                "آپ کی مفت آزمائشی مدت " + daysRemaining + " دن میں ختم ہو جائے گی۔ ایپلیکیشن کا استعمال جاری رکھنے کے لیے ہم سے رابطہ کریں۔");
                     }
                 }
             });

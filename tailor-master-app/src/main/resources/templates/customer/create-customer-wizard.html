@@ -40,23 +40,23 @@
 
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi" th:classappend="${isEdit} ? 'bi-pencil-square' : 'bi-person-fill-add'"></i>
-                    <span th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'"></span>
+                    <span th:text="${isEdit} ? 'گاہک کی معلومات میں ترمیم' : 'نیا گاہک بنائیں'"></span>
                 </h2>
 
                 <ul class="nav nav-tabs wizard-nav mb-3" id="wizardTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#step1" type="button"
-                                role="tab">Customer Info
+                                role="tab">گاہک کی معلومات
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#step2" type="button" role="tab">
-                            Product Selection
+                            کپڑے منتخب کریں
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#step3" type="button" role="tab">
-                            Measurements
+                            ناپ
                         </button>
                     </li>
                 </ul>
@@ -67,26 +67,26 @@
                     <div class="tab-pane fade show active" id="step1" role="tabpanel">
                         <div class="card border-success border-bottom border-3 shadow-sm mb-4">
                             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-info-circle me-2"></i> Customer Information
+                                <i class="bi bi-info-circle me-2"></i> گاہک کی معلومات
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label required" for="fullName">Full Name</label>
+                                        <label class="form-label required" for="fullName">گاہک کا نام</label>
                                         <input th:field="*{fullName}" id="fullName" class="form-control" required>
-                                        <div class="invalid-feedback">Full name is required.</div>
+                                        <div class="invalid-feedback">گاہک کا نام درج کرنا ضروری ہے۔</div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label required" for="phoneNumber">Phone Number</label>
+                                        <label class="form-label required" for="phoneNumber">فون نمبر</label>
                                         <input th:field="*{phoneNumber}" id="phoneNumber" class="form-control" required pattern="^03\d{9}$">
                                         <div class="invalid-feedback">
-                                            Phone number must start with 03 and be 11 digits (e.g., 03001234567).
+                                            فون نمبر 03 سے شروع ہونا چاہیے اور 11 ہندسوں پر مشتمل ہونا چاہیے۔ مثال: 03001234567
                                         </div>
                                     </div>
                                     <div class="col-md-6 form-check mt-2">
                                         <input class="form-check-input" type="checkbox" th:field="*{enabled}"
                                                id="enabled">
-                                        <label class="form-check-label" for="enabled">Enabled</label>
+                                        <label class="form-check-label" for="enabled">فعال</label>
                                     </div>
                                 </div>
                             </div>
@@ -94,10 +94,10 @@
 
                         <div class="d-flex justify-content-between">
                             <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
-                                <i class="bi bi-x-circle"></i> Cancel
+                                <i class="bi bi-x-circle"></i> واپس جائیں
                             </a>
                             <button type="button" id="toStep2" class="btn btn-success">
-                                Next <i class="bi bi-arrow-right"></i>
+                                اگلا مرحلہ <i class="bi bi-arrow-right"></i>
                             </button>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                     <div class="tab-pane fade" id="step2" role="tabpanel">
                         <div class="card border-success border-bottom border-3 shadow-sm mb-4">
                             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-bag-check me-2"></i> Select Products
+                                <i class="bi bi-bag-check me-2"></i> کپڑے منتخب کریں
                             </div>
                             <div class="card-body">
                                 <div class="row" id="productsGrid">
@@ -123,22 +123,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="text-danger small d-none" id="productError">Please select at least one
-                                    product.
+                                <div class="text-danger small d-none" id="productError">
+                                    کم از کم ایک کپڑا منتخب کریں۔
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between">
                             <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
-                                <i class="bi bi-x-circle"></i> Cancel
+                                <i class="bi bi-x-circle"></i> واپس جائیں
                             </a>
                             <button type="button" class="btn btn-secondary" id="backToStep1" data-bs-target="#step1"
                                     data-bs-toggle="tab">
-                                <i class="bi bi-arrow-left"></i> Back
+                                <i class="bi bi-arrow-left"></i> واپس جائیں
                             </button>
                             <button type="button" id="toStep3" class="btn btn-success">
-                                Next <i class="bi bi-arrow-right"></i>
+                                اگلا مرحلہ <i class="bi bi-arrow-right"></i>
                             </button>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                     <div class="tab-pane fade" id="step3" role="tabpanel">
                         <div class="card border-success border-bottom border-3 shadow-sm mb-4">
                             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-rulers me-2"></i> Measurements
+                                <i class="bi bi-rulers me-2"></i> ناپ
                             </div>
                             <div class="card-body">
                                 <div id="measurementsContainer">
@@ -158,14 +158,14 @@
 
                         <div class="sticky-actions d-flex justify-content-between">
                             <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
-                                <i class="bi bi-x-circle"></i> Cancel
+                                <i class="bi bi-x-circle"></i> واپس جائیں
                             </a>
                             <button type="button" class="btn btn-secondary" id="backToStep2" data-bs-target="#step2"
                                     data-bs-toggle="tab">
-                                <i class="bi bi-arrow-left"></i> Back
+                                <i class="bi bi-arrow-left"></i> واپس جائیں
                             </button>
                             <button type="button" class="btn btn-success" id="openConfirmationModal">
-                                <i class="bi bi-check-circle me-1"></i> Save Customer
+                                <i class="bi bi-check-circle me-1"></i> گاہک محفوظ کریں
                             </button>
                         </div>
                     </div>
@@ -174,22 +174,22 @@
                 <!-- Confirm Modal -->
                 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content rounded-4 shadow">
+                        <div class="modal-content rounded-4 shadow pickup-modal">
                             <div class="modal-header bg-success text-white rounded-top-4">
-                                <h5 class="modal-title">Confirm Submission</h5>
+                                <h5 class="modal-title">محفوظ کرنے کی تصدیق</h5>
                                 <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                             </div>
                             <div class="modal-body" th:text="${isEdit} ?
-        'Are you sure you want to update this customer?' :
-        'Are you sure you want to create this customer with the provided details?'">
+        'کیا آپ واقعی اس گاہک کی معلومات میں ترمیم کرنا چاہتے ہیں؟' :
+        'کیا آپ واقعی دی گئی معلومات کے ساتھ یہ نیا گاہک بنانا چاہتے ہیں؟'">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    <i class="bi bi-x-circle me-1"></i> Cancel
+                                    <i class="bi bi-x-circle me-1"></i> واپس جائیں
                                 </button>
                                 <button type="submit" class="btn btn-success" id="confirmSubmit"
-                                        th:text="${isEdit} ? 'Yes, Update' : 'Yes, Submit'"></button>
+                                        th:text="${isEdit} ? 'ہاں، ترمیم کریں' : 'ہاں، محفوظ کریں'"></button>
                             </div>
                         </div>
                     </div>
@@ -234,11 +234,11 @@
             const phoneRegex = /^03\d{9}$/;
             if (!phone.value.trim() || !phoneRegex.test(phone.value)) {
                 phone.classList.add('is-invalid');
-                phone.nextElementSibling.textContent = "Enter a valid phone number (e.g., 03001234567).";
+                phone.nextElementSibling.textContent = "درست فون نمبر درج کریں۔ مثال: 03001234567";
                 ok = false;
             } else {
                 phone.classList.remove('is-invalid');
-                phone.nextElementSibling.textContent = "Phone number is required."; // reset message
+                phone.nextElementSibling.textContent = "فون نمبر درج کرنا ضروری ہے۔"; // reset message
             }
 
             return ok;
@@ -328,8 +328,8 @@
                 table.innerHTML = `
             <thead class="table-success text-dark">
                 <tr>
-                    <th>Measurement Field</th>
-                    <th class="text-center">Value</th>
+                    <th>ناپ کا نام</th>
+                    <th class="text-center">ناپ کی ویلیو</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -348,7 +348,7 @@
                         controlHtml = `<input type="number" step="0.01" class="form-control" name="${inputName}" value="${existing}" placeholder="${f.fieldName}">`;
                     } else if (f.fieldType === 'DROPDOWN') {
                         const opts = (f.options || '').split(',').map(s => s.trim()).filter(Boolean);
-                        const optionsHtml = ['<option value="">Select</option>'].concat(
+                        const optionsHtml = ['<option value="">منتخب کریں</option>'].concat(
                             opts.map(o => `<option value="${o}" ${o === existing ? 'selected' : ''}>${o}</option>`)
                         ).join('');
                         controlHtml = `<select class="form-select" name="${inputName}">${optionsHtml}</select>`;

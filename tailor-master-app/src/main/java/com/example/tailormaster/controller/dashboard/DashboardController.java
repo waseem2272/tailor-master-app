@@ -1,7 +1,9 @@
 package com.example.tailormaster.controller.dashboard;
 
 import com.example.tailormaster.entity.Order;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.dashboard.DashboardService;
+import com.example.tailormaster.service.order.OrderService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ public class DashboardController {
     private static final Logger logger = LogManager.getLogger(DashboardController.class);
 
     private final DashboardService dashboardService;
+    private final OrderService orderService;
 
     @GetMapping("/total-customers")
     public ResponseEntity<Long> getTotalCustomers() {
@@ -64,6 +68,49 @@ public class DashboardController {
             logger.error("Error fetching pending payments: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/pending-payments-summary")
+    @ResponseBody
+    public Map<String, Object> getPendingPaymentsSummary() {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            Object[] result = orderService.getPendingPaymentsSummary();
+
+            if (result != null) {
+
+                // Agar result ke andar actual row Object[] hai
+                if (result.length == 1 && result[0] instanceof Object[]) {
+
+                    Object[] row = (Object[]) result[0];
+
+                    response.put("count", row.length > 0 ? row[0] : 0L);
+                    response.put("amount", row.length > 1 ? row[1] : BigDecimal.ZERO);
+
+                } else {
+
+                    // Normal case: [count, amount]
+                    response.put("count", result.length > 0 ? result[0] : 0L);
+                    response.put("amount", result.length > 1 ? result[1] : BigDecimal.ZERO);
+                }
+
+            } else {
+                response.put("count", 0L);
+                response.put("amount", BigDecimal.ZERO);
+            }
+
+        } catch (Exception e) {
+
+            logger.error("Error while fetching pending payments summary", e);
+
+            response.put("count", 0L);
+            response.put("amount", BigDecimal.ZERO);
+        }
+
+        return response;
     }
 
     @GetMapping("/orders-in-progress")

@@ -1,114 +1,291 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login - Tailor Master</title>
+    <title>لاگ اِن - ٹیلر ماسٹر</title>
+
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
-</head>
-<body>
-<div class="container-fluid vh-100">
-    <div class="row h-100">
 
-        <!-- Left side with tailor image -->
+    <style>
+        body {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .login-page {
+            direction: rtl;
+        }
+
+        .login-page .card {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .login-page .card-header {
+            text-align: right;
+        }
+
+        .login-page .form-label {
+            text-align: right;
+            display: block;
+        }
+
+        .login-page .input-group {
+            direction: rtl;
+        }
+
+        .login-page .input-group-text {
+            order: 2;
+        }
+
+        .login-page .form-control {
+            text-align: right;
+            direction: rtl;
+        }
+
+        .login-page .text-center {
+            text-align: center !important;
+        }
+
+        .login-page .card-footer {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid vh-100 login-page">
+    <div class="row h-100" dir="ltr">
+
+        <!-- Tailor image - LEFT -->
         <div class="col-md-6 p-0 d-none d-md-block login-background">
-            <img th:src="@{/images/tailor-shop.jpg}" alt="Tailor Shop" class="img-fluid h-100 w-100" style="object-fit: cover;" />
+            <img th:src="@{/images/tailor-shop.jpg}"
+                 alt="ٹیلر ماسٹر دکان"
+                 class="img-fluid h-100 w-100"
+                 style="object-fit: cover;" />
         </div>
+
+        <!-- Gap -->
         <div class="col-md-1"></div>
-        <!-- Login Form on right (4 columns) -->
-        <div class="col-md-4 d-flex align-items-center justify-content-center">
+
+        <!-- Login Form - RIGHT -->
+        <div class="col-md-4 d-flex align-items-center justify-content-center"
+             dir="rtl">
+
             <div class="card shadow-sm border-success border-bottom border-3 mb-4 w-100 p-3">
+
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
                     <i class="bi bi-person-circle me-2"></i>
-                    <span id="formTitle">Login to Tailor Master</span>
+                    <span id="formTitle">ٹیلر ماسٹر میں لاگ اِن کریں</span>
                 </div>
+
                 <div class="card-body">
+
                     <!-- Alert Messages -->
+
                     <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i> Invalid username or password. Please try again.
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        یوزر نیم یا پاس ورڈ درست نہیں ہے۔ دوبارہ کوشش کریں۔
                     </div>
+
                     <div th:if="${param.logout}" class="alert alert-success" role="alert">
-                        <i class="bi bi-check-circle-fill"></i> You have been logged out successfully.
+                        <i class="bi bi-check-circle-fill"></i>
+                        آپ کامیابی سے سسٹم سے لاگ آؤٹ ہو گئے ہیں۔
                     </div>
+
                     <div th:if="${param.trial}" class="alert alert-warning" role="alert">
-                        <i class="bi bi-info-circle-fill"></i> Your 30-day trial has expired. Please contact us to continue using the application.
+                        <i class="bi bi-info-circle-fill"></i>
+                        آپ کی 30 دن کی آزمائشی مدت ختم ہو گئی ہے۔
+                        ایپلیکیشن کا استعمال جاری رکھنے کے لیے ہم سے رابطہ کریں۔
                     </div>
+
                     <div th:if="${success}" class="alert alert-success" role="alert">
-                        <i class="bi bi-check-circle-fill"></i> <span th:text="${success}"></span>
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span th:text="${success}"></span>
                     </div>
+
                     <div th:if="${error}" class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${error}"></span>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span th:text="${error}"></span>
                     </div>
+
 
                     <!-- Login Form -->
+
                     <form id="loginForm" method="post" th:action="@{/login}">
+
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label">
+                                یوزر نیم
+                            </label>
+
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="username"
+                                       name="username"
+                                       placeholder="یوزر نیم درج کریں"
+                                       required>
                             </div>
                         </div>
+
+
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="password" class="form-label">
+                                پاس ورڈ
+                            </label>
+
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+
+                                <input type="password"
+                                       class="form-control"
+                                       id="password"
+                                       name="password"
+                                       placeholder="پاس ورڈ درج کریں"
+                                       required>
                             </div>
                         </div>
+
+
                         <button type="submit" class="btn btn-success w-100 mb-2">
-                            <i class="bi bi-box-arrow-in-right"></i> Login
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            لاگ اِن کریں
                         </button>
+
+
                         <div class="text-center">
-                            <a href="javascript:void(0);" class="text-primary" onclick="toggleForgotPassword()">Forgot Password?</a>
+                            <a href="javascript:void(0);"
+                               class="text-primary"
+                               onclick="toggleForgotPassword()">
+                                پاس ورڈ بھول گئے؟
+                            </a>
                         </div>
+
                     </form>
+
 
                     <!-- Forgot Password Form -->
-                    <form id="forgotPasswordForm" method="post" th:action="@{/update-password}" style="display: none;" onsubmit="return validateForgotPasswordForm()">
-                    <div class="mb-3">
-                            <label for="forgotUsername" class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                                <input type="text" class="form-control" id="forgotUsername" name="username" placeholder="Enter your username" required>
-                            </div>
-                        </div>
+
+                    <form id="forgotPasswordForm"
+                          method="post"
+                          th:action="@{/update-password}"
+                          style="display: none;"
+                          onsubmit="return validateForgotPasswordForm()">
+
                         <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <div class="input-group position-relative has-validation">
-                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                                <input type="password" class="form-control" id="newPassword" name="newPassword"
-                                       placeholder="Enter new password" required oninput="validatePasswordInput()">
-                                <button class="btn btn-outline-success position-absolute end-0 top-0 bottom-0 border-0"
-                                        type="button" onclick="togglePasswordVisibility()" tabindex="-1"
-                                        style="z-index: 5; right: 10px;">
-                                    <i id="togglePasswordIcon" class="bi bi-eye-slash"></i>
-                                </button>
-                                <div class="invalid-feedback" id="passwordError">Password must be at least 6 characters long.</div>
+                            <label for="forgotUsername" class="form-label">
+                                یوزر نیم
+                            </label>
+
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-person-fill"></i>
+                                </span>
+
+                                <input type="text"
+                                       class="form-control"
+                                       id="forgotUsername"
+                                       name="username"
+                                       placeholder="اپنا یوزر نیم درج کریں"
+                                       required>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 mb-2">
-                            <i class="bi bi-save"></i> Update Password
-                        </button>
-                        <div class="text-center">
-                            <a href="javascript:void(0);" class="text-primary" onclick="toggleForgotPassword()">Back to Login</a>
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">
+                                نیا پاس ورڈ
+                            </label>
+
+                            <div class="input-group position-relative has-validation">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+
+                                <input type="password"
+                                       class="form-control"
+                                       id="newPassword"
+                                       name="newPassword"
+                                       placeholder="نیا پاس ورڈ درج کریں"
+                                       required
+                                       oninput="validatePasswordInput()">
+
+                                <button class="btn btn-outline-success position-absolute end-0 top-0 bottom-0 border-0"
+                                        type="button"
+                                        onclick="togglePasswordVisibility()"
+                                        tabindex="-1"
+                                        style="z-index: 5; right: 10px;">
+
+                                    <i id="togglePasswordIcon"
+                                       class="bi bi-eye-slash"></i>
+
+                                </button>
+
+                                <div class="invalid-feedback"
+                                     id="passwordError">
+                                    پاس ورڈ کم از کم 6 حروف پر مشتمل ہونا چاہیے۔
+                                </div>
+
+                            </div>
                         </div>
+
+
+                        <button type="submit" class="btn btn-success w-100 mb-2">
+                            <i class="bi bi-save"></i>
+                            پاس ورڈ تبدیل کریں
+                        </button>
+
+
+                        <div class="text-center">
+                            <a href="javascript:void(0);"
+                               class="text-primary"
+                               onclick="toggleForgotPassword()">
+                                لاگ اِن پر واپس جائیں
+                            </a>
+                        </div>
+
                     </form>
+
                 </div>
+
                 <div class="card-footer text-center">
-                    <p class="mb-0">Don't have an account? <a th:href="@{users/register}" class="text-primary">Sign Up</a></p>
+                    <p class="mb-0">
+                        اکاؤنٹ نہیں ہے؟
+                        <a th:href="@{users/register}"
+                           class="text-primary">
+                            نیا اکاؤنٹ بنائیں
+                        </a>
+                    </p>
                 </div>
+
             </div>
+
         </div>
+
+        <!-- Remaining gap -->
         <div class="col-md-1"></div>
+
     </div>
 </div>
 
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
 <script>
+
     function toggleForgotPassword() {
+
         const loginForm = document.getElementById('loginForm');
         const forgotForm = document.getElementById('forgotPasswordForm');
         const title = document.getElementById('formTitle');
@@ -118,47 +295,68 @@
         document.getElementById('passwordError').style.display = 'none';
 
         const isLoginVisible = loginForm.style.display !== 'none';
+
         loginForm.style.display = isLoginVisible ? 'none' : 'block';
         forgotForm.style.display = isLoginVisible ? 'block' : 'none';
-        title.innerText = isLoginVisible ? 'Reset Your Password' : 'Login to Tailor Master';
+
+        title.innerText = isLoginVisible
+            ? 'اپنا پاس ورڈ تبدیل کریں'
+            : 'ٹیلر ماسٹر میں لاگ اِن کریں';
     }
 
+
     function validatePasswordInput() {
+
         const passwordInput = document.getElementById('newPassword');
         const errorDiv = document.getElementById('passwordError');
 
         if (passwordInput.value.length >= 6) {
+
             passwordInput.classList.remove('is-invalid');
             errorDiv.style.display = 'none';
+
         } else {
+
             passwordInput.classList.add('is-invalid');
             errorDiv.style.display = 'block';
         }
     }
 
+
     function validateForgotPasswordForm() {
+
         const passwordInput = document.getElementById('newPassword');
         const errorDiv = document.getElementById('passwordError');
 
         if (passwordInput.value.length < 6) {
+
             passwordInput.classList.add('is-invalid');
             errorDiv.style.display = 'block';
+
             return false;
         }
 
         passwordInput.classList.remove('is-invalid');
         errorDiv.style.display = 'none';
+
         return true;
     }
 
+
     function togglePasswordVisibility() {
+
         const passwordInput = document.getElementById("newPassword");
         const toggleIcon = document.getElementById("togglePasswordIcon");
 
         const isPassword = passwordInput.type === "password";
+
         passwordInput.type = isPassword ? "text" : "password";
-        toggleIcon.className = isPassword ? "bi bi-eye" : "bi bi-eye-slash";
+
+        toggleIcon.className = isPassword
+            ? "bi bi-eye"
+            : "bi bi-eye-slash";
     }
+
 </script>
 
 </body>

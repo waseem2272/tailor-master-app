@@ -17,13 +17,13 @@
             <form th:action="@{/orders/create}" th:object="${orderDto}" method="post" class="order-form">
                 <div id="orderProductsInputs"></div>
                 <h2 class="page-title d-flex align-items-center mb-4">
-                    <i class="bi bi-plus-circle-fill me-2"></i> Create Order
+                    <i class="bi bi-plus-circle-fill me-2"></i> نیا آرڈر بنائیں
                 </h2>
 
                 <!-- Customer Information Card -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Customer Information
+                        <i class="bi bi-info-circle me-2"></i> گاہک کی معلومات
                     </div>
                     <div class="card-body">
                         <input type="hidden" name="encryptedCustomerId"
@@ -31,12 +31,12 @@
                                th:value="${thymeleafUtil.encryptId(orderDto.customer.id)}">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Full Name</label>
+                                <label class="form-label fw-semibold">گاہک کا نام</label>
                                 <input type="text" id="customerName" class="form-control bg-light"
                                        th:value="${orderDto.customer.fullName}" readonly>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Phone Number</label>
+                                <label class="form-label fw-semibold">فون نمبر</label>
                                 <input type="text" id="customerPhone" class="form-control bg-light"
                                        th:value="${orderDto.customer.phoneNumber}" readonly>
                             </div>
@@ -49,7 +49,7 @@
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
 
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-box-seam me-2"></i> Add Product to Order
+                        <i class="bi bi-box-seam me-2"></i> آرڈر میں کپڑا شامل کریں
                     </div>
 
                     <div class="card-body">
@@ -60,12 +60,12 @@
                             <!-- Product -->
                             <div class="col-md-5">
                                 <label for="productSelect" class="form-label fw-bold">
-                                    Select Product
+                                    کپڑا منتخب کریں
                                 </label>
 
                                 <select class="form-select" id="productSelect">
                                     <option value="" disabled selected>
-                                        -- Select a Product --
+                                        -- کپڑا منتخب کریں --
                                     </option>
 
                                     <option th:each="p : ${products}"
@@ -78,12 +78,12 @@
                             <!-- Silai -->
                             <div class="col-md-4">
                                 <label for="silaiSelect" class="form-label fw-bold">
-                                    Silai Type
+                                    سلائی کی قسم
                                 </label>
 
                                 <select class="form-select" id="silaiSelect">
                                     <option value="" disabled selected>
-                                        -- Silai Type --
+                                        -- سلائی کی قسم --
                                     </option>
                                 </select>
                             </div>
@@ -91,7 +91,7 @@
                             <!-- Quantity -->
                             <div class="col-md-3">
                                 <label for="quantity" class="form-label fw-bold">
-                                    Quantity
+                                    تعداد
                                 </label>
 
                                 <input type="number"
@@ -99,7 +99,7 @@
                                        min="1"
                                        class="form-control"
                                        id="quantity"
-                                       placeholder="e.g. 1">
+                                       placeholder="مثال: 1">
                             </div>
 
                         </div>
@@ -109,14 +109,14 @@
                             <div class="col-12">
 
                                 <label for="additionalNotes" class="form-label fw-bold">
-                                    Additional Notes
+                                    اضافی ہدایات
                                 </label>
 
                                 <textarea
                                         class="form-control"
                                         id="additionalNotes"
                                         rows="3"
-                                        placeholder="Enter any additional instructions or notes..."
+                                        placeholder="کوئی اضافی ہدایت یا بات درج کریں..."
                                         style="text-align: left; vertical-align: top; resize: vertical;"></textarea>
 
                             </div>
@@ -132,7 +132,7 @@
                                         class="btn btn-success w-100">
 
                                     <i class="bi bi-plus-circle me-1"></i>
-                                    Add Product
+                                    کپڑا شامل کریں
 
                                 </button>
 
@@ -145,7 +145,7 @@
 
                         <h6 class="fw-bold mb-3">
                             <i class="bi bi-list-check me-1"></i>
-                            Products Added
+                            شامل کیے گئے کپڑے
                         </h6>
 
                         <div class="table-responsive">
@@ -154,13 +154,13 @@
 
                                 <thead class="table-light">
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Silai</th>
-                                    <th>Silai Amount</th>
-                                    <th>Quantity</th>
-                                    <th>Subtotal</th>
-                                    <th>Additional Notes</th>
-                                    <th>Action</th>
+                                    <th>کپڑا</th>
+                                    <th>سلائی</th>
+                                    <th>سلائی کی رقم</th>
+                                    <th>تعداد</th>
+                                    <th>کل رقم</th>
+                                    <th>اضافی ہدایات</th>
+                                    <th>کارروائی</th>
                                 </tr>
                                 </thead>
 
@@ -175,12 +175,12 @@
                 <!-- Order Details Card -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                        <i class="bi bi-card-list me-2"></i> Order Details
+                        <i class="bi bi-card-list me-2"></i> آرڈر کی تفصیلات
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="orderDate" class="form-label fw-bold">Order Date <span
+                                <label for="orderDate" class="form-label fw-bold">آرڈر کی تاریخ <span
                                         class="text-danger">*</span></label>
                                 <input type="date" id="orderDate" name="orderDate" class="form-control"
                                        th:value="${orderDto != null ? #temporals.format(orderDto.orderDate, 'yyyy-MM-dd') : ''}"
@@ -189,7 +189,7 @@
                                       th:errors="*{orderDate}"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="deliveryDate" class="form-label fw-bold">Delivery Date <span
+                                <label for="deliveryDate" class="form-label fw-bold">تیاری کی تاریخ <span
                                         class="text-danger">*</span></label>
                                 <input type="date" id="deliveryDate" name="deliveryDate" class="form-control"
                                        th:value="${orderDto != null ? #temporals.format(orderDto.deliveryDate, 'yyyy-MM-dd') : ''}"
@@ -199,7 +199,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="advancePayment" class="form-label fw-bold">
-                                    Advance Payment
+                                    پیشگی رقم
                                 </label>
 
                                 <input type="number"
@@ -221,7 +221,7 @@
                                 </span>
                             </div>
                             <div class="col-md-6">
-                                <label for="duePayment" class="form-label fw-bold">Due Payment <span
+                                <label for="duePayment" class="form-label fw-bold">بقایا رقم <span
                                         class="text-danger">*</span></label>
                                 <input type="number" step="0.01" class="form-control" name="duePayment" id="duePayment"
                                        th:field="*{duePayment}" readonly>
@@ -229,7 +229,7 @@
                                       th:errors="*{duePayment}"></span>
                             </div>
                             <div class="col-md-6">
-                                <label for="totalProductAmount" class="form-label fw-bold">Total Product Amount <span
+                                <label for="totalProductAmount" class="form-label fw-bold">کپڑوں کی کل رقم <span
                                         class="text-danger">*</span></label>
                                 <input type="number" step="0.01" class="form-control" id="totalProductAmount"
                                        name="totalProductAmount" th:field="*{totalProductAmount}" readonly>
@@ -244,10 +244,10 @@
                 <!-- Buttons -->
                 <div class="text-center mt-4 mb-4">
                     <button type="button" class="btn btn-success shadow rounded-pill px-4" id="createOrderButton">
-                        <i class="bi bi-check-circle"></i> Create
+                        <i class="bi bi-check-circle"></i> آرڈر بنائیں
                     </button>
                     <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
-                        <i class="bi bi-x-circle"></i> Cancel
+                        <i class="bi bi-x-circle"></i> واپس جائیں
                     </a>
                 </div>
             </form>
@@ -259,28 +259,28 @@
 <div class="modal fade" id="orderSummaryModal" tabindex="-1" aria-labelledby="orderSummaryModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 shadow">
+        <div class="modal-content rounded-4 shadow pickup-modal">
             <div class="modal-header bg-success text-white rounded-top-4">
                 <h5 class="modal-title" id="orderSummaryModalLabel">
-                    <i class="bi bi-receipt-cutoff me-2"></i> Order Summary
+                    <i class="bi bi-receipt-cutoff me-2"></i> آرڈر کا خلاصہ
                 </h5>
                 <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Customer Information
+                        <i class="bi bi-info-circle me-2"></i> گاہک کی معلومات
                     </div>
                     <div class="card-body">
-                        <p><strong>Name:</strong> <span id="modalCustomerName">-</span></p>
-                        <p><strong>Phone Number:</strong> <span id="modalCustomerContact">-</span></p>
+                        <p><strong>نام:</strong> <span id="modalCustomerName">-</span></p>
+                        <p><strong>فون نمبر:</strong> <span id="modalCustomerContact">-</span></p>
                     </div>
                 </div>
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
 
                     <div class="card-header bg-success text-white fw-bold">
                         <i class="bi bi-calendar-check me-2"></i>
-                        Order Information
+                        آرڈر کی معلومات
                     </div>
 
                     <div class="card-body">
@@ -289,14 +289,14 @@
 
                             <div class="col-md-6">
                                 <p>
-                                    <strong>Order Date:</strong>
+                                    <strong>آرڈر کی تاریخ:</strong>
                                     <span id="modalOrderDate">-</span>
                                 </p>
                             </div>
 
                             <div class="col-md-6">
                                 <p>
-                                    <strong>Delivery Date:</strong>
+                                    <strong>تیاری کی تاریخ:</strong>
                                     <span id="modalDeliveryDate">-</span>
                                 </p>
                             </div>
@@ -305,18 +305,18 @@
                 </div>
                 <div class="card border-success border-bottom border-3 shadow-sm border-0 mb-3">
                     <div class="card-header bg-success text-white rounded-top-4">
-                        <strong><i class="bi bi-list-check me-2"></i>Products Summary</strong>
+                        <strong><i class="bi bi-list-check me-2"></i>کپڑوں کا خلاصہ</strong>
                     </div>
                     <div class="card-body p-0">
                         <table class="table table-bordered m-0">
                             <thead class="table-success">
                             <tr>
-                                <th>Product</th>
-                                <th>Silai</th>
-                                <th>Silai Amount</th>
-                                <th>Qty</th>
-                                <th>Subtotal</th>
-                                <th>Additional Notes</th>
+                                <th>کپڑا</th>
+                                <th>سلائی</th>
+                                <th>سلائی کی رقم</th>
+                                <th>تعداد</th>
+                                <th>کل رقم</th>
+                                <th>اضافی ہدایات</th>
                             </tr>
                             </thead>
                             <tbody id="orderSummaryBody">
@@ -326,17 +326,17 @@
                     </div>
                 </div>
                 <div class="text-end mt-4">
-                    <p class="fs-5 fw-bold">Total Amount: <span id="modalTotalAmount">0.00</span></p>
-                    <p class="fs-5 fw-bold text-success">Advance Payment: <span id="modalAdvancePayment">0.00</span></p>
-                    <p class="fs-5 fw-bold text-danger">Due Payment: <span id="modalDuePayment">0.00</span></p>
+                    <p class="fs-5 fw-bold">کل رقم: <span id="modalTotalAmount">0.00</span></p>
+                    <p class="fs-5 fw-bold text-success">پیشگی رقم: <span id="modalAdvancePayment">0.00</span></p>
+                    <p class="fs-5 fw-bold text-danger">بقایا رقم: <span id="modalDuePayment">0.00</span></p>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                        class="bi bi-x-circle me-1"></i> Cancel
+                        class="bi bi-x-circle me-1"></i> واپس جائیں
                 </button>
                 <button type="submit" class="btn btn-success" id="confirmOrderButton"><i
-                        class="bi bi-check-circle me-1"></i> Confirm Order
+                        class="bi bi-check-circle me-1"></i> آرڈر کی تصدیق کریں
                 </button>
             </div>
         </div>
@@ -380,7 +380,7 @@
         var silaiContainer = document.getElementById("silaiContainer");
 
         // Clear old options
-        silaiSelect.innerHTML = '<option value="" disabled selected>-- Silai Type --</option>';
+        silaiSelect.innerHTML = '<option value="" disabled selected>-- سلائی کی قسم --</option>';
 
         // Find product
         var product = productSilaiData.find(p => p.id == selectedId);
@@ -388,13 +388,13 @@
             // Add Single Silai
             var opt1 = document.createElement("option");
             opt1.value = "single";
-            opt1.text = "Single Silai - " + formatAmount(product.singleSilai);
+            opt1.text = "سنگل سلائی - " + formatAmount(product.singleSilai);
             silaiSelect.appendChild(opt1);
 
             // Add Double Silai
             var opt2 = document.createElement("option");
             opt2.value = "double";
-            opt2.text = "Double Silai - " + formatAmount(product.doubleSilai);
+            opt2.text = "ڈبل سلائی - " + formatAmount(product.doubleSilai);
             silaiSelect.appendChild(opt2);
 
             // Show dropdown
@@ -430,7 +430,7 @@
             !qty ||
             qty < 1) {
 
-            alert("Please select product, silai type and quantity.");
+            alert("کپڑا، سلائی کی قسم اور تعداد منتخب کریں۔");
             return;
         }
 
@@ -443,7 +443,7 @@
 
 
         if (!product) {
-            alert("Product information not found.");
+            alert("کپڑے کی معلومات نہیں مل سکیں۔");
             return;
         }
 
@@ -514,7 +514,7 @@
         productSelect.selectedIndex = 0;
 
         silaiSelect.innerHTML =
-            '<option value="" disabled selected>-- Silai Type --</option>';
+            '<option value="" disabled selected>-- سلائی کی قسم --</option>';
 
         quantityInput.value = "";
 
@@ -553,7 +553,7 @@
                             class="btn btn-sm btn-danger"
                             onclick="deleteItem(${index})">
                         <i class="bi bi-trash"></i>
-                        Delete
+                        حذف کریں
                     </button>
                 </td>
             </tr>
@@ -596,7 +596,7 @@
         if (advancePayment < 0) {
 
             advanceError.innerText =
-                "Advance payment cannot be negative.";
+                "پیشگی رقم منفی نہیں ہو سکتی۔";
 
             advanceError.style.display = "block";
 
@@ -609,7 +609,7 @@
         if (advancePayment > totalAmount) {
 
             advanceError.innerText =
-                "Advance payment cannot be greater than total product amount.";
+                "پیشگی رقم کپڑوں کی کل رقم سے زیادہ نہیں ہو سکتی۔";
 
             advanceError.style.display = "block";
 
@@ -650,7 +650,7 @@
 
             if (orderItems.length === 0) {
 
-                alert("Please add at least one product.");
+                alert("کم از کم ایک کپڑا شامل کریں۔");
 
                 return;
             }
@@ -669,7 +669,7 @@
 
             if (!orderDate || !deliveryDate) {
 
-                alert("Please select order and delivery date.");
+                alert("آرڈر کی تاریخ اور تیاری کی تاریخ منتخب کریں۔");
 
                 return;
             }
@@ -693,7 +693,7 @@
 
             if (advancePayment < 0) {
 
-                alert("Advance payment cannot be negative.");
+                alert("پیشگی رقم منفی نہیں ہو سکتی۔");
 
                 return;
             }
@@ -702,7 +702,7 @@
             if (advancePayment > totalAmount) {
 
                 alert(
-                    "Advance payment cannot be greater than total product amount."
+                    "پیشگی رقم کپڑوں کی کل رقم سے زیادہ نہیں ہو سکتی۔"
                 );
 
                 return;

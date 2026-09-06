@@ -17,7 +17,7 @@
         <div class="container-fluid">
 
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-person-fill me-2"></i> Labor Details
+                <i class="bi bi-person-fill me-2"></i> کاریگر کی تفصیلات
             </h2>
 
             <!-- Success Alert -->
@@ -27,7 +27,7 @@
                         <i class="bi bi-check-circle-fill me-2 fs-4"></i>
                         <span th:text="${successMessage}"></span>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="بند کریں"></button>
                 </div>
             </div>
 
@@ -38,48 +38,73 @@
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="بند کریں"></button>
                 </div>
             </div>
 
-            <!-- Customer Information -->
+            <!-- Labor Information -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-info-circle me-2"></i> Labor Information
+                    <i class="bi bi-info-circle me-2"></i> کاریگر کی معلومات
                 </div>
+
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <p><strong>Name:</strong> <span th:text="${labor.name}"></span></p>
+                            <p>
+                                <strong>نام:</strong>
+                                <span th:text="${labor.name}"></span>
+                            </p>
                         </div>
+
                         <div class="col-md-6">
-                            <p><strong>Phone:</strong> <span th:text="${labor.contact}"></span></p>
+                            <p>
+                                <strong>رابطہ نمبر:</strong>
+                                <span th:text="${labor.contact}"></span>
+                            </p>
                         </div>
+
                         <div class="col-md-6">
-                            <p><strong>Skills:</strong> <span th:text="${labor.skills}"></span></p>
+                            <p>
+                                <strong>مہارت:</strong>
+                                <span th:text="${labor.skills}"></span>
+                            </p>
                         </div>
+
                         <div class="col-md-6">
-                            <p><strong>Join Date:</strong> <span
-                                    th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></span></p>
+                            <p>
+                                <strong>شمولیت کی تاریخ:</strong>
+                                <span th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></span>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Payment Details -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center rounded-top-4">
-                    <span><i class="bi bi-cash-coin me-2"></i> Payment Details</span>
-                    <button class="btn btn-light btn-sm" th:attr="data-labor-id=${labor.id}" onclick="openAddPaymentModal(this)">
-                        <i class="bi bi-plus-circle me-1"></i> Make Payment
+                    <span>
+                        <i class="bi bi-cash-coin me-2"></i> ادائیگی کی تفصیلات
+                    </span>
+
+                    <button class="btn btn-light btn-sm"
+                            th:attr="data-labor-id=${labor.id}"
+                            onclick="openAddPaymentModal(this)">
+                        <i class="bi bi-plus-circle me-1"></i> ادائیگی کریں
                     </button>
                 </div>
+
                 <div class="card-body">
+
+                    <!-- Total Paid -->
                     <div class="row justify-content-center text-center mb-4">
                         <div class="col-md-6">
-                            <div class="p-4 border rounded bg-success bg-opacity-10">
+                            <div class="p-4 border rounded bg-success bg-opacity-10 text-center">
                                 <h5 class="text-success mb-2">
-                                    <i class="bi bi-cash-coin me-1"></i> Total Paid
+                                    <i class="bi bi-cash-coin me-1"></i> کل ادا شدہ رقم
                                 </h5>
+
                                 <h3 class="fw-bold text-success mb-0"
                                     th:text="${#numbers.formatDecimal(totalPaid, 1, 'COMMA', 2, 'POINT')}">
                                 </h3>
@@ -87,12 +112,15 @@
                         </div>
                     </div>
 
+                    <!-- Payment Summary -->
                     <div class="row text-center mb-2">
+
                         <div class="col-md-4 mb-2">
-                            <div class="p-3 border rounded bg-primary bg-opacity-10">
+                            <div class="p-3 border rounded bg-primary bg-opacity-10 text-center">
                                 <h6 class="text-primary mb-1">
-                                    <i class="bi bi-wallet2 me-1"></i> Regular
+                                    <i class="bi bi-wallet2 me-1"></i> معمول کی ادائیگی
                                 </h6>
+
                                 <h5 class="fw-bold text-primary mb-0"
                                     th:text="${#numbers.formatDecimal(regularPaid, 1, 'COMMA', 2, 'POINT')}">
                                 </h5>
@@ -100,10 +128,11 @@
                         </div>
 
                         <div class="col-md-4 mb-2">
-                            <div class="p-3 border rounded bg-info bg-opacity-10">
+                            <div class="p-3 border rounded bg-info bg-opacity-10 text-center">
                                 <h6 class="text-info mb-1">
-                                    <i class="bi bi-piggy-bank me-1"></i> Advance
+                                    <i class="bi bi-piggy-bank me-1"></i> پیشگی رقم
                                 </h6>
+
                                 <h5 class="fw-bold text-info mb-0"
                                     th:text="${#numbers.formatDecimal(advancePaid, 1, 'COMMA', 2, 'POINT')}">
                                 </h5>
@@ -111,10 +140,11 @@
                         </div>
 
                         <div class="col-md-4 mb-2">
-                            <div class="p-3 border rounded bg-danger bg-opacity-10">
+                            <div class="p-3 border rounded bg-danger bg-opacity-10 text-center">
                                 <h6 class="text-danger mb-1">
-                                    <i class="bi bi-arrow-down-circle me-1"></i> Borrowed
+                                    <i class="bi bi-arrow-down-circle me-1"></i> ادھار رقم
                                 </h6>
+
                                 <h5 class="fw-bold text-danger mb-0"
                                     th:text="${#numbers.formatDecimal(borrowPaid, 1, 'COMMA', 2, 'POINT')}">
                                 </h5>
@@ -122,64 +152,84 @@
                         </div>
                     </div>
 
+                    <!-- Remaining Balance -->
                     <div class="row justify-content-center text-center">
                         <div class="col-md-6 mb-2">
                             <div class="p-4 border rounded"
-                                 th:classappend="${remainingBalance > 0} ? ' bg-success bg-opacity-10' : ' bg-danger bg-opacity-10'">
-                                <h5 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'" class="mb-2">
-                                    <i class="bi bi-calculator me-1"></i> Remaining Balance
+                                 th:classappend="${remainingBalance > 0} ? ' bg-success bg-opacity-10 text-center' : ' bg-danger bg-opacity-10 text-center'">
+
+                                <h5 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'"
+                                    class="mb-2">
+                                    <i class="bi bi-calculator me-1"></i> باقی رقم
                                 </h5>
+
                                 <h3 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'"
                                     class="fw-bold mb-0"
                                     th:text="${#numbers.formatDecimal(remainingBalance, 1, 'COMMA', 2, 'POINT')}">
                                 </h3>
+
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
 
+            <!-- Payment History -->
             <div class="card shadow-sm border-success border-bottom border-3">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-clock-history me-2"></i> Payment History
+                    <i class="bi bi-clock-history me-2"></i> ادائیگیوں کا ریکارڈ
                 </div>
+
                 <div class="card-body">
-                    <table id="laborPaymentsTable" class="table table-bordered table-hover table-striped">
+                    <table id="laborPaymentsTable"
+                           class="table table-bordered table-hover table-striped">
+
                         <thead class="table-success text-dark">
                         <tr>
                             <th>#</th>
-                            <th>Payment Type</th>
-                            <th>Payment Date</th>
-                            <th>Amount</th>
-                            <th>Remarks</th>
-                            <th>Actions</th>
+                            <th>ادائیگی کی قسم</th>
+                            <th>ادائیگی کی تاریخ</th>
+                            <th>رقم</th>
+                            <th>تفصیل</th>
+                            <th>کارروائی</th>
                         </tr>
                         </thead>
-                        <tbody>
-                            <tr th:each="payment, iterStat : ${payments}">
-                                <td th:text="${iterStat.count}"></td>
-                                <td th:text="${payment.paymentType.name()}"></td>
-                                <td th:text="${#temporals.format(payment.paymentDate, 'dd-MMM-yyyy')}"></td>
-                                <td class="format-amount" th:text="${payment.workAmount > 0 ? payment.workAmount : payment.deductions}"></td>
-                                <td th:text="${payment.remarks} ?: '—'"></td>
-                                <td>
-                                    <a href="javascript:void(0);"
-                                       class="btn btn-warning btn-sm"
-                                       th:attr="data-id=${payment.id}"
-                                       onclick="editPayment(this)">
-                                        <i class="bi bi-pencil-square"></i> Edit
-                                    </a>
-                                    <a href="javascript:void(0);"
-                                       class="btn btn-danger btn-sm ms-1"
-                                       th:attr="data-id=${payment.id}"
-                                       onclick="deletePayment(this)">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </a>
 
-                                </td>
-                            </tr>
+                        <tbody>
+                        <tr th:each="payment, iterStat : ${payments}">
+
+                            <td th:text="${iterStat.count}"></td>
+
+                            <td th:text="${payment.paymentType.name()}"></td>
+
+                            <td th:text="${#temporals.format(payment.paymentDate, 'dd-MMM-yyyy')}"></td>
+
+                            <td class="format-amount"
+                                th:text="${payment.workAmount > 0 ? payment.workAmount : payment.deductions}">
+                            </td>
+
+                            <td th:text="${payment.remarks} ?: '—'"></td>
+
+                            <td>
+                                <a href="javascript:void(0);"
+                                   class="btn btn-warning btn-sm"
+                                   th:attr="data-id=${payment.id}"
+                                   onclick="editPayment(this)">
+                                    <i class="bi bi-pencil-square"></i> ترمیم
+                                </a>
+
+                                <a href="javascript:void(0);"
+                                   class="btn btn-danger btn-sm ms-1"
+                                   th:attr="data-id=${payment.id}"
+                                   onclick="deletePayment(this)">
+                                    <i class="bi bi-trash"></i> حذف کریں
+                                </a>
+                            </td>
+
+                        </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -189,52 +239,130 @@
 </div>
 
 <!-- Shared Modal for Create/Update -->
-<div class="modal fade" id="makePaymentModal" tabindex="-1" aria-labelledby="makePaymentModalLabel" aria-hidden="true">
+<div class="modal fade"
+     id="makePaymentModal"
+     tabindex="-1"
+     aria-labelledby="makePaymentModalLabel"
+     aria-hidden="true">
+
     <div class="modal-dialog">
-        <form method="post" th:object="${laborPayment}" id="laborPaymentForm" class="needs-validation" novalidate>
+
+        <form method="post"
+              th:object="${laborPayment}"
+              id="laborPaymentForm"
+              class="needs-validation"
+              novalidate>
+
             <input type="hidden" name="laborId" th:value="${labor.id}" />
 
-            <input type="hidden" name="_csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <input type="hidden" id="paymentId" name="id" th:field="*{id}"/>
+            <input type="hidden"
+                   name="_csrf"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}" />
 
-            <div class="modal-content rounded-4 shadow">
+            <input type="hidden"
+                   id="paymentId"
+                   name="id"
+                   th:field="*{id}"/>
+
+            <div class="modal-content rounded-4 shadow pickup-modal">
+
                 <div class="modal-header bg-success text-white rounded-top-4">
-                    <h5 class="modal-title" id="makePaymentModalLabel">Make Payment</h5>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="makePaymentModalLabel">
+                        ادائیگی کریں
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close bg-light"
+                            data-bs-dismiss="modal"
+                            aria-label="بند کریں">
+                    </button>
                 </div>
+
                 <div class="modal-body">
-                    <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+                    <p class="text-danger fw-bold">
+                        * والے خانے لازمی ہیں
+                    </p>
 
                     <div class="mb-3">
-                        <label for="paymentType" class="form-label">Payment Type <span class="text-danger">*</span></label>
-                        <select id="paymentType" name="paymentType" class="form-select rounded-pill" required>
-                            <option value="" disabled selected>Select</option>
-                            <option th:each="type : ${paymentTypes}" th:value="${type}" th:text="${type}"></option>
+                        <label for="paymentType" class="form-label">
+                            ادائیگی کی قسم <span class="text-danger">*</span>
+                        </label>
+
+                        <select id="paymentType"
+                                name="paymentType"
+                                class="form-select rounded-pill"
+                                required>
+
+                            <option value="" disabled selected>
+                                منتخب کریں
+                            </option>
+
+                            <option th:each="type : ${paymentTypes}"
+                                    th:value="${type}"
+                                    th:text="${type}">
+                            </option>
+
                         </select>
-                        <div class="invalid-feedback">Please select a payment type.</div>
+
+                        <div class="invalid-feedback">
+                            ادائیگی کی قسم منتخب کریں۔
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
-                        <input type="number" min="0.01" step="0.01" class="form-control" id="amount" name="amount" required>
-                        <div class="invalid-feedback">Please enter a valid amount greater than 0.</div>
+                        <label for="amount" class="form-label">
+                            رقم <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="number"
+                               min="0.01"
+                               step="0.01"
+                               class="form-control"
+                               id="amount"
+                               name="amount"
+                               required>
+
+                        <div class="invalid-feedback">
+                            0 سے زیادہ درست رقم درج کریں۔
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="remarks" class="form-label">Remarks</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
+                        <label for="remarks" class="form-label">
+                            تفصیل
+                        </label>
+
+                        <textarea class="form-control"
+                                  id="remarks"
+                                  name="remarks"
+                                  rows="2">
+                        </textarea>
                     </div>
+
                 </div>
+
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success" id="submitBtn">
-                        <i class="bi bi-check-circle"></i> Confirm Payment
+
+                    <button type="submit"
+                            class="btn btn-success"
+                            id="submitBtn">
+                        <i class="bi bi-check-circle"></i> ادائیگی کی تصدیق کریں
                     </button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Cancel
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> واپس جائیں
                     </button>
+
                 </div>
+
             </div>
+
         </form>
+
     </div>
 </div>
 
@@ -260,7 +388,9 @@
 <script>
     (function () {
         'use strict';
+
         const forms = document.querySelectorAll('.needs-validation');
+
         Array.from(forms).forEach(function (form) {
             form.addEventListener('submit', function (event) {
                 const submitBtn = form.querySelector('#submitBtn');
@@ -269,14 +399,17 @@
                     event.preventDefault();
                     event.stopPropagation();
                 } else {
-                    // ✅ Disable the button after successful validation
+                    // Button disable after successful validation
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                    submitBtn.innerHTML =
+                        '<i class="bi bi-hourglass-split"></i> کارروائی جاری ہے...';
                 }
+
                 form.classList.add('was-validated');
             }, false);
         });
     })();
+
 
     function openAddPaymentModal(button) {
         const laborId = button.getAttribute('data-labor-id');
@@ -288,7 +421,7 @@
         document.getElementById('remarks').value = '';
 
         // Set modal title
-        document.getElementById('makePaymentModalLabel').innerText = 'Make Payment';
+        document.getElementById('makePaymentModalLabel').innerText = 'ادائیگی کریں';
 
         // Set form action
         const form = document.getElementById('laborPaymentForm');
@@ -298,9 +431,12 @@
         document.querySelector('input[name="laborId"]').value = laborId;
 
         // Show the modal
-        const modal = new bootstrap.Modal(document.getElementById('makePaymentModal'));
+        const modal = new bootstrap.Modal(
+            document.getElementById('makePaymentModal')
+        );
         modal.show();
     }
+
 
     function editPayment(button) {
         const paymentId = button.getAttribute('data-id');
@@ -308,59 +444,81 @@
         fetch(contextPath + `labors/payments/get/${paymentId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch payment details');
+                    throw new Error('ادائیگی کی معلومات حاصل نہیں ہو سکیں');
                 }
+
                 return response.json();
             })
             .then(payment => {
+
                 // Populate modal form fields
                 document.getElementById('paymentId').value = payment.id;
                 document.getElementById('paymentType').value = payment.paymentType;
-                document.getElementById('amount').value = payment.workAmount > 0 ? payment.workAmount : payment.deductions;
-                document.getElementById('remarks').value = payment.remarks || '';
+                document.getElementById('amount').value =
+                    payment.workAmount > 0
+                        ? payment.workAmount
+                        : payment.deductions;
+
+                document.getElementById('remarks').value =
+                    payment.remarks || '';
 
                 // Update modal title
-                document.getElementById('makePaymentModalLabel').innerText = 'Edit Payment';
+                document.getElementById('makePaymentModalLabel').innerText =
+                    'ادائیگی میں ترمیم';
 
                 // Set form action (POST URL for update)
                 const form = document.getElementById('laborPaymentForm');
                 form.action = contextPath + 'labors/payments/update';
 
                 // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('makePaymentModal'));
+                const modal = new bootstrap.Modal(
+                    document.getElementById('makePaymentModal')
+                );
                 modal.show();
             })
             .catch(error => {
                 console.error('Error loading payment details:', error);
-                alert('Could not load payment information. Please try again.');
+
+                alert(
+                    'ادائیگی کی معلومات حاصل نہیں ہو سکیں۔ دوبارہ کوشش کریں۔'
+                );
             });
     }
+
 
     function deletePayment(button) {
         const paymentId = button.getAttribute('data-id');
 
-        if (confirm('Are you sure you want to delete this payment?')) {
+        if (confirm('کیا آپ واقعی یہ ادائیگی حذف کرنا چاہتے ہیں؟')) {
+
             fetch(contextPath + `labors/payments/delete/${paymentId}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                    'X-CSRF-TOKEN':
+                    document.querySelector('input[name="_csrf"]').value
                 }
             })
                 .then(response => {
+
                     if (response.ok) {
                         location.reload();
                     } else {
-                        alert('Failed to delete payment. Please try again.');
+                        alert(
+                            'ادائیگی حذف نہیں ہو سکی۔ دوبارہ کوشش کریں۔'
+                        );
                     }
+
                 })
                 .catch(error => {
+
                     console.error('Error deleting payment:', error);
-                    alert('An error occurred. Please try again.');
+
+                    alert(
+                        'کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔'
+                    );
                 });
         }
     }
-
-
 
 </script>
 

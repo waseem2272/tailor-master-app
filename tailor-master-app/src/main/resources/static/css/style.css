@@ -1,15 +1,17 @@
 .sidebar {
-    background: #dee2e6; /* Light grey background */
+    background: #dee2e6;
     color: #333;
     height: 100vh;
     position: fixed;
     width: 270px;
-    left: 0;
+    right: 0;
+    left: auto;
     top: 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-    /*transition: transform 0.3s ease-in-out;*/
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
     z-index: 1050;
+    direction: rtl;
+    text-align: right;
 }
 
 /* Sidebar links */
@@ -19,83 +21,96 @@
     display: block;
     padding: 10px 20px;
     font-size: 16px;
+    text-align: right;
 }
-/* Active link styling */
+
+/* Active link */
 .sidebar a.active {
-    background-color: #198754; /* Bootstrap's bg-success color */
+    background-color: #198754;
     color: #fff;
 }
 
-/* Hover state - grey background on hover */
+/* Hover */
 .sidebar a:hover {
-    background-color: #d1e7dd; /* Bootstrap alert-success light green */
-    color: #0f5132; /* Optional: Adjust the text color for better contrast */
+    background-color: #d1e7dd;
+    color: #0f5132;
 }
 
-/* Optional: ensure active link text color stays white on hover */
+/* Active hover */
 .sidebar a.active:hover {
     background-color: #198754;
     color: #fff;
 }
 
+/* Collapsed sidebar */
 .sidebar.collapsed {
-    margin-left: -250px; /* Hides it */
+    margin-right: -270px;
+    margin-left: 0;
 }
 
-/*.hamburger-btn {*/
-/*    position: fixed;*/
-/*    top: 15px;*/
-/*    left: 15px;*/
-/*    background: #ffffff;*/
-/*    border: none;*/
-/*    padding: 8px 10px;*/
-/*    border-radius: 5px;*/
-/*    box-shadow: 0 0 5px rgba(0,0,0,0.1);*/
-/*    cursor: pointer;*/
-/*    z-index: 1100;*/
-/*    display: none; !* show only on small screens *!*/
-/*}*/
+/* =========================
+   Main Content
+   ========================= */
 
 .content {
-    margin-left: 260px;
+    margin-right: 270px;
+    margin-left: 0;
     padding: 20px;
-    transition: margin-left 0.3s;
+    transition: margin-right 0.3s ease;
+    direction: rtl;
+    text-align: right;
 }
-
-/* When sidebar is hidden (on large screens) */
-body.sidebar-open .sidebar {
-    transform: translateX(0);
-}
-
 @media (min-width: 993px) {
+
     .sidebar {
+        right: 0;
+        left: auto;
         transform: translateX(0);
     }
 
+    /*
+     * Sidebar hidden
+     */
     body.sidebar-open .sidebar {
-        transform: translateX(-100%);
+        transform: translateX(100%);
     }
 
+    /*
+     * Normal content position
+     */
     .content {
-        margin-left: 260px;
-    }
-
-    body.sidebar-open .content {
+        margin-right: 270px;
         margin-left: 0;
     }
 
-    body.sidebar-expanded .content {
-        margin-left: 250px;
+    /*
+     * Sidebar hidden => content uses full width
+     */
+    body.sidebar-open .content {
+        margin-right: 0;
+        margin-left: 0;
     }
 
-    /*.hamburger-btn {*/
-    /*    display: none; !* Hidden on large screens *!*/
-    /*}*/
+    /*
+     * Sidebar visible
+     */
+    body.sidebar-expanded .content {
+        margin-right: 270px;
+        margin-left: 0;
+    }
 }
 
+
+/* =========================
+   Mobile / Tablet
+   ========================= */
+
 @media (max-width: 992px) {
+
     .sidebar {
-        transform: translateX(-100%);
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
     }
 
     .sidebar.show {
@@ -103,20 +118,22 @@ body.sidebar-open .sidebar {
     }
 
     .content {
+        margin-right: 0;
         margin-left: 0;
     }
-
-    /*.hamburger-btn {*/
-    /*    display: block;*/
-    /*}*/
 }
+
+/* =========================
+   Notification Badge
+   ========================= */
 
 .badge-counter {
     position: absolute;
     transform: scale(0.8);
-    transform-origin: top right;
+    transform-origin: top left;
     top: 0.25rem;
-    right: 0.25rem;
+    left: 0.25rem;
+    right: auto;
     font-size: 0.75rem;
     background-color: #e74a3b;
     color: white;
@@ -124,47 +141,86 @@ body.sidebar-open .sidebar {
     border-radius: 10rem;
 }
 
+/* =========================
+   Topbar
+   ========================= */
+
 .topbar-divider {
     height: 2.375rem;
     width: 0;
-    border-right: 1px solid #e3e6f0;
+    border-left: 1px solid #e3e6f0;
+    border-right: none;
     margin: 0 1rem;
 }
+
 .custom-dropdown {
-    margin-right: 1.5rem; /* Adjust as needed */
+    margin-left: 1.5rem;
+    margin-right: 0;
 }
+
 .no-arrow-dropdown::after {
     display: none !important;
 }
-/* Scroll container for notifications */
+
+/* =========================
+   Notifications
+   ========================= */
+
 .max-height-scroll {
     max-height: 320px;
     overflow-y: auto;
 }
 
-/* Ensure alerts have a fixed layout with wrapping text */
 .notification-wrap {
-    width: 300px; /* or any width that fits your dropdown design */
+    width: 300px;
     white-space: normal !important;
     word-wrap: break-word;
     text-wrap: wrap;
+    direction: rtl;
+    text-align: right;
 }
 
-
-/* Notification item styling */
 .notification-item {
     transition: background-color 0.2s ease;
     border-radius: 0.375rem;
 }
 
-/* Subtle hover */
 .notification-item:hover {
     background-color: #f1f1f1;
 }
 
+/* =========================
+   Footer
+   ========================= */
 
 .footer {
     background: #f8f9fa;
     text-align: center;
     padding: 10px 0;
+    direction: rtl;
+}
+
+/* =========================
+   Navbar - RTL
+   ========================= */
+
+.app-navbar {
+    margin-right: 270px;
+    margin-left: 0;
+    direction: rtl;
+    transition: margin-right 0.3s ease;
+}
+
+/* Sidebar hidden */
+body.sidebar-open .app-navbar {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+@media (max-width: 992px) {
+
+    .app-navbar {
+        margin-right: 0;
+        margin-left: 0;
+    }
 }

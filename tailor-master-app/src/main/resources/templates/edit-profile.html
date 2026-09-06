@@ -16,93 +16,230 @@
         <div class="container-fluid">
 
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-person-lines-fill me-2"></i> Update Profile
+                <i class="bi bi-person-lines-fill me-2"></i> پروفائل میں ترمیم
             </h2>
 
             <div class="card border-success border-bottom border-3 shadow-sm rounded-4 animate__animated animate__fadeIn mb-4">
+
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                    <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                    <i class="bi bi-pencil-square me-2"></i> پروفائل میں ترمیم
                 </div>
+
                 <div class="card-body">
-                    <p class="text-danger fw-bold mb-4">Fields marked with <span class="text-danger">*</span> are required</p>
-                    <form id="profileForm" th:action="@{/users/profile/update}" method="post" th:object="${user}" enctype="multipart/form-data">
-                    <input type="hidden" th:field="*{id}"/>
+
+                    <p class="text-danger fw-bold mb-4">
+                        <span class="text-danger">*</span> والے خانے لازمی ہیں
+                    </p>
+
+                    <form id="profileForm"
+                          th:action="@{/users/profile/update}"
+                          method="post"
+                          th:object="${user}"
+                          enctype="multipart/form-data">
+
+                        <input type="hidden" th:field="*{id}"/>
 
                         <div class="row g-3">
+
                             <div class="col-md-6">
-                                <label for="fullName" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control shadow-sm" id="fullName" th:field="*{fullName}" placeholder="Enter full name">
-                                <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+                                <label for="fullName" class="form-label">
+                                    پورا نام <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="fullName"
+                                       th:field="*{fullName}"
+                                       placeholder="پورا نام درج کریں">
+
+                                <div th:if="${#fields.hasErrors('fullName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('fullName')}"
+                                     th:text="${error}">
+                                </div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="phone1" class="form-label">Phone Number 1 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control shadow-sm" id="phone1" th:field="*{phone1}" placeholder="Enter phone number">
-                                <div th:if="${#fields.hasErrors('phone1')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('phone1')}" th:text="${error}"></div>
+                                <label for="phone1" class="form-label">
+                                    فون نمبر 1 <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="phone1"
+                                       th:field="*{phone1}"
+                                       placeholder="فون نمبر درج کریں">
+
+                                <div th:if="${#fields.hasErrors('phone1')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('phone1')}"
+                                     th:text="${error}">
+                                </div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="phone2" class="form-label">Phone Number 2</label>
-                                <input type="text" class="form-control shadow-sm" id="phone2" th:field="*{phone2}" placeholder="Enter alternate phone number">
-                                <div th:if="${#fields.hasErrors('phone2')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
+                                <label for="phone2" class="form-label">
+                                    فون نمبر 2
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="phone2"
+                                       th:field="*{phone2}"
+                                       placeholder="متبادل فون نمبر درج کریں">
+
+                                <div th:if="${#fields.hasErrors('phone2')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('phone2')}"
+                                     th:text="${error}">
+                                </div>
                             </div>
 
                             <!--<div class="col-md-6">
-                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control shadow-sm" id="dateOfBirth"
+                                <label for="dateOfBirth" class="form-label">
+                                    تاریخ پیدائش
+                                </label>
+
+                                <input type="date"
+                                       class="form-control shadow-sm"
+                                       id="dateOfBirth"
                                        th:value="${user?.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'yyyy-MM-dd') : ''}"
                                        th:field="*{dateOfBirth}">
                             </div>-->
 
                             <div class="col-md-6">
-                                <label for="shopName" class="form-label">Shop Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control shadow-sm" id="shopName" th:field="*{shopName}" placeholder="Enter shop name">
-                                <div th:if="${#fields.hasErrors('shopName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shopName')}" th:text="${error}"></div>
+                                <label for="shopName" class="form-label">
+                                    دکان کا نام <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="shopName"
+                                       th:field="*{shopName}"
+                                       placeholder="دکان کا نام درج کریں">
+
+                                <div th:if="${#fields.hasErrors('shopName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('shopName')}"
+                                     th:text="${error}">
+                                </div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="proprietorName" class="form-label">Proprietor Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control shadow-sm" id="proprietorName" th:field="*{proprietorName}" placeholder="Enter proprietor name">
-                                <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
+                                <label for="proprietorName" class="form-label">
+                                    مالک کا نام <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="proprietorName"
+                                       th:field="*{proprietorName}"
+                                       placeholder="مالک کا نام درج کریں">
+
+                                <div th:if="${#fields.hasErrors('proprietorName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('proprietorName')}"
+                                     th:text="${error}">
+                                </div>
                             </div>
 
                             <!--<div class="col-md-6">
-                                <label for="shortCode" class="form-label">Short Code <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control shadow-sm" id="shortCode" th:field="*{shortCode}" placeholder="Enter short code">
-                                <div th:if="${#fields.hasErrors('shortCode')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shortCode')}" th:text="${error}"></div>
+                                <label for="shortCode" class="form-label">
+                                    شارٹ کوڈ <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="shortCode"
+                                       th:field="*{shortCode}"
+                                       placeholder="شارٹ کوڈ درج کریں">
+
+                                <div th:if="${#fields.hasErrors('shortCode')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('shortCode')}"
+                                     th:text="${error}">
+                                </div>
                             </div>-->
 
                             <div class="col-md-12">
-                                <label for="shopAddress" class="form-label">Shop Address <span class="text-danger">*</span></label>
-                                <textarea class="form-control shadow-sm" id="shopAddress" th:field="*{shopAddress}" rows="3" placeholder="Enter shop address"></textarea>
-                                <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
-                            </div>
-                            <div class="col-md-6 text-center">
-                                <label class="form-label d-block">Current Shop Logo</label>
-                                <div th:if="${user.logo != null}">
-                                    <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" class="img-thumbnail" style="max-height: 120px; max-width: 120px;">
+                                <label for="shopAddress" class="form-label">
+                                    دکان کا پتہ <span class="text-danger">*</span>
+                                </label>
+
+                                <textarea class="form-control shadow-sm"
+                                          id="shopAddress"
+                                          th:field="*{shopAddress}"
+                                          rows="3"
+                                          placeholder="دکان کا پتہ درج کریں"></textarea>
+
+                                <div th:if="${#fields.hasErrors('shopAddress')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('shopAddress')}"
+                                     th:text="${error}">
                                 </div>
-                                <div th:if="${user.logo == null}" class="text-muted small">No logo uploaded yet</div>
+                            </div>
+
+                            <div class="col-md-6 text-center">
+
+                                <label class="form-label d-block">
+                                    موجودہ دکان کا لوگو
+                                </label>
+
+                                <div th:if="${user.logo != null}">
+                                    <img th:src="@{'/users/logo/' + ${user.username}}"
+                                         alt="دکان کا لوگو"
+                                         class="img-thumbnail"
+                                         style="max-height: 120px; max-width: 120px;">
+                                </div>
+
+                                <div th:if="${user.logo == null}"
+                                     class="text-muted small">
+                                    ابھی کوئی لوگو اپ لوڈ نہیں کیا گیا
+                                </div>
+
                             </div>
 
                             <div class="col-md-6">
-                                <label for="logo" class="form-label">Change Logo (PNG, JPG, JPEG)</label>
-                                <input type="file" class="form-control shadow-sm" id="logo" name="logoFile" accept="image/png, image/jpeg, image/jpg">
-                                <div th:if="${#fields.hasErrors('logo')}" class="text-danger small mt-1" th:each="error : ${#fields.errors('logo')}" th:text="${error}"></div>
+
+                                <label for="logo" class="form-label">
+                                    لوگو تبدیل کریں (PNG, JPG, JPEG)
+                                </label>
+
+                                <input type="file"
+                                       class="form-control shadow-sm"
+                                       id="logo"
+                                       name="logoFile"
+                                       accept="image/png, image/jpeg, image/jpg">
+
+                                <div th:if="${#fields.hasErrors('logo')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('logo')}"
+                                     th:text="${error}">
+                                </div>
+
                             </div>
+
                         </div>
 
                         <div class="d-flex justify-content-center mt-4 gap-2">
-                            <button type="submit" class="btn btn-success shadow rounded-pill px-4">
-                                <i class="bi bi-check-circle"></i> Update
+
+                            <button type="submit"
+                                    class="btn btn-success shadow rounded-pill px-4">
+                                <i class="bi bi-check-circle"></i> محفوظ کریں
                             </button>
-                            <a th:href="@{/users/profile}" class="btn btn-secondary shadow rounded-pill px-4">
-                                <i class="bi bi-x-circle"></i> Cancel
+
+                            <a th:href="@{/users/profile}"
+                               class="btn btn-secondary shadow rounded-pill px-4">
+                                <i class="bi bi-x-circle"></i> واپس جائیں
                             </a>
+
                         </div>
+
                     </form>
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>

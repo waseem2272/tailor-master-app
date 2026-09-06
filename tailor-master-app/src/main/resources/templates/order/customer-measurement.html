@@ -315,13 +315,8 @@
                 <div class="measurement-header">
 
                     <h3>
-                        کسٹمر کی ناپ
+                        گاہک کا ناپ
                     </h3>
-
-                    <div class="small mt-1">
-                        Customer Measurement
-                    </div>
-
                 </div>
 
 
@@ -333,7 +328,7 @@
 
                     <div class="section-title">
                         <i class="bi bi-person-fill me-2"></i>
-                        کسٹمر کی معلومات
+                        گاہک کی معلومات
                     </div>
 
                     <div class="row g-2">
@@ -342,7 +337,7 @@
                         <div class="col-md-6">
                             <div class="info-box">
                                 <div class="info-label">
-                                    کسٹمر کا نام
+                                    گاہک کا نام
                                 </div>
                                 <div class="info-value"
                                      th:text="${order.customer.fullName}">
@@ -366,7 +361,7 @@
                         <div class="col-md-3">
                             <div class="info-box">
                                 <div class="info-label">
-                                    کسٹمر نمبر
+                                    گاہک نمبر
                                 </div>
                                 <div class="info-value"
                                      th:text="${order.customer.id}">
@@ -402,7 +397,7 @@
                         <div class="col-md-3">
                             <div class="info-box">
                                 <div class="info-label">
-                                    ڈیلیوری کی تاریخ
+                                    تیاری کی تاریخ
                                 </div>
                                 <div class="info-value"
                                      th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}">
@@ -413,6 +408,7 @@
                     </div>
 
                 </div>
+
 
                 <!-- ========================= -->
                 <!-- PRODUCT DETAILS -->
@@ -430,7 +426,9 @@
                         <!-- Product -->
                         <div class="col-md-6">
                             <div class="info-box">
-                                <div class="info-label">پروڈکٹ</div>
+                                <div class="info-label">
+                                    کپڑا
+                                </div>
                                 <div class="info-value"
                                      th:text="${orderProduct.product.name}">
                                 </div>
@@ -440,7 +438,9 @@
                         <!-- Quantity -->
                         <div class="col-md-3">
                             <div class="info-box">
-                                <div class="info-label">مقدار</div>
+                                <div class="info-label">
+                                    تعداد
+                                </div>
                                 <div class="info-value"
                                      th:text="${orderProduct.quantity}">
                                 </div>
@@ -450,14 +450,14 @@
                         <!-- Silai -->
                         <div class="col-md-3">
                             <div class="info-box">
-                                <div class="info-label">سلائی</div>
+                                <div class="info-label">
+                                    سلائی
+                                </div>
                                 <div class="info-value"
                                      th:text="${orderProduct.silaiType}">
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Additional Notes -->
 
                     </div>
 
@@ -484,7 +484,7 @@
 
                                 <div class="measurement-name"
                                      th:text="${m.field.fieldName}">
-                                    Chest
+                                    سینہ
                                 </div>
 
                                 <div class="measurement-value"
@@ -505,7 +505,7 @@
                         <i class="bi bi-exclamation-circle"></i>
 
                         <div>
-                            اس کسٹمر کی ناپ موجود نہیں ہے۔
+                            اس گاہک کی ناپ موجود نہیں ہے۔
                         </div>
 
                     </div>
@@ -526,7 +526,7 @@
                             <div class="info-value"
                                  style="white-space: pre-wrap;"
                                  th:text="${orderProduct.additionalNotes}">
-                                No additional Notes
+                                اضافی ہدایات موجود نہیں ہیں۔
                             </div>
 
                         </div>
@@ -543,7 +543,7 @@
                 <div class="measurement-footer text-center">
 
                     <div class="small text-muted">
-                        یہ ناپ کسٹمر کے آرڈر کے لیے محفوظ کی گئی ہے۔
+                        یہ ناپ گاہک کے آرڈر کے لیے محفوظ کی گئی ہے۔
                     </div>
 
                 </div>
@@ -562,7 +562,7 @@
                         onclick="window.print()">
 
                     <i class="bi bi-printer me-1"></i>
-                    Print
+                    پرنٹ کریں
 
                 </button>
 
@@ -571,7 +571,7 @@
                    class="btn btn-secondary">
 
                     <i class="bi bi-arrow-left-circle me-1"></i>
-                    Back
+                    واپس جائیں
 
                 </a>
 

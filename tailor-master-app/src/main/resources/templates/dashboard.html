@@ -8,6 +8,15 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
     <style>
+        .dashboard-card {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.12);
+        }
         .badge-completed {
             background-color: #6f42c1 !important;
         }
@@ -65,26 +74,37 @@
             <div class="row">
                 <!-- کل گاہک -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary custom-shadow h-100 py-2">
+                    <div class="card border-left-primary custom-shadow h-100 py-2 dashboard-card"
+                         onclick="window.location.href=contextPath + 'customers'">
+
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
+
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                         کل گاہک
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCustomers">0</div>
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                         id="totalCustomers">
+                                        0
+                                    </div>
                                 </div>
+
                                 <div class="col-auto">
                                     <i class="bi bi-people-fill fa-2x text-gray-300"></i>
                                 </div>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <!-- کل آرڈرز -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success custom-shadow h-100 py-2">
+                    <div class="card border-left-success custom-shadow h-100 py-2 dashboard-card"
+                         onclick="window.location.href=contextPath + 'orders'">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
@@ -103,18 +123,28 @@
 
                 <!-- بقیہ ادائیگیاں -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-danger custom-shadow h-100 py-2">
+                    <div class="card border-left-danger custom-shadow h-100 py-2 dashboard-card"
+                         onclick="window.location.href=contextPath + 'orders/pending-payments'">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
+
                                 <div class="col mr-2">
+
                                     <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                         بقیہ ادائیگیاں
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="pendingPayments">0</div>
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        (<span id="pendingPaymentAmount">0.00</span>)
+                                        <span id="pendingPaymentCount">0</span>
+                                    </div>
+
                                 </div>
+
                                 <div class="col-auto">
                                     <i class="bi bi-exclamation-circle-fill fa-2x text-gray-300"></i>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -122,7 +152,7 @@
 
                 <!-- اس ماہ کی آمدنی -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-dark custom-shadow h-100 py-2">
+                    <div class="card border-left-dark custom-shadow h-100 py-2 dashboard-card">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
@@ -258,12 +288,20 @@
             .catch(error => console.error("کل آرڈرز لوڈ کرنے میں مسئلہ:", error));
 
         // بقیہ ادائیگیاں لوڈ کریں
-        fetch(contextPath + "dashboard/pending-payments")
+        fetch(contextPath + "dashboard/pending-payments-summary")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("pendingPayments").innerText = formatNumber(data);
+
+                document.getElementById("pendingPaymentAmount").innerText =
+                    "Rs. " + formatAmount(data.amount);
+
+                document.getElementById("pendingPaymentCount").innerText =
+                    formatNumber(data.count);
+
             })
-            .catch(error => console.error("بقیہ ادائیگیاں لوڈ کرنے میں مسئلہ:", error));
+            .catch(error =>
+                console.error("بقیہ ادائیگیاں لوڈ کرنے میں مسئلہ:", error)
+            );
 
         // اس ماہ کی آمدنی
         fetch(contextPath + "dashboard/revenue-this-month")
@@ -319,30 +357,85 @@
         fetch(contextPath + 'dashboard/order-status-counts')
             .then(response => response.json())
             .then(data => {
+
                 const labels = Object.keys(data);
                 const counts = Object.values(data);
+
+                // Dynamic total
+                const totalOrders = counts.reduce((sum, count) => sum + count, 0);
+
                 const backgroundColors = [
                     'rgba(220, 53, 69, 0.75)',   // cancelled
                     'rgba(108, 117, 125, 0.75)', // pending
                     'rgba(13, 110, 253, 0.75)',  // in_progress
                     'rgba(111, 66, 193, 0.75)',  // completed
-                    'rgba(40, 167, 69, 0.8)',   // delivered
+                    'rgba(40, 167, 69, 0.8)',    // delivered
                 ];
 
                 const borderColors = [
-                    'rgba(220, 53, 69, 1)',   // cancelled
-                    'rgba(108, 117, 125, 1)', // pending
-                    'rgba(13, 110, 253, 1)',  // in_progress
-                    'rgba(111, 66, 193, 1)',  // completed
-                    'rgba(40, 167, 69, 1)',   // delivered
+                    'rgba(220, 53, 69, 1)',
+                    'rgba(108, 117, 125, 1)',
+                    'rgba(13, 110, 253, 1)',
+                    'rgba(111, 66, 193, 1)',
+                    'rgba(40, 167, 69, 1)',
                 ];
 
+                // Center text plugin
+                const centerTextPlugin = {
+                    id: 'centerText',
 
-                const ctx = document.getElementById('orderStatusChart').getContext('2d');
+                    afterDraw(chart) {
+                        const { ctx } = chart;
+                        const meta = chart.getDatasetMeta(0);
+
+                        if (!meta.data || !meta.data.length) {
+                            return;
+                        }
+
+                        const centerX = meta.data[0].x;
+                        const centerY = meta.data[0].y;
+
+                        ctx.save();
+
+                        // Dynamic font size based on total digits
+                        let fontSize = 32;
+
+                        if (totalOrders >= 1000) {
+                            fontSize = 24;
+                        } else if (totalOrders >= 100) {
+                            fontSize = 28;
+                        } else if (totalOrders >= 10) {
+                            fontSize = 32;
+                        }
+
+                        // Total
+                        ctx.font = `bold ${fontSize}px Arial`;
+                        ctx.fillStyle = '#212529';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+
+                        ctx.fillText(totalOrders, centerX, centerY - 8);
+
+                        // Label
+                        ctx.font = '13px Arial';
+                        ctx.fillStyle = '#6c757d';
+
+                        ctx.fillText('کل آرڈرز', centerX, centerY + 18);
+
+                        ctx.restore();
+                    }
+                };
+
+                const ctx = document
+                    .getElementById('orderStatusChart')
+                    .getContext('2d');
+
                 const orderStatusChart = new Chart(ctx, {
                     type: 'doughnut',
+
                     data: {
                         labels: labels,
+
                         datasets: [{
                             label: 'آرڈرز کی صورتحال',
                             data: counts,
@@ -351,19 +444,24 @@
                             borderWidth: 1
                         }]
                     },
+
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+
                         plugins: {
                             legend: {
-                                position: 'bottom',
+                                position: 'bottom'
                             },
+
                             title: {
                                 display: true,
                                 text: 'آرڈرز کی صورتحال کی تقسیم'
                             }
                         }
-                    }
+                    },
+
+                    plugins: [centerTextPlugin]
                 });
             });
 

@@ -1,17 +1,36 @@
-
 <div th:fragment="notification">
-    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal fade"
+         id="notificationModal"
+         tabindex="-1"
+         aria-labelledby="notificationModalLabel"
+         aria-hidden="true">
+
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="notificationModalLabel">Upcoming Deliveries</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="notificationModalLabel">
+                        آنے والی ترسیلیں
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="بند کریں">
+                    </button>
                 </div>
+
                 <div class="modal-body" id="notificationList">
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        واپس جائیں
+                    </button>
                 </div>
+
             </div>
         </div>
     </div>

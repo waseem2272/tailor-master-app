@@ -517,6 +517,15 @@ public class OrderService {
         }
     }
 
+    public Object[] getPendingPaymentsSummary() {
+        try {
+            return orderRepository.getPendingPaymentSummary(authenticatedUserService.getCurrentUser());
+        } catch (Exception e) {
+            logger.error("Error getting pending payments count: {}", e.getMessage(), e);
+            throw new RuntimeException("Error getting pending payments count.", e);
+        }
+    }
+
     public Long getOrdersInProgressCount() {
         try {
             long count = orderRepository.countOrdersInProgress(authenticatedUserService.getCurrentUser());

@@ -24,7 +24,7 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-file-earmark-text-fill me-2"></i> Order Details
+                <i class="bi bi-file-earmark-text-fill me-2"></i> آرڈر کی تفصیلات
             </h2>
 
             <div class="row">
@@ -32,11 +32,11 @@
                 <div class="col-md-4 mb-4">
                     <div class="card shadow-sm border-success border-bottom border-3 h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                            <i class="bi bi-person-circle me-2"></i> Customer Information
+                            <i class="bi bi-person-circle me-2"></i> گاہک کی معلومات
                         </div>
                         <div class="card-body">
-                            <p><strong>Name:</strong> <span th:text="${order.customer.fullName}"></span></p>
-                            <p><strong>Phone:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
+                            <p><strong>نام:</strong> <span th:text="${order.customer.fullName}"></span></p>
+                            <p><strong>فون نمبر:</strong> <span th:text="${order.customer.phoneNumber}"></span></p>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="col-md-8 mb-4">
                     <div class="card shadow-sm border-success border-bottom border-3 h-100">
                         <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                            <i class="bi bi-card-list me-2"></i> Order Details
+                            <i class="bi bi-card-list me-2"></i> آرڈر کی تفصیلات
                         </div>
                         <div class="card-body">
                             <input type="hidden" id="orderId" th:field="*{order.id}"/>
@@ -53,18 +53,18 @@
                             <!-- Using row with two columns for better alignment -->
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Order ID:</strong> <span th:text="${order.orderId}"></span></p>
-                                    <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy')}"></span></p>
-                                    <p><strong>Delivery Date:</strong> <span th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}"></span></p>
-                                    <p><strong>Pickup Status:</strong> <span th:text="${order.pickupStatus}"></span></p>
-                                    <p><strong>Pickup Date:</strong> <span th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy')}"></span></p>
+                                    <p><strong>آرڈر نمبر:</strong> <span th:text="${order.orderId}"></span></p>
+                                    <p><strong>آرڈر کی تاریخ:</strong> <span th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}"></span></p>
+                                    <p><strong>تیاری کی تاریخ:</strong> <span th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}"></span></p>
+                                    <p><strong>پک اپ کی حالت:</strong> <span th:text="${order.pickupStatus}"></span></p>
+                                    <p><strong>پک اپ کی تاریخ:</strong> <span th:text="${#temporals.format(order.pickupDate, 'dd-MM-yyyy')}"></span></p>
 
                                     <!-- Order Status (Only for COMPLETED and CANCELLED) -->
                                     <p th:if="${order.status?.name() == 'COMPLETED'
            or order.status?.name() == 'CANCELLED'
            or order.status?.name() == 'DELIVERED'}">
 
-                                        <strong>Order Status:</strong>
+                                        <strong>آرڈر کی حالت:</strong>
 
                                         <span th:classappend="${order.status?.name() == 'COMPLETED'
                            ? 'badge badge-completed'
@@ -78,16 +78,16 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <p><strong>Total Amount:</strong> <span class="format-amount" th:text="${order.totalProductAmount}"></span></p>
-                                    <p><strong>Advance Payment:</strong> <span class="format-amount" th:text="${order.advancePayment}"></span></p>
-                                    <p><strong>Due Amount:</strong> <span class="format-amount" th:text="${order.duePayment}"></span></p>
-                                    <p><strong>Paid Amount:</strong> <span class="format-amount" th:text="${order.paidAmount}"></span></p>
-                                    <p><strong>Outstanding Due:</strong> <span class="text-danger fw-bold format-amount" th:text="${order.outstandingDueAmount}"></span></p>
+                                    <p><strong>کل رقم:</strong> <span class="format-amount" th:text="${order.totalProductAmount}"></span></p>
+                                    <p><strong>پیشگی رقم:</strong> <span class="format-amount" th:text="${order.advancePayment}"></span></p>
+                                    <p><strong>بقایا رقم:</strong> <span class="format-amount" th:text="${order.duePayment}"></span></p>
+                                    <p><strong>ادا شدہ رقم:</strong> <span class="format-amount" th:text="${order.paidAmount}"></span></p>
+                                    <p><strong>بقایا قابلِ وصول رقم:</strong> <span class="text-danger fw-bold format-amount" th:text="${order.outstandingDueAmount}"></span></p>
 
                                     <!-- Payment Status (Show if Order is COMPLETED OR Outstanding Due > 0) -->
                                     <p th:if="${(order.status?.name() == 'COMPLETED' or order.status?.name() == 'DELIVERED')
 and order.pickupStatus?.name() == 'PICKED_UP'}">
-                                        <strong>Payment Status:</strong>
+                                        <strong>ادائیگی کی حالت:</strong>
 
                                         <span th:classappend="${
                                             order.paidAmount == order.totalProductAmount
@@ -96,12 +96,12 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                                 ? 'badge bg-danger'
                                                 : 'badge bg-warning text-dark')
                                         }"
-                                                                                  th:text="${
+                                              th:text="${
                                             order.paidAmount == order.totalProductAmount
-                                            ? 'Paid'
+                                            ? 'مکمل ادائیگی'
                                             : (order.totalProductAmount == order.outstandingDueAmount
-                                                ? 'Unpaid'
-                                                : 'Partially Paid')
+                                                ? 'ادائیگی باقی'
+                                                : 'جزوی ادائیگی')
                                         }"></span>
                                     </p>
 
@@ -113,7 +113,7 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                  th:if="${order.status?.name() != 'COMPLETED' and
                              order.status?.name() != 'CANCELLED' and order.status?.name() != 'DELIVERED'}">
                                 <div class="col-md-12 d-flex flex-wrap align-items-center gap-2">
-                                    <label for="orderStatus" class="fw-bold me-2">Order Status</label>
+                                    <label for="orderStatus" class="fw-bold me-2">آرڈر کی حالت</label>
                                     <select id="orderStatus" name="status" class="form-select w-auto">
                                         <option th:each="status : ${order.status?.values()}"
                                                 th:value="${status}" th:text="${status}"
@@ -122,11 +122,11 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                     </select>
                                     <input type="text" id="cabinetNo" name="cabinetNo"
                                            class="form-control w-auto d-none"
-                                           placeholder="Cabinet No"
+                                           placeholder="الماری نمبر"
                                            th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
                                     <button type="button" id="updateOrderStatusBtn"
                                             class="btn btn-success shadow rounded-pill px-4">
-                                        <i class="bi bi-check-circle"></i> Update
+                                        <i class="bi bi-check-circle"></i> اپ ڈیٹ کریں
                                     </button>
                                 </div>
                             </div>
@@ -143,7 +143,7 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
 
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                    <i class="bi bi-box-seam me-2"></i> Product Details
+                    <i class="bi bi-box-seam me-2"></i> کپڑے کی تفصیلات
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -151,13 +151,13 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                             <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Product</th>
-                                <th>Silai</th>
-                                <th>Silai Amount</th>
-                                <th>Qty</th>
-                                <th>Subtotal</th>
-                                <th>Additional Notes</th>
-                                <th>Actions</th>
+                                <th>کپڑا</th>
+                                <th>سلائی</th>
+                                <th>سلائی کی رقم</th>
+                                <th>تعداد</th>
+                                <th>کل رقم</th>
+                                <th>اضافی ہدایات</th>
+                                <th>کارروائی</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -172,7 +172,7 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                 <td>
                                     <a th:href="@{/receipts/generate-measurement/{id}(id=${thymeleafUtil.encryptId(item.id)})}"
                                        class="btn btn-success me-2">
-                                        <i class="bi bi-receipt"></i> Generate Measurement
+                                        <i class="bi bi-receipt"></i> ناپ کی رسید بنائیں
                                     </a>
                                 </td>
                             </tr>
@@ -186,10 +186,10 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
 
                 <a th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
                    class="btn btn-success me-2">
-                    <i class="bi bi-receipt"></i> Generate Order Receipt
+                    <i class="bi bi-receipt"></i> آرڈر کی رسید بنائیں
                 </a>
                 <a th:href="@{/orders}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left-circle"></i> Back to Orders
+                    <i class="bi bi-arrow-left-circle"></i> واپس جائیں
                 </a>
             </div>
 
@@ -240,11 +240,11 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                 xhr.setRequestHeader(csrfHeader, csrfToken);
             },
             success: function (response) {
-                showAlert("success", "Order status updated successfully!");
+                showAlert("success", "آرڈر کی حالت کامیابی سے اپ ڈیٹ ہو گئی!");
                 setTimeout(() => location.reload(), 5000); // Reload after 5 seconds
             },
             error: function () {
-                showAlert("danger", "Error updating order status. Please try again.");
+                showAlert("danger", "آرڈر کی حالت اپ ڈیٹ نہیں ہو سکی۔ دوبارہ کوشش کریں۔");
             }
         });
     }

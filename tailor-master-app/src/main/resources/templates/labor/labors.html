@@ -13,73 +13,140 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content container-fluid">
+
         <div class="d-flex justify-content-between align-items-center mb-4">
+
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-person-workspace me-2"></i> Labors
+                <i class="bi bi-person-workspace me-2"></i>
+                کاریگر
             </h2>
-            <a th:href="@{/labors/create}" class="btn btn-success rounded-pill shadow-sm">
-                <i class="bi bi-plus-circle"></i> Create New Labor
+
+            <a th:href="@{/labors/create}"
+               class="btn btn-success rounded-pill shadow-sm">
+                <i class="bi bi-plus-circle"></i>
+                نیا کاریگر بنائیں
             </a>
+
         </div>
+
 
         <!-- Success Alert -->
         <div th:if="${successMessage}" class="row justify-content-center">
-            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
+
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3"
+                 role="alert">
+
                 <div class="d-flex align-items-center">
                     <i class="bi bi-check-circle-fill me-2 fs-4"></i>
                     <span th:text="${successMessage}"></span>
                 </div>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="بند کریں">
+                </button>
+
             </div>
+
         </div>
+
 
         <!-- Error Alert -->
         <div th:if="${errorMessage}" class="row justify-content-center">
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
+                 role="alert">
+
                 <div class="d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                     <span th:text="${errorMessage}"></span>
                 </div>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="بند کریں">
+                </button>
+
             </div>
+
         </div>
 
+
+        <!-- Labors List -->
         <div class="card shadow-sm border-success border-bottom border-3">
+
             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                <i class="bi bi-people me-2"></i> Labors List
+
+                <i class="bi bi-people me-2"></i>
+                کاریگروں کی فہرست
+
             </div>
+
+
             <div class="card-body">
-                <table id="laborsTable" class="table table-bordered table-hover table-striped">
+
+                <table id="laborsTable"
+                       class="table table-bordered table-hover table-striped">
+
                     <thead class="table-success text-dark">
+
                     <tr>
-                        <th>Name</th>
-                        <th>Contact</th>
-                        <th>Join Date</th>
-                        <th>Balance</th>
-                        <th>Actions</th>
+                        <th>نام</th>
+                        <th>رابطہ نمبر</th>
+                        <th>شمولیت کی تاریخ</th>
+                        <th>حساب</th>
+                        <th>کارروائی</th>
                     </tr>
+
                     </thead>
+
+
                     <tbody>
+
                     <tr th:each="labor, iterStat : ${labors}">
+
                         <td th:text="${labor.name}"></td>
+
                         <td th:text="${labor.contact}"></td>
+
                         <td th:text="${#temporals.format(labor.joinDate, 'dd-MMM-yyyy')}"></td>
+
                         <td th:text="${#numbers.formatDecimal(balanceMap[labor.id], 1, 'COMMA', 2, 'POINT')}"
                             th:classappend="${balanceMap[labor.id] < 0} ? 'text-danger'">
                         </td>
+
                         <td>
-                            <a class="btn btn-info btn-sm" th:href="@{'/labors/details/' + ${thymeleafUtil.encryptId(labor.id)}}">
-                                <i class="bi bi-eye"></i> Details
+
+                            <a class="btn btn-info btn-sm"
+                               th:href="@{'/labors/details/' + ${thymeleafUtil.encryptId(labor.id)}}">
+
+                                <i class="bi bi-eye"></i>
+                                تفصیلات
+
                             </a>
-                            <a class="btn btn-warning btn-sm" th:href="@{'/labors/edit/' + ${thymeleafUtil.encryptId(labor.id)}}">
-                                <i class="bi bi-pencil-square"></i> Edit
+
+                            <a class="btn btn-warning btn-sm"
+                               th:href="@{'/labors/edit/' + ${thymeleafUtil.encryptId(labor.id)}}">
+
+                                <i class="bi bi-pencil-square"></i>
+                                ترمیم
+
                             </a>
+
                         </td>
+
                     </tr>
+
                     </tbody>
+
                 </table>
+
             </div>
+
         </div>
+
     </div>
 </div>
 

@@ -2,14 +2,118 @@ body {
     background-color: #fff;
 }
 
+/* =========================
+   Global RTL - Urdu UI
+   ========================= */
+
+.content,
+.main-content,
+.container-fluid {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Headings */
 h2 {
     font-weight: 700;
     margin-bottom: 1.5rem;
 }
 
+/* Cards */
+.card {
+    border: none;
+    direction: rtl;
+    text-align: right;
+}
+
+.card-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+.card-body {
+    text-align: right;
+}
+
+/* Rows inside content should flow from right */
+.content .row {
+    direction: rtl;
+}
+
+/* Keep Bootstrap columns working normally */
+.content .row > [class*="col-"] {
+    text-align: right;
+}
+
+/* Tables */
+.content .table {
+    direction: rtl;
+    text-align: right;
+}
+
+.content .table th,
+.content .table td {
+    text-align: right;
+    vertical-align: middle;
+}
+
+/* First table column / numbering */
+.content .table th:first-child,
+.content .table td:first-child {
+    text-align: center;
+}
+
+/* Buttons and links */
+.content .btn {
+    direction: rtl;
+}
+
+/* Forms */
+.content label {
+    direction: rtl;
+    text-align: right;
+}
+
+.content input,
+.content textarea,
+.content select {
+    direction: ltr;
+    text-align: left;
+}
+
+input[type="date"],
+select.form-select,
+input.form-control {
+    transition: box-shadow 0.2s;
+}
+
+/* Numeric values should remain readable LTR */
+.format-amount {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+/* Alerts */
 .alert {
     animation: fadeInDown 0.5s;
+    direction: rtl;
+    text-align: right;
 }
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Center text should remain centered */
+.content .text-center {
+    text-align: center !important;
+}
+
+/* =========================
+   Existing styles
+   ========================= */
 
 @keyframes fadeInDown {
     from {
@@ -24,24 +128,18 @@ h2 {
 
 .btn {
     transition: all 0.3s ease-in-out;
+    border-radius: 2rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn:hover {
     transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .table-hover tbody tr:hover {
     background-color: #f1f7ff;
     cursor: pointer;
-}
-
-.card {
-    border: none;
-}
-
-.card-header {
-    font-size: 1.1rem;
-    font-weight: 600;
 }
 
 .card-header.bg-success {
@@ -56,21 +154,15 @@ h2 {
     border-radius: 50rem !important;
 }
 
-input[type="date"], select.form-select, input.form-control {
-    transition: box-shadow 0.2s;
-}
-
-input[type="date"]:focus, select.form-select:focus, input.form-control:focus {
+input[type="date"]:focus,
+select.form-select:focus,
+input.form-control:focus {
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .table thead th {
     vertical-align: middle;
     font-weight: 600;
-}
-
-.badge {
-    font-size: 0.75rem;
 }
 
 .shadow-sm {
@@ -81,20 +173,66 @@ input[type="date"]:focus, select.form-select:focus, input.form-control:focus {
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.05) !important;
 }
 
-.btn {
-    transition: all 0.3s ease-in-out;
-    border-radius: 2rem !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
-
 .login-background {
     background: url('../images/tailor-shop.jpg');
     background-size: cover;
 }
+/* Pickup Modal - Proper RTL */
+.pickup-modal {
+    direction: rtl;
+    text-align: right;
+}
 
+.pickup-modal .modal-header {
+    direction: rtl;
+    text-align: right;
+    justify-content: space-between;
+}
 
+.pickup-modal .modal-title {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.pickup-modal .btn-close {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+}
+
+/* Modal body content */
+.pickup-modal .modal-body {
+    direction: rtl;
+    text-align: right;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.pickup-modal .list-group-item {
+    direction: rtl;
+    text-align: right;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.pickup-modal .modal-footer {
+    direction: rtl;
+    justify-content: flex-start;
+}
+
+/* Input and labels */
+.pickup-modal label,
+.pickup-modal input,
+.pickup-modal small {
+    direction: rtl;
+    text-align: right;
+}
+
+.pickup-modal input::placeholder {
+    text-align: right;
+}
+
+/* Alert */
+.pickup-modal .alert {
+    direction: rtl;
+    text-align: right;
+}

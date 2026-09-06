@@ -15,81 +15,197 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <form th:action="@{/labors/update}" th:object="${labor}" method="post" id="laborForm" class="needs-validation" novalidate>
+            <form th:action="@{/labors/update}" th:object="${labor}" method="post"
+                  id="laborForm" class="needs-validation" novalidate>
+
                 <input type="hidden" name="encryptedLaborId"
                        th:if="${thymeleafUtil != null}"
                        th:value="${thymeleafUtil.encryptId(labor.id)}">
 
                 <h2 class="page-title d-flex align-items-center mb-4">
-                    <i class="bi bi-pencil-square me-2"></i> Edit Labor
+                    <i class="bi bi-pencil-square me-2"></i> مزدور میں ترمیم
                 </h2>
-                <p class="text-danger fw-bold">Fields marked as * are required</p>
+
+                <p class="text-danger fw-bold">
+                    * سے نشان زدہ خانے پُر کرنا ضروری ہیں
+                </p>
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Labor Information
+                        <i class="bi bi-info-circle me-2"></i> مزدور کی معلومات
                     </div>
+
                     <div class="card-body">
+
                         <div class="row">
+
                             <!-- Name -->
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" th:field="*{name}" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" class="form-control" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Invalid Name.</div>
+                                <label for="name" class="form-label">
+                                    نام <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="name"
+                                       name="name"
+                                       th:field="*{name}"
+                                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                                       class="form-control"
+                                       required>
+
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('name')}"
+                                     th:errors="*{name}">
+                                    نام درست نہیں ہے۔
+                                </div>
                             </div>
 
                             <!-- Contact -->
                             <div class="col-md-6 mb-3">
-                                <label for="contact" class="form-label">Contact <span class="text-danger">*</span></label>
-                                <input type="text" id="contact" name="contact" th:field="*{contact}" pattern="^03[0-9]{9}$" th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'" class="form-control" placeholder="e.g., 03001234567" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('contact')}" th:errors="*{contact}">Invalid contact.</div>
+                                <label for="contact" class="form-label">
+                                    رابطہ نمبر <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="contact"
+                                       name="contact"
+                                       th:field="*{contact}"
+                                       pattern="^03[0-9]{9}$"
+                                       th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'"
+                                       class="form-control"
+                                       placeholder="مثال: 03001234567"
+                                       required>
+
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('contact')}"
+                                     th:errors="*{contact}">
+                                    رابطہ نمبر درست نہیں ہے۔
+                                </div>
                             </div>
 
                             <!-- Skills -->
                             <div class="col-md-6 mb-3">
-                                <label for="skills" class="form-label">Skills</label>
-                                <input type="text" id="skills" name="skills" th:field="*{skills}" class="form-control">
+                                <label for="skills" class="form-label">
+                                    مہارتیں
+                                </label>
+
+                                <input type="text"
+                                       id="skills"
+                                       name="skills"
+                                       th:field="*{skills}"
+                                       class="form-control">
                             </div>
 
                             <!-- Join Date -->
                             <div class="col-md-6 mb-3">
-                                <label for="joinDate" class="form-label">Join Date</label>
-                                <input type="date" id="joinDate" name="joinDate" th:value="${#temporals.format(labor.joinDate, 'yyyy-MM-dd')}"
+                                <label for="joinDate" class="form-label">
+                                    شمولیت کی تاریخ
+                                </label>
+
+                                <input type="date"
+                                       id="joinDate"
+                                       name="joinDate"
+                                       th:value="${#temporals.format(labor.joinDate, 'yyyy-MM-dd')}"
                                        class="form-control">
                             </div>
 
                             <!-- Status -->
                             <div class="col-md-6 mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select id="status" name="status" th:field="*{status}" class="form-select">
-                                    <option th:each="s : ${labor.status?.values()}" th:value="${s}" th:text="${s}">Active</option>
+                                <label for="status" class="form-label">
+                                    حیثیت
+                                </label>
+
+                                <select id="status"
+                                        name="status"
+                                        th:field="*{status}"
+                                        class="form-select">
+
+                                    <option th:each="s : ${labor.status?.values()}"
+                                            th:value="${s}"
+                                            th:text="${s}">
+                                        فعال
+                                    </option>
+
                                 </select>
                             </div>
+
                         </div>
                     </div>
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="button" class="btn btn-success" id="openConfirmationModal"><i class="bi bi-check-circle me-1"></i> Update</button>
-                    <a th:href="@{/labors}" class="btn btn-secondary"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+
+                    <button type="button"
+                            class="btn btn-success"
+                            id="openConfirmationModal">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        اپ ڈیٹ کریں
+                    </button>
+
+                    <a th:href="@{/labors}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i>
+                        منسوخ کریں
+                    </a>
+
                 </div>
+
             </form>
 
+
             <!-- Confirmation Modal -->
-            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal fade"
+                 id="confirmationModal"
+                 tabindex="-1"
+                 aria-labelledby="confirmationModalLabel"
+                 aria-hidden="true">
+
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content rounded-4 shadow">
+
+                    <div class="modal-content rounded-4 shadow pickup-modal">
+
                         <div class="modal-header bg-success text-white rounded-top-4">
-                            <h5 class="modal-title" id="confirmationModalLabel">Confirm Update</h5>
-                            <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                            <h5 class="modal-title" id="confirmationModalLabel">
+                                ترمیم کی تصدیق
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close bg-light"
+                                    data-bs-dismiss="modal"
+                                    aria-label="بند کریں">
+                            </button>
+
                         </div>
+
                         <div class="modal-body">
-                            Are you sure you want to update this Labor with the provided details?
+                            کیا آپ فراہم کردہ معلومات کے ساتھ اس مزدور کی معلومات
+                            اپ ڈیٹ کرنا چاہتے ہیں؟
                         </div>
+
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancel</button>
-                            <button type="button" class="btn btn-success" id="confirmSubmit"><i class="bi bi-check-circle me-1"></i>Yes, Update</button>
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+
+                                <i class="bi bi-x-circle me-1"></i>
+                                منسوخ کریں
+
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-success"
+                                    id="confirmSubmit">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                جی ہاں، اپ ڈیٹ کریں
+
+                            </button>
+
                         </div>
+
                     </div>
                 </div>
             </div>
