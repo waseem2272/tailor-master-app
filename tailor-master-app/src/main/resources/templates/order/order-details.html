@@ -147,7 +147,7 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover">
+                        <table class="table table-bordered table-striped table-hover align-middle">
                             <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
@@ -155,6 +155,9 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                 <th>Silai</th>
                                 <th>Silai Amount</th>
                                 <th>Qty</th>
+                                <th>Fabric</th>
+                                <th>Fabric Qty</th>
+                                <th>Fabric Amount</th>
                                 <th>Subtotal</th>
                                 <th>Additional Notes</th>
                                 <th>Actions</th>
@@ -167,8 +170,42 @@ and order.pickupStatus?.name() == 'PICKED_UP'}">
                                 <td th:text="${item.silaiType}"></td>
                                 <td class="format-amount" th:text="${item.silaiAmount}"></td>
                                 <td th:text="${item.quantity}"></td>
-                                <td class="format-amount" th:text="${item.subtotal}"></td>
+
+                                <td>
+                        <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                              th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}">
+                        </span>
+                                    <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                          class="text-muted">
+                            Customer Fabric
+                        </span>
+                                </td>
+
+                                <td>
+                        <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                              th:text="${item.fabricQuantity != null ? item.fabricQuantity.stripTrailingZeros().toPlainString() + ' ' + item.inventoryItem.unit.name() : '-'}">
+                        </span>
+                                    <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                          class="text-muted">
+                            -
+                        </span>
+                                </td>
+
+                                <td>
+                        <span th:if="${item.fabricSource?.name() == 'SHOP' and item.inventoryItem != null and item.fabricQuantity != null}"
+                              class="format-amount"
+                              th:text="${item.fabricQuantity.multiply(item.inventoryItem.salePrice)}">
+                        </span>
+                                    <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                          class="text-muted">
+                            -
+                        </span>
+                                </td>
+
+                                <td class="format-amount fw-bold" th:text="${item.subtotal}"></td>
+
                                 <td th:text="${item.additionalNotes}"></td>
+
                                 <td>
                                     <a th:href="@{/receipts/generate-measurement/{id}(id=${thymeleafUtil.encryptId(item.id)})}"
                                        class="btn btn-success me-2">

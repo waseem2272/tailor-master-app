@@ -168,3 +168,64 @@ body.sidebar-open .sidebar {
     text-align: center;
     padding: 10px 0;
 }
+
+/* =========================
+   Sidebar Submenu
+   ========================= */
+
+.sidebar .submenu {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* Submenu links */
+.sidebar .submenu a {
+    display: block;
+    padding: 8px 20px 8px 55px !important;
+    font-size: 14px !important;
+    color: #333;
+}
+
+/* Submenu icons */
+.sidebar .submenu a i {
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+/* Submenu active */
+.sidebar .submenu a.active {
+    background-color: #198754;
+    color: #fff;
+}
+
+/* Submenu hover */
+.sidebar .submenu a:hover {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Active hover */
+.sidebar .submenu a.active:hover {
+    background-color: #198754;
+    color: #fff;
+}
+
+/* =========================
+   Inventory Parent
+   ========================= */
+
+.sidebar #inventory-toggle {
+    position: relative;
+}
+
+.sidebar #inventory-toggle-arrow {
+    font-size: 12px;
+    margin-top: 4px;
+}
+/* Inventory submenu indentation */
+.sidebar #inventory-submenu {
+    padding-left: 20px !important;
+}
+
+.sidebar #inventory-submenu a {
+    padding-left: 20px !important;
+}

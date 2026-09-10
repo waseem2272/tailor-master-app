@@ -11,11 +11,13 @@
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
             <form th:action="@{/orders/create}" th:object="${orderDto}" method="post" class="order-form">
                 <div id="orderProductsInputs"></div>
+
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi bi-plus-circle-fill me-2"></i> Create Order
                 </h2>
@@ -29,12 +31,14 @@
                         <input type="hidden" name="encryptedCustomerId"
                                th:if="${thymeleafUtil != null}"
                                th:value="${thymeleafUtil.encryptId(orderDto.customer.id)}">
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Full Name</label>
                                 <input type="text" id="customerName" class="form-control bg-light"
                                        th:value="${orderDto.customer.fullName}" readonly>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Phone Number</label>
                                 <input type="text" id="customerPhone" class="form-control bg-light"
@@ -44,19 +48,14 @@
                     </div>
                 </div>
 
-                <!-- STEP 2: Product Selection -->
-                <!-- STEP 2: Product Selection -->
+                <!-- Product Selection -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-box-seam me-2"></i> Add Product to Order
                     </div>
 
                     <div class="card-body">
-
-                        <!-- Product / Silai / Quantity -->
                         <div class="row g-3">
-
                             <!-- Product -->
                             <div class="col-md-5">
                                 <label for="productSelect" class="form-label fw-bold">
@@ -101,43 +100,100 @@
                                        id="quantity"
                                        placeholder="e.g. 1">
                             </div>
+                        </div>
 
+                        <!-- Fabric Source -->
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-4">
+                                <label for="fabricSource" class="form-label fw-bold">
+                                    Fabric Source
+                                </label>
+
+                                <select class="form-select" id="fabricSource">
+                                    <option value="CUSTOMER" selected>
+                                        Customer Fabric
+                                    </option>
+                                    <option value="SHOP">
+                                        Shop Fabric
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Shop Fabric -->
+                            <div class="col-md-5" id="shopFabricContainer" style="display: none;">
+                                <label for="inventoryItemSelect" class="form-label fw-bold">
+                                    Shop Fabric
+                                </label>
+
+                                <select class="form-select" id="inventoryItemSelect">
+                                    <option value="" disabled selected>
+                                        -- Select Shop Fabric --
+                                    </option>
+
+                                    <option th:each="item : ${inventoryItems}"
+                                            th:value="${item.id}"
+                                            th:data-stock="${item.quantity}"
+                                            th:data-unit="${item.unit}"
+                                            th:data-sale-price="${item.salePrice}"
+                                            th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
+                                    </option>
+                                </select>
+
+                                <div id="fabricStockInfo"
+                                     class="small text-success fw-semibold mt-1"
+                                     style="display: none;">
+                                </div>
+
+                                <div id="fabricStockError"
+                                     class="text-danger small mt-1"
+                                     style="display: none;">
+                                </div>
+                            </div>
+
+                            <!-- Fabric Quantity -->
+                            <div class="col-md-3" id="fabricQuantityContainer" style="display: none;">
+                                <label for="fabricQuantity" class="form-label fw-bold">
+                                    Fabric Quantity
+                                </label>
+
+                                <input type="number"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control"
+                                       id="fabricQuantity"
+                                       placeholder="e.g. 4.50">
+
+                                <small class="text-muted">
+                                    Quantity in meters
+                                </small>
+                            </div>
                         </div>
 
                         <!-- Additional Notes -->
                         <div class="row mt-3">
                             <div class="col-12">
-
                                 <label for="additionalNotes" class="form-label fw-bold">
                                     Additional Notes
                                 </label>
 
-                                <textarea
-                                        class="form-control"
-                                        id="additionalNotes"
-                                        rows="3"
-                                        placeholder="Enter any additional instructions or notes..."
-                                        style="text-align: left; vertical-align: top; resize: vertical;"></textarea>
-
+                                <textarea class="form-control"
+                                          id="additionalNotes"
+                                          rows="3"
+                                          placeholder="Enter any additional instructions or notes..."
+                                          style="text-align: left; vertical-align: top; resize: vertical;"></textarea>
                             </div>
                         </div>
 
                         <!-- Add Product Button -->
                         <div class="row mt-3">
-
                             <div class="col-md-3 mx-auto">
-
                                 <button type="button"
                                         id="addProductBtn"
                                         class="btn btn-success w-100">
-
                                     <i class="bi bi-plus-circle me-1"></i>
                                     Add Product
-
                                 </button>
-
                             </div>
-
                         </div>
 
                         <!-- Products Added -->
@@ -149,13 +205,15 @@
                         </h6>
 
                         <div class="table-responsive">
-
                             <table class="table table-bordered align-middle" id="productTable">
-
                                 <thead class="table-light">
                                 <tr>
                                     <th>Product</th>
                                     <th>Silai</th>
+                                    <th>Fabric Source</th>
+                                    <th>Shop Fabric</th>
+                                    <th>Fabric Qty</th>
+                                    <th>Fabric Amount</th>
                                     <th>Silai Amount</th>
                                     <th>Quantity</th>
                                     <th>Subtotal</th>
@@ -165,7 +223,6 @@
                                 </thead>
 
                                 <tbody>
-                                <!-- Rows will be appended by JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -177,26 +234,45 @@
                     <div class="card-header bg-success text-white fw-bold rounded-top-4">
                         <i class="bi bi-card-list me-2"></i> Order Details
                     </div>
+
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="orderDate" class="form-label fw-bold">Order Date <span
-                                        class="text-danger">*</span></label>
-                                <input type="date" id="orderDate" name="orderDate" class="form-control"
+                                <label for="orderDate" class="form-label fw-bold">
+                                    Order Date <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="date"
+                                       id="orderDate"
+                                       name="orderDate"
+                                       class="form-control"
                                        th:value="${orderDto != null ? #temporals.format(orderDto.orderDate, 'yyyy-MM-dd') : ''}"
                                        required>
-                                <span class="text-danger error-message" th:if="${#fields.hasErrors('orderDate')}"
-                                      th:errors="*{orderDate}"></span>
+
+                                <span class="text-danger error-message"
+                                      th:if="${#fields.hasErrors('orderDate')}"
+                                      th:errors="*{orderDate}">
+                                </span>
                             </div>
+
                             <div class="col-md-6">
-                                <label for="deliveryDate" class="form-label fw-bold">Delivery Date <span
-                                        class="text-danger">*</span></label>
-                                <input type="date" id="deliveryDate" name="deliveryDate" class="form-control"
+                                <label for="deliveryDate" class="form-label fw-bold">
+                                    Delivery Date <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="date"
+                                       id="deliveryDate"
+                                       name="deliveryDate"
+                                       class="form-control"
                                        th:value="${orderDto != null ? #temporals.format(orderDto.deliveryDate, 'yyyy-MM-dd') : ''}"
                                        required>
-                                <span class="text-danger error-message" th:if="${#fields.hasErrors('deliveryDate')}"
-                                      th:errors="*{deliveryDate}"></span>
+
+                                <span class="text-danger error-message"
+                                      th:if="${#fields.hasErrors('deliveryDate')}"
+                                      th:errors="*{deliveryDate}">
+                                </span>
                             </div>
+
                             <div class="col-md-6">
                                 <label for="advancePayment" class="form-label fw-bold">
                                     Advance Payment
@@ -220,22 +296,43 @@
                                       th:errors="*{advancePayment}">
                                 </span>
                             </div>
+
                             <div class="col-md-6">
-                                <label for="duePayment" class="form-label fw-bold">Due Payment <span
-                                        class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" name="duePayment" id="duePayment"
-                                       th:field="*{duePayment}" readonly>
-                                <span class="text-danger error-message" th:if="${#fields.hasErrors('duePayment')}"
-                                      th:errors="*{duePayment}"></span>
+                                <label for="duePayment" class="form-label fw-bold">
+                                    Due Payment <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       step="0.01"
+                                       class="form-control"
+                                       name="duePayment"
+                                       id="duePayment"
+                                       th:field="*{duePayment}"
+                                       readonly>
+
+                                <span class="text-danger error-message"
+                                      th:if="${#fields.hasErrors('duePayment')}"
+                                      th:errors="*{duePayment}">
+                                </span>
                             </div>
+
                             <div class="col-md-6">
-                                <label for="totalProductAmount" class="form-label fw-bold">Total Product Amount <span
-                                        class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="totalProductAmount"
-                                       name="totalProductAmount" th:field="*{totalProductAmount}" readonly>
+                                <label for="totalProductAmount" class="form-label fw-bold">
+                                    Total Product Amount <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       step="0.01"
+                                       class="form-control"
+                                       id="totalProductAmount"
+                                       name="totalProductAmount"
+                                       th:field="*{totalProductAmount}"
+                                       readonly>
+
                                 <span class="text-danger error-message"
                                       th:if="${#fields.hasErrors('totalProductAmount')}"
-                                      th:errors="*{totalProductAmount}"></span>
+                                      th:errors="*{totalProductAmount}">
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -243,10 +340,14 @@
 
                 <!-- Buttons -->
                 <div class="text-center mt-4 mb-4">
-                    <button type="button" class="btn btn-success shadow rounded-pill px-4" id="createOrderButton">
+                    <button type="button"
+                            class="btn btn-success shadow rounded-pill px-4"
+                            id="createOrderButton">
                         <i class="bi bi-check-circle"></i> Create
                     </button>
-                    <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
+
+                    <a th:href="@{/customers}"
+                       class="btn btn-secondary shadow rounded-pill px-4">
                         <i class="bi bi-x-circle"></i> Cancel
                     </a>
                 </div>
@@ -256,37 +357,58 @@
 </div>
 
 <!-- Order Summary Modal -->
-<div class="modal fade" id="orderSummaryModal" tabindex="-1" aria-labelledby="orderSummaryModalLabel"
+<div class="modal fade"
+     id="orderSummaryModal"
+     tabindex="-1"
+     aria-labelledby="orderSummaryModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content rounded-4 shadow">
+
             <div class="modal-header bg-success text-white rounded-top-4">
                 <h5 class="modal-title" id="orderSummaryModalLabel">
-                    <i class="bi bi-receipt-cutoff me-2"></i> Order Summary
+                    <i class="bi bi-receipt-cutoff me-2"></i>
+                    Order Summary
                 </h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
             </div>
+
             <div class="modal-body">
+                <!-- Customer Information -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Customer Information
+                        <i class="bi bi-info-circle me-2"></i>
+                        Customer Information
                     </div>
+
                     <div class="card-body">
-                        <p><strong>Name:</strong> <span id="modalCustomerName">-</span></p>
-                        <p><strong>Phone Number:</strong> <span id="modalCustomerContact">-</span></p>
+                        <p>
+                            <strong>Name:</strong>
+                            <span id="modalCustomerName">-</span>
+                        </p>
+
+                        <p>
+                            <strong>Phone Number:</strong>
+                            <span id="modalCustomerContact">-</span>
+                        </p>
                     </div>
                 </div>
-                <div class="card shadow-sm border-success border-bottom border-3 mb-4">
 
+                <!-- Order Information -->
+                <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold">
                         <i class="bi bi-calendar-check me-2"></i>
                         Order Information
                     </div>
 
                     <div class="card-body">
-
                         <div class="row">
-
                             <div class="col-md-6">
                                 <p>
                                     <strong>Order Date:</strong>
@@ -303,110 +425,209 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Products Summary -->
                 <div class="card border-success border-bottom border-3 shadow-sm border-0 mb-3">
                     <div class="card-header bg-success text-white rounded-top-4">
-                        <strong><i class="bi bi-list-check me-2"></i>Products Summary</strong>
+                        <strong>
+                            <i class="bi bi-list-check me-2"></i>
+                            Products Summary
+                        </strong>
                     </div>
+
                     <div class="card-body p-0">
-                        <table class="table table-bordered m-0">
-                            <thead class="table-success">
-                            <tr>
-                                <th>Product</th>
-                                <th>Silai</th>
-                                <th>Silai Amount</th>
-                                <th>Qty</th>
-                                <th>Subtotal</th>
-                                <th>Additional Notes</th>
-                            </tr>
-                            </thead>
-                            <tbody id="orderSummaryBody">
-                            <!-- Dynamic product rows go here -->
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered m-0">
+                                <thead class="table-success">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Silai</th>
+                                    <th>Fabric Source</th>
+                                    <th>Shop Fabric</th>
+                                    <th>Fabric Qty</th>
+                                    <th>Fabric Amount</th>
+                                    <th>Silai Amount</th>
+                                    <th>Qty</th>
+                                    <th>Subtotal</th>
+                                    <th>Additional Notes</th>
+                                </tr>
+                                </thead>
+
+                                <tbody id="orderSummaryBody">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Payment Summary -->
                 <div class="text-end mt-4">
-                    <p class="fs-5 fw-bold">Total Amount: <span id="modalTotalAmount">0.00</span></p>
-                    <p class="fs-5 fw-bold text-success">Advance Payment: <span id="modalAdvancePayment">0.00</span></p>
-                    <p class="fs-5 fw-bold text-danger">Due Payment: <span id="modalDuePayment">0.00</span></p>
+                    <p class="fs-5 fw-bold">
+                        Total Amount:
+                        <span id="modalTotalAmount">0.00</span>
+                    </p>
+
+                    <p class="fs-5 fw-bold text-success">
+                        Advance Payment:
+                        <span id="modalAdvancePayment">0.00</span>
+                    </p>
+
+                    <p class="fs-5 fw-bold text-danger">
+                        Due Payment:
+                        <span id="modalDuePayment">0.00</span>
+                    </p>
                 </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                        class="bi bi-x-circle me-1"></i> Cancel
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancel
                 </button>
-                <button type="submit" class="btn btn-success" id="confirmOrderButton"><i
-                        class="bi bi-check-circle me-1"></i> Confirm Order
+
+                <button type="submit"
+                        class="btn btn-success"
+                        id="confirmOrderButton">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Confirm Order
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div th:replace="~{fragments/notification-modal :: notification}"></div>
 
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
-<!-- JSON Data for JS -->
+
 <script th:inline="javascript">
     /*<![CDATA[*/
+
     var productSilaiData = /*[[${productDtos}]]*/ [];
 
-    document.addEventListener("DOMContentLoaded", function () {
+    let orderItems = [];
 
+    document.addEventListener("DOMContentLoaded", function () {
         const orderDate = document.getElementById("orderDate");
         const deliveryDate = document.getElementById("deliveryDate");
 
         const today = new Date().toISOString().split("T")[0];
 
-        // Order Date: only today
         orderDate.min = today;
         orderDate.max = today;
 
-        // Delivery Date: today and future
         deliveryDate.min = today;
+
+        setupFabricControls();
     });
+
+    function setupFabricControls() {
+        const fabricSource = document.getElementById("fabricSource");
+        const shopFabricContainer = document.getElementById("shopFabricContainer");
+        const fabricQuantityContainer = document.getElementById("fabricQuantityContainer");
+        const inventoryItemSelect = document.getElementById("inventoryItemSelect");
+        const fabricQuantity = document.getElementById("fabricQuantity");
+        const fabricStockInfo = document.getElementById("fabricStockInfo");
+        const fabricStockError = document.getElementById("fabricStockError");
+
+        fabricSource.addEventListener("change", function () {
+            const isShopFabric = this.value === "SHOP";
+
+            shopFabricContainer.style.display = isShopFabric ? "block" : "none";
+            fabricQuantityContainer.style.display = isShopFabric ? "block" : "none";
+
+            inventoryItemSelect.value = "";
+            fabricQuantity.value = "";
+            fabricStockInfo.style.display = "none";
+            fabricStockError.style.display = "none";
+        });
+
+        inventoryItemSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+
+            if (!this.value) {
+                fabricStockInfo.style.display = "none";
+                return;
+            }
+
+            const stock = parseFloat(selectedOption.dataset.stock) || 0;
+            const unit = selectedOption.dataset.unit || "METER";
+
+            fabricStockInfo.innerText =
+                "Available Stock: " + stock.toFixed(2) + " " + unit;
+
+            fabricStockInfo.style.display = "block";
+
+            fabricQuantity.max = stock;
+            fabricStockError.style.display = "none";
+        });
+
+        fabricQuantity.addEventListener("input", function () {
+            const selectedOption =
+                inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+
+            if (!selectedOption || !inventoryItemSelect.value) {
+                return;
+            }
+
+            const stock = parseFloat(selectedOption.dataset.stock) || 0;
+            const quantity = parseFloat(this.value) || 0;
+
+            if (quantity > stock) {
+                fabricStockError.innerText =
+                    "Fabric quantity cannot be greater than available stock.";
+
+                fabricStockError.style.display = "block";
+            } else {
+                fabricStockError.innerText = "";
+                fabricStockError.style.display = "none";
+            }
+        });
+    }
 
     document.getElementById("productSelect").addEventListener("change", function () {
-        var selectedId = this.value;
-        var silaiSelect = document.getElementById("silaiSelect");
-        var silaiContainer = document.getElementById("silaiContainer");
+        const selectedId = this.value;
+        const silaiSelect = document.getElementById("silaiSelect");
 
-        // Clear old options
-        silaiSelect.innerHTML = '<option value="" disabled selected>-- Silai Type --</option>';
+        silaiSelect.innerHTML =
+            '<option value="" disabled selected>-- Silai Type --</option>';
 
-        // Find product
-        var product = productSilaiData.find(p => p.id == selectedId);
+        const product =
+            productSilaiData.find(p => p.id == selectedId);
+
         if (product) {
-            // Add Single Silai
-            var opt1 = document.createElement("option");
+            const opt1 = document.createElement("option");
             opt1.value = "single";
-            opt1.text = "Single Silai - " + formatAmount(product.singleSilai);
+            opt1.text = "Single Silai - " +
+                formatAmount(product.singleSilai);
+
             silaiSelect.appendChild(opt1);
 
-            // Add Double Silai
-            var opt2 = document.createElement("option");
+            const opt2 = document.createElement("option");
             opt2.value = "double";
-            opt2.text = "Double Silai - " + formatAmount(product.doubleSilai);
-            silaiSelect.appendChild(opt2);
+            opt2.text = "Double Silai - " +
+                formatAmount(product.doubleSilai);
 
-            // Show dropdown
-            silaiContainer.style.display = "block";
+            silaiSelect.appendChild(opt2);
         }
     });
-    /*]]>*/
 
-    let orderItems = [];
+    function formatAmount(amount) {
+        const value = parseFloat(amount);
+        return isNaN(value) ? "0.00" : value.toFixed(2);
+    }
 
     document.getElementById("addProductBtn").addEventListener("click", function () {
-
         const productSelect =
             document.getElementById("productSelect");
 
@@ -419,12 +640,18 @@
         const additionalNotesInput =
             document.getElementById("additionalNotes");
 
+        const fabricSource =
+            document.getElementById("fabricSource");
+
+        const inventoryItemSelect =
+            document.getElementById("inventoryItemSelect");
+
+        const fabricQuantityInput =
+            document.getElementById("fabricQuantity");
 
         const qty =
             parseInt(quantityInput.value);
 
-
-        // Validation
         if (!productSelect.value ||
             !silaiSelect.value ||
             !qty ||
@@ -434,130 +661,172 @@
             return;
         }
 
+        const selectedFabricSource =
+            fabricSource.value;
 
-        // Find selected product
+        let inventoryItemId = null;
+        let inventoryItemName = "-";
+        let fabricQuantity = null;
+        let fabricSalePrice = 0;
+        let fabricAmount = 0;
+
+        if (selectedFabricSource === "SHOP") {
+            if (!inventoryItemSelect.value) {
+                alert("Please select shop fabric.");
+                return;
+            }
+
+            fabricQuantity =
+                parseFloat(fabricQuantityInput.value);
+
+            if (!fabricQuantity ||
+                fabricQuantity <= 0) {
+
+                alert("Please enter fabric quantity.");
+                return;
+            }
+
+            const selectedOption =
+                inventoryItemSelect.options[
+                    inventoryItemSelect.selectedIndex
+                    ];
+
+            const availableStock =
+                parseFloat(selectedOption.dataset.stock) || 0;
+
+            if (fabricQuantity > availableStock) {
+                alert(
+                    "Fabric quantity cannot be greater than available stock."
+                );
+                return;
+            }
+
+            inventoryItemId =
+                inventoryItemSelect.value;
+
+            inventoryItemName =
+                selectedOption.text.split(" - Stock:")[0];
+
+            fabricSalePrice =
+                parseFloat(selectedOption.dataset.salePrice) || 0;
+
+            fabricAmount =
+                fabricQuantity * fabricSalePrice;
+        }
+
         const product =
             productSilaiData.find(
                 p => p.id == productSelect.value
             );
-
 
         if (!product) {
             alert("Product information not found.");
             return;
         }
 
-
-        // Selected Silai
         const silaiType =
             silaiSelect.value;
 
-
-        // Selected Silai Amount
         const silaiAmount =
             silaiType === "single"
                 ? parseFloat(product.singleSilai) || 0
                 : parseFloat(product.doubleSilai) || 0;
 
-
-        // Subtotal
-        const itemAmount =
+        const stitchingAmount =
             silaiAmount * qty;
 
+        const itemAmount =
+            stitchingAmount + fabricAmount;
 
-        // Additional Notes
         const additionalNotes =
             additionalNotesInput.value.trim();
 
-
-        // Create item
         const item = {
-
-            productId:
-            productSelect.value,
-
-            productName:
-            productSelect.options[
+            productId: productSelect.value,
+            productName: productSelect.options[
                 productSelect.selectedIndex
                 ].text,
-
-            silaiType:
-            silaiType,
-
-            silai:
-            silaiSelect.options[
+            silaiType: silaiType,
+            silai: silaiSelect.options[
                 silaiSelect.selectedIndex
                 ].text,
-
-            silaiAmount:
-            silaiAmount,
-
-            qty:
-            qty,
-
-            amount:
-            itemAmount,
-
-            additionalNotes:
-            additionalNotes
+            silaiAmount: silaiAmount,
+            stitchingAmount: stitchingAmount,
+            qty: qty,
+            amount: itemAmount,
+            fabricSource: selectedFabricSource,
+            inventoryItemId: inventoryItemId,
+            inventoryItemName: inventoryItemName,
+            fabricQuantity: fabricQuantity,
+            fabricSalePrice: fabricSalePrice,
+            fabricAmount: fabricAmount,
+            additionalNotes: additionalNotes
         };
 
-
-        // Add item
         orderItems.push(item);
-        // Update table
+
         renderTable();
-        // Update total/due
         updateOrderDetails();
 
-        // Reset fields
         productSelect.selectedIndex = 0;
 
         silaiSelect.innerHTML =
             '<option value="" disabled selected>-- Silai Type --</option>';
 
         quantityInput.value = "";
-
         additionalNotesInput.value = "";
+
+        fabricSource.value = "CUSTOMER";
+        inventoryItemSelect.value = "";
+        fabricQuantityInput.value = "";
+
+        document.getElementById("shopFabricContainer").style.display = "none";
+        document.getElementById("fabricQuantityContainer").style.display = "none";
+        document.getElementById("fabricStockInfo").style.display = "none";
+        document.getElementById("fabricStockError").style.display = "none";
     });
 
     function renderTable() {
-
         const tbody =
             document.querySelector("#productTable tbody");
 
         tbody.innerHTML = "";
 
         orderItems.forEach((item, index) => {
+            const fabricSourceText =
+                item.fabricSource === "SHOP"
+                    ? "Shop Fabric"
+                    : "Customer Fabric";
 
             tbody.innerHTML += `
-            <tr>
-                <td>${item.productName}</td>
-
-                <td>${item.silai}</td>
-
-                <td>${item.silaiAmount.toFixed(2)}</td>
-
-                <td>${item.qty}</td>
-
-                <td>${item.amount.toFixed(2)}</td>
-
-                <td>
-                    ${item.additionalNotes
+    <tr>
+        <td>${item.productName}</td>
+        <td>${item.silai}</td>
+        <td>${fabricSourceText}</td>
+        <td>${item.fabricSource === "SHOP"
+                ? item.inventoryItemName
+                : "-"}</td>
+        <td>${item.fabricSource === "SHOP"
+                ? item.fabricQuantity.toFixed(2) + " M"
+                : "-"}</td>
+        <td>${item.fabricSource === "SHOP"
+                ? item.fabricAmount.toFixed(2)
+                : "0.00"}</td>
+        <td>${item.silaiAmount.toFixed(2)}</td>
+        <td>${item.qty}</td>
+        <td>${item.amount.toFixed(2)}</td>
+        <td>${item.additionalNotes
                 ? item.additionalNotes
-                : "-"}
-                </td>
-
-                <td>
-                    <button type="button"
-                            class="btn btn-sm btn-danger"
-                            onclick="deleteItem(${index})">
-                        <i class="bi bi-trash"></i>
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        `;
+                : "-"}</td>
+        <td>
+            <button type="button"
+                    class="btn btn-sm btn-danger"
+                    onclick="deleteItem(${index})">
+                <i class="bi bi-trash"></i>
+            </button>
+        </td>
+    </tr>
+`;
         });
     }
 
@@ -568,7 +837,6 @@
     }
 
     function updateOrderDetails() {
-
         let totalAmount = 0;
 
         orderItems.forEach(item => {
@@ -587,38 +855,30 @@
         const advanceError =
             document.getElementById("advancePaymentError");
 
-        totalInput.value = totalAmount.toFixed(2);
+        totalInput.value =
+            totalAmount.toFixed(2);
 
         let advancePayment =
             parseFloat(advanceInput.value) || 0;
 
-        // Negative advance
         if (advancePayment < 0) {
-
             advanceError.innerText =
                 "Advance payment cannot be negative.";
 
             advanceError.style.display = "block";
-
             dueInput.value = totalAmount.toFixed(2);
-
             return;
         }
 
-        // Advance greater than total
         if (advancePayment > totalAmount) {
-
             advanceError.innerText =
                 "Advance payment cannot be greater than total product amount.";
 
             advanceError.style.display = "block";
-
             dueInput.value = "0.00";
-
             return;
         }
 
-        // Valid
         advanceError.innerText = "";
         advanceError.style.display = "none";
 
@@ -639,26 +899,13 @@
             updateOrderDetails();
         });
 
-
-    // on create button click
     document.getElementById("createOrderButton")
         .addEventListener("click", function () {
 
-            // -----------------------------
-            // Product validation
-            // -----------------------------
-
             if (orderItems.length === 0) {
-
                 alert("Please add at least one product.");
-
                 return;
             }
-
-
-            // -----------------------------
-            // Dates
-            // -----------------------------
 
             const orderDate =
                 document.getElementById("orderDate").value;
@@ -666,153 +913,91 @@
             const deliveryDate =
                 document.getElementById("deliveryDate").value;
 
-
             if (!orderDate || !deliveryDate) {
-
                 alert("Please select order and delivery date.");
-
                 return;
             }
-
-
-            // -----------------------------
-            // Payment
-            // -----------------------------
 
             const totalAmount =
                 parseFloat(
                     document.getElementById("totalProductAmount").value
                 ) || 0;
 
-
             const advancePayment =
                 parseFloat(
                     document.getElementById("advancePayment").value
                 ) || 0;
 
-
             if (advancePayment < 0) {
-
                 alert("Advance payment cannot be negative.");
-
                 return;
             }
 
-
             if (advancePayment > totalAmount) {
-
                 alert(
                     "Advance payment cannot be greater than total product amount."
                 );
-
                 return;
             }
-
 
             const duePayment =
                 totalAmount - advancePayment;
 
-
-            // -----------------------------
-            // Customer
-            // -----------------------------
-
-            document.getElementById("modalCustomerName")
-                .innerText =
+            document.getElementById("modalCustomerName").innerText =
                 document.getElementById("customerName").value;
 
-
-            document.getElementById("modalCustomerContact")
-                .innerText =
+            document.getElementById("modalCustomerContact").innerText =
                 document.getElementById("customerPhone").value;
 
-
-            // -----------------------------
-            // Dates
-            // -----------------------------
-
-            document.getElementById("modalOrderDate")
-                .innerText =
+            document.getElementById("modalOrderDate").innerText =
                 orderDate;
 
-
-            document.getElementById("modalDeliveryDate")
-                .innerText =
+            document.getElementById("modalDeliveryDate").innerText =
                 deliveryDate;
-
-
-            // -----------------------------
-            // Products
-            // -----------------------------
 
             const summaryBody =
                 document.getElementById("orderSummaryBody");
 
-
             summaryBody.innerHTML = "";
 
-
             orderItems.forEach(item => {
-
                 const row =
                     document.createElement("tr");
 
-
                 row.innerHTML = `
-
-            <td>
-                ${item.productName}
-            </td>
-
-            <td>
-                ${item.silai}
-            </td>
-
-            <td>
-                ${item.silaiAmount.toFixed(2)}
-            </td>
-
-            <td>
-                ${item.qty}
-            </td>
-
-            <td>
-                ${item.amount.toFixed(2)}
-            </td>
-
-            <td>
-                ${item.additionalNotes
+    <td>${item.productName}</td>
+    <td>${item.silai}</td>
+    <td>${item.fabricSource === "SHOP"
+                    ? "Shop Fabric"
+                    : "Customer Fabric"}</td>
+    <td>${item.fabricSource === "SHOP"
+                    ? item.inventoryItemName
+                    : "-"}</td>
+    <td>${item.fabricSource === "SHOP"
+                    ? item.fabricQuantity.toFixed(2) + " M"
+                    : "-"}</td>
+    <td>${item.fabricSource === "SHOP"
+                    ? item.fabricAmount.toFixed(2)
+                    : "0.00"}</td>
+    <td>${item.silaiAmount.toFixed(2)}</td>
+    <td>${item.qty}</td>
+    <td>${item.amount.toFixed(2)}</td>
+    <td>${item.additionalNotes
                     ? item.additionalNotes
-                    : "-"}
-            </td>
-
-        `;
-
+                    : "-"}</td>
+`;
 
                 summaryBody.appendChild(row);
-
             });
 
-
-            // -----------------------------
-            // Payment Summary
-            // -----------------------------
-
-            document.getElementById("modalTotalAmount")
-                .innerText =
+            document.getElementById("modalTotalAmount").innerText =
                 totalAmount.toFixed(2);
 
-            document.getElementById("modalAdvancePayment")
-                .innerText =
+            document.getElementById("modalAdvancePayment").innerText =
                 advancePayment.toFixed(2);
 
-            document.getElementById("modalDuePayment")
-                .innerText =
+            document.getElementById("modalDuePayment").innerText =
                 duePayment.toFixed(2);
-
-            // -----------------------------
-            // Open Modal
-            // -----------------------------
 
             const modalElement =
                 document.getElementById("orderSummaryModal");
@@ -829,10 +1014,7 @@
             const container =
                 document.getElementById("orderProductsInputs");
 
-
-            // Remove old hidden inputs
             container.innerHTML = "";
-
 
             orderItems.forEach((item, index) => {
 
@@ -842,13 +1024,11 @@
                     item.productId
                 );
 
-
                 addHiddenInput(
                     container,
                     `orderProducts[${index}].silaiType`,
                     item.silaiType
                 );
-
 
                 addHiddenInput(
                     container,
@@ -856,13 +1036,11 @@
                     item.silaiAmount
                 );
 
-
                 addHiddenInput(
                     container,
                     `orderProducts[${index}].quantity`,
                     item.qty
                 );
-
 
                 addHiddenInput(
                     container,
@@ -870,29 +1048,39 @@
                     item.amount
                 );
 
-
                 addHiddenInput(
                     container,
                     `orderProducts[${index}].additionalNotes`,
                     item.additionalNotes
                 );
 
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].fabricSource`,
+                    item.fabricSource
+                );
+
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].inventoryItemId`,
+                    item.inventoryItemId
+                );
+
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].fabricQuantity`,
+                    item.fabricQuantity
+                );
             });
 
-
-            // Submit form
             document.querySelector(".order-form").submit();
-
         });
 
-
     function addHiddenInput(container, name, value) {
-
         const input =
             document.createElement("input");
 
         input.type = "hidden";
-
         input.name = name;
 
         input.value =
@@ -904,6 +1092,7 @@
         container.appendChild(input);
     }
 
+    /*]]>*/
 </script>
 
 </body>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stock In | Tailor Master</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+<!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2 class="page-title mb-0">
+                    <i class="bi bi-box-arrow-in-down text-success me-2"></i>
+                    Stock In
+                </h2>
+
+                <a th:href="@{/inventory}"
+                   class="btn btn-success shadow rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Inventory
+                </a>
+
+            </div>
+
+            <!-- Success Message -->
+            <div th:if="${successMessage != null}"
+                 class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+
+                <i class="bi bi-check-circle me-2"></i>
+
+                <span th:text="${successMessage}">
+                    Stock added successfully.
+                </span>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage != null}"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                <span th:text="${errorMessage}">
+                    Unable to add stock.
+                </span>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+            <!-- Stock In Card -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-plus-square me-2"></i> Add Stock
+                    </div>
+
+                </div>
+
+                <div class="card-body">
+
+                    <!-- Information -->
+                    <div class="alert alert-success d-flex align-items-start"
+                         role="alert">
+
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+
+                        <div>
+                            <strong>Stock In</strong>
+
+                            <div class="small mt-1">
+                                Select an inventory item and enter the quantity
+                                you want to add to the current stock.
+                                The stock movement will automatically be
+                                recorded in inventory history.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Form -->
+                    <form th:action="@{/inventory/stock-in}"
+                          method="post"
+                          id="stockInForm">
+
+                        <div class="row g-3">
+
+                            <!-- Inventory Item -->
+                            <div class="col-md-12">
+
+                                <label for="inventoryItem"
+                                       class="form-label fw-semibold">
+
+                                    Inventory Item
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                <select id="inventoryItem"
+                                        name="inventoryItemId"
+                                        class="form-select rounded-pill"
+                                        required>
+
+                                    <option value="">
+                                        Select Inventory Item
+                                    </option>
+
+                                    <option th:each="item : ${inventoryItems}"
+                                            th:value="${item.id}"
+                                            th:data-stock="${item.quantity}"
+                                            th:text="${item.name
+                                                + ' | '
+                                                + item.itemType.name()
+                                                + ' | Current Stock: '
+                                                + item.quantity.stripTrailingZeros().toPlainString()}">
+
+                                        Cotton | FABRIC | Current Stock: 25
+
+                                    </option>
+
+                                </select>
+
+                                <div class="form-text">
+                                    Select the item for which you want to
+                                    increase stock.
+                                </div>
+
+                            </div>
+
+                            <!-- Current Stock -->
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Current Stock
+                                </label>
+
+                                <div class="alert alert-light border-success mb-0 py-2">
+
+                                    <i class="bi bi-box-seam text-success me-2"></i>
+
+                                    <strong id="currentStock"
+                                            class="text-success">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Quantity -->
+                            <div class="col-md-6">
+
+                                <label for="quantity"
+                                       class="form-label fw-semibold">
+
+                                    Quantity to Add
+                                    <span class="text-danger">*</span>
+
+                                </label>
+
+                                <input type="number"
+                                       id="quantity"
+                                       name="quantity"
+                                       class="form-control rounded-pill"
+                                       min="0.01"
+                                       step="0.01"
+                                       placeholder="Enter quantity"
+                                       required>
+
+                                <div class="form-text">
+                                    Enter the quantity being added to stock.
+                                </div>
+
+                            </div>
+
+                            <!-- Unit Price -->
+                            <div class="col-md-6">
+
+                                <label for="unitPrice"
+                                       class="form-label fw-semibold">
+
+                                    Purchase / Unit Price
+
+                                </label>
+
+                                <input type="number"
+                                       id="unitPrice"
+                                       name="unitPrice"
+                                       class="form-control rounded-pill"
+                                       min="0"
+                                       step="0.01"
+                                       placeholder="Enter unit price">
+
+                                <div class="form-text">
+                                    Optional. Price paid for this stock.
+                                </div>
+
+                            </div>
+
+                            <!-- Reason -->
+                            <div class="col-md-6">
+
+                                <label for="reason"
+                                       class="form-label fw-semibold">
+
+                                    Reason
+
+                                </label>
+
+                                <select id="reason"
+                                        name="reason"
+                                        class="form-select rounded-pill">
+
+                                    <option value="PURCHASE">
+                                        Purchase
+                                    </option>
+
+                                    <option value="OPENING_STOCK">
+                                        Opening Stock
+                                    </option>
+
+                                    <option value="RETURN">
+                                        Customer Return
+                                    </option>
+
+                                    <option value="ADJUSTMENT">
+                                        Stock Adjustment
+                                    </option>
+
+                                    <option value="OTHER">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="col-md-12">
+
+                                <label for="notes"
+                                       class="form-label fw-semibold">
+
+                                    Notes
+
+                                </label>
+
+                                <textarea id="notes"
+                                          name="notes"
+                                          class="form-control rounded-3"
+                                          rows="3"
+                                          placeholder="Enter any additional notes..."></textarea>
+
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-md-12">
+
+                                <div class="d-flex justify-content-end gap-2 mt-2">
+
+                                    <a th:href="@{/inventory}"
+                                       class="btn btn-secondary shadow rounded-pill px-4">
+
+                                        <i class="bi bi-x-lg me-1"></i>
+                                        Cancel
+
+                                    </a>
+
+                                    <button type="submit"
+                                            class="btn btn-success shadow rounded-pill px-4">
+
+                                        <i class="bi bi-box-arrow-in-down me-1"></i>
+                                        Add Stock
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<script>
+
+    const inventoryItem = document.getElementById('inventoryItem');
+    const currentStock = document.getElementById('currentStock');
+
+    inventoryItem?.addEventListener('change', function () {
+
+        const selectedOption = this.options[this.selectedIndex];
+
+        if (!selectedOption || !this.value) {
+            currentStock.textContent = '0';
+            return;
+        }
+
+        currentStock.textContent =
+            selectedOption.dataset.stock || '0';
+    });
+
+    document.getElementById('stockInForm')
+        ?.addEventListener('submit', function (event) {
+
+            const quantity =
+                document.getElementById('quantity');
+
+            if (!quantity.value ||
+                parseFloat(quantity.value) <= 0) {
+
+                event.preventDefault();
+
+                quantity.focus();
+
+                alert('Please enter a quantity greater than 0.');
+            }
+        });
+
+</script>
+
+</body>
+</html>

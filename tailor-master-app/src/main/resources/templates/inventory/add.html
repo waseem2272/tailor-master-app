@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${inventoryItem.id == null ? 'Add Inventory Item | Tailor Master' : 'Edit Inventory Item | Tailor Master'}">
+        Add Inventory Item | Tailor Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="page-title mb-0">
+                    <i class="bi bi-box-seam text-success me-2"></i>
+                    <span th:text="${inventoryItem.id == null ? 'Add Inventory Item' : 'Edit Inventory Item'}">Add Inventory Item</span>
+                </h2>
+                <a th:href="@{/inventory}" class="btn btn-success shadow rounded-pill px-4"><i
+                        class="bi bi-arrow-left me-1"></i>Back to Inventory</a>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-pencil-square me-2"></i>Item Information
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/inventory/save}" th:object="${inventoryItem}" method="post" id="inventoryForm">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="card border-success shadow-sm mb-4">
+                            <div class="card-header bg-light text-success fw-bold">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label fw-semibold">Item Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" th:field="*{name}" id="name"
+                                               class="form-control rounded-pill" placeholder="Enter item name" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="itemType" class="form-label fw-semibold">Item Type <span
+                                                class="text-danger">*</span></label>
+                                        <select th:field="*{itemType}" id="itemType" class="form-select rounded-pill"
+                                                required>
+                                            <option value="">Select Item Type</option>
+                                            <option th:each="type : ${itemTypes}" th:value="${type}"
+                                                    th:text="${type.name() == 'KURTA_PAJAMA' ? 'Kurta Pajama' : type.name().replace('_', ' ')}">
+                                                Fabric
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="brand" class="form-label fw-semibold">Brand</label>
+                                        <select th:field="*{brand}" id="brand" class="form-select rounded-pill">
+                                            <option value="">Select Brand</option>
+                                            <option th:each="brand : ${brands}" th:value="${brand.id}"
+                                                    th:text="${brand.name}">Brand
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="category" class="form-label fw-semibold">Category</label>
+                                        <select th:field="*{category}" id="category" class="form-select rounded-pill">
+                                            <option value="">Select Category</option>
+                                            <option th:each="category : ${categories}" th:value="${category.id}"
+                                                    th:text="${category.name}">Category
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-success shadow-sm mb-4">
+                            <div class="card-header bg-light text-success fw-bold">
+                                <i class="bi bi-tags me-2"></i>Item Details
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="color" class="form-label fw-semibold">Color</label>
+                                        <input type="text" th:field="*{color}" id="color"
+                                               class="form-control rounded-pill" placeholder="e.g. Black, White, Navy">
+                                    </div>
+
+                                    <div class="col-md-4" id="designField">
+                                        <label for="design" class="form-label fw-semibold">Design / Pattern</label>
+                                        <input type="text" th:field="*{design}" id="design"
+                                               class="form-control rounded-pill"
+                                               placeholder="e.g. Plain, Checks, Printed">
+                                    </div>
+
+                                    <div class="col-md-4" id="sizeField">
+                                        <label for="size" class="form-label fw-semibold">Size</label>
+                                        <input type="text" th:field="*{size}" id="size"
+                                               class="form-control rounded-pill" placeholder="e.g. S, M, L, XL">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="alert alert-success mb-0 py-2" id="typeInfo">
+                                            <i class="bi bi-lightbulb me-1"></i>Select an item type to see the relevant
+                                            fields.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-success shadow-sm mb-4">
+                            <div class="card-header bg-light text-success fw-bold">
+                                <i class="bi bi-boxes me-2"></i>Stock & Pricing
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="unit" class="form-label fw-semibold">Unit <span class="text-danger">*</span></label>
+                                        <select th:field="*{unit}" id="unit" class="form-select rounded-pill" required>
+                                            <option value="">Select Unit</option>
+                                            <option th:each="unit : ${units}" th:value="${unit}"
+                                                    th:text="${unit.name().replace('_', ' ')}">Meter
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="quantity" class="form-label fw-semibold">Quantity <span
+                                                class="text-danger">*</span></label>
+                                        <input type="number" th:field="*{quantity}" id="quantity"
+                                               class="form-control rounded-pill" min="0" step="0.01" placeholder="0.00"
+                                               required>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="purchasePrice" class="form-label fw-semibold">Purchase Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text rounded-start-pill">Rs.</span>
+                                            <input type="number" th:field="*{purchasePrice}" id="purchasePrice"
+                                                   class="form-control rounded-end-pill" min="0" step="0.01"
+                                                   placeholder="0.00">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="salePrice" class="form-label fw-semibold">Sale Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text rounded-start-pill">Rs.</span>
+                                            <input type="number" th:field="*{salePrice}" id="salePrice"
+                                                   class="form-control rounded-end-pill" min="0" step="0.01"
+                                                   placeholder="0.00">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="minimumStock" class="form-label fw-semibold">Minimum Stock</label>
+                                        <input type="number" th:field="*{minimumStock}" id="minimumStock"
+                                               class="form-control rounded-pill" min="0" step="0.01"
+                                               placeholder="e.g. 5">
+                                        <small class="text-muted">Low-stock alert threshold</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-success shadow-sm mb-4">
+                            <div class="card-header bg-light text-success fw-bold">
+                                <i class="bi bi-card-text me-2"></i>Additional Information
+                            </div>
+                            <div class="card-body">
+                                <label for="description" class="form-label fw-semibold">Description</label>
+                                <textarea th:field="*{description}" id="description" class="form-control rounded-3"
+                                          rows="4"
+                                          placeholder="Enter any additional notes about this item..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a th:href="@{/inventory}" class="btn btn-secondary shadow rounded-pill px-4"><i
+                                    class="bi bi-x-circle me-1"></i>Cancel</a>
+                            <button type="submit" class="btn btn-success shadow rounded-pill px-4">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${inventoryItem.id == null ? 'Save Item' : 'Update Item'}">Save Item</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<script>
+    const itemType = document.getElementById('itemType');
+    const unit = document.getElementById('unit');
+    const designField = document.getElementById('designField');
+    const sizeField = document.getElementById('sizeField');
+    const typeInfo = document.getElementById('typeInfo');
+
+    function updateItemTypeFields() {
+        const type = itemType.value;
+
+        designField.style.display = '';
+        sizeField.style.display = '';
+
+        if (type === 'FABRIC') {
+            unit.value = 'METER';
+            sizeField.style.display = 'none';
+            typeInfo.innerHTML = '<i class="bi bi-rulers me-1"></i>Fabric stock is measured in meters. You can track color, design and brand.';
+        } else if (type === 'STITCHED') {
+            unit.value = 'PIECE';
+            designField.style.display = 'none';
+            typeInfo.innerHTML = '<i class="bi bi-scissors me-1"></i>Stitched items are tracked by pieces. Size can be used for ready-made garments.';
+        } else if (type === 'WAISTCOAT') {
+            unit.value = 'PIECE';
+            designField.style.display = 'none';
+            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>Waistcoats are tracked by pieces and can have different sizes.';
+        } else if (type === 'KURTA_PAJAMA') {
+            unit.value = 'PIECE';
+            designField.style.display = 'none';
+            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>Kurta Pajama stock is tracked by pieces and sizes.';
+        } else if (type === 'OTHER') {
+            typeInfo.innerHTML = '<i class="bi bi-box me-1"></i>Select the appropriate unit and enter the item details.';
+        } else {
+            typeInfo.innerHTML = '<i class="bi bi-lightbulb me-1"></i>Select an item type to see the relevant fields.';
+        }
+    }
+
+    itemType?.addEventListener('change', updateItemTypeFields);
+    updateItemTypeFields();
+</script>
+</body>
+</html>

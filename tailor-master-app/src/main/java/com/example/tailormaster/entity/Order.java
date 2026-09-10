@@ -45,6 +45,10 @@ public class Order extends BaseEntity {
     @ToString.Exclude
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<OrderInventoryUsage> inventoryUsages = new ArrayList<>();
+
     // ✅ New fields for pickup and due management
     @Enumerated(EnumType.STRING)
     private PickupStatus pickupStatus = PickupStatus.NOT_PICKED_UP;  // default value

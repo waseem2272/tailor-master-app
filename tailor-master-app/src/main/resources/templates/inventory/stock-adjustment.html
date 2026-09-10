@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Adjustment | Tailor Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="page-title mb-0"><i class="bi bi-sliders text-success me-2"></i>Stock Adjustment</h2>
+                <a th:href="@{/inventory}" class="btn btn-success shadow rounded-pill px-4"><i
+                        class="bi bi-arrow-left me-1"></i>Back to Inventory</a>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-sliders me-2"></i>Adjust Stock
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/inventory/stock-adjustment}" method="post" id="adjustmentForm">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label for="inventoryItemId" class="form-label fw-semibold">Inventory Item <span
+                                        class="text-danger">*</span></label>
+                                <select name="inventoryItemId" id="inventoryItemId" class="form-select rounded-pill"
+                                        required>
+                                    <option value="">Select Inventory Item</option>
+                                    <option th:each="item : ${inventoryItems}" th:value="${item.id}"
+                                            th:data-stock="${item.quantity}" th:data-unit="${item.unit.name()}"
+                                            th:text="${item.name + ' (' + item.unit.name() + ')'}">Cotton (METER)
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Current Stock</label>
+                                <div class="alert alert-light border-success mb-0 py-2">
+                                    <i class="bi bi-box-seam text-success me-2"></i>
+                                    <strong id="currentStock" class="text-success">0</strong>
+                                    <span id="currentUnit" class="text-success ms-1"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="newQuantity" class="form-label fw-semibold">Actual / New Stock Quantity
+                                    <span class="text-danger">*</span></label>
+                                <input type="number" name="newQuantity" id="newQuantity"
+                                       class="form-control rounded-pill" min="0" step="0.01"
+                                       placeholder="Enter actual stock quantity" required>
+                                <div id="differenceBox" class="alert mt-2 mb-0 d-none"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="reason" class="form-label fw-semibold">Reason</label>
+                                <select name="reason" id="reason" class="form-select rounded-pill">
+                                    <option value="">Select Reason</option>
+                                    <option value="PHYSICAL_COUNT">Physical Stock Count</option>
+                                    <option value="DAMAGED">Damaged Stock</option>
+                                    <option value="LOST">Lost Stock</option>
+                                    <option value="CORRECTION">Stock Correction</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="notes" class="form-label fw-semibold">Notes</label>
+                                <textarea name="notes" id="notes" class="form-control rounded-3" rows="3"
+                                          placeholder="Enter additional notes..."></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                    <a th:href="@{/inventory}" class="btn btn-secondary shadow rounded-pill px-4"><i
+                                            class="bi bi-x-lg me-1"></i>Cancel</a>
+                                    <button type="submit" class="btn btn-success shadow rounded-pill px-4"><i
+                                            class="bi bi-check-circle me-1"></i>Adjust Stock
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<script>
+    const itemSelect = document.getElementById('inventoryItemId');
+    const currentStock = document.getElementById('currentStock');
+    const currentUnit = document.getElementById('currentUnit');
+    const newQuantity = document.getElementById('newQuantity');
+    const differenceBox = document.getElementById('differenceBox');
+
+    itemSelect?.addEventListener('change', function () {
+        const selected = this.options[this.selectedIndex];
+
+        if (!this.value) {
+            currentStock.textContent = '0';
+            currentUnit.textContent = '';
+            newQuantity.value = '';
+            differenceBox.className = 'alert mt-2 mb-0 d-none';
+            differenceBox.textContent = '';
+            return;
+        }
+
+        currentStock.textContent = parseFloat(selected.dataset.stock || '0');
+        currentUnit.textContent = selected.dataset.unit || '';
+        newQuantity.value = '';
+        differenceBox.className = 'alert mt-2 mb-0 d-none';
+        differenceBox.textContent = '';
+    });
+
+    newQuantity?.addEventListener('input', function () {
+        const selected = itemSelect.options[itemSelect.selectedIndex];
+
+        if (!itemSelect.value || !selected || this.value === '') {
+            differenceBox.className = 'alert mt-2 mb-0 d-none';
+            differenceBox.textContent = '';
+            return;
+        }
+
+        const current = parseFloat(selected.dataset.stock || '0');
+        const newValue = parseFloat(this.value);
+
+        if (isNaN(newValue)) return;
+
+        const difference = newValue - current;
+
+        if (difference === 0) {
+            differenceBox.className = 'alert alert-secondary mt-2 mb-0';
+            differenceBox.innerHTML = '<i class="bi bi-dash-circle me-2"></i>New quantity is same as current stock.';
+        } else if (difference > 0) {
+            differenceBox.className = 'alert alert-success mt-2 mb-0';
+            differenceBox.innerHTML = '<i class="bi bi-arrow-up-circle me-2"></i>Stock will increase by ' + difference.toFixed(2);
+        } else {
+            differenceBox.className = 'alert alert-danger mt-2 mb-0';
+            differenceBox.innerHTML = '<i class="bi bi-arrow-down-circle me-2"></i>Stock will decrease by ' + Math.abs(difference).toFixed(2);
+        }
+    });
+
+    document.getElementById('adjustmentForm')?.addEventListener('submit', function (event) {
+        const selected = itemSelect.options[itemSelect.selectedIndex];
+        const newValue = parseFloat(newQuantity.value);
+
+        if (!itemSelect.value || !selected) {
+            event.preventDefault();
+            alert('Please select an inventory item.');
+            return;
+        }
+
+        if (isNaN(newValue) || newValue < 0) {
+            event.preventDefault();
+            alert('Stock quantity cannot be negative.');
+            newQuantity.focus();
+            return;
+        }
+
+        const current = parseFloat(selected.dataset.stock || '0');
+
+        if (newValue === current) {
+            event.preventDefault();
+            alert('New stock quantity is same as current stock.');
+            newQuantity.focus();
+        }
+    });
+</script>
+
+</body>
+</html>

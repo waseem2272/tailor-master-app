@@ -24,33 +24,58 @@ public class GlobalControllerAdvice {
 
     @ModelAttribute
     public void addAttributes(Model model, HttpServletRequest request) {
+
         String uri = request.getRequestURI();
+
         if (uri.contains("/customers")) {
+
             model.addAttribute("activePage", "customers");
+
         } else if (uri.contains("/orders/pending-payments")) {
+
             model.addAttribute("activePage", "orders/pending-payments");
+
         } else if (uri.contains("/orders")) {
+
             model.addAttribute("activePage", "orders");
+
         } else if (uri.contains("/products")) {
+
             model.addAttribute("activePage", "products");
+
+        } else if (uri.contains("/inventory")) {
+
+            // Inventory ke tamam pages ke liye
+            model.addAttribute("activePage", "inventory");
+
         } else if (uri.contains("/dashboard")) {
+
             model.addAttribute("activePage", "dashboard");
+
         } else if (uri.contains("/users/profile")) {
+
             model.addAttribute("activePage", "profile");
+
         } else if (uri.contains("/labors")) {
+
             model.addAttribute("activePage", "labors");
         }
 
+
         // Get logged-in user and add shop name or whole user to model
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null
+                && auth.isAuthenticated()
+                && !"anonymousUser".equals(auth.getPrincipal())) {
+
             String username = auth.getName();
+
             Optional<User> user = userService.findByUsername(username);
-            //                model.addAttribute("loggedInUser", user); // Add full user object if needed
-            // Or just shop name
-//            user.ifPresent(value -> model.addAttribute("shopName", value.getShopName()));
 
             user.ifPresent(tempUser -> {
+
                 // Add shop name to model
                 model.addAttribute("shopName", tempUser.getShopName());
 
@@ -59,9 +84,18 @@ public class GlobalControllerAdvice {
                 LocalDate trialEnd = tempUser.getTrialEndsAt();
 
                 if (trialEnd != null) {
-                    long daysRemaining = ChronoUnit.DAYS.between(today, trialEnd);
+
+                    long daysRemaining =
+                            ChronoUnit.DAYS.between(today, trialEnd);
+
                     if (daysRemaining >= 0 && daysRemaining <= 5) {
-                        model.addAttribute("trialMessage", "Your free trial will expire in " + daysRemaining + " day(s). Please contact us to continue using the application.");
+
+                        model.addAttribute(
+                                "trialMessage",
+                                "Your free trial will expire in "
+                                        + daysRemaining
+                                        + " day(s). Please contact us to continue using the application."
+                        );
                     }
                 }
             });

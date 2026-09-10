@@ -1,7 +1,7 @@
 package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.product.Product;
-import jakarta.validation.constraints.Min;
+import com.example.tailormaster.enums.FabricSource;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,4 +21,9 @@ public class OrderProductDto extends Product {
     private BigDecimal amount;
 
     private String additionalNotes;
+    private FabricSource fabricSource = FabricSource.CUSTOMER;
+
+    private Long inventoryItemId;
+
+    private BigDecimal fabricQuantity;
 }

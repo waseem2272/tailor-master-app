@@ -1,6 +1,7 @@
 package com.example.tailormaster.service.order;
 
 import com.example.tailormaster.dto.OrderProductDto;
+import com.example.tailormaster.dto.OrderStatusUpdateDto;
 import com.example.tailormaster.dto.UpdateCustomerOrderDto;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.Order;
@@ -14,6 +15,7 @@ import com.example.tailormaster.enums.PickupStatus;
 import com.example.tailormaster.repository.customerledger.CustomerPaymentRepository;
 import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
+import com.example.tailormaster.service.OrderInventoryService;
 import com.example.tailormaster.util.AuthenticatedUserService;
 import com.example.tailormaster.util.ThymeleafUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,6 +49,7 @@ public class OrderService {
     private final CustomerPaymentRepository customerPaymentRepository;
     private final ThymeleafUtil thymeleafUtil;
     private final AuthenticatedUserService authenticatedUserService;
+    private final OrderInventoryService orderInventoryService;
 
     // Save an order
     public Order save(Order order) {
@@ -84,14 +87,70 @@ public class OrderService {
         }
     }
 
-    public void updateOrderStatus(Order order) {
+    @Transactional
+    public void updateOrderStatus(OrderStatusUpdateDto orderStatusUpdateDto) {
         try {
-            order.setUser(authenticatedUserService.getCurrentUser());
-            Order savedOrder = orderRepository.save(order);
-            logger.info("Order Status updated with ID: {}", savedOrder.getId());
+            User currentUser = authenticatedUserService.getCurrentUser();
+
+            Order existingOrder = orderRepository.findByIdAndUser(
+                    orderStatusUpdateDto.getOrderId(),
+                    currentUser
+            ).orElseThrow(() ->
+                    new RuntimeException("Order not found")
+            );
+
+            OrderStatus oldStatus = existingOrder.getStatus();
+            OrderStatus newStatus = orderStatusUpdateDto.getStatus();
+
+            logger.info(
+                    "Updating order status. orderId={}, oldStatus={}, newStatus={}",
+                    existingOrder.getOrderId(),
+                    oldStatus,
+                    newStatus
+            );
+
+            if (oldStatus != OrderStatus.IN_PROGRESS &&
+                    newStatus == OrderStatus.IN_PROGRESS) {
+
+                logger.info(
+                        "Consuming shop fabric stock for order {}",
+                        existingOrder.getOrderId()
+                );
+
+                orderInventoryService.consumeShopFabric(existingOrder);
+            }
+
+            if (oldStatus != OrderStatus.CANCELLED &&
+                    newStatus == OrderStatus.CANCELLED) {
+
+                logger.info(
+                        "Reversing shop fabric stock for cancelled order {}",
+                        existingOrder.getOrderId()
+                );
+
+                orderInventoryService.reverseShopFabric(existingOrder);
+            }
+
+            existingOrder.setStatus(newStatus);
+            existingOrder.setCabinetNo(orderStatusUpdateDto.getCabinetNo());
+            existingOrder.setUser(currentUser);
+
+            orderRepository.save(existingOrder);
+
+            logger.info(
+                    "Order status updated successfully. orderId={}, status={}",
+                    existingOrder.getOrderId(),
+                    newStatus
+            );
+
         } catch (Exception e) {
-            logger.error("Error Order Status update : {}", e.getMessage(), e);
-            throw new RuntimeException("Error Order Status update.", e);
+            logger.error(
+                    "Error while updating order status. orderId={}",
+                    orderStatusUpdateDto != null ? orderStatusUpdateDto.getOrderId() : null,
+                    e
+            );
+
+            throw e;
         }
     }
 

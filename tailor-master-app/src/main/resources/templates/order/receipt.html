@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Receipt</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -11,7 +12,6 @@
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -152,31 +152,89 @@
             text-align: left;
         }
 
-        .product-name {
+        /* SIMPLE TABLE */
+
+        .simple-product-name {
             width: 36%;
             font-weight: 700;
         }
 
-        .silai-type {
+        .simple-silai-type {
             width: 22%;
-            text-align: center;
+            text-align: center !important;
         }
 
-        .quantity {
+        .simple-quantity {
             width: 12%;
-            text-align: center;
+            text-align: center !important;
         }
 
-        .silai-price {
+        .simple-silai-price {
             width: 15%;
-            text-align: right;
+            text-align: right !important;
         }
 
-        .item-total {
+        .simple-item-total {
             width: 15%;
-            text-align: right;
+            text-align: right !important;
             font-weight: 700;
         }
+
+        /* DETAILED FABRIC TABLE */
+
+        .fabric-product-name {
+            width: 18%;
+            font-weight: 700;
+        }
+
+        .fabric-silai-type {
+            width: 10%;
+            text-align: center !important;
+        }
+
+        .fabric-quantity {
+            width: 6%;
+            text-align: center !important;
+        }
+
+        .fabric-silai-price {
+            width: 11%;
+            text-align: right !important;
+        }
+
+        .fabric-name {
+            width: 17%;
+        }
+
+        .fabric-qty {
+            width: 9%;
+            text-align: center !important;
+        }
+
+        .fabric-price {
+            width: 10%;
+            text-align: right !important;
+        }
+
+        .fabric-amount {
+            width: 10%;
+            text-align: right !important;
+        }
+
+        .fabric-item-total {
+            width: 9%;
+            text-align: right !important;
+            font-weight: 700;
+        }
+
+        .fabric-name,
+        .fabric-qty,
+        .fabric-price,
+        .fabric-amount {
+            word-break: break-word;
+        }
+
+        /* NOTES */
 
         .notes-row td {
             background: #fafafa;
@@ -274,6 +332,15 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 background: #ffffff !important;
+
+                /* IMPORTANT: Print colors */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .receipt-wrapper {
@@ -349,9 +416,18 @@
                 font-size: 11px;
             }
 
+            .product-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
             .product-table th {
                 padding: 5px 3px;
                 font-size: 9px;
+
+                /* Keep header background in print */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .product-table td {
@@ -390,18 +466,13 @@
                 break-inside: avoid;
                 page-break-inside: avoid;
             }
-
         }
-
     </style>
-
 </head>
-
 
 <body>
 
 <div class="receipt-wrapper">
-
     <div class="receipt-card">
 
         <!-- =========================
@@ -435,7 +506,6 @@
             </div>
 
         </div>
-
 
         <!-- =========================
              CUSTOMER / ORDER INFORMATION
@@ -496,7 +566,6 @@
 
         </div>
 
-
         <!-- =========================
              PRODUCTS
         ========================= -->
@@ -508,29 +577,36 @@
                 Order Items
             </div>
 
-            <table class="product-table">
+            <!-- =====================================================
+                 SIMPLE TABLE
+                 Show when order has NO shop fabric
+            ====================================================== -->
+
+            <table class="product-table"
+                   th:if="${!#lists.isEmpty(order.orderProducts)
+                           and !#lists.contains(order.orderProducts.![fabricSource?.name()], 'SHOP')}">
 
                 <thead>
 
                 <tr>
 
-                    <th class="product-name">
+                    <th class="simple-product-name">
                         Product
                     </th>
 
-                    <th class="silai-type">
+                    <th class="simple-silai-type">
                         Silai
                     </th>
 
-                    <th class="quantity">
+                    <th class="simple-quantity">
                         Qty
                     </th>
 
-                    <th class="silai-price">
+                    <th class="simple-silai-price">
                         Silai Amount
                     </th>
 
-                    <th class="item-total">
+                    <th class="simple-item-total">
                         Total
                     </th>
 
@@ -538,42 +614,37 @@
 
                 </thead>
 
-
                 <tbody>
 
                 <th:block th:each="item : ${order.orderProducts}">
 
-                    <!-- Product Row -->
-
                     <tr class="product-row">
 
-                        <td class="product-name"
+                        <td class="simple-product-name"
                             th:text="${item.product.name}">
                         </td>
 
-                        <td class="silai-type"
+                        <td class="simple-silai-type"
                             th:text="${item.silaiType}">
                         </td>
 
-                        <td class="quantity"
+                        <td class="simple-quantity"
                             th:text="${item.quantity}">
                         </td>
 
-                        <td class="silai-price format-amount"
+                        <td class="simple-silai-price format-amount"
                             th:text="${item.silaiAmount}">
                         </td>
 
-                        <td class="item-total">
+                        <td class="simple-item-total">
 
-                            <span class="format-amount" th:text="${item.subtotal}">
+                            <span class="format-amount"
+                                  th:text="${item.subtotal}">
                             </span>
 
                         </td>
 
                     </tr>
-
-
-                    <!-- Additional Notes -->
 
                     <tr class="notes-row"
                         th:if="${item.additionalNotes != null
@@ -600,8 +671,188 @@
 
             </table>
 
-        </div>
+            <!-- =====================================================
+                 DETAILED TABLE
+                 Show when order contains SHOP FABRIC
+            ====================================================== -->
 
+            <table class="product-table"
+                   th:if="${!#lists.isEmpty(order.orderProducts)
+                           and #lists.contains(order.orderProducts.![fabricSource?.name()], 'SHOP')}">
+
+                <thead>
+
+                <tr>
+
+                    <th class="fabric-product-name">
+                        Product
+                    </th>
+
+                    <th class="fabric-silai-type">
+                        Silai
+                    </th>
+
+                    <th class="fabric-quantity">
+                        Qty
+                    </th>
+
+                    <th class="fabric-silai-price">
+                        Silai Amount
+                    </th>
+
+                    <th class="fabric-name">
+                        Fabric
+                    </th>
+
+                    <th class="fabric-qty">
+                        Fabric Qty
+                    </th>
+
+                    <th class="fabric-price">
+                        Fabric Rate
+                    </th>
+
+                    <th class="fabric-amount">
+                        Fabric Amount
+                    </th>
+
+                    <th class="fabric-item-total">
+                        Total
+                    </th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <th:block th:each="item : ${order.orderProducts}">
+
+                    <tr class="product-row">
+
+                        <td class="fabric-product-name"
+                            th:text="${item.product.name}">
+                        </td>
+
+                        <td class="fabric-silai-type"
+                            th:text="${item.silaiType}">
+                        </td>
+
+                        <td class="fabric-quantity"
+                            th:text="${item.quantity}">
+                        </td>
+
+                        <td class="fabric-silai-price format-amount"
+                            th:text="${item.silaiAmount}">
+                        </td>
+
+                        <!-- FABRIC NAME -->
+
+                        <td class="fabric-name">
+
+                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                                  th:text="${item.inventoryItem != null
+                                      ? item.inventoryItem.name
+                                      : '-'}">
+                            </span>
+
+                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="text-muted">
+                                Customer Fabric
+                            </span>
+
+                        </td>
+
+                        <!-- FABRIC QUANTITY -->
+
+                        <td class="fabric-qty">
+
+                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                                  th:text="${item.fabricQuantity != null && item.inventoryItem != null
+                                      ? item.fabricQuantity.stripTrailingZeros().toPlainString()
+                                        + ' ' + item.inventoryItem.unit.name()
+                                      : '-'}">
+                            </span>
+
+                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="text-muted">
+                                -
+                            </span>
+
+                        </td>
+
+                        <!-- FABRIC RATE -->
+
+                        <td class="fabric-price">
+
+                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="format-amount"
+                                  th:text="${item.fabricUnitPrice}">
+                            </span>
+
+                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="text-muted">
+                                -
+                            </span>
+
+                        </td>
+
+                        <!-- FABRIC AMOUNT -->
+
+                        <td class="fabric-amount">
+
+                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="format-amount"
+                                  th:text="${item.fabricAmount}">
+                            </span>
+
+                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
+                                  class="text-muted">
+                                -
+                            </span>
+
+                        </td>
+
+                        <!-- TOTAL -->
+
+                        <td class="fabric-item-total">
+
+                            <span class="format-amount"
+                                  th:text="${item.subtotal}">
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <!-- ADDITIONAL NOTES -->
+
+                    <tr class="notes-row"
+                        th:if="${item.additionalNotes != null
+                        and !#strings.isEmpty(item.additionalNotes)}">
+
+                        <td colspan="9">
+
+                            <span class="notes-label">
+                                <i class="bi bi-chat-left-text me-1"></i>
+                                Additional Notes:
+                            </span>
+
+                            <span class="notes-value"
+                                  th:text="${item.additionalNotes}">
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </th:block>
+
+                </tbody>
+
+            </table>
+
+        </div>
 
         <!-- =========================
              TOTALS
@@ -621,7 +872,6 @@
 
             </div>
 
-
             <div class="total-row">
 
                 <span class="total-label">
@@ -633,7 +883,6 @@
                 </span>
 
             </div>
-
 
             <div class="total-row due-row">
 
@@ -648,7 +897,6 @@
             </div>
 
         </div>
-
 
         <!-- =========================
              FOOTER
@@ -666,7 +914,6 @@
 
         </div>
 
-
         <!-- =========================
              ACTION BUTTONS
         ========================= -->
@@ -682,7 +929,6 @@
 
             </button>
 
-
             <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
                class="btn btn-secondary">
 
@@ -694,9 +940,7 @@
         </div>
 
     </div>
-
 </div>
-
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/common.js}"></script>

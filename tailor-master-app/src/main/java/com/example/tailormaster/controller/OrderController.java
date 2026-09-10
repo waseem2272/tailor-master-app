@@ -3,7 +3,10 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.*;
 import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.enums.FabricSource;
+import com.example.tailormaster.enums.ItemType;
 import com.example.tailormaster.enums.OrderStatus;
+import com.example.tailormaster.service.InventoryItemService;
 import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
@@ -47,6 +50,7 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     private final Validation validation;
+    private final InventoryItemService inventoryItemService;
 
     @GetMapping
     public String listOrders(Model model) {
@@ -176,8 +180,7 @@ public class OrderController {
         }
     }
 
-    private void validateOrder(CustomerOrderDto orderDto,
-                               BindingResult result) {
+    private void validateOrder(CustomerOrderDto orderDto, BindingResult result) {
 
         if (result.hasErrors()) {
             return;
@@ -195,83 +198,19 @@ public class OrderController {
             return;
         }
 
+        BigDecimal totalAmount =
+                calculateOrderTotal(orderDto, result);
 
-        BigDecimal totalAmount = BigDecimal.ZERO;
-
-
-        for (int i = 0;
-             i < orderDto.getOrderProducts().size();
-             i++) {
-
-            OrderProductDto product =
-                    orderDto.getOrderProducts().get(i);
-
-
-            // Quantity
-            if (product.getQuantity() == null ||
-                    product.getQuantity() < 1) {
-
-                result.rejectValue(
-                        "orderProducts[" + i + "].quantity",
-                        "error.orderProducts[" + i + "].quantity",
-                        "Quantity must be at least 1."
-                );
-
-                continue;
-            }
-
-
-            // Silai amount
-            if (product.getSilaiAmount() == null ||
-                    product.getSilaiAmount().compareTo(
-                            BigDecimal.ZERO) < 0) {
-
-                result.rejectValue(
-                        "orderProducts[" + i + "].silaiAmount",
-                        "error.orderProducts[" + i + "].silaiAmount",
-                        "Invalid Silai amount."
-                );
-
-                continue;
-            }
-
-
-            // Calculate item amount
-            BigDecimal itemAmount =
-                    product.getSilaiAmount()
-                            .multiply(
-                                    BigDecimal.valueOf(
-                                            product.getQuantity()
-                                    )
-                            );
-
-            totalAmount =
-                    totalAmount.add(itemAmount);
+        if (result.hasErrors()) {
+            return;
         }
 
-
-        // Validate total
-        if (orderDto.getTotalProductAmount() == null ||
-                orderDto.getTotalProductAmount()
-                        .compareTo(totalAmount) != 0) {
-
-            result.rejectValue(
-                    "totalProductAmount",
-                    "error.totalProductAmount",
-                    "Total amount is incorrect."
-            );
-        }
-
-
-        // Advance
         BigDecimal advance =
                 orderDto.getAdvancePayment() != null
                         ? orderDto.getAdvancePayment()
                         : BigDecimal.ZERO;
 
-
         if (advance.compareTo(BigDecimal.ZERO) < 0) {
-
             result.rejectValue(
                     "advancePayment",
                     "error.advancePayment",
@@ -279,9 +218,7 @@ public class OrderController {
             );
         }
 
-
         if (advance.compareTo(totalAmount) > 0) {
-
             result.rejectValue(
                     "advancePayment",
                     "error.advancePayment",
@@ -289,15 +226,11 @@ public class OrderController {
             );
         }
 
-
-        // Due
         BigDecimal expectedDue =
                 totalAmount.subtract(advance);
 
-
         if (orderDto.getDuePayment() == null ||
-                orderDto.getDuePayment()
-                        .compareTo(expectedDue) != 0) {
+                orderDto.getDuePayment().compareTo(expectedDue) != 0) {
 
             result.rejectValue(
                     "duePayment",
@@ -360,8 +293,6 @@ public class OrderController {
         }
     }
 
-
-
     private String populateModel(Model model, Long customerId, CustomerOrderDto orderDto, Customer customer) {
         List<CustomerMeasurement> measurements = customerMeasurementService.getCustomerMeasurement(customerId);
         Set<Product> products = measurements.stream().map(CustomerMeasurement::getProduct).collect(Collectors.toSet());
@@ -376,41 +307,310 @@ public class OrderController {
         model.addAttribute("orderDto", orderDto);
 //        model.addAttribute("customer", customer);
         model.addAttribute("products", products);
+        model.addAttribute("inventoryItems",
+                inventoryItemService.getByItemType(ItemType.FABRIC));
         model.addAttribute("thymeleafUtil", new ThymeleafUtil());
         return "order/create";
     }
 
-    private Order buildOrder(CustomerOrderDto orderDto, Long actualCustomerId) {
+    private Order buildOrder(CustomerOrderDto orderDto, Long customerId) {
+
         Order order = new Order();
+        order.setCustomer(customerService.getCustomerById(customerId));
         order.setOrderDate(orderDto.getOrderDate());
         order.setDeliveryDate(orderDto.getDeliveryDate());
-        order.setStatus(orderDto.getStatus());
-        order.setAdvancePayment(orderDto.getAdvancePayment());
-        order.setDuePayment(orderDto.getDuePayment());
-        order.setPaidAmount(orderDto.getAdvancePayment());
 
-        // Fetch customer and associate with order
-        Customer customer = customerService.getCustomerById(actualCustomerId);
-        order.setCustomer(customer);
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        BigDecimal finalTotal = BigDecimal.ZERO;
 
-        // Convert OrderProductDto list to OrderProduct entities
-        List<OrderProduct> orderProducts = orderDto.getOrderProducts().stream().map(opDto -> {
+        for (OrderProductDto orderProductDto : orderDto.getOrderProducts()) {
+
+            Product product =
+                    productService.getProductById(orderProductDto.getProductId());
+
             OrderProduct orderProduct = new OrderProduct();
-            Product product = productService.getProductById(opDto.getProductId());
-            orderProduct.setProduct(product);
-            orderProduct.setQuantity(opDto.getQuantity());
-            orderProduct.setSubtotal(opDto.getSilaiAmount().multiply(new BigDecimal(opDto.getQuantity())));
-            orderProduct.setSilaiType(opDto.getSilaiType());
-            orderProduct.setAdditionalNotes(opDto.getAdditionalNotes());
-            orderProduct.setSilaiAmount(opDto.getSilaiAmount());
-            orderProduct.setOrder(order);
-            return orderProduct;
-        }).collect(Collectors.toList());
 
-        order.setTotalProductAmount(orderDto.getTotalProductAmount());
+            orderProduct.setOrder(order);
+            orderProduct.setProduct(product);
+            orderProduct.setQuantity(orderProductDto.getQuantity());
+            orderProduct.setSilaiType(orderProductDto.getSilaiType());
+            orderProduct.setSilaiAmount(orderProductDto.getSilaiAmount());
+            orderProduct.setAdditionalNotes(orderProductDto.getAdditionalNotes());
+
+            BigDecimal stitchingAmount =
+                    orderProductDto.getSilaiAmount()
+                            .multiply(
+                                    BigDecimal.valueOf(
+                                            orderProductDto.getQuantity()
+                                    )
+                            );
+
+            BigDecimal fabricAmount = BigDecimal.ZERO;
+
+            FabricSource fabricSource =
+                    orderProductDto.getFabricSource();
+
+            if (fabricSource == null) {
+                fabricSource = FabricSource.CUSTOMER;
+            }
+
+            orderProduct.setFabricSource(fabricSource);
+
+            // =====================================================
+            // SHOP FABRIC
+            // =====================================================
+            if (fabricSource == FabricSource.SHOP) {
+
+                if (orderProductDto.getInventoryItemId() == null) {
+                    throw new IllegalArgumentException(
+                            "Shop fabric must be selected for product: " +
+                                    product.getName()
+                    );
+                }
+
+                if (orderProductDto.getFabricQuantity() == null ||
+                        orderProductDto.getFabricQuantity()
+                                .compareTo(BigDecimal.ZERO) <= 0) {
+
+                    throw new IllegalArgumentException(
+                            "Fabric quantity must be greater than zero for product: " +
+                                    product.getName()
+                    );
+                }
+
+                InventoryItem inventoryItem =
+                        inventoryItemService.getById(
+                                orderProductDto.getInventoryItemId()
+                        );
+
+                if (inventoryItem == null) {
+                    throw new IllegalArgumentException(
+                            "Selected fabric was not found."
+                    );
+                }
+
+                if (Boolean.FALSE.equals(inventoryItem.getActive())) {
+                    throw new IllegalArgumentException(
+                            "Selected fabric is inactive: " +
+                                    inventoryItem.getName()
+                    );
+                }
+
+                BigDecimal availableStock =
+                        inventoryItem.getQuantity() != null
+                                ? inventoryItem.getQuantity()
+                                : BigDecimal.ZERO;
+
+                BigDecimal requestedQuantity =
+                        orderProductDto.getFabricQuantity();
+
+                if (requestedQuantity.compareTo(availableStock) > 0) {
+                    throw new IllegalArgumentException(
+                            "Insufficient stock for fabric: " +
+                                    inventoryItem.getName() +
+                                    ". Available stock: " +
+                                    availableStock.stripTrailingZeros()
+                                            .toPlainString()
+                    );
+                }
+
+                BigDecimal salePrice =
+                        inventoryItem.getSalePrice();
+
+                if (salePrice == null ||
+                        salePrice.compareTo(BigDecimal.ZERO) < 0) {
+
+                    throw new IllegalArgumentException(
+                            "Sale price is not configured for fabric: " +
+                                    inventoryItem.getName()
+                    );
+                }
+
+                // Fabric amount = quantity × current sale price
+                fabricAmount =
+                        requestedQuantity.multiply(salePrice);
+
+                // Save inventory reference
+                orderProduct.setInventoryItem(inventoryItem);
+
+                // Save consumed quantity
+                orderProduct.setFabricQuantity(requestedQuantity);
+
+                // IMPORTANT:
+                // Save price snapshot at order creation time
+                orderProduct.setFabricUnitPrice(salePrice);
+
+                // IMPORTANT:
+                // Save fabric amount snapshot
+                orderProduct.setFabricAmount(fabricAmount);
+
+            }
+
+            // =====================================================
+            // CUSTOMER FABRIC
+            // =====================================================
+            else {
+
+                orderProduct.setInventoryItem(null);
+                orderProduct.setFabricQuantity(null);
+
+                // No shop fabric price/amount for customer fabric
+                orderProduct.setFabricUnitPrice(null);
+                orderProduct.setFabricAmount(null);
+            }
+
+            // =====================================================
+            // FINAL PRODUCT SUBTOTAL
+            // =====================================================
+
+            BigDecimal subtotal =
+                    stitchingAmount.add(fabricAmount);
+
+            orderProduct.setSubtotal(subtotal);
+
+            orderProducts.add(orderProduct);
+
+            finalTotal =
+                    finalTotal.add(subtotal);
+        }
 
         order.setOrderProducts(orderProducts);
+
+        // =====================================================
+        // PAYMENT
+        // =====================================================
+
+        BigDecimal advance =
+                orderDto.getAdvancePayment() != null
+                        ? orderDto.getAdvancePayment()
+                        : BigDecimal.ZERO;
+
+        BigDecimal finalDue =
+                finalTotal.subtract(advance);
+
+        order.setAdvancePayment(advance);
+        order.setDuePayment(finalDue);
+        order.setTotalProductAmount(finalTotal);
+
         return order;
+    }
+
+    private BigDecimal calculateOrderTotal(CustomerOrderDto orderDto, BindingResult result) {
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
+
+            OrderProductDto product = orderDto.getOrderProducts().get(i);
+
+            if (product.getQuantity() == null || product.getQuantity() < 1) {
+                result.rejectValue(
+                        "orderProducts[" + i + "].quantity",
+                        "error.orderProducts[" + i + "].quantity",
+                        "Quantity must be at least 1."
+                );
+                continue;
+            }
+
+            if (product.getSilaiAmount() == null ||
+                    product.getSilaiAmount().compareTo(BigDecimal.ZERO) < 0) {
+                result.rejectValue(
+                        "orderProducts[" + i + "].silaiAmount",
+                        "error.orderProducts[" + i + "].silaiAmount",
+                        "Invalid Silai amount."
+                );
+                continue;
+            }
+
+            BigDecimal stitchingAmount =
+                    product.getSilaiAmount()
+                            .multiply(BigDecimal.valueOf(product.getQuantity()));
+
+            BigDecimal fabricAmount = BigDecimal.ZERO;
+
+            FabricSource fabricSource = product.getFabricSource();
+
+            if (fabricSource == null) {
+                fabricSource = FabricSource.CUSTOMER;
+            }
+
+            if (fabricSource == FabricSource.SHOP) {
+
+                if (product.getInventoryItemId() == null) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Shop fabric must be selected."
+                    );
+                    continue;
+                }
+
+                if (product.getFabricQuantity() == null ||
+                        product.getFabricQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].fabricQuantity",
+                            "error.orderProducts[" + i + "].fabricQuantity",
+                            "Fabric quantity must be greater than zero."
+                    );
+                    continue;
+                }
+
+                InventoryItem inventoryItem =
+                        inventoryItemService.getById(product.getInventoryItemId());
+
+                if (inventoryItem == null) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Selected fabric was not found."
+                    );
+                    continue;
+                }
+
+                if (Boolean.FALSE.equals(inventoryItem.getActive())) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Selected fabric is inactive."
+                    );
+                    continue;
+                }
+
+                BigDecimal stock = inventoryItem.getQuantity() != null
+                        ? inventoryItem.getQuantity()
+                        : BigDecimal.ZERO;
+
+                if (product.getFabricQuantity().compareTo(stock) > 0) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].fabricQuantity",
+                            "error.orderProducts[" + i + "].fabricQuantity",
+                            "Insufficient fabric stock."
+                    );
+                    continue;
+                }
+
+                BigDecimal salePrice = inventoryItem.getSalePrice();
+
+                if (salePrice == null ||
+                        salePrice.compareTo(BigDecimal.ZERO) < 0) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Sale price is not configured for selected fabric."
+                    );
+                    continue;
+                }
+
+                fabricAmount =
+                        product.getFabricQuantity().multiply(salePrice);
+            }
+
+            totalAmount = totalAmount.add(
+                    stitchingAmount.add(fabricAmount)
+            );
+        }
+
+        return totalAmount;
     }
 
     @GetMapping("/details/{id}")
@@ -575,7 +775,7 @@ public class OrderController {
             }
             logger.debug("Fetched order for status update (ID {}): {}", dto.getOrderId(), order);
 
-            order.setStatus(dto.getStatus());
+//            order.setStatus(dto.getStatus());
             logger.debug("Updated order status to: {}", dto.getStatus());
             if (dto.getStatus() == OrderStatus.COMPLETED) {
                 order.setCabinetNo(dto.getCabinetNo());
@@ -585,7 +785,7 @@ public class OrderController {
                 logger.debug("Cleared cabinet number as status is not COMPLETED.");
             }
 
-            orderService.updateOrderStatus(order);
+            orderService.updateOrderStatus(dto);
             logger.info("Order status updated successfully for ID: {}", dto.getOrderId());
             return ResponseEntity.ok("Order status updated successfully!");
         } catch (Exception e) {

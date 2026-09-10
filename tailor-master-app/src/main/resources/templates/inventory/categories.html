@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Inventory Categories | Tailor Master</title>
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <style>
+
+        :root {
+            --primary-green: #198f3a;
+            --light-green: #d8eee3;
+        }
+
+        body {
+            background-color: #f7f7f7;
+        }
+
+        .inventory-header {
+            background: var(--primary-green);
+            color: white;
+            border-radius: 0 22px 0 22px;
+            padding: 12px 22px;
+            margin-bottom: 20px;
+        }
+
+        .inventory-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 22px 0 22px;
+            overflow: hidden;
+        }
+
+        .card-header-green {
+            background: var(--primary-green);
+            color: white;
+            padding: 13px 20px;
+        }
+
+        .card-header-green h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .card-body-custom {
+            padding: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control,
+        .form-select {
+            min-height: 44px;
+            border-radius: 20px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.15rem rgba(25, 143, 58, 0.15);
+        }
+
+        .btn-green {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+            border-radius: 22px;
+            padding: 9px 22px;
+            font-weight: 500;
+        }
+
+        .btn-green:hover {
+            background-color: #147b31;
+            border-color: #147b31;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            border-radius: 18px;
+            padding: 6px 13px;
+        }
+
+        .category-table {
+            margin-bottom: 0;
+        }
+
+        .category-table thead th {
+            background-color: var(--light-green);
+            color: #111;
+            font-weight: 600;
+            border-color: #c7d8d0;
+        }
+
+        .category-table tbody td {
+            vertical-align: middle;
+            border-color: #dee2e6;
+        }
+
+        .category-table tbody tr:hover {
+            background-color: #f4fbf6;
+        }
+
+        .category-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--light-green);
+            color: var(--primary-green);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+        }
+
+        .type-badge {
+            padding: 5px 10px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-fabric {
+            background-color: #198f3a;
+            color: white;
+        }
+
+        .badge-stitched {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .badge-waistcoat {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .badge-kurta {
+            background-color: #fd7e14;
+            color: white;
+        }
+
+        .badge-other {
+            background-color: #6c757d;
+            color: white;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid py-3">
+
+
+    <!-- Header -->
+
+    <div class="inventory-header d-flex justify-content-between align-items-center">
+
+        <h4>
+
+            <i class="bi bi-tags me-2"></i>
+
+            Inventory Categories
+
+        </h4>
+
+
+        <a th:href="@{/inventory}"
+           class="btn btn-light rounded-pill px-4">
+
+            <i class="bi bi-arrow-left me-1"></i>
+
+            Back to Inventory
+
+        </a>
+
+    </div>
+
+
+    <div class="row g-4">
+
+
+        <!-- =====================================================
+             ADD CATEGORY
+             ===================================================== -->
+
+        <div class="col-lg-4">
+
+            <div class="content-card">
+
+                <div class="card-header-green">
+
+                    <h5>
+
+                        <i class="bi bi-plus-circle me-2"></i>
+
+                        Add Category
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body-custom">
+
+                    <form th:action="@{/inventory/categories/save}"
+                          th:object="${category}"
+                          method="post">
+
+
+                        <!-- Category Name -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Category Name
+
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <input type="text"
+                                   th:field="*{name}"
+                                   class="form-control"
+                                   placeholder="e.g. Cotton"
+                                   required>
+
+                        </div>
+
+
+                        <!-- Item Type -->
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Item Type
+
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <select th:field="*{itemType}"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Item Type
+                                </option>
+
+                                <option th:each="type : ${itemTypes}"
+                                        th:value="${type}"
+                                        th:text="${type.name() == 'KURTA_PAJAMA'
+                                            ? 'Kurta Pajama'
+                                            : type.name().replace('_', ' ')}">
+
+                                    Fabric
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn btn-green w-100">
+
+                            <i class="bi bi-check-circle me-1"></i>
+
+                            Save Category
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CATEGORY LIST
+             ===================================================== -->
+
+        <div class="col-lg-8">
+
+            <div class="content-card">
+
+
+                <div class="card-header-green d-flex justify-content-between align-items-center">
+
+                    <h5>
+
+                        <i class="bi bi-list-ul me-2"></i>
+
+                        Category List
+
+                    </h5>
+
+
+                    <span class="small">
+
+                        Total:
+
+                        <strong th:text="${#lists.size(categories)}">
+                            0
+                        </strong>
+
+                    </span>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped category-table">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Category Name</th>
+
+                            <th>Item Type</th>
+
+                            <th>Status</th>
+
+                            <th class="text-center">Action</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <tr th:each="category, stat : ${categories}">
+
+
+                            <td th:text="${stat.count}">
+                                1
+                            </td>
+
+
+                            <td>
+
+                                <span class="category-icon">
+
+                                    <i class="bi bi-tag"></i>
+
+                                </span>
+
+                                <strong th:text="${category.name}">
+                                    Cotton
+                                </strong>
+
+                            </td>
+
+
+                            <!-- Item Type -->
+
+                            <td>
+
+                                <span th:if="${category.itemType.name() == 'FABRIC'}"
+                                      class="type-badge badge-fabric">
+
+                                    Fabric
+
+                                </span>
+
+                                <span th:if="${category.itemType.name() == 'STITCHED'}"
+                                      class="type-badge badge-stitched">
+
+                                    Stitched
+
+                                </span>
+
+                                <span th:if="${category.itemType.name() == 'WAISTCOAT'}"
+                                      class="type-badge badge-waistcoat">
+
+                                    Waistcoat
+
+                                </span>
+
+                                <span th:if="${category.itemType.name() == 'KURTA_PAJAMA'}"
+                                      class="type-badge badge-kurta">
+
+                                    Kurta Pajama
+
+                                </span>
+
+                                <span th:if="${category.itemType.name() == 'OTHER'}"
+                                      class="type-badge badge-other">
+
+                                    Other
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+                                <span class="badge bg-success"
+                                      th:if="${category.active}">
+
+                                    Active
+
+                                </span>
+
+                                <span class="badge bg-secondary"
+                                      th:unless="${category.active}">
+
+                                    Inactive
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- Delete -->
+
+                            <td class="text-center">
+
+                                <a th:href="@{/inventory/categories/delete/{id}(id=${category.id})}"
+                                   class="btn btn-delete"
+                                   onclick="return confirm('Are you sure you want to delete this category?');">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+
+                        <tr th:if="${#lists.isEmpty(categories)}">
+
+                            <td colspan="5"
+                                class="text-center py-5">
+
+                                <i class="bi bi-tags fs-1 text-muted"></i>
+
+                                <h5 class="mt-3">
+                                    No Categories Found
+                                </h5>
+
+                                <p class="text-muted">
+                                    Add your first inventory category.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>
