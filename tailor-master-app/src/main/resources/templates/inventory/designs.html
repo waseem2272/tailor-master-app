@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories | Tailor Master</title>
+    <title>Designs | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -15,69 +15,67 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content">
-        <div class="container-fluid">
+        <div class="container-fluid"> <!-- Page Header -->
             <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="page-title mb-0"><i
-                    class="bi bi-diagram-3 text-success me-2"></i> Categories </h2> <a
-                    th:href="@{/inventory/categories/add}" class="btn btn-success shadow rounded-pill px-4"> <i
-                    class="bi bi-plus-lg me-1"></i> Add Category </a></div>
+                    class="bi bi-grid-3x3-gap text-success me-2"></i> Designs </h2> <a
+                    th:href="@{/inventory/designs/add}" class="btn btn-success shadow rounded-pill px-4"> <i
+                    class="bi bi-plus-lg me-1"></i> Add Design </a></div> <!-- Success Message -->
             <div th:if="${successMessage != null}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle me-2"></i> <span
-                    th:text="${successMessage}">Category saved successfully.</span>
+                    th:text="${successMessage}">Design saved successfully.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            </div> <!-- Error Message -->
             <div th:if="${errorMessage != null}" class="alert alert-danger alert-dismissible fade show" role="alert"><i
-                    class="bi bi-exclamation-triangle me-2"></i> <span th:text="${errorMessage}">Unable to process category.</span>
+                    class="bi bi-exclamation-triangle me-2"></i> <span th:text="${errorMessage}">Unable to process design.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            </div> <!-- Designs Card -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-diagram-3 me-2"></i> Inventory Categories
+                    <div class="d-flex align-items-center"><i class="bi bi-grid-3x3-gap me-2"></i> Inventory Designs
                     </div>
-                    <span class="small"> Total Categories: <strong
-                            th:text="${categories != null ? categories.size() : 0}">0</strong> </span></div>
-                <div class="card-body">
+                    <span class="small"> Total Designs: <strong
+                            th:text="${designs != null ? designs.size() : 0}">0</strong> </span></div>
+                <div class="card-body"> <!-- Information -->
                     <div class="alert alert-success d-flex align-items-start" role="alert"><i
                             class="bi bi-info-circle-fill me-2 mt-1"></i>
-                        <div><strong>Category Management</strong>
-                            <div class="small mt-1"> Manage the categories available for your inventory items.</div>
+                        <div><strong>Design Management</strong>
+                            <div class="small mt-1"> Manage the designs available for your inventory items.</div>
                         </div>
-                    </div>
-                    <div th:if="${categories != null and !categories.isEmpty()}" class="table-responsive">
-                        <table id="categoriesTable" class="table table-bordered table-hover table-striped">
+                    </div> <!-- Designs Table -->
+                    <div th:if="${designs != null and !designs.isEmpty()}" class="table-responsive">
+                        <table id="designsTable" class="table table-bordered table-hover table-striped">
                             <thead class="table-success text-dark">
                             <tr>
                                 <th style="width: 70px;">#</th>
-                                <th>Category Name</th>
-                                <th>Item Type</th>
+                                <th>Design Name</th>
                                 <th class="text-center" style="width: 120px;">Status</th>
                                 <th class="text-end" style="width: 180px;">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="category, stat : ${categories}">
-                                <td th:text="${stat.count}">1</td>
-                                <td><span class="fw-semibold" th:text="${category.name}"> Fabric </span></td>
-                                <td><span class="badge bg-primary-subtle text-primary rounded-pill px-3"
-                                          th:text="${category.itemType}"> FABRIC </span></td>
-                                <td class="text-center"><span th:if="${category.active}"
+                            <tr th:each="design, stat : ${designs}"> <!-- Number -->
+                                <td th:text="${stat.count}">1</td> <!-- Design Name -->
+                                <td><span class="fw-semibold" th:text="${design.name}"> Plain </span></td>
+                                <!-- Status -->
+                                <td class="text-center"><span th:if="${design.active}"
                                                               class="badge bg-success-subtle text-success rounded-pill px-3"> Active </span>
-                                    <span th:unless="${category.active}"
+                                    <span th:unless="${design.active}"
                                           class="badge bg-secondary-subtle text-secondary rounded-pill px-3"> Inactive </span>
-                                </td>
+                                </td> <!-- Actions -->
                                 <td>
-                                    <div class="d-flex gap-1 justify-content-center"><a
-                                            th:href="@{/inventory/categories/edit/{id}(id=${category.id})}"
+                                    <div class="d-flex gap-1 justify-content-center"> <!-- Edit --> <a
+                                            th:href="@{/inventory/designs/edit/{id}(id=${design.id})}"
                                             class="btn btn-warning btn-sm" title="Edit"> <i class="bi bi-pencil"></i>
-                                    </a>
-                                        <form th:if="${category.active}"
-                                              th:action="@{/inventory/categories/deactivate/{id}(id=${category.id})}"
+                                    </a> <!-- Deactivate -->
+                                        <form th:if="${design.active}"
+                                              th:action="@{/inventory/designs/deactivate/{id}(id=${design.id})}"
                                               method="post" class="d-inline"
-                                              onsubmit="return confirm('Are you sure you want to deactivate this category?');">
+                                              onsubmit="return confirm('Are you sure you want to deactivate this design?');">
                                             <button type="submit" class="btn btn-danger btn-sm" title="Deactivate"><i
                                                     class="bi bi-x-circle"></i></button>
-                                        </form>
-                                        <form th:unless="${category.active}"
-                                              th:action="@{/inventory/categories/activate/{id}(id=${category.id})}"
+                                        </form> <!-- Activate -->
+                                        <form th:unless="${design.active}"
+                                              th:action="@{/inventory/designs/activate/{id}(id=${design.id})}"
                                               method="post" class="d-inline">
                                             <button type="submit" class="btn btn-success btn-sm" title="Activate"><i
                                                     class="bi bi-check-circle"></i></button>
@@ -87,13 +85,13 @@
                             </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div th:if="${categories == null or categories.isEmpty()}" class="text-center py-5">
-                        <div class="mb-3"><i class="bi bi-diagram-3 text-muted" style="font-size: 48px;"></i></div>
-                        <h5 class="fw-semibold">No Categories Found</h5>
-                        <p class="text-muted mb-3"> No categories have been added yet. </p> <a
-                            th:href="@{/inventory/categories/add}" class="btn btn-success shadow rounded-pill px-4"> <i
-                            class="bi bi-plus-lg me-1"></i> Add Your First Category </a></div>
+                    </div> <!-- Empty State -->
+                    <div th:if="${designs == null or designs.isEmpty()}" class="text-center py-5">
+                        <div class="mb-3"><i class="bi bi-grid-3x3-gap text-muted" style="font-size: 48px;"></i></div>
+                        <h5 class="fw-semibold">No Designs Found</h5>
+                        <p class="text-muted mb-3"> No designs have been added yet. </p> <a
+                            th:href="@{/inventory/designs/add}" class="btn btn-success shadow rounded-pill px-4"> <i
+                            class="bi bi-plus-lg me-1"></i> Add Your First Design </a></div>
                 </div>
             </div>
         </div>
@@ -106,7 +104,7 @@
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 <script> $(document).ready(function () {
-    $('#categoriesTable').DataTable();
+    $('#designsTable').DataTable();
 }); </script>
 </body>
 </html>

@@ -33,6 +33,11 @@ public class OrderInventoryUsage extends BaseEntity {
     @ToString.Exclude
     private OrderProduct orderProduct;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_item_id", nullable = false)
     @ToString.Exclude

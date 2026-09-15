@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${color.id == null ? 'Add Color | Tailor Master' : 'Edit Color | Tailor Master'}">Color | Tailor
+        Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div><h2 class="page-title mb-1"><i class="bi bi-palette me-2"></i> <span
+                        th:text="${color.id == null ? 'Add Color' : 'Edit Color'}">Add Color</span></h2>
+                    <p class="text-muted mb-0"><span
+                            th:text="${color.id == null ? 'Add a new color to your inventory master data.' : 'Update the selected inventory color.'}"> Add a new color to your inventory master data. </span>
+                    </p></div>
+                <a th:href="@{/inventory/colors}" class="btn btn-success rounded-pill shadow-sm px-4"> <i
+                        class="bi bi-arrow-left me-1"></i> Back </a></div>
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm"
+                 role="alert"><i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold py-3 rounded-top-4"><i
+                        class="bi bi-palette me-2"></i> <span
+                        th:text="${color.id == null ? 'Color Information' : 'Edit Color Information'}"> Color Information </span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-success d-flex align-items-start mb-4"><i
+                            class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div><strong>Color Master Data</strong>
+                            <div class="small mt-1"> Add colors that can be selected when creating or managing inventory
+                                items.
+                            </div>
+                        </div>
+                    </div>
+                    <form th:action="@{/inventory/colors/save}" th:object="${color}" method="post"
+                          class="needs-validation" novalidate><input type="hidden" th:field="*{id}">
+                        <div class="row g-4">
+                            <div class="col-md-8"><label for="name" class="form-label fw-semibold"> Color Name <span
+                                    class="text-danger">*</span> </label>
+                                <div class="input-group"><span class="input-group-text bg-success text-white"> <i
+                                        class="bi bi-palette"></i> </span> <input type="text"
+                                                                                  class="form-control rounded-end-pill"
+                                                                                  id="name" th:field="*{name}"
+                                                                                  placeholder="e.g. Black, White, Navy Blue"
+                                                                                  maxlength="100" required>
+                                    <div class="invalid-feedback"> Please enter a color name.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4"><label for="hexCode" class="form-label fw-semibold"> Color
+                                Code </label>
+                                <div class="input-group"><span class="input-group-text bg-success text-white"> <i
+                                        class="bi bi-hash"></i> </span> <input type="text" class="form-control"
+                                                                               id="hexCode" th:field="*{hexCode}"
+                                                                               placeholder="#000000" maxlength="7"
+                                                                               pattern="^#[A-Fa-f0-9]{6}$"> <input
+                                        type="color" class="form-control form-control-color rounded-end-pill"
+                                        id="colorPicker" title="Choose color"
+                                        th:value="${color.hexCode != null and color.hexCode.matches('^#[A-Fa-f0-9]{6}$') ? color.hexCode : '#000000'}">
+                                </div>
+                                <div class="form-text"> Optional. Example: #000000</div>
+                                <div class="invalid-feedback"> Please enter a valid hex color code.</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top"><a
+                                th:href="@{/inventory/colors}" class="btn btn-secondary rounded-pill shadow-sm px-4"> <i
+                                class="bi bi-x-circle me-1"></i> Cancel </a>
+                            <button type="submit" class="btn btn-success rounded-pill shadow-sm px-4"><i
+                                    class="bi bi-check-circle me-1"></i> <span
+                                    th:text="${color.id == null ? 'Save Color' : 'Update Color'}"> Save Color </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script> document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector(".needs-validation");
+    const hexCode = document.getElementById("hexCode");
+    const colorPicker = document.getElementById("colorPicker");
+    if (colorPicker && hexCode) {
+        colorPicker.addEventListener("input", function () {
+            hexCode.value = colorPicker.value.toUpperCase();
+        });
+        hexCode.addEventListener("input", function () {
+            const value = hexCode.value.trim();
+            if (/^#[A-Fa-f0-9]{6}$/.test(value)) {
+                colorPicker.value = value;
+            }
+        });
+    }
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add("was-validated");
+        });
+    }
+}); </script>
+</body>
+</html>

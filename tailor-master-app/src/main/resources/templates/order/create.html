@@ -133,6 +133,7 @@
                                     <option th:each="item : ${inventoryItems}"
                                             th:value="${item.id}"
                                             th:data-stock="${item.quantity}"
+                                            th:data-reserved="${reservedStockMap[item.id]}"
                                             th:data-unit="${item.unit}"
                                             th:data-sale-price="${item.salePrice}"
                                             th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
@@ -553,43 +554,138 @@
         });
 
         inventoryItemSelect.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
+
+            const selectedOption =
+                this.options[this.selectedIndex];
 
             if (!this.value) {
                 fabricStockInfo.style.display = "none";
+                fabricStockError.style.display = "none";
                 return;
             }
 
-            const stock = parseFloat(selectedOption.dataset.stock) || 0;
-            const unit = selectedOption.dataset.unit || "METER";
 
-            fabricStockInfo.innerText =
-                "Available Stock: " + stock.toFixed(2) + " " + unit;
+            const physicalStock =
+                parseFloat(selectedOption.dataset.stock) || 0;
+
+            const reservedStock =
+                parseFloat(selectedOption.dataset.reserved) || 0;
+
+            const unit =
+                selectedOption.dataset.unit || "METER";
+
+
+            /*
+             * Quantity of the same inventory item
+             * already added in the current order.
+             */
+            const currentOrderQuantity =
+                getCurrentOrderFabricQuantity(this.value);
+
+
+            /*
+             * Real remaining available stock.
+             *
+             * Physical stock
+             * - Existing pending reservations
+             * - Current order usage
+             */
+            let availableStock =
+                physicalStock -
+                reservedStock -
+                currentOrderQuantity;
+
+
+            if (availableStock < 0) {
+                availableStock = 0;
+            }
+
+
+            fabricStockInfo.innerHTML =
+                "Physical Stock: " +
+                physicalStock.toFixed(2) + " " + unit +
+
+                " &nbsp; | &nbsp; " +
+
+                "Reserved Stock: " +
+                reservedStock.toFixed(2) + " " + unit +
+
+                " &nbsp; | &nbsp; " +
+
+                "Current Order: " +
+                currentOrderQuantity.toFixed(2) + " " + unit +
+
+                " &nbsp; | &nbsp; " +
+
+                "Available Stock: " +
+                availableStock.toFixed(2) + " " + unit;
+
 
             fabricStockInfo.style.display = "block";
 
-            fabricQuantity.max = stock;
+            fabricQuantity.max = availableStock;
+
             fabricStockError.style.display = "none";
         });
 
         fabricQuantity.addEventListener("input", function () {
+
             const selectedOption =
-                inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+                inventoryItemSelect.options[
+                    inventoryItemSelect.selectedIndex
+                    ];
+
 
             if (!selectedOption || !inventoryItemSelect.value) {
                 return;
             }
 
-            const stock = parseFloat(selectedOption.dataset.stock) || 0;
-            const quantity = parseFloat(this.value) || 0;
 
-            if (quantity > stock) {
+            const physicalStock =
+                parseFloat(selectedOption.dataset.stock) || 0;
+
+            const reservedStock =
+                parseFloat(selectedOption.dataset.reserved) || 0;
+
+
+            /*
+             * Already used by this current order.
+             */
+            const currentOrderQuantity =
+                getCurrentOrderFabricQuantity(
+                    inventoryItemSelect.value
+                );
+
+
+            /*
+             * Remaining stock for this order.
+             */
+            const availableStock =
+                Math.max(
+                    0,
+                    physicalStock -
+                    reservedStock -
+                    currentOrderQuantity
+                );
+
+
+            const quantity =
+                parseFloat(this.value) || 0;
+
+
+            if (quantity > availableStock) {
+
                 fabricStockError.innerText =
-                    "Fabric quantity cannot be greater than available stock.";
+                    "Fabric quantity cannot be greater than available stock (" +
+                    availableStock.toFixed(2) +
+                    ").";
 
                 fabricStockError.style.display = "block";
+
             } else {
+
                 fabricStockError.innerText = "";
+
                 fabricStockError.style.display = "none";
             }
         });
@@ -625,6 +721,24 @@
     function formatAmount(amount) {
         const value = parseFloat(amount);
         return isNaN(value) ? "0.00" : value.toFixed(2);
+    }
+
+    function getCurrentOrderFabricQuantity(inventoryItemId) {
+
+        let totalQuantity = 0;
+
+        orderItems.forEach(function (item) {
+
+            if (
+                item.fabricSource === "SHOP" &&
+                String(item.inventoryItemId) === String(inventoryItemId)
+            ) {
+                totalQuantity +=
+                    Number(item.fabricQuantity || 0);
+            }
+        });
+
+        return totalQuantity;
     }
 
     document.getElementById("addProductBtn").addEventListener("click", function () {
@@ -691,13 +805,44 @@
                     inventoryItemSelect.selectedIndex
                     ];
 
-            const availableStock =
+            const physicalStock =
                 parseFloat(selectedOption.dataset.stock) || 0;
 
-            if (fabricQuantity > availableStock) {
-                alert(
-                    "Fabric quantity cannot be greater than available stock."
+            const reservedStock =
+                parseFloat(selectedOption.dataset.reserved) || 0;
+
+
+            /*
+             * Fabric already used by the current order
+             * for this same inventory item.
+             */
+            const currentOrderQuantity =
+                getCurrentOrderFabricQuantity(
+                    inventoryItemSelect.value
                 );
+
+
+            /*
+             * Remaining stock available for this new line.
+             */
+            const availableStock =
+                Math.max(
+                    0,
+                    physicalStock -
+                    reservedStock -
+                    currentOrderQuantity
+                );
+
+
+            if (fabricQuantity > availableStock) {
+
+                alert(
+                    "Fabric quantity cannot be greater than available stock. " +
+                    "Available: " +
+                    availableStock.toFixed(2) +
+                    " M"
+                );
+
                 return;
             }
 

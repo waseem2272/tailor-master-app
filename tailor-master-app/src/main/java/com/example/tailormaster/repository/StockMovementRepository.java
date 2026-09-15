@@ -1,21 +1,26 @@
 package com.example.tailormaster.repository;
 
 import com.example.tailormaster.entity.StockMovement;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.enums.StockMovementType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
 
-    List<StockMovement> findByInventoryItemIdOrderByCreatedAtDesc(Long inventoryItemId);
+    List<StockMovement> findByUserAndInventoryItemIdOrderByCreatedAtDesc(
+            User user, Long inventoryItemId);
 
-    List<StockMovement> findByMovementTypeOrderByCreatedAtDesc(StockMovementType movementType);
+    List<StockMovement> findByUserAndMovementTypeOrderByCreatedAtDesc(
+            User user, StockMovementType movementType);
 
-    List<StockMovement> findByInventoryItemIdAndMovementTypeOrderByCreatedAtDesc(
+    List<StockMovement> findByUserAndInventoryItemIdAndMovementTypeOrderByCreatedAtDesc(
+            User user,
             Long inventoryItemId,
-            StockMovementType movementType
-    );
+            StockMovementType movementType);
 
-    List<StockMovement> findAllByOrderByCreatedAtDesc();
+    List<StockMovement> findByUserOrderByCreatedAtDesc(User user);
 }

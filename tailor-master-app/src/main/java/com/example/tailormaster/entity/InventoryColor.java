@@ -1,17 +1,16 @@
 package com.example.tailormaster.entity;
 
-import com.example.tailormaster.enums.ItemType;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "inventory_category")
+@Table(name = "inventory_color")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class InventoryCategory extends BaseEntity {
+public class InventoryColor extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -21,9 +20,8 @@ public class InventoryCategory extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "item_type", nullable = false, length = 50)
-    private ItemType itemType;
+    @Column(name = "hex_code", length = 7)
+    private String hexCode;
 
     @Column(nullable = false)
     private Boolean active = true;

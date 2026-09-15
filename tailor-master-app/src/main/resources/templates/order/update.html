@@ -9,194 +9,382 @@
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
+
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-            <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-file-earmark-text-fill me-2"></i> Update Order
-            </h2>
-            <p class="text-danger fw-bold">Fields marked with * are required</p>
-            <form th:action="@{/orders/update}" th:object="${orderDto}" method="post">
 
-                <!-- Customer Information -->
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-pencil-square me-2"></i> Update Order
+            </h2>
+
+            <form th:action="@{/orders/update}" th:object="${orderDto}" method="post" class="order-form" id="orderForm">
+                <input type="hidden" name="encryptedOrderId" th:value="${thymeleafUtil.encryptId(orderDto.id)}">
+                <div id="orderProductsInputs"></div>
+
+                <!-- EDIT CONTEXT -->
+                <!--<div id="orderEditContext"
+                     th:data-order-status="${orderDto.status}"
+                     style="display:none;"></div>-->
+
+                <!-- CUSTOMER INFORMATION -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-info-circle me-2"></i> Customer Information
                     </div>
                     <div class="card-body">
-                        <input type="hidden" name="encryptedOrderId"
-                               th:if="${thymeleafUtil != null}"
-                               th:value="${thymeleafUtil.encryptId(orderDto.id)}">
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Full Name</label>
-                                <input type="text" id="customerName" class="form-control bg-light" th:value="${orderDto.customer.fullName}" readonly/>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Customer</label>
+                                <input type="text" class="form-control bg-light"
+                                       th:value="${orderDto.customer != null ? orderDto.customer.fullName : ''}" readonly>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Phone Number</label>
-                                <input type="text" id="customerPhone" class="form-control bg-light" th:value="${orderDto.customer.phoneNumber}" readonly/>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <input type="text" class="form-control bg-light"
+                                       th:value="${orderDto.customer != null ? orderDto.customer.phoneNumber : ''}" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Products Selection -->
+                <!-- EXISTING PRODUCTS DATA -->
+                <div id="existingOrderProductsData" style="display:none;">
+                    <div th:each="product : ${orderDto.orderProducts}"
+                         class="existing-product"
+                         th:data-product-id="${product.productId}"
+                         th:data-product-name="${product.name}"
+                         th:data-quantity="${product.quantity}"
+                         th:data-silai-type="${product.silaiType}"
+                         th:data-silai-amount="${product.silaiAmount}"
+                         th:data-fabric-source="${product.fabricSource}"
+                         th:data-inventory-item-id="${product.inventoryItemId}"
+                         th:data-fabric-quantity="${product.fabricQuantity}"
+                         th:data-additional-notes="${product.additionalNotes}">
+                    </div>
+                </div>
+
+                <!-- PRODUCT SELECTION -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-rulers me-2"></i> Products and Descriptions
+                        <i class="bi bi-box-seam me-2"></i>
+                        <span id="productSectionTitle">Add Product to Order</span>
                     </div>
+
                     <div class="card-body">
-                        <h5 class="fw-bold">Selected Products <span class="text-danger">*</span></h5>
-                        <hr/>
+
                         <div class="row g-3">
-                            <div th:each="product : ${orderDto.orderProducts}" class="col-md-4">
-                                <div class="form-check form-switch">
-                                    <input type="checkbox" class="form-check-input product-checkbox"
-                                           th:value="${product.id}"
-                                           th:data-price="${product.price}"
-                                           th:data-quantity="${product.quantity != null ? product.quantity : 1}"
-                                           th:id="'product_' + ${product.id}"
-                                           th:checked="${orderDto.orderProducts != null and #lists.contains(orderDto.orderProducts.![id], product.id)}"/>
-                                    <label class="form-check-label fw-bold" th:for="'product_' + ${product.id}" th:text="${product.name}"></label>
-                                </div>
+                            <div class="col-md-5">
+                                <label for="productSelect" class="form-label fw-bold">Select Product</label>
+                                <select id="productSelect" class="form-select">
+                                    <option value="" selected>-- Select a Product --</option>
+                                    <option th:each="product : ${products}"
+                                            th:value="${product.id}"
+                                            th:text="${product.name}"
+                                            th:data-single-silai="${product.singleSilai}"
+                                            th:data-double-silai="${product.doubleSilai}">
+                                    </option>
+                                </select>
+                                <div id="productError" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="silaiSelect" class="form-label fw-bold">Silai Type</label>
+                                <select id="silaiSelect" class="form-select">
+                                    <option value="">-- Silai Type --</option>
+                                </select>
+                                <div id="silaiError" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="quantity" class="form-label fw-bold">Quantity</label>
+                                <input type="number" id="quantity" class="form-control" min="1" step="1" value="1">
+                                <div id="quantityError" class="text-danger small mt-1"></div>
                             </div>
                         </div>
 
-                        <!-- Hidden Fields for backend -->
-                        <div id="selectedProductsHiddenContainer" class="d-none">
-                            <div th:each="product, iterStat : ${orderDto.orderProducts}">
-                                <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].id'" th:value="${product.id}">
-                                <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].name'" th:value="${product.name}">
-                                <input type="hidden" th:name="'orderProducts[' + ${iterStat.index} + '].price'" th:value="${product.price}">
+                        <!-- FABRIC SOURCE -->
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-4">
+                                <label for="fabricSource" class="form-label fw-bold">Fabric Source</label>
+                                <select id="fabricSource" class="form-select">
+                                    <option value="CUSTOMER" selected>Customer Fabric</option>
+                                    <option value="SHOP">Shop Fabric</option>
+                                </select>
+                                <div id="fabricSourceError" class="text-danger small mt-1"></div>
+                            </div>
 
-                                <div class="text-danger error-message mt-1"
-                                     th:if="${#fields.hasErrors('orderProducts[' + iterStat.index + '].quantity')}"
-                                     th:errors="*{orderProducts[__${iterStat.index}__].quantity}">
-                                </div>
+                            <!-- SHOP FABRIC -->
+                            <div class="col-md-5" id="shopFabricContainer" style="display:none;">
+                                <label for="inventoryItemSelect" class="form-label fw-bold">Shop Fabric</label>
+                                <select id="inventoryItemSelect" class="form-select">
+                                    <option value="" disabled selected>-- Select Shop Fabric --</option>
+                                    <option th:each="item : ${inventoryItems}"
+                                            th:value="${item.id}"
+                                            th:data-stock="${item.quantity}"
+                                            th:data-reserved="${reservedStockMap[item.id]}"
+                                            th:data-unit="${item.unit}"
+                                            th:data-sale-price="${item.salePrice}"
+                                            th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
+                                    </option>
+                                </select>
+                                <div id="fabricStockInfo" class="small text-success fw-semibold mt-1"></div>
+                                <div id="fabricStockError" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <!-- FABRIC QUANTITY -->
+                            <div class="col-md-3" id="fabricQuantityContainer" style="display:none;">
+                                <label for="fabricQuantity" class="form-label fw-bold">Fabric Quantity</label>
+                                <input type="number" id="fabricQuantity" class="form-control"
+                                       min="0.01" step="0.01" placeholder="e.g. 4.50">
+                                <small class="text-muted">Quantity in meters</small>
+                                <div id="fabricQuantityError" class="text-danger small mt-1"></div>
                             </div>
                         </div>
 
-                        <h5 class="mt-4 fw-bold">Product Details</h5>
-                        <hr/>
-                        <div id="selectedProductsContainer" class="row g-3"></div>
+                        <!-- NOTES -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="additionalNotes" class="form-label fw-bold">Additional Notes</label>
+                                <textarea id="additionalNotes" class="form-control" rows="3"
+                                          placeholder="Enter any additional instructions or notes..."
+                                          style="resize:vertical;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- PRODUCT BUTTONS -->
+                        <div class="row mt-3">
+                            <div class="col-md-4 mx-auto d-flex gap-2">
+                                <button type="button" id="addProductBtn" class="btn btn-success flex-fill">
+                                    <i class="bi bi-plus-circle me-1"></i> Add Product
+                                </button>
+                                <button type="button" id="cancelEditBtn"
+                                        class="btn btn-secondary d-none flex-fill">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="fw-bold mb-3">
+                            <i class="bi bi-list-check me-1"></i> Products in Order
+                        </h6>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle" id="productTable">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Silai</th>
+                                    <th>Fabric Source</th>
+                                    <th>Shop Fabric</th>
+                                    <th>Fabric Qty</th>
+                                    <th>Fabric Amount</th>
+                                    <th>Silai Amount</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Additional Notes</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="noProductsMessage" class="text-muted text-center py-3" style="display:none;">
+                            No products added yet.
+                        </div>
                     </div>
                 </div>
 
-                <!-- Order Details -->
+                <!-- ORDER DETAILS -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold rounded-top-4">
                         <i class="bi bi-card-list me-2"></i> Order Details
                     </div>
+
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="orderDate" class="form-label fw-bold">Order Date <span class="text-danger">*</span></label>
-                                <input type="date" id="orderDate" name="orderDate" class="form-control"
-                                       th:value="${orderDto != null ? #temporals.format(orderDto.orderDate, 'yyyy-MM-dd') : ''}" required />
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('orderDate')}" th:errors="*{orderDate}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="deliveryDate" class="form-label fw-bold">Delivery Date <span class="text-danger">*</span></label>
-                                <input type="date" id="deliveryDate" name="deliveryDate" class="form-control"
-                                       th:value="${orderDto != null ? #temporals.format(orderDto.deliveryDate, 'yyyy-MM-dd') : ''}" required />
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('deliveryDate')}" th:errors="*{deliveryDate}"></div>
-                            </div>
-                        </div>
 
-                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <label for="orderDate" class="form-label fw-bold">
+                                    Order Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" id="orderDate" name="orderDate"
+                                       class="form-control"
+                                       th:value="${orderDto.orderDate != null ? #temporals.format(orderDto.orderDate, 'yyyy-MM-dd') : ''}"
+                                       required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="deliveryDate" class="form-label fw-bold">
+                                    Delivery Date <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" id="deliveryDate" name="deliveryDate"
+                                       class="form-control"
+                                       th:value="${orderDto.deliveryDate != null ? #temporals.format(orderDto.deliveryDate, 'yyyy-MM-dd') : ''}"
+                                       required>
+                            </div>
+
                             <div class="col-md-6">
                                 <label for="advancePayment" class="form-label fw-bold">Advance Payment</label>
-                                <input type="number" step="0.01" class="form-control" id="advancePayment" th:field="*{advancePayment}">
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('advancePayment')}" th:errors="*{advancePayment}"></div>
+                                <input type="number" id="advancePayment"
+                                       th:field="*{advancePayment}"
+                                       class="form-control" min="0" step="0.01">
+                                <div id="advancePaymentError" class="text-danger small mt-1"></div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="duePayment" class="form-label fw-bold">Due Payment <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="duePayment" th:field="*{duePayment}" readonly>
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('duePayment')}" th:errors="*{duePayment}"></div>
-                            </div>
-                        </div>
 
-                        <div class="row g-3 mt-3">
                             <div class="col-md-6">
-                                <label for="totalProductAmount" class="form-label fw-bold">Total Product Amount <span class="text-danger">*</span></label>
-                                <input type="number" step="0.01" class="form-control" id="totalProductAmount" th:field="*{totalProductAmount}" readonly />
-                                <div class="text-danger mt-1" th:if="${#fields.hasErrors('totalProductAmount')}" th:errors="*{totalProductAmount}"></div>
+                                <label for="duePayment" class="form-label fw-bold">
+                                    Due Payment <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" id="duePayment"
+                                       th:field="*{duePayment}"
+                                       class="form-control" readonly>
                             </div>
+
+                            <div class="col-md-6">
+                                <label for="totalProductAmount" class="form-label fw-bold">
+                                    Total Product Amount <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" id="totalProductAmount"
+                                       th:field="*{totalProductAmount}"
+                                       class="form-control" readonly>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
+                <!-- ACTION BUTTONS -->
                 <div class="text-center mt-4 mb-4">
-                    <button type="button" class="btn btn-success shadow rounded-pill px-4" id="updateOrderButton">
-                        <i class="bi bi-check-circle"></i> Update
-                    </button>
                     <a th:href="@{/orders}" class="btn btn-secondary shadow rounded-pill px-4">
-                        <i class="bi bi-x-circle"></i> Cancel
+                        <i class="bi bi-x-circle me-1"></i> Cancel
                     </a>
+                    <button type="button" id="updateOrderButton"
+                            class="btn btn-success shadow rounded-pill px-4">
+                        <i class="bi bi-check-circle me-1"></i> Update Order
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="orderSummaryModal" tabindex="-1" aria-labelledby="orderSummaryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- CONFIRMATION MODAL -->
+<div class="modal fade" id="confirmOrderModal" tabindex="-1"
+     aria-labelledby="confirmOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content rounded-4 shadow">
+
             <div class="modal-header bg-success text-white rounded-top-4">
-                <h5 class="modal-title" id="orderSummaryModalLabel">
-                    <i class="bi bi-receipt-cutoff me-2"></i> Order Summary
+                <h5 class="modal-title" id="confirmOrderModalLabel">
+                    <i class="bi bi-receipt-cutoff me-2"></i> Confirm Order Update
                 </h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
+
+                <!-- CUSTOMER INFORMATION -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-info-circle me-2"></i> Customer Information
                     </div>
                     <div class="card-body">
-                        <p><strong>Name:</strong> <span id="modalCustomerName">-</span></p>
-                        <p><strong>Phone Number:</strong> <span id="modalCustomerContact">-</span></p>
+                        <div id="customerInformation">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="mb-0">
+                                        <strong>Name:</strong>
+                                        <span th:text="${orderDto.customer != null ? orderDto.customer.fullName : '-'}">-</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0">
+                                        <strong>Phone Number:</strong>
+                                        <span th:text="${orderDto.customer != null ? orderDto.customer.phoneNumber : '-'}">-</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card border-success border-bottom border-3 shadow-sm border-0 mb-3">
-                    <div class="card-header bg-success text-white  rounded-top-4">
-                        <strong><i class="bi bi-list-check me-2"></i>Products Summary</strong>
+
+                <!-- ORDER INFORMATION -->
+                <div class="card shadow-sm border-success border-bottom border-3 mb-4">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                        <i class="bi bi-calendar-check me-2"></i> Order Information
+                    </div>
+                    <div class="card-body">
+                        <div id="orderInformation"></div>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS SUMMARY -->
+                <div class="card shadow-sm border-success border-bottom border-3 mb-3">
+                    <div class="card-header bg-success text-white rounded-top-4">
+                        <strong>
+                            <i class="bi bi-list-check me-2"></i> Products Summary
+                        </strong>
                     </div>
                     <div class="card-body p-0">
-                        <table class="table table-bordered m-0">
-                            <thead class="table-success">
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Subtotal</th>
-                            </tr>
-                            </thead>
-                            <tbody id="orderSummaryBody">
-                            <!-- Dynamic product rows go here -->
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered m-0">
+                                <thead class="table-success">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Silai</th>
+                                    <th>Fabric Source</th>
+                                    <th>Shop Fabric</th>
+                                    <th>Fabric Qty</th>
+                                    <th>Fabric Amount</th>
+                                    <th>Silai Amount</th>
+                                    <th>Qty</th>
+                                    <th>Subtotal</th>
+                                    <th>Additional Notes</th>
+                                </tr>
+                                </thead>
+                                <tbody id="orderSummary"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
+                <!-- PAYMENT SUMMARY -->
                 <div class="text-end mt-4">
-                    <p class="fs-5 fw-bold">Total Amount: <span id="modalTotalAmount">0.00</span></p>
-                    <p class="fs-5 fw-bold text-success">Advance Payment: <span id="modalAdvancePayment">0.00</span></p>
-                    <p class="fs-5 fw-bold text-danger">Due Payment: <span id="modalDuePayment">0.00</span></p>
+                    <p class="fs-5 fw-bold">
+                        Total Amount: <span id="modalTotalAmount">0.00</span>
+                    </p>
+                    <p class="fs-5 fw-bold text-success">
+                        Advance Payment: <span id="modalAdvancePayment">0.00</span>
+                    </p>
+                    <p class="fs-5 fw-bold text-danger">
+                        Due Payment: <span id="modalDuePayment">0.00</span>
+                    </p>
                 </div>
+
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Cancel</button>
-                <button type="submit" class="btn btn-success" id="confirmOrderButton"><i class="bi bi-check-circle me-1"></i> Confirm Order</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="confirmOrderButton">
+                    <i class="bi bi-check-circle me-1"></i> Confirm Update
+                </button>
             </div>
+
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -206,5 +394,6 @@
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
 </body>
 </html>

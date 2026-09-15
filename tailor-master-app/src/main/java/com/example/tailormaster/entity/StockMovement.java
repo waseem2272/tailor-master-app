@@ -21,6 +21,11 @@ public class StockMovement extends BaseEntity {
     @ToString.Exclude
     private InventoryItem inventoryItem;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "movement_type", nullable = false, length = 30)
     private StockMovementType movementType;

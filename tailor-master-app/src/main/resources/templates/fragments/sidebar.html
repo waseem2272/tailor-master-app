@@ -71,39 +71,72 @@
         </a>
 
         <!-- Inventory Submenu -->
+        <!-- Inventory Submenu -->
         <div id="inventory-submenu"
              class="collapse"
              th:classappend="${activePage != null and activePage.startsWith('inventory')} ? ' show' : ''"
              sec:authorize="hasRole('ROLE_ADMIN')">
 
-            <a th:href="@{/inventory}">
+            <a th:href="@{/inventory}"
+               th:classappend="${activePage == 'inventory'} ? ' active'">
                 <i class="bi bi-list-ul me-2"></i>
                 Inventory List
             </a>
 
-            <a th:href="@{/inventory/add}">
+            <a th:href="@{/inventory/add}"
+               th:classappend="${activePage == 'inventory/add'} ? ' active'">
                 <i class="bi bi-plus-circle me-2"></i>
                 Add Item
             </a>
 
-            <a th:href="@{/inventory/stock-in}">
+            <a th:href="@{/inventory/stock-in}"
+               th:classappend="${activePage == 'inventory/stock-in'} ? ' active'">
                 <i class="bi bi-box-arrow-in-down me-2"></i>
                 Stock In
             </a>
 
-            <a th:href="@{/inventory/stock-out}">
+            <a th:href="@{/inventory/stock-out}"
+               th:classappend="${activePage == 'inventory/stock-out'} ? ' active'">
                 <i class="bi bi-box-arrow-up me-2"></i>
                 Stock Out
             </a>
 
-            <a th:href="@{/inventory/stock-adjustment}">
+            <a th:href="@{/inventory/stock-adjustment}"
+               th:classappend="${activePage == 'inventory/stock-adjustment'} ? ' active'">
                 <i class="bi bi-arrow-repeat me-2"></i>
                 Stock Adjustment
             </a>
 
-            <a th:href="@{/inventory/movements}">
+            <a th:href="@{/inventory/movements}"
+               th:classappend="${activePage == 'inventory/movements'} ? ' active'">
                 <i class="bi bi-clock-history me-2"></i>
                 Stock History
+            </a>
+
+            <a th:href="@{/inventory/brands}"
+               th:classappend="${activePage == 'inventory/brands'} ? ' active'">
+                <i class="bi bi-tags me-2"></i>
+                Brands
+            </a>
+
+            <a th:href="@{/inventory/categories}"
+               th:classappend="${activePage == 'inventory/categories'} ? ' active'">
+                <i class="bi bi-diagram-3 me-2"></i>
+                Categories
+            </a>
+
+            <!-- Colors -->
+            <a th:href="@{/inventory/colors}"
+               th:classappend="${activePage == 'inventory/colors'} ? ' active'">
+                <i class="bi bi-palette me-2"></i>
+                Colors
+            </a>
+
+            <!-- Designs -->
+            <a th:href="@{/inventory/designs}"
+               th:classappend="${activePage == 'inventory/designs'} ? ' active'">
+                <i class="bi bi-grid-3x3-gap me-2"></i>
+                Designs
             </a>
 
         </div>

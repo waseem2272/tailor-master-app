@@ -12,7 +12,12 @@ import lombok.*;
 @ToString
 public class InventoryBrand extends BaseEntity {
 
-    @Column(nullable = false, unique = true, length = 100)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
+
+    @Column(nullable = false, length = 100)
     private String name;
 
     @Column(nullable = false)

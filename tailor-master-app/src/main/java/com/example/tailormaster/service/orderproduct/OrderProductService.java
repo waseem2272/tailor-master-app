@@ -1,12 +1,15 @@
 package com.example.tailormaster.service.orderproduct;
 
 import com.example.tailormaster.entity.OrderProduct;
+import com.example.tailormaster.enums.FabricSource;
+import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.repository.orderproduct.OrderProductRepository;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -19,5 +22,13 @@ public class OrderProductService {
 
     public Optional<OrderProduct> getOrderProductById(Long id) {
         return orderProductRepository.findById(id);
+    }
+
+    public BigDecimal getReservedQuantity(Long id, FabricSource fabricSource, OrderStatus orderStatus) {
+        return orderProductRepository.getReservedQuantity(id, fabricSource, orderStatus);
+    }
+
+    public BigDecimal getReservedQuantityExcludingOrder(Long id, FabricSource fabricSource, OrderStatus orderStatus, Long id1) {
+        return orderProductRepository.getReservedQuantityExcludingOrder(id, fabricSource, orderStatus, id1);
     }
 }

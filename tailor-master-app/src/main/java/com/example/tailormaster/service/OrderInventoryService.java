@@ -11,6 +11,7 @@ import com.example.tailormaster.enums.StockReferenceType;
 import com.example.tailormaster.repository.InventoryItemRepository;
 import com.example.tailormaster.repository.OrderInventoryUsageRepository;
 import com.example.tailormaster.repository.StockMovementRepository;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class OrderInventoryService {
     private final InventoryItemRepository inventoryItemRepository;
     private final OrderInventoryUsageRepository orderInventoryUsageRepository;
     private final StockMovementRepository stockMovementRepository;
+    private final AuthenticatedUserService authenticatedUserService;
 
     public void consumeShopFabric(Order order) {
 
@@ -77,7 +79,7 @@ public class OrderInventoryService {
                 );
             }
 
-            if (orderInventoryUsageRepository.existsByOrderProductId(orderProduct.getId())) {
+            if (orderInventoryUsageRepository.existsByUserAndOrderProductId(authenticatedUserService.getCurrentUser(), orderProduct.getId())) {
                 log.info(
                         "Stock already consumed for orderProductId={}",
                         orderProduct.getId()
@@ -88,7 +90,7 @@ public class OrderInventoryService {
             Long inventoryItemId = orderProduct.getInventoryItem().getId();
 
             InventoryItem inventoryItem =
-                    inventoryItemRepository.findByIdForUpdate(inventoryItemId)
+                    inventoryItemRepository.findByIdForUpdate(inventoryItemId, authenticatedUserService.getCurrentUser())
                             .orElseThrow(() -> new IllegalStateException(
                                     "Inventory item not found: " + inventoryItemId
                             ));
@@ -118,6 +120,7 @@ public class OrderInventoryService {
 
             StockMovement movement = new StockMovement();
             movement.setInventoryItem(inventoryItem);
+            movement.setUser(authenticatedUserService.getCurrentUser());
             movement.setMovementType(StockMovementType.OUT);
             movement.setQuantity(requiredQuantity);
             movement.setReferenceType(StockReferenceType.ORDER);
@@ -163,13 +166,13 @@ public class OrderInventoryService {
 
         List<OrderInventoryUsage> usages =
                 orderInventoryUsageRepository
-                        .findByOrderIdAndReversedFalse(order.getId());
+                        .findByUserAndOrderIdAndReversedFalse(authenticatedUserService.getCurrentUser(), order.getId());
 
         for (OrderInventoryUsage usage : usages) {
 
             InventoryItem inventoryItem =
                     inventoryItemRepository.findByIdForUpdate(
-                                    usage.getInventoryItem().getId())
+                                    usage.getInventoryItem().getId(), authenticatedUserService.getCurrentUser())
                             .orElseThrow(() -> new IllegalStateException(
                                     "Inventory item not found: " +
                                             usage.getInventoryItem().getId()
@@ -187,6 +190,7 @@ public class OrderInventoryService {
 
             StockMovement movement = new StockMovement();
             movement.setInventoryItem(inventoryItem);
+            movement.setUser(authenticatedUserService.getCurrentUser());
             movement.setMovementType(StockMovementType.IN);
             movement.setQuantity(usage.getQuantity());
             movement.setReferenceType(StockReferenceType.ORDER);

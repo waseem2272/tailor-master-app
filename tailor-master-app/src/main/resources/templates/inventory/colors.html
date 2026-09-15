@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colors | Tailor Master</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+<body> <!-- Sidebar -->
+<div th:replace="~{fragments/sidebar :: sidebar}"></div> <!-- Navbar -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid"> <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="page-title mb-0"><i
+                    class="bi bi-palette text-success me-2"></i> Colors </h2> <a th:href="@{/inventory/colors/add}"
+                                                                                 class="btn btn-success shadow rounded-pill px-4">
+                <i class="bi bi-plus-lg me-1"></i> Add Color </a></div> <!-- Success Message -->
+            <div th:if="${successMessage != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i> <span
+                    th:text="${successMessage}"> Color saved successfully. </span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div> <!-- Error Message -->
+            <div th:if="${errorMessage != null}" class="alert alert-danger alert-dismissible fade show" role="alert"><i
+                    class="bi bi-exclamation-triangle me-2"></i> <span th:text="${errorMessage}"> Unable to process color. </span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div> <!-- Colors Card -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-palette me-2"></i> Inventory Colors</div>
+                    <span class="small">
+                        Total Colors:
+                        <strong th:text="${colors != null ? colors.size() : 0}">0</strong>
+                           </span></div>
+                <div class="card-body"> <!-- Information -->
+                    <div class="alert alert-success d-flex align-items-start" role="alert"><i
+                            class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div><strong>Color Management</strong>
+                            <div class="small mt-1"> Manage the colors available for your inventory items. Each color
+                                can optionally have a hex code for visual identification.
+                            </div>
+                        </div>
+                    </div> <!-- Colors Table -->
+                    <div th:if="${colors != null and !colors.isEmpty()}" class="table-responsive">
+                        <table id="colorsTable" class="table table-bordered table-hover table-striped">
+                            <thead class="table-success text-dark">
+                            <tr>
+                                <th style="width: 70px;"> #</th>
+                                <th style="width: 100px;"> Color</th>
+                                <th> Color Name</th>
+                                <th> Hex Code</th>
+                                <th class="text-center" style="width: 120px;"> Status</th>
+                                <th class="text-end" style="width: 180px;"> Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="color, stat : ${colors}"> <!-- Number -->
+                                <td th:text="${stat.count}"> 1</td> <!-- Color Preview -->
+                                <td>
+                                    <div class="border rounded-3 shadow-sm" style="width: 42px; height: 42px;"
+                                         th:style="${color.hexCode != null and !#strings.isEmpty(color.hexCode)} ? 'width:42px;height:42px;background-color:' + ${color.hexCode} + ';border:1px solid #dee2e6;border-radius:8px;' : 'width:42px;height:42px;background-color:#ffffff;border:1px solid #dee2e6;border-radius:8px;'"></div>
+                                </td> <!-- Color Name -->
+                                <td><span class="fw-semibold" th:text="${color.name}"> Black </span></td>
+                                <!-- Hex Code -->
+                                <td><span th:if="${color.hexCode != null and !#strings.isEmpty(color.hexCode)}"
+                                          class="font-monospace text-muted" th:text="${color.hexCode}"> #000000 </span>
+                                    <span th:unless="${color.hexCode != null and !#strings.isEmpty(color.hexCode)}"
+                                          class="text-muted"> — </span></td> <!-- Status -->
+                                <td class="text-center">
+    <span th:if="${color.active}"
+          class="badge bg-success-subtle text-success rounded-pill px-3">
+        Active
+    </span>
+
+                                    <span th:unless="${color.active}"
+                                          class="badge bg-secondary-subtle text-secondary rounded-pill px-3">
+        Inactive
+    </span>
+                                </td> <!-- Actions -->
+                                <!-- Actions -->
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a th:href="@{/inventory/colors/edit/{id}(id=${color.id})}"
+                                           class="btn btn-warning btn-sm"
+                                           title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form th:if="${color.active}"
+                                              th:action="@{/inventory/colors/deactivate/{id}(id=${color.id})}"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to deactivate this color?');">
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm"
+                                                    title="Deactivate">
+                                                <i class="bi bi-x-circle"></i>
+                                            </button>
+                                        </form>
+
+                                        <form th:unless="${color.active}"
+                                              th:action="@{/inventory/colors/activate/{id}(id=${color.id})}"
+                                              method="post"
+                                              class="d-inline">
+                                            <button type="submit"
+                                                    class="btn btn-success btn-sm"
+                                                    title="Activate">
+                                                <i class="bi bi-check-circle"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div> <!-- Empty State -->
+                    <div th:if="${colors == null or colors.isEmpty()}" class="text-center py-5">
+                        <div class="mb-3"><i class="bi bi-palette text-muted" style="font-size: 48px;"> </i></div>
+                        <h5 class="fw-semibold"> No Colors Found </h5>
+                        <p class="text-muted mb-3"> No active colors have been added yet. </p> <a
+                            th:href="@{/inventory/colors/add}" class="btn btn-success shadow rounded-pill px-4"> <i
+                            class="bi bi-plus-lg me-1"></i> Add Your First Color </a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script>
+    $(document).ready(function () {
+        $('#colorsTable').DataTable();
+    });
+</script>
+</body>
+</html>

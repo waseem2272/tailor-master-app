@@ -1,315 +1,782 @@
 document.addEventListener("DOMContentLoaded", function () {
+    let orderItems = [];
+    let editingProductIndex = -1;
 
-    let selectedProductsContainer = document.getElementById("selectedProductsContainer");
-    let selectedProductsHiddenContainer = document.getElementById("selectedProductsHiddenContainer");
-    let advancePaymentInput = document.getElementById("advancePayment");
-    let duePaymentInput = document.getElementById("duePayment");
-    let totalProductAmountInput = document.getElementById("totalProductAmount");
+    const productSelect = document.getElementById("productSelect");
+    const silaiSelect = document.getElementById("silaiSelect");
+    const quantityInput = document.getElementById("quantity");
+    const fabricSource = document.getElementById("fabricSource");
+    const shopFabricContainer = document.getElementById("shopFabricContainer");
+    const fabricQuantityContainer = document.getElementById("fabricQuantityContainer");
+    const inventoryItemSelect = document.getElementById("inventoryItemSelect");
+    const fabricQuantityInput = document.getElementById("fabricQuantity");
+    const fabricStockInfo = document.getElementById("fabricStockInfo");
+    const additionalNotes = document.getElementById("additionalNotes");
+    const addProductBtn = document.getElementById("addProductBtn");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const productTableBody = document.getElementById("productTableBody");
+    const noProductsMessage = document.getElementById("noProductsMessage");
+    const orderProductsInputs = document.getElementById("orderProductsInputs");
+    const totalProductAmount = document.getElementById("totalProductAmount");
+    const advancePayment = document.getElementById("advancePayment");
+    const duePayment = document.getElementById("duePayment");
+    const orderDate = document.getElementById("orderDate");
+    const deliveryDate = document.getElementById("deliveryDate");
+    const updateOrderButton = document.getElementById("updateOrderButton");
+    const confirmOrderButton = document.getElementById("confirmOrderButton");
+    const productSectionTitle = document.getElementById("productSectionTitle");
+    const productError = document.getElementById("productError");
+    const silaiError = document.getElementById("silaiError");
+    const quantityError = document.getElementById("quantityError");
+    const fabricSourceError = document.getElementById("fabricSourceError");
+    const fabricStockError = document.getElementById("fabricStockError");
+    const fabricQuantityError = document.getElementById("fabricQuantityError");
+    const advancePaymentError = document.getElementById("advancePaymentError");
+    // const orderEditContext = document.getElementById("orderEditContext");
+    // const orderStatus = orderEditContext?.dataset.orderStatus || "PENDING";
+    const modalElement = document.getElementById("confirmOrderModal");
+    const orderModal = new bootstrap.Modal(modalElement);
 
-    let updateOrderButton = document.getElementById("updateOrderButton");
-    let confirmOrderButton = document.getElementById("confirmOrderButton");
-    let orderSummaryBody = document.getElementById("orderSummaryBody");
-    let modalTotalAmount = document.getElementById("modalTotalAmount");
-    let modalAdvancePayment = document.getElementById("modalAdvancePayment");
-    let modalDuePayment = document.getElementById("modalDuePayment");
-
-    let modalCustomerName = document.getElementById("modalCustomerName");
-    let modalCustomerContact = document.getElementById("modalCustomerContact");
-
-    let orderDateInput = document.getElementById("orderDate");
-    let deliveryDateInput = document.getElementById("deliveryDate");
-
-    function setMinDates() {
-        let today = new Date().toISOString().split("T")[0]; // Get today's date in yyyy-MM-dd format
-        let orderDateValue = orderDateInput.value || today; // Default to today if empty
-
-        orderDateInput.setAttribute("min", today);
-        deliveryDateInput.setAttribute("min", orderDateValue);
+    function formatAmount(value) {
+        const amount = Number(value || 0);
+        return amount.toLocaleString("en-PK", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
 
-    function validateDates() {
-        let orderDate = new Date(orderDateInput.value);
-        let deliveryDate = new Date(deliveryDateInput.value);
+    function escapeHtml(value) {
+        if (value === null || value === undefined) return "";
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-        if (deliveryDate < orderDate) {
-            showError(deliveryDateInput, "Delivery date cannot be before the order date.");
-            deliveryDateInput.value = ""; // Reset invalid input
-        } else {
-            removeErrors(deliveryDateInput);
+    function clearErrors() {
+        productError.textContent = "";
+        silaiError.textContent = "";
+        quantityError.textContent = "";
+        fabricSourceError.textContent = "";
+        fabricStockError.textContent = "";
+        fabricQuantityError.textContent = "";
+        advancePaymentError.textContent = "";
+    }
+
+    function clearFabricErrors() {
+        fabricStockError.textContent = "";
+        fabricQuantityError.textContent = "";
+    }
+
+    function populateSilaiOptions(selectedSilaiType = "") {
+        silaiSelect.innerHTML = '<option value="">-- Silai Type --</option>';
+
+        const selectedProduct = productSelect.options[productSelect.selectedIndex];
+        if (!selectedProduct || !selectedProduct.value) return;
+
+        const singleSilai = selectedProduct.dataset.singleSilai;
+        const doubleSilai = selectedProduct.dataset.doubleSilai;
+
+        if (singleSilai !== undefined && singleSilai !== null && singleSilai !== "") {
+            const option = document.createElement("option");
+            option.value = "single";
+            option.textContent = "Single Silai - Rs. " + formatAmount(singleSilai);
+            option.dataset.amount = singleSilai;
+            silaiSelect.appendChild(option);
+        }
+
+        if (doubleSilai !== undefined && doubleSilai !== null && doubleSilai !== "") {
+            const option = document.createElement("option");
+            option.value = "double";
+            option.textContent = "Double Silai - Rs. " + formatAmount(doubleSilai);
+            option.dataset.amount = doubleSilai;
+            silaiSelect.appendChild(option);
+        }
+
+        if (selectedSilaiType) {
+            silaiSelect.value = selectedSilaiType.toLowerCase();
         }
     }
 
-    orderDateInput.addEventListener("change", function () {
-        deliveryDateInput.setAttribute("min", orderDateInput.value);
-        validateDates();
-    });
+    function calculateSilaiAmount() {
+        const selectedOption = silaiSelect.options[silaiSelect.selectedIndex];
+        if (!selectedOption || !selectedOption.value) return 0;
+        return Number(selectedOption.dataset.amount || 0);
+    }
 
-    deliveryDateInput.addEventListener("change", validateDates);
+    function getSelectedInventorySalePrice() {
+        const selectedOption = inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+        if (!selectedOption || !selectedOption.value) return 0;
+        return Number(selectedOption.dataset.salePrice || 0);
+    }
 
-    setMinDates(); // Set min dates on page load
+    function getCurrentOrderFabricQuantities(inventoryItemId) {
+        let total = 0;
+        let other = 0;
 
-    let form = document.querySelector("form");
-
-    function updateTotal() {
-        let subtotal = 0;
-        let productIndex = 0;
-
-        document.querySelectorAll(".product-quantity").forEach(input => {
-            let productId = input.dataset.productId;
-            let quantity = parseInt(input.value.trim(), 10) || 0;
-
-            let priceElement = document.getElementById(`hidden_price_${productId}`);
-            let price = priceElement ? parseFloat(priceElement.value) || 0 : 0;
-
-            let productSubtotal = quantity * price;
-            subtotal += productSubtotal;
-
-            let subtotalField = document.querySelector(`#product_card_${productId} .product-subtotal`);
-            if (subtotalField) {
-                subtotalField.innerText = productSubtotal.toFixed(2);
+        orderItems.forEach(function (item, index) {
+            if (item.fabricSource !== "SHOP" ||
+                String(item.inventoryItemId) !== String(inventoryItemId)) {
+                return;
             }
 
-            // ✅ Remove old hidden inputs before creating new ones
-            removeProductCard(productId);
+            const quantity = Number(item.fabricQuantity || 0);
+            total += quantity;
 
-            // ✅ Correct indexing
-            selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_product_${productId}`, `orderProducts[${productIndex}].id`, productId));
-            selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_quantity_${productId}`, `orderProducts[${productIndex}].quantity`, quantity));
-            selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_price_${productId}`, `orderProducts[${productIndex}].price`, price));
-            selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_name_${productId}`, `orderProducts[${productIndex}].name`, document.querySelector(`#product_card_${productId} .card-header`).innerText));
-
-            productIndex++;
-        });
-
-        totalProductAmountInput.value = subtotal.toFixed(2);
-        let advancePayment = parseFloat(advancePaymentInput.value || 0);
-        duePaymentInput.value = (subtotal - advancePayment).toFixed(2);
-    }
-
-    // ✅ Validate advance payment and recalculate due payment
-    advancePaymentInput.addEventListener("input", function () {
-        updateTotal();
-    });
-
-    function validateForm() {
-        removeErrors();
-        let isValid = true;
-
-        if (document.querySelectorAll(".product-checkbox:checked").length === 0) {
-            showError(selectedProductsContainer, "Please select at least one product.");
-            isValid = false;
-        }
-
-        let totalCalculatedAmount = 0;
-
-        document.querySelectorAll(".product-quantity").forEach(input => {
-            let productId = input.dataset.productId;
-            let quantity = parseInt(input.value.trim(), 10) || 0; // Ensure it's a valid number
-
-            console.log(`Product ID: ${productId}, Quantity: ${quantity}`);
-
-            let priceElement = document.getElementById(`hidden_price_${productId}`);
-            let price = priceElement ? parseFloat(priceElement.value) || 0 : 0;
-
-            if (quantity <= 0) {
-                showError(input, "Quantity must be greater than 0.");
-                isValid = false;
+            if (index !== editingProductIndex) {
+                other += quantity;
             }
-
-            totalCalculatedAmount += (quantity * price);
         });
 
-        let totalAmount = parseFloat(totalProductAmountInput.value || 0);
-        if (totalAmount !== totalCalculatedAmount) {
-            showError(totalProductAmountInput, "Total product amount does not match the calculated total.");
-            isValid = false;
-        }
-
-        let advancePayment = parseFloat(advancePaymentInput.value || 0);
-        let duePayment = parseFloat(duePaymentInput.value || 0);
-
-        if (advancePayment < 0) {
-            showError(advancePaymentInput, "Advance payment cannot be negative.");
-            isValid = false;
-        }
-
-        if (advancePayment > totalCalculatedAmount) {
-            showError(advancePaymentInput, "Advance payment cannot be greater than the total amount.");
-            isValid = false;
-        }
-
-        let expectedDuePayment = totalCalculatedAmount - advancePayment;
-        if (duePayment !== expectedDuePayment) {
-            showError(duePaymentInput, "Due payment does not match the expected amount.");
-            isValid = false;
-        }
-
-        updateTotal();
-        return isValid;
+        return {total, other};
     }
 
-    function generateProductCard(productId, productName, productPrice, quantity) {
-        let existingCard = document.getElementById(`product_card_${productId}`);
+    function getAvailableStock(inventoryItemId) {
+        const selectedOption = Array.from(inventoryItemSelect.options)
+            .find(option => String(option.value) === String(inventoryItemId));
 
-        if (existingCard) {
-            let quantityInput = existingCard.querySelector(".product-quantity");
-            quantityInput.value = quantity;
+        if (!selectedOption) return 0;
 
-            // ✅ Remove hidden inputs before adding new ones
-            removeProductCard(productId);
+        const physicalStock = Number(selectedOption.dataset.stock || 0);
+        const reservedStock = Number(selectedOption.dataset.reserved || 0);
+        const currentOrderQuantities = getCurrentOrderFabricQuantities(inventoryItemId);
 
-            selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_quantity_${productId}`, `orderProducts[${productId}].quantity`, quantity));
-            updateTotal();
+        let availableStock = physicalStock - reservedStock;
+
+        // if (orderStatus === "IN_PROGRESS") {
+        //     availableStock += currentOrderQuantities.total;
+        // }
+
+        availableStock -= currentOrderQuantities.other;
+
+        return Math.max(0, availableStock);
+    }
+
+    function updateFabricStockInfo() {
+        clearFabricErrors();
+
+        const selectedOption = inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+
+        if (!selectedOption || !selectedOption.value) {
+            fabricStockInfo.textContent = "";
             return;
         }
 
-        removeProductCard(productId);
+        const physicalStock = Number(selectedOption.dataset.stock || 0);
+        const reservedStock = Number(selectedOption.dataset.reserved || 0);
+        const unit = selectedOption.dataset.unit || "";
+        const currentOrderQuantities = getCurrentOrderFabricQuantities(selectedOption.value);
+        const availableStock = getAvailableStock(selectedOption.value);
 
-        let productCard = document.createElement("div");
-        productCard.classList.add("col-md-6");
-        productCard.id = `product_card_${productId}`;
-
-        productCard.innerHTML = `
-        <div class="card shadow-sm border-success mb-4">
-            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center rounded-top-4">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-check-circle me-2"></i> ${productName}
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6"><strong>Price:</strong> <span class="product-price">${productPrice}</span></div>
-                    <div class="col-6">
-                        <strong>Quantity:</strong>
-                        <input type="number" min="1" value="${quantity}" class="form-control product-quantity" data-product-id="${productId}">
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-12"><strong>Subtotal:</strong> <span class="product-subtotal">${(productPrice * quantity).toFixed(2)}</span></div>
-                </div>
-            </div>
-        </div>
-        `;
-
-        selectedProductsContainer.appendChild(productCard);
-
-        selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_product_${productId}`, `orderProducts[${productId}].id`, productId));
-        selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_quantity_${productId}`, `orderProducts[${productId}].quantity`, quantity));
-        selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_price_${productId}`, `orderProducts[${productId}].price`, productPrice));
-        selectedProductsHiddenContainer.appendChild(createHiddenInput(`hidden_name_${productId}`, `orderProducts[${productId}].name`, productName));
-
-        productCard.querySelector(".product-quantity").addEventListener("input", function () {
-            updateTotal();
-        });
-
-        updateTotal();
+        fabricStockInfo.textContent =
+            "Physical Stock: " + formatAmount(physicalStock) + " " + unit +
+            " | Reserved Stock: " + formatAmount(reservedStock) + " " + unit +
+            " | Current Order: " + formatAmount(currentOrderQuantities.other) + " " + unit +
+            " | Available Stock: " + formatAmount(availableStock) + " " + unit;
     }
 
-    function removeProductCard(productId) {
-        document.getElementById(`hidden_product_${productId}`)?.remove();
-        document.getElementById(`hidden_quantity_${productId}`)?.remove();
-        document.getElementById(`hidden_price_${productId}`)?.remove();
-        document.getElementById(`hidden_name_${productId}`)?.remove();
-    }
+    function validateProduct() {
+        clearErrors();
 
-    function createHiddenInput(id, name, value) {
-        // Remove any existing input with the same name to avoid duplicates
-        let existingInput = document.querySelector(`input[name="${name}"]`);
-        if (existingInput) {
-            existingInput.remove();
+        let valid = true;
+        const productId = productSelect.value;
+        const silaiType = silaiSelect.value;
+        const quantity = Number(quantityInput.value || 0);
+
+        if (!productId) {
+            productError.textContent = "Product is required.";
+            valid = false;
         }
 
-        let input = document.createElement("input");
-        input.type = "hidden";
-        input.id = id;
-        input.name = name; // Ensure correct name format
-        input.value = value;
-        return input;
-    }
-
-
-    function showError(element, message) {
-        let errorDiv = document.createElement("div");
-        errorDiv.className = "text-danger error-message";
-        errorDiv.innerText = message;
-        element.parentNode.appendChild(errorDiv);
-    }
-
-    function removeErrors() {
-        document.querySelectorAll(".error-message").forEach(el => el.remove());
-    }
-
-    document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
-        let productId = checkbox.value;
-        let productLabel = document.querySelector(`label[for="product_${productId}"]`);
-        let productName = productLabel ? productLabel.innerText.trim() : "Unknown Product";
-        let productPrice = parseFloat(checkbox.dataset.price || 0);
-        let selectedQuantity = checkbox.dataset.quantity ? parseInt(checkbox.dataset.quantity) : 1;
-
-        if (checkbox.checked) {
-            generateProductCard(productId, productName, productPrice, selectedQuantity);
+        if (!silaiType) {
+            silaiError.textContent = "Silai type is required.";
+            valid = false;
         }
 
-        checkbox.addEventListener("change", function () {
-            removeErrors();
-            if (this.checked) {
-                generateProductCard(productId, productName, productPrice, selectedQuantity);
-            } else {
-                let card = document.getElementById(`product_card_${productId}`);
-                if (card) {
-                    card.remove(); // ✅ Only remove the product card
-                }
-                removeProductCard(productId); // ✅ Remove associated hidden inputs
-                updateTotal(); // ✅ Ensure the total updates correctly
+        if (!Number.isInteger(quantity) || quantity < 1) {
+            quantityError.textContent = "Quantity must be a whole number of at least 1.";
+            valid = false;
+        }
+
+        if (!fabricSource.value) {
+            fabricSourceError.textContent = "Fabric source is required.";
+            valid = false;
+        }
+
+        if (fabricSource.value === "SHOP") {
+            if (!inventoryItemSelect.value) {
+                fabricStockError.textContent = "Shop fabric is required.";
+                valid = false;
             }
+
+            const fabricQuantity = Number(fabricQuantityInput.value || 0);
+
+            if (!fabricQuantity || fabricQuantity <= 0) {
+                fabricQuantityError.textContent = "Fabric quantity must be greater than zero.";
+                valid = false;
+            }
+
+            if (inventoryItemSelect.value && fabricQuantity > 0) {
+                const selectedOption = inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+                const availableStock = getAvailableStock(inventoryItemSelect.value);
+
+                if (fabricQuantity > availableStock) {
+                    fabricStockError.textContent =
+                        "Insufficient stock. Available stock: " +
+                        formatAmount(availableStock) + " " +
+                        (selectedOption.dataset.unit || "");
+                    valid = false;
+                }
+            }
+
+            const salePrice = getSelectedInventorySalePrice();
+
+            if (salePrice < 0) {
+                fabricStockError.textContent = "Invalid fabric sale price.";
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+
+    function createProductObject() {
+        const selectedProductOption = productSelect.options[productSelect.selectedIndex];
+        const productId = Number(productSelect.value);
+        const productName = selectedProductOption.textContent.trim();
+        const quantity = Number(quantityInput.value);
+        const silaiType = silaiSelect.value;
+        const silaiAmount = calculateSilaiAmount();
+        const fabricSourceValue = fabricSource.value;
+
+        let inventoryItemId = null;
+        let inventoryItemName = "";
+        let fabricQuantity = null;
+        let fabricUnit = "";
+        let fabricSalePrice = 0;
+        let fabricAmount = 0;
+
+        if (fabricSourceValue === "SHOP") {
+            const selectedInventoryOption = inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+
+            inventoryItemId = Number(inventoryItemSelect.value);
+            inventoryItemName = selectedInventoryOption.textContent.split(" - Stock:")[0].trim();
+            fabricQuantity = Number(fabricQuantityInput.value);
+            fabricUnit = selectedInventoryOption.dataset.unit || "";
+            fabricSalePrice = getSelectedInventorySalePrice();
+            fabricAmount = fabricQuantity * fabricSalePrice;
+        }
+
+        const stitchingAmount = silaiAmount * quantity;
+        const subtotal = stitchingAmount + fabricAmount;
+
+        return {
+            productId,
+            productName,
+            silaiType,
+            silaiAmount,
+            stitchingAmount,
+            quantity,
+            amount: subtotal,
+            subtotal,
+            fabricSource: fabricSourceValue,
+            inventoryItemId,
+            inventoryItemName,
+            fabricQuantity,
+            fabricUnit,
+            fabricSalePrice,
+            fabricAmount,
+            additionalNotes: additionalNotes.value.trim()
+        };
+    }
+
+    function addOrUpdateProduct() {
+        if (!validateProduct()) return;
+
+        const product = createProductObject();
+
+        if (editingProductIndex === -1) {
+            orderItems.push(product);
+        } else {
+            orderItems[editingProductIndex] = product;
+        }
+
+        renderSelectedProducts();
+        resetProductForm();
+        calculateOrderTotals();
+    }
+
+    function renderSelectedProducts() {
+        productTableBody.innerHTML = "";
+
+        if (orderItems.length === 0) {
+            noProductsMessage.style.display = "block";
+            createHiddenFields();
+            calculateOrderTotals();
+            return;
+        }
+
+        noProductsMessage.style.display = "none";
+
+        orderItems.forEach(function (item, index) {
+            const row = document.createElement("tr");
+            const fabricSourceText = item.fabricSource === "SHOP" ? "Shop Fabric" : "Customer Fabric";
+            const shopFabricText = item.fabricSource === "SHOP" ? escapeHtml(item.inventoryItemName) : "-";
+            const fabricUnit = item.fabricUnit || "M";
+            const fabricQuantityText = item.fabricSource === "SHOP"
+                ? formatAmount(item.fabricQuantity) + " " + escapeHtml(fabricUnit)
+                : "-";
+            const fabricAmountText = item.fabricSource === "SHOP"
+                ? "Rs. " + formatAmount(item.fabricAmount)
+                : "0.00";
+            const notes = item.additionalNotes ? escapeHtml(item.additionalNotes) : "-";
+
+            row.innerHTML = `
+                <td>${escapeHtml(item.productName)}</td>
+                <td>${escapeHtml(item.silaiType)}<br><small class="text-muted">Rs. ${formatAmount(item.silaiAmount)}</small></td>
+                <td>${fabricSourceText}</td>
+                <td>${shopFabricText}</td>
+                <td>${fabricQuantityText}</td>
+                <td>${fabricAmountText}</td>
+                <td>Rs. ${formatAmount(item.stitchingAmount)}</td>
+                <td>${item.quantity}</td>
+                <td><strong>Rs. ${formatAmount(item.subtotal)}</strong></td>
+                <td>${notes}</td>
+                <td class="text-nowrap">
+                    <button type="button" class="btn btn-sm btn-outline-primary edit-product-btn"
+                            data-index="${index}" title="Edit Product">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger delete-product-btn"
+                            data-index="${index}" title="Delete Product">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            productTableBody.appendChild(row);
         });
-    });
 
+        createHiddenFields();
+        calculateOrderTotals();
+    }
 
-    updateOrderButton.addEventListener("click", function (event) {
-        event.preventDefault();
+    function editProduct(index) {
+        if (index < 0 || index >= orderItems.length) return;
 
-        updateTotal(); // ✅ Ensure totals are updated before validation
+        const item = orderItems[index];
+        editingProductIndex = index;
 
-        if (!validateForm()) return;
+        productSelect.value = String(item.productId);
+        populateSilaiOptions(item.silaiType);
+        quantityInput.value = item.quantity;
+        fabricSource.value = item.fabricSource || "CUSTOMER";
 
-        modalCustomerName.innerText = document.getElementById("customerName").value || "-";
-        modalCustomerContact.innerText = document.getElementById("customerPhone").value || "-";
+        toggleShopFabric();
 
-        orderSummaryBody.innerHTML = "";
+        if (item.fabricSource === "SHOP") {
+            inventoryItemSelect.value = item.inventoryItemId ? String(item.inventoryItemId) : "";
+            fabricQuantityInput.value =
+                item.fabricQuantity !== null && item.fabricQuantity !== undefined
+                    ? item.fabricQuantity
+                    : "";
+            updateFabricStockInfo();
+        } else {
+            inventoryItemSelect.value = "";
+            fabricQuantityInput.value = "";
+        }
 
-        document.querySelectorAll("#selectedProductsContainer .card").forEach((product) => {
-            let productName = product.querySelector(".card-header").innerText;
-            let productPrice = product.querySelector(".product-price").innerText;
-            let quantity = product.querySelector(".product-quantity").value;
-            let subtotal = product.querySelector(".product-subtotal").innerText;
+        additionalNotes.value = item.additionalNotes || "";
 
-            let row = `
-            <tr>
-                <td>${productName}</td>
-                <td>${parseFloat(productPrice).toFixed(2)}</td>
-                <td>${quantity}</td>
-                <td>${parseFloat(subtotal).toFixed(2)}</td>
-            </tr>
+        addProductBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Product';
+        cancelEditBtn.classList.remove("d-none");
+        productSectionTitle.innerHTML = '<i class="bi bi-pencil-square me-2"></i> Edit Product';
+
+        const productCard = productSectionTitle.closest(".card");
+
+        if (productCard) {
+            productCard.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }
+
+    function deleteProduct(index) {
+        if (index < 0 || index >= orderItems.length) return;
+
+        if (editingProductIndex === index) {
+            resetProductForm();
+        } else if (editingProductIndex > index) {
+            editingProductIndex--;
+        }
+
+        orderItems.splice(index, 1);
+        renderSelectedProducts();
+    }
+
+    function resetProductForm() {
+        editingProductIndex = -1;
+        productSelect.value = "";
+        silaiSelect.innerHTML = '<option value="">-- Silai Type --</option>';
+        quantityInput.value = "1";
+        fabricSource.value = "CUSTOMER";
+        inventoryItemSelect.value = "";
+        fabricQuantityInput.value = "";
+        additionalNotes.value = "";
+
+        toggleShopFabric();
+        clearErrors();
+
+        addProductBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Product';
+        cancelEditBtn.classList.add("d-none");
+        productSectionTitle.innerHTML = "Add Product to Order";
+    }
+
+    function createHiddenFields() {
+        orderProductsInputs.innerHTML = "";
+
+        orderItems.forEach(function (item, index) {
+            addHiddenField(`orderProducts[${index}].productId`, item.productId);
+            addHiddenField(`orderProducts[${index}].quantity`, item.quantity);
+            addHiddenField(`orderProducts[${index}].silaiType`, item.silaiType);
+            addHiddenField(`orderProducts[${index}].silaiAmount`, item.silaiAmount);
+            addHiddenField(`orderProducts[${index}].amount`, item.amount);
+            addHiddenField(`orderProducts[${index}].fabricSource`, item.fabricSource);
+            addHiddenField(
+                `orderProducts[${index}].inventoryItemId`,
+                item.fabricSource === "SHOP" ? item.inventoryItemId : ""
+            );
+            addHiddenField(
+                `orderProducts[${index}].fabricQuantity`,
+                item.fabricSource === "SHOP" ? item.fabricQuantity : ""
+            );
+            addHiddenField(
+                `orderProducts[${index}].additionalNotes`,
+                item.additionalNotes || ""
+            );
+        });
+    }
+
+    function addHiddenField(name, value) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value !== null && value !== undefined ? value : "";
+        orderProductsInputs.appendChild(input);
+    }
+
+    function calculateOrderTotals() {
+        let total = 0;
+
+        orderItems.forEach(function (item) {
+            const stitchingAmount =
+                Number(item.silaiAmount || 0) * Number(item.quantity || 0);
+            const fabricAmount = Number(item.fabricAmount || 0);
+
+            item.stitchingAmount = stitchingAmount;
+            item.amount = stitchingAmount + fabricAmount;
+            item.subtotal = item.amount;
+
+            total += item.amount;
+        });
+
+        totalProductAmount.value = total.toFixed(2);
+
+        const advance = Number(advancePayment.value || 0);
+        const due = Math.max(total - advance, 0);
+
+        duePayment.value = due.toFixed(2);
+    }
+
+    function validatePayment() {
+        advancePaymentError.textContent = "";
+
+        const total = Number(totalProductAmount.value || 0);
+        const advance = Number(advancePayment.value || 0);
+
+        if (advance < 0) {
+            advancePaymentError.textContent = "Advance payment cannot be negative.";
+            return false;
+        }
+
+        if (advance > total) {
+            advancePaymentError.textContent =
+                "Advance payment cannot be greater than total amount.";
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateDates() {
+        if (!orderDate.value) {
+            alert("Order date is required.");
+            return false;
+        }
+
+        if (!deliveryDate.value) {
+            alert("Delivery date is required.");
+            return false;
+        }
+
+        if (deliveryDate.value < orderDate.value) {
+            alert("Delivery date cannot be before order date.");
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateBeforeSubmit() {
+        if (editingProductIndex !== -1) {
+            alert("Please update the product or cancel editing before submitting the order.");
+            return false;
+        }
+
+        if (orderItems.length === 0) {
+            alert("At least one product must be added.");
+            return false;
+        }
+
+        calculateOrderTotals();
+
+        if (!validatePayment()) return false;
+        if (!validateDates()) return false;
+
+        createHiddenFields();
+        return true;
+    }
+
+    function buildOrderSummary() {
+        let html = "";
+
+        orderItems.forEach(function (item) {
+            const fabricSourceText =
+                item.fabricSource === "SHOP" ? "Shop Fabric" : "Customer Fabric";
+            const shopFabricText =
+                item.fabricSource === "SHOP" ? escapeHtml(item.inventoryItemName) : "-";
+            const fabricUnit = item.fabricUnit || "M";
+            const fabricQuantityText =
+                item.fabricSource === "SHOP"
+                    ? formatAmount(item.fabricQuantity) + " " + escapeHtml(fabricUnit)
+                    : "-";
+            const fabricAmountText =
+                item.fabricSource === "SHOP"
+                    ? "Rs. " + formatAmount(item.fabricAmount)
+                    : "0.00";
+            const notes = item.additionalNotes
+                ? escapeHtml(item.additionalNotes)
+                : "-";
+
+            html += `
+                <tr>
+                    <td>${escapeHtml(item.productName)}</td>
+                    <td>${escapeHtml(item.silaiType)}<br><small class="text-muted">Rs. ${formatAmount(item.silaiAmount)}</small></td>
+                    <td>${fabricSourceText}</td>
+                    <td>${shopFabricText}</td>
+                    <td>${fabricQuantityText}</td>
+                    <td>${fabricAmountText}</td>
+                    <td>Rs. ${formatAmount(item.stitchingAmount)}</td>
+                    <td>${item.quantity}</td>
+                    <td><strong>Rs. ${formatAmount(item.subtotal)}</strong></td>
+                    <td>${notes}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("orderSummary").innerHTML = html;
+
+        document.getElementById("orderInformation").innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <strong>Order Date:</strong> ${escapeHtml(orderDate.value)}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <strong>Delivery Date:</strong> ${escapeHtml(deliveryDate.value)}
+                    </p>
+                </div>
+            </div>
         `;
-            orderSummaryBody.innerHTML += row;
-        });
 
-        modalTotalAmount.innerText = parseFloat(totalProductAmountInput.value || 0).toFixed(2);
-        modalAdvancePayment.innerText = parseFloat(advancePaymentInput.value || 0).toFixed(2);
-        modalDuePayment.innerText = parseFloat(duePaymentInput.value || 0).toFixed(2);
+        document.getElementById("modalTotalAmount").textContent =
+            formatAmount(totalProductAmount.value);
+        document.getElementById("modalAdvancePayment").textContent =
+            formatAmount(advancePayment.value);
+        document.getElementById("modalDuePayment").textContent =
+            formatAmount(duePayment.value);
+    }
 
-        let orderSummaryModal = new bootstrap.Modal(document.getElementById("orderSummaryModal"));
-        orderSummaryModal.show();
+    function toggleShopFabric() {
+        clearFabricErrors();
+
+        const isShopFabric = fabricSource.value === "SHOP";
+
+        shopFabricContainer.style.display = isShopFabric ? "block" : "none";
+        fabricQuantityContainer.style.display = isShopFabric ? "block" : "none";
+
+        if (!isShopFabric) {
+            inventoryItemSelect.value = "";
+            fabricQuantityInput.value = "";
+            fabricStockInfo.textContent = "";
+        }
+    }
+
+    productSelect.addEventListener("change", function () {
+        populateSilaiOptions();
+        silaiSelect.value = "";
     });
 
+    fabricSource.addEventListener("change", function () {
+        toggleShopFabric();
+    });
+
+    inventoryItemSelect.addEventListener("change", function () {
+        updateFabricStockInfo();
+    });
+
+    fabricQuantityInput.addEventListener("input", function () {
+        clearFabricErrors();
+
+        if (inventoryItemSelect.value && Number(fabricQuantityInput.value || 0) > 0) {
+            const selectedOption =
+                inventoryItemSelect.options[inventoryItemSelect.selectedIndex];
+            const availableStock = getAvailableStock(inventoryItemSelect.value);
+            const quantity = Number(fabricQuantityInput.value);
+
+            if (quantity > availableStock) {
+                fabricQuantityError.textContent =
+                    "Fabric quantity cannot exceed available stock of " +
+                    formatAmount(availableStock) + " " +
+                    (selectedOption.dataset.unit || "");
+            }
+        }
+    });
+
+    advancePayment.addEventListener("input", function () {
+        calculateOrderTotals();
+        validatePayment();
+    });
+
+    addProductBtn.addEventListener("click", function () {
+        addOrUpdateProduct();
+    });
+
+    cancelEditBtn.addEventListener("click", function () {
+        resetProductForm();
+    });
+
+    productTableBody.addEventListener("click", function (event) {
+        const editButton = event.target.closest(".edit-product-btn");
+
+        if (editButton) {
+            editProduct(Number(editButton.dataset.index));
+            return;
+        }
+
+        const deleteButton = event.target.closest(".delete-product-btn");
+
+        if (deleteButton) {
+            deleteProduct(Number(deleteButton.dataset.index));
+        }
+    });
+
+    updateOrderButton.addEventListener("click", function () {
+        if (!validateBeforeSubmit()) return;
+
+        buildOrderSummary();
+        orderModal.show();
+    });
 
     confirmOrderButton.addEventListener("click", function () {
-        let formData = new FormData(form);
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ": " + pair[1]); // ✅ Debug submitted values
+        if (!validateBeforeSubmit()) return;
+
+        createHiddenFields();
+        confirmOrderButton.disabled = true;
+        document.getElementById("orderForm").submit();
+    });
+
+    function loadExistingProducts() {
+        const existingProducts =
+            document.querySelectorAll("#existingOrderProductsData .existing-product");
+
+        if (!existingProducts.length) {
+            renderSelectedProducts();
+            return;
         }
 
-        form.submit();
-    });
+        existingProducts.forEach(function (element) {
+            const productId = Number(element.dataset.productId);
+            const productName = element.dataset.productName || "";
+            const quantity = Number(element.dataset.quantity || 1);
+            const silaiType = (element.dataset.silaiType || "").toLowerCase();
+            const silaiAmount = Number(element.dataset.silaiAmount || 0);
+            const fabricSourceValue =
+                (element.dataset.fabricSource || "CUSTOMER").toUpperCase();
+            const inventoryItemId =
+                element.dataset.inventoryItemId
+                    ? Number(element.dataset.inventoryItemId)
+                    : null;
+            const fabricQuantity =
+                element.dataset.fabricQuantity
+                    ? Number(element.dataset.fabricQuantity)
+                    : null;
+            const notes = element.dataset.additionalNotes || "";
+
+            let inventoryItemName = "";
+            let fabricUnit = "";
+            let fabricSalePrice = 0;
+            let fabricAmount = 0;
+
+            if (fabricSourceValue === "SHOP" && inventoryItemId) {
+                const inventoryOption =
+                    inventoryItemSelect.querySelector(
+                        `option[value="${inventoryItemId}"]`
+                    );
+
+                if (inventoryOption) {
+                    inventoryItemName =
+                        inventoryOption.textContent.split(" - Stock:")[0].trim();
+                    fabricUnit = inventoryOption.dataset.unit || "";
+                    fabricSalePrice =
+                        Number(inventoryOption.dataset.salePrice || 0);
+                    fabricAmount =
+                        Number(fabricQuantity || 0) * fabricSalePrice;
+                }
+            }
+
+            const stitchingAmount = silaiAmount * quantity;
+            const subtotal = stitchingAmount + fabricAmount;
+
+            orderItems.push({
+                productId,
+                productName,
+                silaiType,
+                silaiAmount,
+                stitchingAmount,
+                quantity,
+                amount: subtotal,
+                subtotal,
+                fabricSource: fabricSourceValue,
+                inventoryItemId,
+                inventoryItemName,
+                fabricQuantity,
+                fabricUnit,
+                fabricSalePrice,
+                fabricAmount,
+                additionalNotes: notes
+            });
+        });
+
+        renderSelectedProducts();
+    }
+
+    toggleShopFabric();
+    loadExistingProducts();
+    calculateOrderTotals();
 });

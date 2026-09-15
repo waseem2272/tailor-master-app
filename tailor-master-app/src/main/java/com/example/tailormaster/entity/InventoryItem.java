@@ -33,11 +33,15 @@ public class InventoryItem extends BaseEntity {
     @ToString.Exclude
     private InventoryCategory category;
 
-    @Column(length = 100)
-    private String color;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "color_id")
+    @ToString.Exclude
+    private InventoryColor color;
 
-    @Column(length = 150)
-    private String design;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "design_id")
+    @ToString.Exclude
+    private InventoryDesign design;
 
     @Column(length = 50)
     private String size;
@@ -63,4 +67,9 @@ public class InventoryItem extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @ToString.Exclude
+    private User user;
 }

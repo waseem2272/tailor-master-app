@@ -84,8 +84,10 @@
                                         <label for="category" class="form-label fw-semibold">Category</label>
                                         <select th:field="*{category}" id="category" class="form-select rounded-pill">
                                             <option value="">Select Category</option>
-                                            <option th:each="category : ${categories}" th:value="${category.id}"
-                                                    th:text="${category.name}">Category
+                                            <option th:each="category : ${categories}"
+                                                    th:value="${category.id}"
+                                                    th:text="${category.name}"
+                                                    th:attr="data-item-type=${category.itemType}">
                                             </option>
                                         </select>
                                     </div>
@@ -101,15 +103,24 @@
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label for="color" class="form-label fw-semibold">Color</label>
-                                        <input type="text" th:field="*{color}" id="color"
-                                               class="form-control rounded-pill" placeholder="e.g. Black, White, Navy">
+                                        <select th:field="*{color}" class="form-select">
+                                            <option value="">Select Color</option>
+                                            <option th:each="color : ${colors}"
+                                                    th:value="${color.id}"
+                                                    th:text="${color.name}">
+                                            </option>
+                                        </select>
                                     </div>
 
                                     <div class="col-md-4" id="designField">
                                         <label for="design" class="form-label fw-semibold">Design / Pattern</label>
-                                        <input type="text" th:field="*{design}" id="design"
-                                               class="form-control rounded-pill"
-                                               placeholder="e.g. Plain, Checks, Printed">
+                                        <select th:field="*{design}" class="form-select">
+                                            <option value="">Select Design</option>
+                                            <option th:each="design : ${designs}"
+                                                    th:value="${design.id}"
+                                                    th:text="${design.name}">
+                                            </option>
+                                        </select>
                                     </div>
 
                                     <div class="col-md-4" id="sizeField">
@@ -218,14 +229,14 @@
 <script th:src="@{/js/common.js}"></script>
 
 <script>
-    const itemType = document.getElementById('itemType');
+    const itemTypeSelect = document.getElementById('itemType');
     const unit = document.getElementById('unit');
     const designField = document.getElementById('designField');
     const sizeField = document.getElementById('sizeField');
     const typeInfo = document.getElementById('typeInfo');
 
     function updateItemTypeFields() {
-        const type = itemType.value;
+        const type = itemTypeSelect.value;
 
         designField.style.display = '';
         sizeField.style.display = '';
@@ -253,8 +264,30 @@
         }
     }
 
-    itemType?.addEventListener('change', updateItemTypeFields);
-    updateItemTypeFields();
+    itemTypeSelect.addEventListener("change", function () {
+        filterCategories();
+        updateItemTypeFields();
+    });
+
+    function filterCategories() {
+        const itemType = itemTypeSelect.value;
+        const categorySelect = document.getElementById("category");
+
+        Array.from(categorySelect.options).forEach(option => {
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            option.hidden = option.dataset.itemType !== itemType;
+        });
+
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+
+        if (selectedOption && selectedOption.value && selectedOption.hidden) {
+            categorySelect.value = "";
+        }
+    }
 </script>
 </body>
 </html>

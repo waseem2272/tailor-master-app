@@ -1,15 +1,44 @@
 .sidebar {
-    background: #dee2e6; /* Light grey background */
+    background: #dee2e6;
     color: #333;
+
     height: 100vh;
+    max-height: 100vh;
+
     position: fixed;
     width: 270px;
     left: 0;
     top: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-    /*transition: transform 0.3s ease-in-out;*/
     transition: all 0.3s ease;
     z-index: 1050;
+
+    box-sizing: border-box;
+}
+
+/* =========================
+   Sidebar Scrollbar
+   ========================= */
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #adb5bd;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #868e96;
 }
 
 /* Sidebar links */

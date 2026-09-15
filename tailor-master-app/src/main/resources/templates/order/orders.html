@@ -328,9 +328,9 @@
                     "searchable": false,
                     "render": function (data, type, row) {
                         let encryptedId = row.encryptedId;
-                        // let editButton = (row.status !== "COMPLETED" && row.status !== "CANCELLED")
-                        //     ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
-                        //     : "";
+                        let editButton = (row.status === "PENDING")
+                            ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
+                            : "";
 
                         let pickupButton = (row.status === "COMPLETED" && row.pickupStatus === "NOT_PICKED_UP")
                             ? `<button
@@ -354,6 +354,7 @@
                             <i class="bi bi-eye"></i> Details
                         </a>
                         ${pickupButton}
+                        ${editButton}
                     </div>
                 `;
                     }

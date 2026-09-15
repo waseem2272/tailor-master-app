@@ -1,14 +1,14 @@
 package com.example.tailormaster.controller;
 
 import com.example.tailormaster.entity.InventoryItem;
+import com.example.tailormaster.entity.InventoryStockBatch;
 import com.example.tailormaster.entity.StockMovement;
-import com.example.tailormaster.enums.ItemType;
-import com.example.tailormaster.enums.StockMovementType;
-import com.example.tailormaster.enums.Unit;
-import com.example.tailormaster.service.InventoryBrandService;
-import com.example.tailormaster.service.InventoryCategoryService;
-import com.example.tailormaster.service.InventoryItemService;
-import com.example.tailormaster.service.StockMovementService;
+import com.example.tailormaster.entity.User;
+import com.example.tailormaster.enums.*;
+import com.example.tailormaster.repository.orderproduct.OrderProductRepository;
+import com.example.tailormaster.service.*;
+import com.example.tailormaster.service.orderproduct.OrderProductService;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/inventory")
@@ -29,22 +31,97 @@ public class InventoryController {
     private final InventoryBrandService inventoryBrandService;
     private final InventoryCategoryService inventoryCategoryService;
     private final StockMovementService stockMovementService;
+    private final OrderProductService orderProductService;
+    private final AuthenticatedUserService authenticatedUserService;
+    private final InventoryColorService inventoryColorService;
+    private final InventoryDesignService inventoryDesignService;
 
-    // =========================
-    // Inventory List
-    // =========================
     @GetMapping
     public String inventoryList(Model model) {
         try {
             log.info("Loading inventory item list");
-            model.addAttribute("inventoryItems", inventoryItemService.getAllActive());
-            log.info("Inventory item list loaded successfully");
+
+            List<InventoryItem> inventoryItems =
+                    inventoryItemService.getAllActive();
+
+            model.addAttribute(
+                    "inventoryItems",
+                    inventoryItems
+            );
+
+            Map<Long, BigDecimal> reservedStockMap =
+                    getReservedStockMap(inventoryItems);
+
+            model.addAttribute(
+                    "reservedStockMap",
+                    reservedStockMap
+            );
+
+            Map<Long, InventoryStockBatch> currentBatchMap =
+                    inventoryItemService.getCurrentBatchMap(inventoryItems);
+
+            model.addAttribute("currentBatchMap", currentBatchMap);
+
+            log.info(
+                    "Inventory item list loaded successfully. Total items: {}",
+                    inventoryItems.size()
+            );
+            model.addAttribute("activePage", "inventory");
             return "inventory/list";
+
         } catch (Exception e) {
-            log.error("Error while loading inventory item list", e);
-            model.addAttribute("errorMessage", "Unable to load inventory items.");
-            return "error";
+
+            log.error(
+                    "Error while loading inventory item list",
+                    e
+            );
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Unable to load inventory items."
+            );
+
+            return "inventory/list";
         }
+    }
+
+    private Map<Long, BigDecimal> getReservedStockMap(
+            List<InventoryItem> inventoryItems) {
+
+        Map<Long, BigDecimal> reservedStockMap =
+                new HashMap<>();
+
+        for (InventoryItem item : inventoryItems) {
+
+            BigDecimal reservedQuantity =
+                    BigDecimal.ZERO;
+
+            /*
+             * Reservation is applicable only to FABRIC items.
+             * Reserved stock comes from SHOP fabric used
+             * in PENDING orders.
+             */
+            if (item.getItemType() == ItemType.FABRIC) {
+
+                reservedQuantity =
+                        orderProductService.getReservedQuantity(
+                                item.getId(),
+                                FabricSource.SHOP,
+                                OrderStatus.PENDING
+                        );
+
+                if (reservedQuantity == null) {
+                    reservedQuantity = BigDecimal.ZERO;
+                }
+            }
+
+            reservedStockMap.put(
+                    item.getId(),
+                    reservedQuantity
+            );
+        }
+
+        return reservedStockMap;
     }
 
     // =========================
@@ -54,16 +131,22 @@ public class InventoryController {
     public String addItemForm(Model model) {
         try {
             log.info("Opening add inventory item form");
+
+            User user = authenticatedUserService.getCurrentUser();
+
             model.addAttribute("inventoryItem", new InventoryItem());
-            model.addAttribute("brands", inventoryBrandService.getAllActive());
-            model.addAttribute("categories", inventoryCategoryService.getAllActive());
+            model.addAttribute("brands", inventoryBrandService.getActiveBrands(user));
+            model.addAttribute("categories", inventoryCategoryService.getActiveCategories(user));
+            model.addAttribute("colors", inventoryColorService.getActiveColors(user));
+            model.addAttribute("designs", inventoryDesignService.getActiveDesigns(user));
             model.addAttribute("itemTypes", ItemType.values());
             model.addAttribute("units", Unit.values());
+            model.addAttribute("activePage", "inventory/add");
             return "inventory/add";
         } catch (Exception e) {
             log.error("Error while opening add inventory item form", e);
             model.addAttribute("errorMessage", "Unable to open inventory item form.");
-            return "error";
+            return "inventory/list";
         }
     }
 
@@ -71,14 +154,16 @@ public class InventoryController {
     // Save Item
     // =========================
     @PostMapping("/save")
-    public String saveItem(@ModelAttribute("inventoryItem") InventoryItem inventoryItem) {
+    public String saveItem(@ModelAttribute("inventoryItem") InventoryItem inventoryItem, RedirectAttributes redirectAttributes) {
         try {
             log.info("Saving inventory item. Name: {}, Type: {}", inventoryItem.getName(), inventoryItem.getItemType());
             inventoryItemService.save(inventoryItem);
             log.info("Inventory item saved successfully. Item ID: {}", inventoryItem.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Stock added successfully.");
             return "redirect:/inventory";
         } catch (Exception e) {
             log.error("Error while saving inventory item. Name: {}", inventoryItem.getName(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to add stock.");
             return "redirect:/inventory/add?error=save";
         }
     }
@@ -90,9 +175,13 @@ public class InventoryController {
     public String editItem(@PathVariable Long id, Model model) {
         try {
             log.info("Opening inventory item for edit. Item ID: {}", id);
-            model.addAttribute("inventoryItem", inventoryItemService.getById(id));
-            model.addAttribute("brands", inventoryBrandService.getAllActive());
-            model.addAttribute("categories", inventoryCategoryService.getAllActive());
+            User user = authenticatedUserService.getCurrentUser();
+
+            model.addAttribute("inventoryItem", new InventoryItem());
+            model.addAttribute("brands", inventoryBrandService.getActiveBrands(user));
+            model.addAttribute("categories", inventoryCategoryService.getActiveCategories(user));
+            model.addAttribute("colors", inventoryColorService.getActiveColors(user));
+            model.addAttribute("designs", inventoryDesignService.getActiveDesigns(user));
             model.addAttribute("itemTypes", ItemType.values());
             model.addAttribute("units", Unit.values());
             return "inventory/add";
@@ -106,31 +195,64 @@ public class InventoryController {
     // Delete Item
     // =========================
     @GetMapping("/delete/{id}")
-    public String deleteItem(@PathVariable Long id) {
+    public String deleteItem(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             log.info("Deleting inventory item. Item ID: {}", id);
             inventoryItemService.delete(id);
             log.info("Inventory item deleted successfully. Item ID: {}", id);
+            redirectAttributes.addFlashAttribute("successMessage", "Item deleted successfully.");
             return "redirect:/inventory";
         } catch (Exception e) {
             log.error("Error while deleting inventory item. Item ID: {}", id, e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Unable to delete an item.");
             return "redirect:/inventory?error=delete";
         }
     }
 
-    // =========================
-    // Search
-    // =========================
     @GetMapping("/search")
-    public String search(@RequestParam(required = false) String name, Model model) {
+    public String search(
+            @RequestParam(required = false) String name,
+            Model model) {
+
         try {
-            log.info("Searching inventory items. Search: {}", name);
-            model.addAttribute("inventoryItems", inventoryItemService.search(name));
+
+            log.info(
+                    "Searching inventory items. Search: {}",
+                    name
+            );
+
+            List<InventoryItem> inventoryItems =
+                    inventoryItemService.search(name);
+
+            model.addAttribute(
+                    "inventoryItems",
+                    inventoryItems
+            );
+
+            Map<Long, BigDecimal> reservedStockMap =
+                    getReservedStockMap(inventoryItems);
+
+            model.addAttribute(
+                    "reservedStockMap",
+                    reservedStockMap
+            );
+
             return "inventory/list";
+
         } catch (Exception e) {
-            log.error("Error while searching inventory items. Search: {}", name, e);
-            model.addAttribute("errorMessage", "Unable to search inventory items.");
-            return "error";
+
+            log.error(
+                    "Error while searching inventory items. Search: {}",
+                    name,
+                    e
+            );
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Unable to search inventory items."
+            );
+
+            return "inventory/list";
         }
     }
 
@@ -143,6 +265,7 @@ public class InventoryController {
             log.info("Loading Stock In page");
             List<InventoryItem> inventoryItems = inventoryItemService.findAllActive();
             model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("activePage", "inventory/stock-in");
             return "inventory/stock-in";
         } catch (Exception e) {
             log.error("Error while loading Stock In page", e);
@@ -158,15 +281,21 @@ public class InventoryController {
     public String stockIn(
             @RequestParam("inventoryItemId") Long inventoryItemId,
             @RequestParam("quantity") BigDecimal quantity,
-            @RequestParam(value = "unitPrice", required = false) BigDecimal unitPrice,
+            @RequestParam("purchasePrice") BigDecimal purchasePrice,
+            @RequestParam("salePrice") BigDecimal salePrice,
             @RequestParam(value = "reason", required = false) String reason,
             @RequestParam(value = "notes", required = false) String notes,
             RedirectAttributes redirectAttributes) {
         try {
-            log.info("Stock In request received. itemId={}, quantity={}, unitPrice={}, reason={}",
-                    inventoryItemId, quantity, unitPrice, reason);
+            log.info("Stock In request received. itemId={}, quantity={}, purchasePrice={}, salePrice={}, reason={}",
+                    inventoryItemId, quantity, purchasePrice, salePrice, reason);
 
-            inventoryItemService.stockIn(inventoryItemId, quantity, unitPrice, reason, notes);
+            inventoryItemService.stockIn(inventoryItemId,
+                    quantity,
+                    purchasePrice,
+                    salePrice,
+                    reason,
+                    notes);
 
             log.info("Stock In completed successfully. itemId={}, quantity={}", inventoryItemId, quantity);
             redirectAttributes.addFlashAttribute("successMessage", "Stock added successfully.");
@@ -184,15 +313,13 @@ public class InventoryController {
         }
     }
 
-    // =========================
-// Stock Out Page
-// =========================
     @GetMapping("/stock-out")
     public String showStockOutPage(Model model) {
         try {
             log.info("Loading Stock Out page");
             List<InventoryItem> inventoryItems = inventoryItemService.findAllActive();
             model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("activePage", "inventory/stock-out");
             return "inventory/stock-out";
         } catch (Exception e) {
             log.error("Error while loading Stock Out page", e);
@@ -201,9 +328,6 @@ public class InventoryController {
         }
     }
 
-    // =========================
-// Stock Out
-// =========================
     @PostMapping("/stock-out")
     public String stockOut(
             @RequestParam("inventoryItemId") Long inventoryItemId,
@@ -236,9 +360,7 @@ public class InventoryController {
             return "redirect:/inventory/stock-out";
         }
     }
-    // =========================
-// Stock Movement History
-// =========================
+
     @GetMapping("/movements")
     public String stockMovements(
             @RequestParam(required = false) Long itemId,
@@ -271,13 +393,13 @@ public class InventoryController {
 
             log.info("Stock movement history loaded successfully. Total movements: {}",
                     movements.size());
-
+            model.addAttribute("activePage", "inventory/movements");
             return "inventory/movements";
         } catch (Exception e) {
             log.error("Error while loading stock movement history", e);
             model.addAttribute("errorMessage",
                     "Unable to load stock movement history.");
-            return "error";
+            return "inventory/list";
         }
     }
 
@@ -293,7 +415,7 @@ public class InventoryController {
                     inventoryItemService.findAllActive();
 
             model.addAttribute("inventoryItems", inventoryItems);
-
+            model.addAttribute("activePage", "inventory/stock-adjustment");
             return "inventory/stock-adjustment";
         } catch (Exception e) {
             log.error("Error while loading Stock Adjustment page", e);
