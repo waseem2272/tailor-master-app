@@ -12,8 +12,6 @@ import java.util.Map;
 // CustomerWizardDTO.java
 @Data
 public class CustomerWizardDTO {
-
-    // Step 1
     @NotBlank
     private String fullName;
 
@@ -22,14 +20,9 @@ public class CustomerWizardDTO {
 
     private boolean enabled = true;
 
-    // Step 2
-    @NotEmpty(message = "Select at least one product")
+    private boolean addTailoringMeasurements = true;
+
     private List<Long> selectedProductIds = new ArrayList<>();
 
-    /**
-     * Step 3 Measurements:
-     * Map<productId, Map<fieldId, value>>
-     * e.g. measurements[12][101] = "40"
-     */
     private Map<Long, Map<Long, String>> measurements = new HashMap<>();
 }

@@ -16,19 +16,17 @@
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-pencil-square me-2"></i> Update Order
+                <i class="bi bi-pencil-square me-2"></i> Edit Order
             </h2>
 
-            <form th:action="@{/orders/update}" th:object="${orderDto}" method="post" class="order-form" id="orderForm">
-                <input type="hidden" name="encryptedOrderId" th:value="${thymeleafUtil.encryptId(orderDto.id)}">
-                <div id="orderProductsInputs"></div>
+            <form th:action="@{/orders/update}" th:object="${orderDto}" method="post"
+                  class="order-form" id="orderForm">
 
-                <!-- EDIT CONTEXT -->
-                <!--<div id="orderEditContext"
-                     th:data-order-status="${orderDto.status}"
-                     style="display:none;"></div>-->
+                <input type="hidden" name="encryptedOrderId"
+                       th:value="${thymeleafUtil.encryptId(orderDto.id)}">
+
+                <div id="orderProductsInputs"></div>
 
                 <!-- CUSTOMER INFORMATION -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
@@ -40,12 +38,14 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Customer</label>
                                 <input type="text" class="form-control bg-light"
-                                       th:value="${orderDto.customer != null ? orderDto.customer.fullName : ''}" readonly>
+                                       th:value="${orderDto.customer != null ? orderDto.customer.fullName : ''}"
+                                       readonly>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-semibold">Phone Number</label>
                                 <input type="text" class="form-control bg-light"
-                                       th:value="${orderDto.customer != null ? orderDto.customer.phoneNumber : ''}" readonly>
+                                       th:value="${orderDto.customer != null ? orderDto.customer.phoneNumber : ''}"
+                                       readonly>
                             </div>
                         </div>
                     </div>
@@ -55,9 +55,12 @@
                 <div id="existingOrderProductsData" style="display:none;">
                     <div th:each="product : ${orderDto.orderProducts}"
                          class="existing-product"
+                         th:data-id="${product.id}"
                          th:data-product-id="${product.productId}"
                          th:data-product-name="${product.name}"
+                         th:data-order-product-type="${product.orderProductType}"
                          th:data-quantity="${product.quantity}"
+                         th:data-amount="${product.amount}"
                          th:data-silai-type="${product.silaiType}"
                          th:data-silai-amount="${product.silaiAmount}"
                          th:data-fabric-source="${product.fabricSource}"
@@ -76,79 +79,158 @@
 
                     <div class="card-body">
 
-                        <div class="row g-3">
-                            <div class="col-md-5">
-                                <label for="productSelect" class="form-label fw-bold">Select Product</label>
-                                <select id="productSelect" class="form-select">
-                                    <option value="" selected>-- Select a Product --</option>
-                                    <option th:each="product : ${products}"
-                                            th:value="${product.id}"
-                                            th:text="${product.name}"
-                                            th:data-single-silai="${product.singleSilai}"
-                                            th:data-double-silai="${product.doubleSilai}">
-                                    </option>
-                                </select>
-                                <div id="productError" class="text-danger small mt-1"></div>
-                            </div>
-
+                        <!-- ORDER PRODUCT TYPE -->
+                        <div class="row g-3 mb-3">
                             <div class="col-md-4">
-                                <label for="silaiSelect" class="form-label fw-bold">Silai Type</label>
-                                <select id="silaiSelect" class="form-select">
-                                    <option value="">-- Silai Type --</option>
+                                <label for="orderProductType" class="form-label fw-bold">
+                                    Product Type
+                                </label>
+                                <select id="orderProductType" class="form-select">
+                                    <option value="TAILORING" selected>Tailoring</option>
+                                    <option value="INVENTORY">Inventory</option>
                                 </select>
-                                <div id="silaiError" class="text-danger small mt-1"></div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="quantity" class="form-label fw-bold">Quantity</label>
-                                <input type="number" id="quantity" class="form-control" min="1" step="1" value="1">
-                                <div id="quantityError" class="text-danger small mt-1"></div>
+                                <div id="orderProductTypeError" class="text-danger small mt-1"></div>
                             </div>
                         </div>
 
-                        <!-- FABRIC SOURCE -->
-                        <div class="row g-3 mt-1">
-                            <div class="col-md-4">
-                                <label for="fabricSource" class="form-label fw-bold">Fabric Source</label>
-                                <select id="fabricSource" class="form-select">
-                                    <option value="CUSTOMER" selected>Customer Fabric</option>
-                                    <option value="SHOP">Shop Fabric</option>
-                                </select>
-                                <div id="fabricSourceError" class="text-danger small mt-1"></div>
+                        <!-- TAILORING PRODUCT FIELDS -->
+                        <div id="tailoringProductFields">
+
+                            <div class="row g-3">
+                                <div class="col-md-5">
+                                    <label for="productSelect" class="form-label fw-bold">
+                                        Select Product
+                                    </label>
+                                    <select id="productSelect" class="form-select">
+                                        <option value="" selected>-- Select a Product --</option>
+                                        <option th:each="product : ${products}"
+                                                th:value="${product.id}"
+                                                th:text="${product.name}"
+                                                th:data-single-silai="${product.singleSilai}"
+                                                th:data-double-silai="${product.doubleSilai}">
+                                        </option>
+                                    </select>
+                                    <div id="productError" class="text-danger small mt-1"></div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="silaiSelect" class="form-label fw-bold">
+                                        Silai Type
+                                    </label>
+                                    <select id="silaiSelect" class="form-select">
+                                        <option value="">-- Silai Type --</option>
+                                    </select>
+                                    <div id="silaiError" class="text-danger small mt-1"></div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="quantity" class="form-label fw-bold">
+                                        Quantity
+                                    </label>
+                                    <input type="number" id="quantity" class="form-control"
+                                           min="1" step="1" value="1">
+                                    <div id="quantityError" class="text-danger small mt-1"></div>
+                                </div>
                             </div>
 
-                            <!-- SHOP FABRIC -->
-                            <div class="col-md-5" id="shopFabricContainer" style="display:none;">
-                                <label for="inventoryItemSelect" class="form-label fw-bold">Shop Fabric</label>
-                                <select id="inventoryItemSelect" class="form-select">
-                                    <option value="" disabled selected>-- Select Shop Fabric --</option>
-                                    <option th:each="item : ${inventoryItems}"
-                                            th:value="${item.id}"
-                                            th:data-stock="${item.quantity}"
-                                            th:data-reserved="${reservedStockMap[item.id]}"
-                                            th:data-unit="${item.unit}"
-                                            th:data-sale-price="${item.salePrice}"
-                                            th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
-                                    </option>
-                                </select>
-                                <div id="fabricStockInfo" class="small text-success fw-semibold mt-1"></div>
-                                <div id="fabricStockError" class="text-danger small mt-1"></div>
-                            </div>
+                            <!-- FABRIC SOURCE -->
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-4">
+                                    <label for="fabricSource" class="form-label fw-bold">
+                                        Fabric Source
+                                    </label>
+                                    <select id="fabricSource" class="form-select">
+                                        <option value="CUSTOMER" selected>Customer Fabric</option>
+                                        <option value="SHOP">Shop Fabric</option>
+                                    </select>
+                                    <div id="fabricSourceError" class="text-danger small mt-1"></div>
+                                </div>
 
-                            <!-- FABRIC QUANTITY -->
-                            <div class="col-md-3" id="fabricQuantityContainer" style="display:none;">
-                                <label for="fabricQuantity" class="form-label fw-bold">Fabric Quantity</label>
-                                <input type="number" id="fabricQuantity" class="form-control"
-                                       min="0.01" step="0.01" placeholder="e.g. 4.50">
-                                <small class="text-muted">Quantity in meters</small>
-                                <div id="fabricQuantityError" class="text-danger small mt-1"></div>
+                                <!-- SHOP FABRIC -->
+                                <div class="col-md-5" id="shopFabricContainer" style="display:none;">
+                                    <label for="inventoryItemSelect" class="form-label fw-bold">
+                                        Shop Fabric
+                                    </label>
+                                    <select id="inventoryItemSelect" class="form-select">
+                                        <option value="" disabled selected>-- Select Shop Fabric --</option>
+                                        <option th:each="item : ${inventoryItems}"
+                                                th:value="${item.id}"
+                                                th:data-stock="${item.quantity}"
+                                                th:data-reserved="${reservedStockMap[item.id]}"
+                                                th:data-unit="${item.unit}"
+                                                th:data-sale-price="${item.salePrice}"
+                                                th:data-name="${item.name}"
+                                                th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                                th:data-category="${item.category != null ? item.category.name : ''}"
+                                                th:data-color="${item.color != null ? item.color.name : ''}"
+                                                th:data-design="${item.design != null ? item.design.name : ''}"
+                                                th:data-size="${item.size != null ? item.size : ''}"
+                                                th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
+                                        </option>
+                                    </select>
+                                    <div id="fabricStockInfo" class="small text-success fw-semibold mt-1"></div>
+                                    <div id="fabricStockError" class="text-danger small mt-1"></div>
+                                </div>
+
+                                <!-- FABRIC QUANTITY -->
+                                <div class="col-md-3" id="fabricQuantityContainer" style="display:none;">
+                                    <label for="fabricQuantity" class="form-label fw-bold">
+                                        Fabric Quantity
+                                    </label>
+                                    <input type="number" id="fabricQuantity" class="form-control"
+                                           min="0.01" step="0.01" placeholder="e.g. 4.50">
+                                    <small class="text-muted">Quantity in meters</small>
+                                    <div id="fabricQuantityError" class="text-danger small mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- INVENTORY PRODUCT FIELDS -->
+                        <div id="inventoryProductFields" style="display:none;">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="inventoryItemOrderSelect" class="form-label fw-bold">
+                                        Select Inventory Item
+                                    </label>
+                                    <select id="inventoryItemOrderSelect" class="form-select">
+                                        <option value="" disabled selected>-- Select Inventory Item --</option>
+                                        <option th:each="item : ${inventoryItems}"
+                                                th:value="${item.id}"
+                                                th:data-stock="${item.quantity}"
+                                                th:data-reserved="${reservedStockMap[item.id]}"
+                                                th:data-unit="${item.unit}"
+                                                th:data-sale-price="${item.salePrice}"
+                                                th:data-name="${item.name}"
+                                                th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                                th:data-category="${item.category != null ? item.category.name : ''}"
+                                                th:data-color="${item.color != null ? item.color.name : ''}"
+                                                th:data-design="${item.design != null ? item.design.name : ''}"
+                                                th:data-size="${item.size != null ? item.size : ''}"
+                                                th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
+                                        </option>
+                                    </select>
+                                    <div id="inventoryStockInfo" class="small text-success fw-semibold mt-1"></div>
+                                    <div id="inventoryStockError" class="text-danger small mt-1"></div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="inventoryQuantity" class="form-label fw-bold">
+                                        Quantity
+                                    </label>
+                                    <input type="number" id="inventoryQuantity"
+                                           class="form-control"
+                                           min="1" step="1" value="1">
+                                    <div id="inventoryQuantityError" class="text-danger small mt-1"></div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- NOTES -->
                         <div class="row mt-3">
                             <div class="col-12">
-                                <label for="additionalNotes" class="form-label fw-bold">Additional Notes</label>
+                                <label for="additionalNotes" class="form-label fw-bold">
+                                    Additional Notes
+                                </label>
                                 <textarea id="additionalNotes" class="form-control" rows="3"
                                           placeholder="Enter any additional instructions or notes..."
                                           style="resize:vertical;"></textarea>
@@ -178,7 +260,8 @@
                             <table class="table table-bordered table-hover align-middle" id="productTable">
                                 <thead class="table-light">
                                 <tr>
-                                    <th>Product</th>
+                                    <th>Type</th>
+                                    <th>Product / Item</th>
                                     <th>Silai</th>
                                     <th>Fabric Source</th>
                                     <th>Shop Fabric</th>
@@ -231,7 +314,9 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="advancePayment" class="form-label fw-bold">Advance Payment</label>
+                                <label for="advancePayment" class="form-label fw-bold">
+                                    Advance Payment
+                                </label>
                                 <input type="number" id="advancePayment"
                                        th:field="*{advancePayment}"
                                        class="form-control" min="0" step="0.01">
@@ -273,14 +358,18 @@
             </form>
         </div>
     </div>
+    ```
+
 </div>
 
 <!-- CONFIRMATION MODAL -->
+
 <div class="modal fade" id="confirmOrderModal" tabindex="-1"
      aria-labelledby="confirmOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
         <div class="modal-content rounded-4 shadow">
 
+            ```
             <div class="modal-header bg-success text-white rounded-top-4">
                 <h5 class="modal-title" id="confirmOrderModalLabel">
                     <i class="bi bi-receipt-cutoff me-2"></i> Confirm Order Update
@@ -297,20 +386,18 @@
                         <i class="bi bi-info-circle me-2"></i> Customer Information
                     </div>
                     <div class="card-body">
-                        <div id="customerInformation">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <p class="mb-0">
-                                        <strong>Name:</strong>
-                                        <span th:text="${orderDto.customer != null ? orderDto.customer.fullName : '-'}">-</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="mb-0">
-                                        <strong>Phone Number:</strong>
-                                        <span th:text="${orderDto.customer != null ? orderDto.customer.phoneNumber : '-'}">-</span>
-                                    </p>
-                                </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <p class="mb-0">
+                                    <strong>Name:</strong>
+                                    <span th:text="${orderDto.customer != null ? orderDto.customer.fullName : '-'}">-</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-0">
+                                    <strong>Phone Number:</strong>
+                                    <span th:text="${orderDto.customer != null ? orderDto.customer.phoneNumber : '-'}">-</span>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -338,7 +425,8 @@
                             <table class="table table-bordered m-0">
                                 <thead class="table-success">
                                 <tr>
-                                    <th>Product</th>
+                                    <th>Type</th>
+                                    <th>Product / Item</th>
                                     <th>Silai</th>
                                     <th>Fabric Source</th>
                                     <th>Shop Fabric</th>
@@ -382,18 +470,24 @@
 
         </div>
     </div>
+
 </div>
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
-<script th:src="@{/js/update-order.js}"></script>
-<script th:src="@{/js/sidebar-toggle.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
+<script th:src="@{/js/update-order.js}"></script>
+
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+
+<script th:src="@{/js/dashboard-notifications.js}"></script>
 
 </body>
 </html>

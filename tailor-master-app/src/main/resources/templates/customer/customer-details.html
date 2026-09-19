@@ -1,252 +1,95 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Customer Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
-    <!-- Add this CSS somewhere (either page <style> or global) -->
     <style>
         .badge-completed {
             background-color: #6f42c1 !important;
-        }
-        .collapse-toggle-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .collapsed .collapse-toggle-icon {
-            transform: rotate(0deg);
-        }
-
-        .collapse.show + .card-body .collapse-toggle-icon {
-            transform: rotate(180deg);
-        }
-
-        .not-disabled-label {
-            color: #212529 !important; /* Default Bootstrap text color */
-            opacity: 1 !important; /* Remove any transparency */
+            color: #fff !important;
         }
     </style>
-
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="content">
     <div class="main-content">
-        <div class="container-fluid">
-
-            <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-person-fill me-2"></i> Customer Details
-            </h2>
-
-            <!-- Customer Information -->
-            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-info-circle me-2"></i> Customer Information
+        <div class="container-fluid"> <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="page-title mb-0"><i
+                    class="bi bi-person-vcard text-success me-2"></i> Customer Details </h2>
+                <div class="d-flex gap-2"><a
+                        th:href="@{'/customers/' + ${thymeleafUtil.encryptId(customer.id)} + '/edit'}"
+                        class="btn btn-success shadow rounded-pill px-4"> <i class="bi bi-pencil-square me-1"></i> Edit
+                    Customer </a> <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4"> <i
+                        class="bi bi-arrow-left me-1"></i> Back </a></div>
+            </div> <!-- Customer Information -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-person-lines-fill me-2"></i> Customer
+                        Information
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <p><strong>Name:</strong> <span th:text="${customer.fullName}"></span></p>
+                            <div class="border rounded-3 p-3 bg-light h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-person me-1"></i> Customer Name</div>
+                                <div class="fw-semibold" th:text="${customer.fullName}"> Customer Name</div>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Phone:</strong> <span th:text="${customer.phoneNumber}"></span></p>
+                            <div class="border rounded-3 p-3 bg-light h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i> Phone Number
+                                </div>
+                                <div class="fw-semibold" th:text="${customer.phoneNumber}"> Phone Number</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Products & Measurements -->
-            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-rulers me-2"></i> Products & Measurements
+            </div> <!-- Products & Measurements -->
+            <div th:if="${productMeasurementsMap != null and !productMeasurementsMap.isEmpty()}"
+                 class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-rulers me-2"></i> Products & Measurements
+                    </div>
+                    <span class="small"> Products: <strong th:text="${productMeasurementsMap.size()}">0</strong> </span>
                 </div>
                 <div class="card-body">
-
-                    <div class="row" th:each="entry, iterStat : ${productMeasurementsMap}">
-                        <div class="card shadow-sm mb-4 border-0 rounded-3">
-                            <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center"
-                                 data-bs-toggle="collapse"
-                                 th:data-bs-target="'#collapse-' + ${iterStat.index}"
-                                 aria-expanded="true"
-                                 th:aria-controls="'collapse-' + ${iterStat.index}"
-                                 style="cursor: pointer;">
-                                <div>
-                                    <i class="bi bi-box-seam me-2"></i>
-                                    <span th:text="${entry.key.name}"></span>
-                                </div>
-                                <i class="bi bi-chevron-down toggle-icon"></i>
-                            </div>
-                            <div th:id="'collapse-' + ${iterStat.index}" class="collapse show">
-                                <div class="card-body p-0">
-                                    <table class="table table-bordered table-hover mb-0 align-middle">
-                                        <thead class="table-success text-dark">
-                                        <tr>
-                                            <th>Measurement Field</th>
-                                            <th class="text-center">Value</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="m : ${entry.value}">
-                                            <td th:text="${m.field.fieldName}"></td>
-                                            <td class="text-center">
-                                                <span th:text="${m.value}"></span>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-center gap-2 mt-4">
-                        <a th:href="@{'/customers/' + ${thymeleafUtil.encryptId(customer.id)} + '/edit'}"
-                           class="btn btn-success shadow rounded-pill px-4">
-                            <i class="bi bi-pencil-square"></i> Edit Customer
-                        </a>
-
-                        <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
-                            <i class="bi bi-arrow-left-circle"></i> Back to Customers
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-book me-2"></i> Customer Ledger
-                </div>
-
-                <div class="card-body">
-
-                    <!-- Summary Bar -->
-                    <!-- Total Orders - Centered -->
-                    <div class="row justify-content-center text-center mb-4">
-                        <div class="col-md-6">
-                            <div class="p-4 border rounded bg-light">
-                                <h5 class="text-muted mb-2">
-                                    <i class="bi bi-bag-check me-1"></i> Total Orders
-                                </h5>
-                                <h3 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"></h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Credit & Debit -->
-                    <div class="row text-center mb-4">
-                        <div class="col-md-6 mb-3">
-                            <div class="p-3 border rounded bg-success bg-opacity-10">
-                                <h6 class="text-success mb-1">
-                                    <i class="bi bi-arrow-down-square me-1"></i> Total Credit
-                                </h6>
-                                <h5 class="fw-bold text-success mb-0"
-                                    th:text="${#numbers.formatDecimal(totalCredit, 1, 'COMMA', 2, 'POINT')}">
-                                </h5>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <div class="p-3 border rounded bg-danger bg-opacity-10">
-                                <h6 class="text-danger mb-1">
-                                    <i class="bi bi-arrow-up-square me-1"></i> Total Debit
-                                </h6>
-                                <h5 class="fw-bold text-danger mb-0"
-                                    th:text="${#numbers.formatDecimal(totalDebit, 1, 'COMMA', 2, 'POINT')}">
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Outstanding Balance - Centered -->
-                    <div class="row justify-content-center text-center">
-                        <div class="col-md-6 mb-2">
-                            <div class="p-4 border rounded"
-                                 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' bg-success bg-opacity-10' : ' bg-danger bg-opacity-10'">
-                                <h5 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'" class="mb-2">
-                                    <i class="bi bi-currency-exchange me-1"></i> Outstanding Balance
-                                </h5>
-                                <h3 th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'"
-                                    class="fw-bold mb-0"
-                                    th:text="${#numbers.formatDecimal(totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT')}">
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div th:each="orderEntry : ${orderLedgerMap}" class="mb-3">
-                        <div class="card shadow-sm rounded-3">
-                            <div class="card-header d-flex justify-content-between align-items-center bg-success-subtle text-success-emphasis"
-                                 style="cursor: pointer;"
-                                 data-bs-toggle="collapse"
-                                 th:data-bs-target="'#collapse__' + ${orderEntry.key}"
-                                 th:aria-controls="'collapse__' + ${orderEntry.key}"
-                                 aria-expanded="true">
-
-                                <div>
-                                    <h6 class="mb-0">
-                                        Order: <span th:text="${orderEntry.key}"></span>
-
-                                        <span th:classappend="${orderStatuses[orderEntry.key]?.name() == 'COMPLETED'
-                       ? 'badge badge-completed'
-                       : (orderStatuses[orderEntry.key]?.name() == 'DELIVERED'
-                          ? 'badge bg-success'
-                          : (orderStatuses[orderEntry.key]?.name() == 'CANCELLED'
-                             ? 'badge bg-danger'
-                                : (orderStatuses[orderEntry.key]?.name() == 'IN_PROGRESS'
-                                   ? 'badge bg-primary'
-                                   : 'badge bg-secondary')))}"
-                                              th:text="${orderStatuses[orderEntry.key]?.name()}">
-</span>
-                                    </h6>
-
-                                    <small>
-                                        Remaining Balance:
-                                        <span th:text="${#numbers.formatDecimal(
-                            orderBalances[orderEntry.key],
-                            1,
-                            'COMMA',
-                            2,
-                            'POINT'
-                        )}"
-                                              th:classappend="${orderBalances[orderEntry.key] >= 0}
-                              ? 'text-success'
-                              : 'text-danger'">
-        </span>
-                                    </small>
-                                </div>
-                                <div>
-                                    <i class="bi bi-chevron-down collapse-toggle-icon"
-                                       th:id="'icon__' + ${orderEntry.key}"></i>
-                                </div>
-                            </div>
-
-                            <div th:id="'collapse__' + ${orderEntry.key}" class="collapse show">
-                                <div class="card-body p-0">
+                    <div class="row g-3">
+                        <div class="col-lg-6" th:each="entry, stat : ${productMeasurementsMap}">
+                            <div class="card border shadow-sm rounded-3"> <!-- Product Header -->
+                                <div class="card-header bg-success-subtle d-flex align-items-center justify-content-between py-2"
+                                     role="button" data-bs-toggle="collapse"
+                                     th:data-bs-target="'#measurement_' + ${stat.index}" aria-expanded="false">
+                                    <div class="d-flex align-items-center"><i
+                                            class="bi bi-box-seam text-success me-2"></i>
+                                        <div>
+                                            <div class="fw-semibold" th:text="${entry.key.name}"> Product Name</div>
+                                            <small class="text-muted"> <span th:text="${entry.value.size()}">0</span>
+                                                measurements </small></div>
+                                    </div>
+                                    <i class="bi bi-chevron-down text-success"></i></div> <!-- Measurement Details -->
+                                <div th:id="'measurement_' + ${stat.index}" class="collapse">
                                     <div class="table-responsive">
-                                        <table class="table table-striped mb-0">
-                                            <thead class="table-light">
+                                        <table class="table table-sm table-bordered table-hover mb-0 align-middle">
+                                            <thead class="table-success text-dark">
                                             <tr>
-                                                <th>#</th>
-                                                <th>Date</th>
-                                                <th>Type</th>
-                                                <th>Amount</th>
-                                                <th>Description</th>
+                                                <th>Measurement</th>
+                                                <th class="text-center">Value</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="entry, iterStat : ${orderEntry.value}">
-                                                <td th:text="${iterStat.index + 1}"></td>
-                                                <td th:text="${#temporals.format(entry.paymentDate, 'yyyy-MM-dd')}"></td>
-                                                <td>
-                                        <span th:text="${entry.paymentType}"
-                                              th:classappend="${entry.paymentType == 'CREDIT'} ? 'text-success' : 'text-danger'">
-                                        </span>
+                                            <tr th:each="measurement : ${entry.value}">
+                                                <td><span th:text="${measurement.field.fieldName}"> Measurement </span>
                                                 </td>
-                                                <td th:text="${#numbers.formatDecimal(entry.amount, 1, 'COMMA', 2, 'POINT')}"></td>
-                                                <td th:text="${entry.remarks}"></td>
+                                                <td class="text-center fw-semibold"><span
+                                                        th:text="${measurement.value}"> Value </span></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -255,45 +98,201 @@
                             </div>
                         </div>
                     </div>
-                </div> <!-- card-body -->
-            </div>
+                </div>
+            </div> <!-- No Measurements -->
+            <div th:if="${productMeasurementsMap == null or productMeasurementsMap.isEmpty()}"
+                 class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4"><i
+                        class="bi bi-box-seam me-2"></i> Customer Type
+                </div>
+                <div class="card-body text-center py-5"><i class="bi bi-person-check text-success fs-1"></i> <h5
+                        class="fw-semibold mt-3"> General / Inventory Customer </h5>
+                    <p class="text-muted mb-0"> No tailoring products or measurements are associated with this
+                        customer. </p></div>
+            </div> <!-- Customer Ledger -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-journal-text me-2"></i> Customer Ledger</div>
+                    <span class="small"> Total Orders: <strong th:text="${orderLedgerMap.size()}">0</strong> </span>
+                </div>
+                <div class="card-body"> <!-- Ledger Summary -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 text-center bg-light h-100">
+                                <div class="text-muted small mb-1"><i class="bi bi-bag-check me-1"></i> Total Orders
+                                </div>
+                                <h4 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"> 0 </h4></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border border-success rounded-3 p-3 text-center bg-success-subtle h-100">
+                                <div class="text-success small mb-1"><i class="bi bi-arrow-down-circle me-1"></i> Total
+                                    Credit
+                                </div>
+                                <h5 class="fw-bold text-success mb-0"
+                                    th:text="${#numbers.formatDecimal(totalCredit, 1, 'COMMA', 2, 'POINT')}"> 0.00 </h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border border-danger rounded-3 p-3 text-center bg-danger-subtle h-100">
+                                <div class="text-danger small mb-1"><i class="bi bi-arrow-up-circle me-1"></i> Total
+                                    Debit
+                                </div>
+                                <h5 class="fw-bold text-danger mb-0"
+                                    th:text="${#numbers.formatDecimal(totalDebit, 1, 'COMMA', 2, 'POINT')}"> 0.00 </h5>
+                            </div>
+                        </div>
+                    </div> <!-- Outstanding Balance -->
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-6">
+                            <div class="border rounded-3 p-3 text-center bg-light">
+                                <div class="text-muted small mb-1"><i class="bi bi-wallet2 me-1"></i> Outstanding
+                                    Balance
+                                </div>
+                                <h4 class="fw-bold mb-0"
+                                    th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'"
+                                    th:text="${#numbers.formatDecimal( totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT' )}">
+                                    0.00 </h4></div>
+                        </div>
+                    </div> <!-- Orders -->
+                    <div th:each="orderEntry : ${orderLedgerMap}" class="card border shadow-sm rounded-3 mb-3">
 
+                        <div class="card-header bg-success-subtle d-flex justify-content-between align-items-center">
+
+                            <!-- LEFT SIDE -->
+                            <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+
+                                <!-- Collapse trigger ONLY -->
+                                <div class="d-flex flex-wrap align-items-center gap-2"
+                                     role="button"
+                                     data-bs-toggle="collapse"
+                                     th:data-bs-target="'#order_' + ${orderEntry.key}"
+                                     aria-expanded="false">
+
+                                    <i class="bi bi-receipt"></i>
+
+                                    <span>Order:</span>
+
+                                </div>
+
+                                <!-- ORDER ID - COMPLETELY OUTSIDE COLLAPSE TRIGGER -->
+                                <a th:href="@{/orders/details/{id}(id=${thymeleafUtil.encryptId(orderIds[orderEntry.key])})}"
+                                   th:text="${orderEntry.key}"
+                                   class="text-success text-decoration-none fw-bold">
+                                    ORDER
+                                </a>
+
+                                <!-- Order Type -->
+                                <span th:if="${orderTypes[orderEntry.key] == 'INVENTORY'}"
+                                      class="badge bg-primary">
+                <i class="bi bi-box-seam me-1"></i>
+                Inventory
+            </span>
+
+                                <span th:if="${orderTypes[orderEntry.key] == 'TAILORING'}"
+                                      class="badge bg-success">
+                <i class="bi bi-scissors me-1"></i>
+                Tailoring
+            </span>
+
+                                <span th:if="${orderTypes[orderEntry.key] == 'MIXED'}"
+                                      class="badge bg-warning text-dark">
+                <i class="bi bi-layers-fill me-1"></i>
+                Mixed
+            </span>
+
+                                <!-- Order Status -->
+                                <span th:classappend="${orderStatuses[orderEntry.key]?.name() == 'COMPLETED'
+                    ? ' badge badge-completed'
+                    : (orderStatuses[orderEntry.key]?.name() == 'DELIVERED'
+                    ? ' badge bg-success'
+                    : (orderStatuses[orderEntry.key]?.name() == 'CANCELLED'
+                    ? ' badge bg-danger'
+                    : (orderStatuses[orderEntry.key]?.name() == 'IN_PROGRESS'
+                    ? ' badge bg-primary'
+                    : ' badge bg-secondary')))}"
+                                      th:text="${orderStatuses[orderEntry.key]?.name()}">
+                PENDING
+            </span>
+
+                            </div>
+
+                            <!-- CHEVRON - COLLAPSE TRIGGER -->
+                            <div role="button"
+                                 data-bs-toggle="collapse"
+                                 th:data-bs-target="'#order_' + ${orderEntry.key}"
+                                 aria-expanded="false"
+                                 class="ms-2 px-2">
+
+                                <i class="bi bi-chevron-down text-success"></i>
+
+                            </div>
+
+                        </div>
+
+                        <!-- COLLAPSE CONTENT -->
+                        <div th:id="'order_' + ${orderEntry.key}"
+                             class="collapse">
+
+                            <div class="table-responsive">
+
+                                <table class="table table-sm table-bordered table-hover mb-0 align-middle">
+
+                                    <thead class="table-success text-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Description</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr th:each="entry, iterStat : ${orderEntry.value}">
+
+                                        <td th:text="${iterStat.count}">1</td>
+
+                                        <td th:text="${#temporals.format(entry.paymentDate, 'yyyy-MM-dd')}">
+                                            2026-01-01
+                                        </td>
+
+                                        <td>
+                        <span th:text="${entry.paymentType}"
+                              th:classappend="${entry.paymentType == 'CREDIT'}
+                                  ? ' text-success fw-semibold'
+                                  : ' text-danger fw-semibold'">
+                            CREDIT
+                        </span>
+                                        </td>
+
+                                        <td th:text="${#numbers.formatDecimal(entry.amount, 1, 'COMMA', 2, 'POINT')}">
+                                            0.00
+                                        </td>
+
+                                        <td th:text="${entry.remarks}">
+                                            -
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
-
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
-<script th:inline="javascript">
-    var contextPath = [[@{/}]];
-</script>
-<script>
-    // Toggle arrow direction on collapse
-    document.addEventListener("DOMContentLoaded", function () {
-        const cards = document.querySelectorAll(".card-header");
-        cards.forEach(header => {
-            header.addEventListener("click", function () {
-                const icon = this.querySelector(".toggle-icon");
-                const collapseId = this.getAttribute("data-bs-target");
-                const collapseElement = document.querySelector(collapseId);
-
-                collapseElement.addEventListener("shown.bs.collapse", () => {
-                    icon.classList.remove("bi-chevron-down");
-                    icon.classList.add("bi-chevron-up");
-                });
-
-                collapseElement.addEventListener("hidden.bs.collapse", () => {
-                    icon.classList.remove("bi-chevron-up");
-                    icon.classList.add("bi-chevron-down");
-                });
-            });
-        });
-    });
-</script>
-
+<script th:inline="javascript"> var contextPath = [[@{/}]]; </script>
 </body>
 </html>

@@ -5,8 +5,10 @@ import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.enums.FabricSource;
 import com.example.tailormaster.enums.ItemType;
+import com.example.tailormaster.enums.OrderProductType;
 import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.service.InventoryItemService;
+import com.example.tailormaster.service.OrderInventoryService;
 import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Controller
 @RequestMapping("/orders")
-//@SessionAttributes("orderDto")
 public class OrderController {
 
     private static final Logger logger = LogManager.getLogger(OrderController.class);
@@ -53,6 +54,7 @@ public class OrderController {
     private final Validation validation;
     private final InventoryItemService inventoryItemService;
     private final OrderProductService orderProductService;
+    private final OrderInventoryService orderInventoryService;
 
     @GetMapping
     public String listOrders(Model model) {
@@ -228,17 +230,22 @@ public class OrderController {
             );
         }
 
-        BigDecimal expectedDue =
-                totalAmount.subtract(advance);
+        boolean hasInventoryProduct = orderDto.getOrderProducts().stream()
+                .anyMatch(product ->
+                        product.getOrderProductType() == OrderProductType.INVENTORY);
 
-        if (orderDto.getDuePayment() == null ||
-                orderDto.getDuePayment().compareTo(expectedDue) != 0) {
+        if (!hasInventoryProduct) {
+            BigDecimal expectedDue = totalAmount.subtract(advance);
 
-            result.rejectValue(
-                    "duePayment",
-                    "error.duePayment",
-                    "Due payment is incorrect."
-            );
+            if (orderDto.getDuePayment() == null ||
+                    orderDto.getDuePayment().compareTo(expectedDue) != 0) {
+
+                result.rejectValue(
+                        "duePayment",
+                        "error.duePayment",
+                        "Due payment is incorrect."
+                );
+            }
         }
     }
 
@@ -360,15 +367,25 @@ public class OrderController {
                             .collect(Collectors.toList());
 
             model.addAttribute("productDtos", productDtos);
-
             model.addAttribute("orderDto", orderDto);
             model.addAttribute("products", products);
 
-            // Fabric inventory
+            // All active inventory items for Inventory orders
             List<InventoryItem> inventoryItems =
-                    inventoryItemService.getByItemType(ItemType.FABRIC);
+                    inventoryItemService.getAllActive();
 
             model.addAttribute("inventoryItems", inventoryItems);
+
+            // Fabric items only for Tailoring -> Shop Fabric
+            List<InventoryItem> fabricItems =
+                    inventoryItemService.getByItemType(ItemType.FABRIC);
+
+            model.addAttribute("fabricItems", fabricItems);
+
+            Map<Long, InventoryStockBatch> currentBatchMap =
+                    inventoryItemService.getCurrentBatchMap(inventoryItems);
+
+            model.addAttribute("currentBatchMap", currentBatchMap);
 
             /*
              * Reserved stock for PENDING orders
@@ -379,11 +396,8 @@ public class OrderController {
             for (InventoryItem item : inventoryItems) {
 
                 BigDecimal reservedQuantity =
-                        orderProductService.getReservedQuantity(
-                                item.getId(),
-                                FabricSource.SHOP,
-                                OrderStatus.PENDING
-                        );
+                        orderInventoryService
+                                .getReservedQuantity(item.getId());
 
                 if (reservedQuantity == null) {
                     reservedQuantity = BigDecimal.ZERO;
@@ -431,6 +445,54 @@ public class OrderController {
             BigDecimal finalTotal = BigDecimal.ZERO;
 
             for (OrderProductDto orderProductDto : orderDto.getOrderProducts()) {
+                OrderProductType orderProductType = orderProductDto.getOrderProductType();
+
+                if (orderProductType == null) {
+                    throw new IllegalArgumentException("Order product type is required.");
+                }
+
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setOrder(order);
+                orderProduct.setOrderProductType(orderProductType);
+                orderProduct.setQuantity(orderProductDto.getQuantity());
+                orderProduct.setAdditionalNotes(orderProductDto.getAdditionalNotes());
+
+                if (orderProductType == OrderProductType.INVENTORY) {
+                    InventoryItem inventoryItem =
+                            inventoryItemService.getById(orderProductDto.getInventoryItemId());
+
+                    if (inventoryItem == null) {
+                        throw new IllegalArgumentException("Selected inventory item was not found.");
+                    }
+
+                    if (Boolean.FALSE.equals(inventoryItem.getActive())) {
+                        throw new IllegalArgumentException(
+                                "Selected inventory item is inactive: " + inventoryItem.getName()
+                        );
+                    }
+
+                    if (inventoryItem.getItemType() == null) {
+                        throw new IllegalArgumentException(
+                                "Inventory item type is not configured: " + inventoryItem.getName()
+                        );
+                    }
+
+                    orderProduct.setProduct(null);
+                    orderProduct.setInventoryItem(inventoryItem);
+                    orderProduct.setSilaiType(null);
+                    orderProduct.setSilaiAmount(null);
+                    orderProduct.setFabricSource(FabricSource.CUSTOMER);
+                    orderProduct.setFabricQuantity(null);
+                    orderProduct.setFabricUnitPrice(null);
+                    orderProduct.setFabricAmount(null);
+                    orderProduct.setInventoryUnitPrice(null);
+                    orderProduct.setInventoryAmount(null);
+                    orderProduct.setSubtotal(BigDecimal.ZERO);
+
+                    orderProducts.add(orderProduct);
+                    continue;
+                }
+
                 Product product = productService.getProductById(orderProductDto.getProductId());
 
                 if (product == null) {
@@ -439,13 +501,10 @@ public class OrderController {
                     );
                 }
 
-                OrderProduct orderProduct = new OrderProduct();
-                orderProduct.setOrder(order);
                 orderProduct.setProduct(product);
-                orderProduct.setQuantity(orderProductDto.getQuantity());
+                orderProduct.setInventoryItem(null);
                 orderProduct.setSilaiType(orderProductDto.getSilaiType());
                 orderProduct.setSilaiAmount(orderProductDto.getSilaiAmount());
-                orderProduct.setAdditionalNotes(orderProductDto.getAdditionalNotes());
 
                 BigDecimal stitchingAmount = orderProductDto.getSilaiAmount()
                         .multiply(BigDecimal.valueOf(orderProductDto.getQuantity()));
@@ -453,6 +512,7 @@ public class OrderController {
                 BigDecimal fabricAmount = BigDecimal.ZERO;
 
                 FabricSource fabricSource = orderProductDto.getFabricSource();
+
                 if (fabricSource == null) {
                     fabricSource = FabricSource.CUSTOMER;
                 }
@@ -495,45 +555,10 @@ public class OrderController {
                         );
                     }
 
-                    BigDecimal physicalStock = inventoryItem.getQuantity() != null
-                            ? inventoryItem.getQuantity()
-                            : BigDecimal.ZERO;
-
-                    BigDecimal reservedQuantity = orderProductService.getReservedQuantity(
-                            inventoryItem.getId(),
-                            FabricSource.SHOP,
-                            OrderStatus.PENDING
-                    );
-
-                    BigDecimal availableStock = physicalStock.subtract(reservedQuantity);
-
-                    if (requestedQuantity.compareTo(availableStock) > 0) {
-                        BigDecimal displayAvailable = availableStock.max(BigDecimal.ZERO);
-
-                        throw new IllegalArgumentException(
-                                "Insufficient available stock for fabric: " +
-                                        inventoryItem.getName() +
-                                        ". Available: " +
-                                        displayAvailable.stripTrailingZeros().toPlainString()
-                        );
-                    }
-
-                    BigDecimal salePrice = inventoryItem.getSalePrice();
-
-                    if (salePrice == null ||
-                            salePrice.compareTo(BigDecimal.ZERO) < 0) {
-                        throw new IllegalArgumentException(
-                                "Sale price is not configured for fabric: " +
-                                        inventoryItem.getName()
-                        );
-                    }
-
-                    fabricAmount = requestedQuantity.multiply(salePrice);
-
                     orderProduct.setInventoryItem(inventoryItem);
                     orderProduct.setFabricQuantity(requestedQuantity);
-                    orderProduct.setFabricUnitPrice(salePrice);
-                    orderProduct.setFabricAmount(fabricAmount);
+                    orderProduct.setFabricUnitPrice(null);
+                    orderProduct.setFabricAmount(null);
                 } else {
                     orderProduct.setInventoryItem(null);
                     orderProduct.setFabricQuantity(null);
@@ -590,18 +615,99 @@ public class OrderController {
     }
 
     private BigDecimal calculateOrderTotal(CustomerOrderDto orderDto, BindingResult result) {
-
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
-
             OrderProductDto product = orderDto.getOrderProducts().get(i);
+            OrderProductType orderProductType = product.getOrderProductType();
+
+            if (orderProductType == null) {
+                result.rejectValue(
+                        "orderProducts[" + i + "].orderProductType",
+                        "error.orderProducts[" + i + "].orderProductType",
+                        "Order product type is required."
+                );
+                continue;
+            }
 
             if (product.getQuantity() == null || product.getQuantity() < 1) {
                 result.rejectValue(
                         "orderProducts[" + i + "].quantity",
                         "error.orderProducts[" + i + "].quantity",
                         "Quantity must be at least 1."
+                );
+                continue;
+            }
+
+            if (orderProductType == OrderProductType.INVENTORY) {
+                if (product.getInventoryItemId() == null) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Inventory item must be selected."
+                    );
+                    continue;
+                }
+
+                InventoryItem inventoryItem =
+                        inventoryItemService.getById(product.getInventoryItemId());
+
+                if (inventoryItem == null) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Selected inventory item was not found."
+                    );
+                    continue;
+                }
+
+                if (Boolean.FALSE.equals(inventoryItem.getActive())) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].inventoryItemId",
+                            "error.orderProducts[" + i + "].inventoryItemId",
+                            "Selected inventory item is inactive."
+                    );
+                    continue;
+                }
+
+                BigDecimal stock = inventoryItem.getQuantity() != null
+                        ? inventoryItem.getQuantity()
+                        : BigDecimal.ZERO;
+
+                BigDecimal requestedQuantity =
+                        BigDecimal.valueOf(product.getQuantity());
+
+                BigDecimal reservedQuantity = orderProductService.getReservedQuantity(
+                        inventoryItem.getId(),
+                        FabricSource.SHOP,
+                        OrderStatus.PENDING
+                );
+
+                BigDecimal availableStock = stock.subtract(reservedQuantity);
+
+                if (requestedQuantity.compareTo(availableStock) > 0) {
+                    result.rejectValue(
+                            "orderProducts[" + i + "].quantity",
+                            "error.orderProducts[" + i + "].quantity",
+                            "Insufficient inventory stock. Available: " +
+                                    availableStock.max(BigDecimal.ZERO)
+                                            .stripTrailingZeros()
+                                            .toPlainString()
+                    );
+                    continue;
+                }
+
+                totalAmount = totalAmount.add(
+                        requestedQuantity.multiply(inventoryItem.getSalePrice())
+                );
+                continue;
+            }
+
+            if (product.getProductId() == null) {
+                result.rejectValue(
+                        "orderProducts[" + i + "].productId",
+                        "error.orderProducts[" + i + "].productId",
+                        "Product must be selected."
                 );
                 continue;
             }
@@ -629,7 +735,6 @@ public class OrderController {
             }
 
             if (fabricSource == FabricSource.SHOP) {
-
                 if (product.getInventoryItemId() == null) {
                     result.rejectValue(
                             "orderProducts[" + i + "].inventoryItemId",
@@ -769,18 +874,11 @@ public class OrderController {
 
             if (order == null) {
                 logger.warn("Order not found with ID {} for editing.", orderId);
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Order not found."
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
                 return "redirect:/orders";
             }
 
-            /*
-             * Only PENDING orders can be edited.
-             */
             if (order.getStatus() != OrderStatus.PENDING) {
-
                 logger.warn(
                         "Attempt to edit non-pending order. Order ID: {}, Status: {}",
                         order.getId(),
@@ -795,72 +893,39 @@ public class OrderController {
                 return "redirect:/orders";
             }
 
-            UpdateCustomerOrderDto orderUpdateDto =
-                    populateOrderUpdateDto(order);
-
-            model.addAttribute("orderDto", orderUpdateDto);
-
-            /*
-             * Same data required by the update page
-             * as the create page.
-             */
-
-            model.addAttribute(
-                    "products",
-                    productService.getAllProducts()
-            );
+            UpdateCustomerOrderDto orderUpdateDto = populateOrderUpdateDto(order);
 
             List<InventoryItem> inventoryItems =
                     inventoryItemService.getByItemType(ItemType.FABRIC);
 
-            model.addAttribute(
-                    "inventoryItems",
-                    inventoryItems
-            );
-
-            /*
-             * Reserved stock for other PENDING orders.
-             * Current order is excluded because its existing
-             * reservation should not count against itself.
-             */
-            Map<Long, BigDecimal> reservedStockMap =
-                    new HashMap<>();
+            Map<Long, BigDecimal> reservedStockMap = new HashMap<>();
 
             for (InventoryItem item : inventoryItems) {
-
                 BigDecimal reservedQuantity =
-                        orderProductService
-                                .getReservedQuantityExcludingOrder(
-                                        item.getId(),
-                                        FabricSource.SHOP,
-                                        OrderStatus.PENDING,
-                                        order.getId()
-                                );
-
-                if (reservedQuantity == null) {
-                    reservedQuantity = BigDecimal.ZERO;
-                }
+                        orderProductService.getReservedQuantityExcludingOrder(
+                                item.getId(),
+                                FabricSource.SHOP,
+                                OrderStatus.PENDING,
+                                order.getId()
+                        );
 
                 reservedStockMap.put(
                         item.getId(),
-                        reservedQuantity
+                        reservedQuantity != null
+                                ? reservedQuantity
+                                : BigDecimal.ZERO
                 );
             }
 
-            model.addAttribute(
-                    "reservedStockMap",
-                    reservedStockMap
-            );
-
-            model.addAttribute(
-                    "thymeleafUtil",
-                    new ThymeleafUtil()
-            );
+            model.addAttribute("orderDto", orderUpdateDto);
+            model.addAttribute("products", productService.getAllProducts());
+            model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("reservedStockMap", reservedStockMap);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
             return "order/update";
 
         } catch (Exception e) {
-
             logger.error(
                     "An error occurred while preparing the edit order form for ID {}: {}",
                     id,
@@ -870,8 +935,7 @@ public class OrderController {
 
             redirectAttributes.addFlashAttribute(
                     "errorMessage",
-                    "An error occurred while preparing the edit order: "
-                            + e.getMessage()
+                    "An error occurred while preparing the edit order: " + e.getMessage()
             );
 
             return "redirect:/orders";
@@ -881,7 +945,6 @@ public class OrderController {
     private UpdateCustomerOrderDto populateOrderUpdateDto(Order order) {
         try {
             UpdateCustomerOrderDto orderUpdateDto = new UpdateCustomerOrderDto();
-
             orderUpdateDto.setId(order.getId());
             orderUpdateDto.setCustomer(order.getCustomer());
             orderUpdateDto.setOrderDate(order.getOrderDate());
@@ -890,28 +953,44 @@ public class OrderController {
             orderUpdateDto.setDuePayment(order.getDuePayment());
             orderUpdateDto.setTotalProductAmount(order.getTotalProductAmount());
             orderUpdateDto.setPaidAmount(order.getAdvancePayment());
-
             List<OrderProductDto> orderProductDtos = order.getOrderProducts().stream().map(orderProduct -> {
                 OrderProductDto dto = new OrderProductDto();
-                Product product = orderProduct.getProduct();
-
-                dto.setId(product.getId());
-                dto.setProductId(product.getId());
-                dto.setName(product.getName());
+                dto.setId(orderProduct.getId());
+                dto.setOrderProductType(orderProduct.getOrderProductType());
                 dto.setQuantity(orderProduct.getQuantity());
-                dto.setSilaiType(orderProduct.getSilaiType());
-                dto.setSilaiAmount(orderProduct.getSilaiAmount());
                 dto.setAdditionalNotes(orderProduct.getAdditionalNotes());
-                dto.setFabricSource(orderProduct.getFabricSource());
-                dto.setFabricQuantity(orderProduct.getFabricQuantity());
-
-                if (orderProduct.getInventoryItem() != null) {
-                    dto.setInventoryItemId(orderProduct.getInventoryItem().getId());
+                dto.setAmount(orderProduct.getInventoryAmount() != null
+                        ? orderProduct.getInventoryAmount()
+                        : orderProduct.getSubtotal());
+                if (orderProduct.getOrderProductType() == OrderProductType.INVENTORY) {
+                    InventoryItem inventoryItem = orderProduct.getInventoryItem();
+                    if (inventoryItem == null) {
+                        throw new IllegalStateException("Inventory item is missing for order product ID: " + orderProduct.getId());
+                    }
+                    dto.setProductId(null);
+                    dto.setName(inventoryItem.getName());
+                    dto.setInventoryItemId(inventoryItem.getId());
+                    dto.setSilaiType(null);
+                    dto.setSilaiAmount(null);
+                    dto.setFabricSource(FabricSource.CUSTOMER);
+                    dto.setFabricQuantity(null);
+                } else {
+                    Product product = orderProduct.getProduct();
+                    if (product == null) {
+                        throw new IllegalStateException("Product is missing for tailoring order product ID: " + orderProduct.getId());
+                    }
+                    dto.setProductId(product.getId());
+                    dto.setName(product.getName());
+                    dto.setSilaiType(orderProduct.getSilaiType());
+                    dto.setSilaiAmount(orderProduct.getSilaiAmount());
+                    dto.setFabricSource(orderProduct.getFabricSource());
+                    dto.setFabricQuantity(orderProduct.getFabricQuantity());
+                    if (orderProduct.getInventoryItem() != null) {
+                        dto.setInventoryItemId(orderProduct.getInventoryItem().getId());
+                    }
                 }
-
                 return dto;
             }).collect(Collectors.toList());
-
             orderUpdateDto.setOrderProducts(orderProductDtos);
             logger.info("Order update DTO populated successfully for order ID: {}", order.getId());
             return orderUpdateDto;
@@ -929,44 +1008,48 @@ public class OrderController {
             RedirectAttributes redirectAttributes,
             @RequestParam("encryptedOrderId") String encryptedOrderId) {
 
-        logger.info("Attempting to update order with encrypted order ID: {}", encryptedOrderId);
+        logger.info(
+                "Attempting to update order with encrypted order ID: {}",
+                encryptedOrderId
+        );
 
         try {
-
-            logger.info("Received orderProducts count: {}", orderUpdateDto.getOrderProducts().size());
-
-            for (int i = 0; i < orderUpdateDto.getOrderProducts().size(); i++) {
-                OrderProductDto p = orderUpdateDto.getOrderProducts().get(i);
-
-                logger.info(
-                        "Received product [{}]: productId={}, fabricSource={}, inventoryItemId={}, fabricQuantity={}",
-                        i,
-                        p.getProductId(),
-                        p.getFabricSource(),
-                        p.getInventoryItemId(),
-                        p.getFabricQuantity()
-                );
-            }
-            Long orderId = validation.validateAndFetchOrder(encryptedOrderId, redirectAttributes);
+            Long orderId =
+                    validation.validateAndFetchOrder(
+                            encryptedOrderId,
+                            redirectAttributes
+                    );
 
             if (orderId == null) {
-                logger.warn("Invalid order ID provided for update: {}", encryptedOrderId);
+                logger.warn(
+                        "Invalid order ID provided for update: {}",
+                        encryptedOrderId
+                );
                 return "redirect:/orders";
             }
-
-            logger.debug("Decrypted order ID for update: {}", orderId);
 
             Order order = orderService.findById(orderId);
 
             if (order == null) {
-                logger.warn("Order not found with ID {} for update.", orderId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+                logger.warn(
+                        "Order not found with ID {} for update.",
+                        orderId
+                );
+
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        "Order not found."
+                );
+
                 return "redirect:/orders";
             }
 
             if (order.getStatus() != OrderStatus.PENDING) {
-                logger.warn("Attempt to update non-pending order. Order ID: {}, Status: {}",
-                        order.getId(), order.getStatus());
+                logger.warn(
+                        "Attempt to update non-pending order. Order ID: {}, Status: {}",
+                        order.getId(),
+                        order.getStatus()
+                );
 
                 redirectAttributes.addFlashAttribute(
                         "errorMessage",
@@ -976,35 +1059,91 @@ public class OrderController {
                 return "redirect:/orders";
             }
 
+            if (orderUpdateDto.getOrderProducts() == null ||
+                    orderUpdateDto.getOrderProducts().isEmpty()) {
+
+                bindingResult.reject(
+                        "orderProducts.empty",
+                        "At least one product must be added."
+                );
+            }
+
             validateOrder(orderUpdateDto, bindingResult);
 
             if (bindingResult.hasErrors()) {
-                logger.warn("Validation errors occurred during order update for ID {}: {}",
-                        orderId, bindingResult.getAllErrors());
+                logger.warn(
+                        "Validation errors occurred during order update for ID {}: {}",
+                        orderId,
+                        bindingResult.getAllErrors()
+                );
 
-                model.addAttribute("org.springframework.validation.BindingResult.orderDto", bindingResult);
+                model.addAttribute(
+                        "org.springframework.validation.BindingResult.orderDto",
+                        bindingResult
+                );
+
                 model.addAttribute("orderDto", orderUpdateDto);
                 model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+                model.addAttribute("products", productService.getAllProducts());
 
-                model.addAttribute("products",
-                        productService.getAllProducts());
+                List<InventoryItem> inventoryItems =
+                        inventoryItemService.getByItemType(ItemType.FABRIC);
 
-                model.addAttribute("inventoryItems",
-                        inventoryItemService.getByItemType(ItemType.FABRIC));
+                model.addAttribute("inventoryItems", inventoryItems);
+
+                Map<Long, BigDecimal> reservedStockMap = new HashMap<>();
+
+                for (InventoryItem item : inventoryItems) {
+                    BigDecimal reservedQuantity =
+                            orderProductService.getReservedQuantityExcludingOrder(
+                                    item.getId(),
+                                    FabricSource.SHOP,
+                                    OrderStatus.PENDING,
+                                    orderId
+                            );
+
+                    reservedStockMap.put(
+                            item.getId(),
+                            reservedQuantity != null
+                                    ? reservedQuantity
+                                    : BigDecimal.ZERO
+                    );
+                }
+
+                model.addAttribute(
+                        "reservedStockMap",
+                        reservedStockMap
+                );
 
                 return "order/update";
             }
 
-            Order updatedOrder = orderService.updateOrder(orderId, orderUpdateDto);
+            logger.info(
+                    "Updating order ID {} with {} products.",
+                    orderId,
+                    orderUpdateDto.getOrderProducts().size()
+            );
 
-            logger.info("Order updated successfully: {}", updatedOrder);
+            Order updatedOrder =
+                    orderService.updateOrder(
+                            orderId,
+                            orderUpdateDto
+                    );
+
+            logger.info(
+                    "Order updated successfully. Order ID: {}",
+                    updatedOrder.getId()
+            );
 
             redirectAttributes.addFlashAttribute(
                     "successMessage",
                     "Order updated successfully!"
             );
 
-            redirectAttributes.addFlashAttribute("orderId", updatedOrder.getId());
+            redirectAttributes.addFlashAttribute(
+                    "orderId",
+                    updatedOrder.getId()
+            );
 
             return "redirect:/orders";
 
@@ -1136,4 +1275,31 @@ public class OrderController {
         return ResponseEntity.status(status).body(Collections.singletonMap("error", message));
     }
 
+    @GetMapping("/inventory-preview")
+    @ResponseBody
+    public OrderInventoryPreviewDto previewInventory(
+            @RequestParam Long inventoryItemId,
+            @RequestParam BigDecimal quantity) {
+        logger.info(
+                "Previewing inventory amount. inventoryItemId={}, quantity={}",
+                inventoryItemId,
+                quantity
+        );
+
+        try {
+            return orderInventoryService.previewInventoryAmount(
+                    inventoryItemId,
+                    quantity
+            );
+        } catch (Exception e) {
+            logger.error(
+                    "Error previewing inventory amount. inventoryItemId={}, quantity={}: {}",
+                    inventoryItemId,
+                    quantity,
+                    e.getMessage(),
+                    e
+            );
+            throw e;
+        }
+    }
 }

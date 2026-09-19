@@ -35,6 +35,7 @@ public class InventoryController {
     private final AuthenticatedUserService authenticatedUserService;
     private final InventoryColorService inventoryColorService;
     private final InventoryDesignService inventoryDesignService;
+    private final OrderInventoryService orderInventoryService;
 
     @GetMapping
     public String inventoryList(Model model) {
@@ -93,27 +94,13 @@ public class InventoryController {
 
         for (InventoryItem item : inventoryItems) {
 
-            BigDecimal reservedQuantity =
-                    BigDecimal.ZERO;
+            BigDecimal reservedQuantity = BigDecimal.ZERO;
 
-            /*
-             * Reservation is applicable only to FABRIC items.
-             * Reserved stock comes from SHOP fabric used
-             * in PENDING orders.
-             */
-            if (item.getItemType() == ItemType.FABRIC) {
-
+//            if (item.getItemType() == ItemType.FABRIC) {
                 reservedQuantity =
-                        orderProductService.getReservedQuantity(
-                                item.getId(),
-                                FabricSource.SHOP,
-                                OrderStatus.PENDING
-                        );
-
-                if (reservedQuantity == null) {
-                    reservedQuantity = BigDecimal.ZERO;
-                }
-            }
+                        orderInventoryService
+                                .getReservedQuantity(item.getId());
+//            }
 
             reservedStockMap.put(
                     item.getId(),

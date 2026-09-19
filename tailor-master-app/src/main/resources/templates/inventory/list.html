@@ -253,7 +253,7 @@
 
                                 <td>
                                     <span th:if="${item.color != null and !#strings.isEmpty(item.color)}"
-                                          th:text="${item.color}">
+                                          th:text="${item.color.name}">
                                         Black
                                     </span>
                                     <span th:unless="${item.color != null and !#strings.isEmpty(item.color)}"
@@ -307,25 +307,22 @@
                                         </div>
 
                                         <!-- Reserved Stock -->
-                                        <div
-                                                class="small"
-                                                th:if="${item.itemType.name() == 'FABRIC'}">
-
+                                        <div class="small">
                                             <span class="text-muted">Reserved:</span>
 
                                             <strong
                                                     th:text="${reservedStockMap[item.id] != null
-                        ? reservedStockMap[item.id].stripTrailingZeros().toPlainString()
-                        : '0'}">
-                                                5
+        ? reservedStockMap[item.id].stripTrailingZeros().toPlainString()
+        : '0'}">
+                                                0
                                             </strong>
 
                                             <span
                                                     class="text-muted"
                                                     th:if="${item.unit != null}"
                                                     th:text="${' ' + item.unit.name().replace('_', ' ')}">
-                METER
-            </span>
+        PIECE
+    </span>
                                         </div>
 
                                         <!-- Available Stock -->
@@ -388,8 +385,6 @@
                                 </td>
 
                                 <td>
-
-                                    <!-- Calculate Available Stock -->
                                     <div
                                             th:with="
                 physical=${item.quantity != null ? item.quantity : T(java.math.BigDecimal).ZERO},
@@ -399,14 +394,22 @@
                     : physical.subtract(reserved)}
             ">
 
-                                        <!-- Out of Stock -->
+                                        <!-- Physically no stock -->
                                         <span
-                                                th:if="${available.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
+                                                th:if="${physical.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
                                                 class="badge bg-danger">
             Out of Stock
         </span>
 
-                                        <!-- Low Stock -->
+                                        <!-- Physical stock exists but fully reserved -->
+                                        <span
+                                                th:if="${physical.compareTo(T(java.math.BigDecimal).ZERO) > 0
+                    and available.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
+                                                class="badge bg-secondary">
+            Reserved
+        </span>
+
+                                        <!-- Low available stock -->
                                         <span
                                                 th:if="${available.compareTo(T(java.math.BigDecimal).ZERO) > 0
                     and available.compareTo(item.minimumStock) <= 0}"
@@ -414,7 +417,7 @@
             Low Stock
         </span>
 
-                                        <!-- Available -->
+                                        <!-- Healthy available stock -->
                                         <span
                                                 th:if="${available.compareTo(item.minimumStock) > 0}"
                                                 class="badge bg-success">
@@ -422,7 +425,6 @@
         </span>
 
                                     </div>
-
                                 </td>
 
                                 <td>

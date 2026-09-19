@@ -3,9 +3,11 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.enums.OrderProductType;
 import com.example.tailormaster.enums.OrderStatus;
 import com.example.tailormaster.enums.PaymentType;
 import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
@@ -86,6 +88,7 @@ public class CustomerController {
             CustomerWizardDTO form = new CustomerWizardDTO();
             model.addAttribute("form", form);
             model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", false);
             return "customer/create-customer-wizard";
         } catch (Exception ex) {
             logger.error("Error while showing create customer form: {}", ex.getMessage(), ex);
@@ -98,23 +101,31 @@ public class CustomerController {
     @GetMapping("/{productId}/fields")
     @ResponseBody
     public List<Map<String, Object>> getFields(@PathVariable Long productId) {
-        List<ProductMeasurementField> fields = fieldRepository.findByProductIdOrderByIdAsc(productId);
-        return fields.stream().map(f -> {
-            Map<String, Object> m = new HashMap<>();
-            m.put("id", f.getId());
-            m.put("fieldName", f.getFieldName());
-            m.put("fieldType", f.getFieldType());  // TEXT | NUMBER | DROPDOWN
-            m.put("options", f.getOptions());      // comma-separated
-            return m;
+        productService.getProductById(productId);
+
+        List<ProductMeasurementField> fields =
+                fieldRepository.findByProductIdOrderByIdAsc(productId);
+
+        return fields.stream().map(field -> {
+            Map<String, Object> result = new HashMap<>();
+            result.put("id", field.getId());
+            result.put("fieldName", field.getFieldName());
+            result.put("fieldType", field.getFieldType());
+            result.put("options", field.getOptions());
+            return result;
         }).collect(Collectors.toList());
     }
 
     @PostMapping("/create")
-    public String createCustomer(@Valid @ModelAttribute("customer") CustomerWizardDTO form,
-                                 BindingResult bindingResult,
-                                 Model model,
-                                 RedirectAttributes redirectAttributes) {
+    public String createCustomer(
+            @Valid @ModelAttribute("form") CustomerWizardDTO form,
+            BindingResult bindingResult,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         if (bindingResult.hasErrors()) {
+            model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", false);
             return "customer/create-customer-wizard";
         }
 
@@ -126,6 +137,8 @@ public class CustomerController {
         } catch (Exception ex) {
             logger.error("Error while creating customer: {}", ex.getMessage(), ex);
             model.addAttribute("errorMessage", "Failed to create customer. Please try again.");
+            model.addAttribute("products", productService.getAllActiveProducts());
+            model.addAttribute("isEdit", false);
             return "customer/create-customer-wizard";
         }
     }
@@ -267,71 +280,117 @@ public class CustomerController {
     public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         logger.info("Displaying details for customer ID (encrypted): {}", id);
         try {
-            // Decrypt and validate customer ID
             Long customerId = validation.decryptAndValidateId(id);
             if (customerId == null) {
                 logger.warn("Invalid customer ID provided: {}", id);
                 redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
                 return "redirect:/customers";
             }
+
             logger.debug("Decrypted customer ID: {}", customerId);
-            // Fetch customer details
+
             Customer customer = customerService.getCustomerById(customerId);
             if (customer == null) {
                 logger.warn("Customer not found with ID: {}", customerId);
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
-            // Measurements are already fetched via relation (assuming FetchType.EAGER or proper fetch join in service)
+
             List<CustomerMeasurement> measurements = customer.getMeasurements();
 
-            // Group measurements by product
-            Map<Product, List<CustomerMeasurement>> productMeasurementsMap = measurements.stream()
-                    .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
-            // customer ledger
+            Map<Product, List<CustomerMeasurement>> productMeasurementsMap =
+                    measurements.stream()
+                            .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
+
             Map<String, List<CustomerPaymentLedger>> orderLedgerMap = new LinkedHashMap<>();
             Map<String, BigDecimal> orderBalances = new HashMap<>();
             Map<String, OrderStatus> orderStatuses = new HashMap<>();
+            Map<String, Long> orderIds = new HashMap<>();
+            Map<String, String> orderTypes = new HashMap<>();
 
-            // Initialize total variables for credits and debits
             BigDecimal totalCredit = BigDecimal.ZERO;
             BigDecimal totalDebit = BigDecimal.ZERO;
 
-            List<CustomerPaymentLedger> ledgerEntries = customerPaymentLedgerService.findByCustomerIdOrderByOrderIdAscPaymentDateAsc(customerId);
+            List<CustomerPaymentLedger> ledgerEntries =
+                    customerPaymentLedgerService.findByCustomerIdOrderByOrderIdAscPaymentDateAsc(customerId);
 
             for (CustomerPaymentLedger payment : ledgerEntries) {
-                String orderId = payment.getOrder().getOrderId();
-                orderLedgerMap.computeIfAbsent(orderId, k -> new ArrayList<>()).add(payment);
-                // Order status
-                orderStatuses.put(orderId, payment.getOrder().getStatus());
+                Order order = payment.getOrder();
+                if (order == null) {
+                    continue;
+                }
 
-                // Calculate balance
+                String orderId = order.getOrderId();
+
+                orderLedgerMap
+                        .computeIfAbsent(orderId, k -> new ArrayList<>())
+                        .add(payment);
+
+                orderStatuses.put(orderId, order.getStatus());
+                orderIds.put(orderId, order.getId());
+
+                if (!orderTypes.containsKey(orderId)) {
+                    boolean hasInventory = order.getOrderProducts() != null &&
+                            order.getOrderProducts().stream()
+                                    .anyMatch(orderProduct ->
+                                            orderProduct.getOrderProductType() == OrderProductType.INVENTORY);
+
+                    boolean hasTailoring = order.getOrderProducts() != null &&
+                            order.getOrderProducts().stream()
+                                    .anyMatch(orderProduct ->
+                                            orderProduct.getOrderProductType() != null &&
+                                                    orderProduct.getOrderProductType() != OrderProductType.INVENTORY);
+
+                    if (hasInventory && hasTailoring) {
+                        orderTypes.put(orderId, "MIXED");
+                    } else if (hasInventory) {
+                        orderTypes.put(orderId, "INVENTORY");
+                    } else {
+                        orderTypes.put(orderId, "TAILORING");
+                    }
+                }
+
                 BigDecimal balance = orderBalances.getOrDefault(orderId, BigDecimal.ZERO);
+
                 if (payment.getPaymentType() == PaymentType.CREDIT) {
                     balance = balance.add(payment.getAmount());
-                    totalCredit = totalCredit.add(payment.getAmount());  // Add to total credit
+                    totalCredit = totalCredit.add(payment.getAmount());
                 } else {
                     balance = balance.subtract(payment.getAmount());
-                    totalDebit = totalDebit.add(payment.getAmount());  // Add to total debit
+                    totalDebit = totalDebit.add(payment.getAmount());
                 }
+
                 orderBalances.put(orderId, balance);
             }
+
             model.addAttribute("totalCredit", totalCredit);
             model.addAttribute("totalDebit", totalDebit);
             model.addAttribute("orderLedgerMap", orderLedgerMap);
             model.addAttribute("orderBalances", orderBalances);
             model.addAttribute("orderStatuses", orderStatuses);
+            model.addAttribute("orderIds", orderIds);
+            model.addAttribute("orderTypes", orderTypes);
 
             model.addAttribute("customer", customer);
             model.addAttribute("productMeasurementsMap", productMeasurementsMap);
-            logger.info("Fetched customer details: {}", customer);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
+            logger.info("Fetched customer details: {}", customer);
+
         } catch (Exception e) {
-            logger.error("Error loading customer details for ID (encrypted) {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error loading customer details: " + e.getMessage());
+            logger.error(
+                    "Error loading customer details for ID (encrypted) {}: {}",
+                    id,
+                    e.getMessage(),
+                    e
+            );
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Error loading customer details: " + e.getMessage()
+            );
             return "redirect:/customers";
         }
+
         return "customer/customer-details";
     }
 

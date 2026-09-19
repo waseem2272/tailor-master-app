@@ -132,6 +132,7 @@
                             <th>Customer</th>
                             <th>Order Date</th>
                             <th>Delivery Date</th>
+                            <th>Order Type</th>
                             <th>Status</th>
                             <th>Cabinet No</th>
                             <th>Payment Status</th>
@@ -277,6 +278,38 @@
                 { "data": "orderDate" },
                 { "data": "deliveryDate" },
                 {
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row) {
+                        if (!row.orderProducts || row.orderProducts.length === 0) {
+                            return `<span class="badge bg-secondary">N/A</span>`;
+                        }
+
+                        let hasTailoring = row.orderProducts.some(
+                            op => op.orderProductType === "TAILORING"
+                        );
+
+                        let hasInventory = row.orderProducts.some(
+                            op => op.orderProductType === "INVENTORY"
+                        );
+
+                        if (hasTailoring && hasInventory) {
+                            return `<span class="badge bg-info text-dark">Mixed</span>`;
+                        }
+
+                        if (hasInventory) {
+                            return `<span class="badge bg-warning text-dark">Inventory</span>`;
+                        }
+
+                        if (hasTailoring) {
+                            return `<span class="badge bg-primary">Tailoring</span>`;
+                        }
+
+                        return `<span class="badge bg-secondary">N/A</span>`;
+                    }
+                },
+                {
                     "data": "status",
                     "render": function (data) {
                         let badgeClass = {
@@ -286,6 +319,7 @@
                             "DELIVERED": "badge bg-success",
                             "CANCELLED": "badge bg-danger"
                         }[data] || "";
+
                         return `<span class="${badgeClass}">${data}</span>`;
                     }
                 },
@@ -295,25 +329,32 @@
                     "orderable": false,
                     "searchable": false,
                     "render": function (data, type, row) {
-                        // let duePayment = data.duePayment;
                         let totalProductAmount = data.totalProductAmount;
                         let paidAmount = data.paidAmount;
                         let orderStatus = data.status;
                         let pickedUpStatus = data.pickupStatus;
                         let outstandingDueAmount = data.outstandingDueAmount;
 
-                        let badgeClass = "secondary"; // Default badge (gray)
-                        let paymentStatus = `<span class="badge bg-secondary">N/A</span>`; // Default
+                        let badgeClass = "secondary";
+                        let paymentStatus = `<span class="badge bg-secondary">N/A</span>`;
 
-                        if ((orderStatus === "COMPLETED" || orderStatus === "DELIVERED") && pickedUpStatus === "PICKED_UP") {
-                            if (totalProductAmount !== paidAmount && totalProductAmount !== outstandingDueAmount) {
-                                badgeClass = "warning text-dark"; // Yellow badge for partial payment
+                        if ((orderStatus === "COMPLETED" || orderStatus === "DELIVERED") &&
+                            pickedUpStatus === "PICKED_UP") {
+
+                            if (totalProductAmount !== paidAmount &&
+                                totalProductAmount !== outstandingDueAmount) {
+
+                                badgeClass = "warning text-dark";
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
+
                             } else if (totalProductAmount === outstandingDueAmount) {
-                                badgeClass = "danger"; // Yellow badge for partial payment
+
+                                badgeClass = "danger";
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Unpaid</span>`;
+
                             } else {
-                                badgeClass = "success"; // Green badge for full payment
+
+                                badgeClass = "success";
                                 paymentStatus = `<span class="badge bg-${badgeClass}">Paid</span>`;
                             }
                         }
@@ -321,47 +362,42 @@
                         return paymentStatus;
                     }
                 },
-
                 {
                     "data": null,
                     "orderable": false,
                     "searchable": false,
                     "render": function (data, type, row) {
                         let encryptedId = row.encryptedId;
-                        let editButton = (row.status === "PENDING")
-                            ? `<a href="${contextPath}orders/edit/${encryptedId}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>`
+
+                        let pickupButton = (row.status === "COMPLETED" &&
+                            row.pickupStatus === "NOT_PICKED_UP")
+                            ? `<button
+                              class="btn btn-success btn-sm pickup-btn me-1"
+                              data-order-id="${row.orderId}"
+                              data-order-db-id="${encryptedId}"
+                              data-total-amount="${row.totalProductAmount}"
+                              data-advance-payment="${row.advancePayment}"
+                              data-due="${row.duePayment}"
+                              data-customer-name="${row.customer}"
+                              data-delivery-date="${row.deliveryDate}"
+                              data-bs-toggle="modal"
+                              data-bs-target="#pickupModal">
+                              <i class="bi bi-check2-circle"></i> Mark as Picked Up
+                           </button>`
                             : "";
 
-                        let pickupButton = (row.status === "COMPLETED" && row.pickupStatus === "NOT_PICKED_UP")
-                            ? `<button
-                                  class="btn btn-success btn-sm pickup-btn me-1"
-                                  data-order-id="${row.orderId}"
-                                  data-order-db-id="${encryptedId}"
-                                  data-total-amount="${row.totalProductAmount}"
-                                  data-advance-payment="${row.advancePayment}"
-                                  data-due="${row.duePayment}"
-                                  data-customer-name="${row.customer}"
-                                  data-delivery-date="${row.deliveryDate}"
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#pickupModal">
-                                  <i class="bi bi-check2-circle"></i> Mark as Picked Up
-                               </button>`
-                                                : "";
-
                         return `
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
-                            <i class="bi bi-eye"></i> Details
-                        </a>
-                        ${pickupButton}
-                        ${editButton}
-                    </div>
-                `;
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            ${pickupButton}
+                        </div>
+                    `;
                     }
                 }
             ]
         });
-
 
         // Apply filters button
         $('#applyFilters').on('click', function () {
@@ -380,7 +416,7 @@
             table.ajax.reload();
         });
 
-        // Handle quick range but do not reload immediately — just populate the fields
+        // Handle quick range but do not reload immediately
         $('#dateRange').on('change', function () {
             var today = new Date();
             var startDate = '';
@@ -403,32 +439,17 @@
             updateFilterBadge();
         });
 
-        // document.getElementById("amountReceived").addEventListener("input", function () {
-        //     const paymentAmount = parseFloat(this.value);
-        //     const due = parseFloat(document.getElementById("modalDueAmount").innerText);
-        //     const errorElement = document.getElementById("amountReceivedError");
-        //     errorElement.innerText = "";
-        //
-        //     if (isNaN(paymentAmount) || paymentAmount <= 0) {
-        //         errorElement.innerText = "Received amount must be greater than 0.";
-        //     } else if (paymentAmount > due) {
-        //         errorElement.innerText = "Received amount cannot be more than outstanding due.";
-        //     } else {
-        //         errorElement.innerText = ""; // No errors
-        //     }
-        // });
-
         $('#ordersTable tbody').on('click', '.pickup-btn', function () {
 
             const button = $(this);
-            const row = table.row(button.closest('tr')).data()
+            const row = table.row(button.closest('tr')).data();
 
             const orderId = $(this).data('order-id');
             const customerName = $(this).data('customer-name');
             const orderDbId = $(this).data('order-db-id');
-            const totalAmount = parseFloat($(this).data('total-amount')).toFixed(2); // convert to decimal format
-            const advancePayment = parseFloat($(this).data('advance-payment')).toFixed(2); // convert to decimal format
-            const dueAmount = parseFloat($(this).data('due')).toFixed(2); // convert to decimal format
+            const totalAmount = parseFloat($(this).data('total-amount')).toFixed(2);
+            const advancePayment = parseFloat($(this).data('advance-payment')).toFixed(2);
+            const dueAmount = parseFloat($(this).data('due')).toFixed(2);
 
             $('#modalOrderId').text(orderId);
             $('#modalCustomerName').html(customerName);
@@ -437,31 +458,34 @@
             $('#modalAdvancePayment').text(advancePayment);
             $('#modalDueAmount').text(dueAmount);
             $('#confirmPickupBtn').data('order-db-id', orderDbId);
-            $('#amountReceived').val(dueAmount); // Auto-fill with due
+            $('#amountReceived').val(dueAmount);
 
-            // Clear existing product list
             $('#productList').empty();
 
-
-            // Add product details
             if (row.orderProducts && row.orderProducts.length > 0) {
                 row.orderProducts.forEach(op => {
                     const item = `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="fw-semibold">${op.productName}</span>
-                        <small class="text-muted d-block">Qty: ${op.quantity}, Silai Type: ${op.silaiType}, Amount: ${op.amount}</small>
-                    </div>
-                    <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
-                </li>
-            `;
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-semibold">${op.productName}</span>
+                            <small class="text-muted d-block">
+                                Qty: ${op.quantity},
+                                Silai Type: ${op.silaiType},
+                                Amount: ${op.amount}
+                            </small>
+                        </div>
+                        <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
+                    </li>
+                `;
+
                     $('#productList').append(item);
                 });
             } else {
-                $('#productList').append(`<li class="list-group-item text-muted">No products found.</li>`);
+                $('#productList').append(
+                    `<li class="list-group-item text-muted">No products found.</li>`
+                );
             }
         });
-
     });
 
     $('#confirmPickupBtn').on('click', function () {

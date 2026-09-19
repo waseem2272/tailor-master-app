@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -52,39 +53,161 @@ public class OrderService {
     private final InventoryItemService inventoryItemService;
 
     // Save an order
+    @Transactional
     public Order save(Order order) {
-        try {
-            order.setUser(authenticatedUserService.getCurrentUser());
-            Order savedOrder = orderRepository.save(order);
 
-            // 1. Create a CREDIT entry for the full order amount
-            CustomerPaymentLedger creditEntry = new CustomerPaymentLedger();
-            creditEntry.setCustomer(savedOrder.getCustomer());
-            creditEntry.setOrder(savedOrder);
-            creditEntry.setAmount(savedOrder.getTotalProductAmount());
-            creditEntry.setPaymentType(PaymentType.CREDIT); // assuming enum
-            creditEntry.setRemarks("Order created#" + savedOrder.getOrderId());
-            creditEntry.setPaymentDate(LocalDate.now());
-            customerPaymentRepository.save(creditEntry);
+        User currentUser = authenticatedUserService.getCurrentUser();
+        order.setUser(currentUser);
 
-            // 2. If advance is paid, create a DEBIT entry
-            if (order.getAdvancePayment() != null && order.getAdvancePayment().compareTo(BigDecimal.ZERO) > 0) {
-                CustomerPaymentLedger debitEntry = new CustomerPaymentLedger();
-                debitEntry.setCustomer(savedOrder.getCustomer());
-                debitEntry.setOrder(savedOrder);
-                debitEntry.setAmount(savedOrder.getAdvancePayment());
-                debitEntry.setPaymentType(PaymentType.DEBIT);
-                debitEntry.setRemarks("Advance payment at order creation#" + savedOrder.getOrderId());
-                debitEntry.setPaymentDate(LocalDate.now());
-                customerPaymentRepository.save(debitEntry);
+        Order savedOrder = orderRepository.save(order);
+
+        BigDecimal finalTotal = BigDecimal.ZERO;
+
+        for (OrderProduct orderProduct : savedOrder.getOrderProducts()) {
+
+            if (orderProduct.getOrderProductType() == OrderProductType.INVENTORY) {
+
+                if (orderProduct.getInventoryItem() == null) {
+                    throw new IllegalStateException(
+                            "Inventory item is missing for inventory order product."
+                    );
+                }
+
+                BigDecimal quantity =
+                        BigDecimal.valueOf(orderProduct.getQuantity());
+
+                BigDecimal inventoryAmount =
+                        orderInventoryService.reserveInventory(
+                                savedOrder,
+                                orderProduct,
+                                orderProduct.getInventoryItem().getId(),
+                                quantity
+                        );
+
+                BigDecimal inventoryUnitPrice =
+                        quantity.compareTo(BigDecimal.ZERO) > 0
+                                ? inventoryAmount.divide(
+                                quantity,
+                                2,
+                                RoundingMode.HALF_UP
+                        )
+                                : BigDecimal.ZERO;
+
+                orderProduct.setInventoryAmount(inventoryAmount);
+                orderProduct.setInventoryUnitPrice(inventoryUnitPrice);
+                orderProduct.setSubtotal(inventoryAmount);
+
+                orderProductRepository.save(orderProduct);
+
+                finalTotal = finalTotal.add(inventoryAmount);
+
+                logger.info(
+                        "Inventory order product reserved. orderId={}, orderProductId={}, quantity={}, amount={}, unitPrice={}",
+                        savedOrder.getOrderId(),
+                        orderProduct.getId(),
+                        quantity,
+                        inventoryAmount,
+                        inventoryUnitPrice
+                );
+
+                continue;
             }
 
-            logger.info("Order saved with ID: {}", savedOrder.getId());
-            return savedOrder;
-        } catch (Exception e) {
-            logger.error("Error saving order: {}", e.getMessage(), e);
-            throw new RuntimeException("Error saving order.", e);
+            BigDecimal stitchingAmount =
+                    orderProduct.getSilaiAmount() != null
+                            ? orderProduct.getSilaiAmount()
+                            .multiply(BigDecimal.valueOf(orderProduct.getQuantity()))
+                            : BigDecimal.ZERO;
+
+            BigDecimal fabricAmount = BigDecimal.ZERO;
+
+            if (orderProduct.getFabricSource() == FabricSource.SHOP &&
+                    orderProduct.getInventoryItem() != null &&
+                    orderProduct.getFabricQuantity() != null) {
+
+                fabricAmount =
+                        orderInventoryService.reserveInventory(
+                                savedOrder,
+                                orderProduct,
+                                orderProduct.getInventoryItem().getId(),
+                                orderProduct.getFabricQuantity()
+                        );
+
+                BigDecimal fabricUnitPrice =
+                        orderProduct.getFabricQuantity().compareTo(BigDecimal.ZERO) > 0
+                                ? fabricAmount.divide(
+                                orderProduct.getFabricQuantity(),
+                                2,
+                                RoundingMode.HALF_UP
+                        )
+                                : BigDecimal.ZERO;
+
+                orderProduct.setFabricAmount(fabricAmount);
+                orderProduct.setFabricUnitPrice(fabricUnitPrice);
+
+                logger.info(
+                        "Shop fabric reserved. orderId={}, orderProductId={}, quantity={}, amount={}, unitPrice={}",
+                        savedOrder.getOrderId(),
+                        orderProduct.getId(),
+                        orderProduct.getFabricQuantity(),
+                        fabricAmount,
+                        fabricUnitPrice
+                );
+            }
+
+            BigDecimal subtotal = stitchingAmount.add(fabricAmount);
+
+            orderProduct.setSubtotal(subtotal);
+            orderProductRepository.save(orderProduct);
+
+            finalTotal = finalTotal.add(subtotal);
         }
+
+        BigDecimal advance = savedOrder.getAdvancePayment() != null
+                ? savedOrder.getAdvancePayment()
+                : BigDecimal.ZERO;
+
+        BigDecimal due = finalTotal.subtract(advance);
+
+        savedOrder.setTotalProductAmount(finalTotal);
+        savedOrder.setDuePayment(due);
+
+        savedOrder = orderRepository.save(savedOrder);
+
+        CustomerPaymentLedger creditEntry = new CustomerPaymentLedger();
+        creditEntry.setCustomer(savedOrder.getCustomer());
+        creditEntry.setOrder(savedOrder);
+        creditEntry.setAmount(finalTotal);
+        creditEntry.setPaymentType(PaymentType.CREDIT);
+        creditEntry.setRemarks("Order created#" + savedOrder.getOrderId());
+        creditEntry.setPaymentDate(LocalDate.now());
+        customerPaymentRepository.save(creditEntry);
+
+        if (advance.compareTo(BigDecimal.ZERO) > 0) {
+            CustomerPaymentLedger debitEntry = new CustomerPaymentLedger();
+            debitEntry.setCustomer(savedOrder.getCustomer());
+            debitEntry.setOrder(savedOrder);
+            debitEntry.setAmount(advance);
+            debitEntry.setPaymentType(PaymentType.DEBIT);
+            debitEntry.setRemarks(
+                    "Advance payment at order creation#" +
+                            savedOrder.getOrderId()
+            );
+            debitEntry.setPaymentDate(LocalDate.now());
+            customerPaymentRepository.save(debitEntry);
+        }
+
+        logger.info(
+                "Order saved successfully with FIFO inventory reservation. orderId={}, orderPkId={}, total={}, advance={}, due={}",
+                savedOrder.getOrderId(),
+                savedOrder.getId(),
+                finalTotal,
+                advance,
+                due
+        );
+
+        return savedOrder;
+
     }
 
     @Transactional
@@ -234,6 +357,12 @@ public class OrderService {
                     ? existingOrder.getAdvancePayment()
                     : BigDecimal.ZERO;
 
+            /*
+             * Release all active reservations of this pending order.
+             * Physical stock is NOT changed.
+             */
+            orderInventoryService.releasePendingOrderReservations(existingOrder);
+
             existingOrder.setOrderDate(dto.getOrderDate());
             existingOrder.setDeliveryDate(dto.getDeliveryDate());
             existingOrder.setUser(currentUser);
@@ -245,6 +374,7 @@ public class OrderService {
 
             for (OrderProduct existingProduct : existingOrderProducts) {
                 String key = buildOrderProductKey(
+                        existingProduct.getOrderProductType(),
                         existingProduct.getProduct() != null
                                 ? existingProduct.getProduct().getId()
                                 : null,
@@ -262,7 +392,134 @@ public class OrderService {
             Set<OrderProduct> reusedExistingProducts = new HashSet<>();
             List<OrderProduct> updatedOrderProducts = new ArrayList<>();
 
+            BigDecimal newTotal = BigDecimal.ZERO;
+
             for (OrderProductDto productDto : dto.getOrderProducts()) {
+
+                OrderProductType orderProductType =
+                        productDto.getOrderProductType();
+
+                if (orderProductType == null) {
+                    orderProductType = OrderProductType.TAILORING;
+                }
+
+                /*
+                 * =========================================================
+                 * INVENTORY PRODUCT
+                 * =========================================================
+                 */
+                if (orderProductType == OrderProductType.INVENTORY) {
+
+                    if (productDto.getInventoryItemId() == null) {
+                        throw new RuntimeException(
+                                "Inventory item is required."
+                        );
+                    }
+
+                    if (productDto.getQuantity() == null ||
+                            productDto.getQuantity() <= 0) {
+                        throw new RuntimeException(
+                                "Inventory quantity must be greater than zero."
+                        );
+                    }
+
+                    InventoryItem inventoryItem =
+                            inventoryItemService.getById(
+                                    productDto.getInventoryItemId()
+                            );
+
+                    if (inventoryItem == null) {
+                        throw new RuntimeException(
+                                "Inventory item not found."
+                        );
+                    }
+
+                    if (Boolean.FALSE.equals(inventoryItem.getActive())) {
+                        throw new RuntimeException(
+                                "Selected inventory item is inactive: " +
+                                        inventoryItem.getName()
+                        );
+                    }
+
+                    String productKey = buildOrderProductKey(
+                            OrderProductType.INVENTORY,
+                            null,
+                            null,
+                            inventoryItem.getId()
+                    );
+
+                    OrderProduct orderProduct = null;
+
+                    List<OrderProduct> matchingProducts =
+                            existingProductMap.get(productKey);
+
+                    if (matchingProducts != null &&
+                            !matchingProducts.isEmpty()) {
+                        orderProduct = matchingProducts.remove(0);
+                        reusedExistingProducts.add(orderProduct);
+                    }
+
+                    if (orderProduct == null) {
+                        orderProduct = new OrderProduct();
+                        orderProduct.setOrder(existingOrder);
+                    }
+
+                    BigDecimal quantity =
+                            BigDecimal.valueOf(productDto.getQuantity());
+
+                    BigDecimal inventoryAmount =
+                            orderInventoryService.reserveInventory(
+                                    existingOrder,
+                                    orderProduct,
+                                    inventoryItem.getId(),
+                                    quantity
+                            );
+
+                    BigDecimal inventoryUnitPrice =
+                            quantity.compareTo(BigDecimal.ZERO) > 0
+                                    ? inventoryAmount.divide(
+                                    quantity,
+                                    2,
+                                    RoundingMode.HALF_UP
+                            )
+                                    : BigDecimal.ZERO;
+
+                    orderProduct.setProduct(null);
+                    orderProduct.setInventoryItem(inventoryItem);
+                    orderProduct.setOrderProductType(
+                            OrderProductType.INVENTORY
+                    );
+                    orderProduct.setQuantity(productDto.getQuantity());
+                    orderProduct.setSilaiType(null);
+                    orderProduct.setSilaiAmount(null);
+                    orderProduct.setAdditionalNotes(
+                            productDto.getAdditionalNotes()
+                    );
+                    orderProduct.setFabricSource(
+                            FabricSource.CUSTOMER
+                    );
+                    orderProduct.setFabricQuantity(null);
+                    orderProduct.setFabricUnitPrice(null);
+                    orderProduct.setFabricAmount(null);
+                    orderProduct.setInventoryUnitPrice(
+                            inventoryUnitPrice
+                    );
+                    orderProduct.setInventoryAmount(
+                            inventoryAmount
+                    );
+                    orderProduct.setSubtotal(inventoryAmount);
+
+                    updatedOrderProducts.add(orderProduct);
+                    newTotal = newTotal.add(inventoryAmount);
+
+                    continue;
+                }
+
+                /*
+                 * =========================================================
+                 * TAILORING PRODUCT
+                 * =========================================================
+                 */
 
                 if (productDto.getProductId() == null) {
                     throw new RuntimeException("Product is required.");
@@ -276,7 +533,10 @@ public class OrderService {
                 }
 
                 Product product = productRepository
-                        .findByIdAndUser(productDto.getProductId(), currentUser)
+                        .findByIdAndUser(
+                                productDto.getProductId(),
+                                currentUser
+                        )
                         .orElseThrow(() ->
                                 new RuntimeException(
                                         "Product not found: " +
@@ -310,7 +570,8 @@ public class OrderService {
                     );
                 }
 
-                FabricSource fabricSource = productDto.getFabricSource();
+                FabricSource fabricSource =
+                        productDto.getFabricSource();
 
                 if (fabricSource == null) {
                     fabricSource = FabricSource.CUSTOMER;
@@ -323,7 +584,8 @@ public class OrderService {
                 }
 
                 String productKey = buildOrderProductKey(
-                        productDto.getProductId(),
+                        OrderProductType.TAILORING,
+                        product.getId(),
                         fabricSource,
                         inventoryItemId
                 );
@@ -343,9 +605,11 @@ public class OrderService {
                 if (orderProduct == null) {
                     orderProduct = new OrderProduct();
                     orderProduct.setOrder(existingOrder);
-                    orderProduct.setProduct(product);
                 }
 
+                orderProduct.setOrderProductType(
+                        OrderProductType.TAILORING
+                );
                 orderProduct.setProduct(product);
                 orderProduct.setQuantity(productDto.getQuantity());
                 orderProduct.setSilaiType(silaiType);
@@ -354,9 +618,23 @@ public class OrderService {
                         productDto.getAdditionalNotes()
                 );
                 orderProduct.setFabricSource(fabricSource);
+                orderProduct.setInventoryUnitPrice(null);
+                orderProduct.setInventoryAmount(null);
+
+                BigDecimal stitchingAmount =
+                        silaiAmount.multiply(
+                                BigDecimal.valueOf(
+                                        productDto.getQuantity()
+                                )
+                        );
 
                 BigDecimal fabricAmount = BigDecimal.ZERO;
 
+                /*
+                 * =========================================================
+                 * SHOP FABRIC
+                 * =========================================================
+                 */
                 if (fabricSource == FabricSource.SHOP) {
 
                     if (productDto.getInventoryItemId() == null) {
@@ -401,70 +679,45 @@ public class OrderService {
                         );
                     }
 
-                    BigDecimal physicalStock =
-                            inventoryItem.getQuantity() != null
-                                    ? inventoryItem.getQuantity()
+                    /*
+                     * FIFO reservation also calculates the correct
+                     * batch-wise selling amount.
+                     */
+                    fabricAmount =
+                            orderInventoryService.reserveInventory(
+                                    existingOrder,
+                                    orderProduct,
+                                    inventoryItem.getId(),
+                                    requestedQuantity
+                            );
+
+                    BigDecimal fabricUnitPrice =
+                            requestedQuantity.compareTo(BigDecimal.ZERO) > 0
+                                    ? fabricAmount.divide(
+                                    requestedQuantity,
+                                    2,
+                                    RoundingMode.HALF_UP
+                            )
                                     : BigDecimal.ZERO;
 
-                    BigDecimal reservedQuantity =
-                            orderProductRepository
-                                    .getReservedQuantityExcludingOrder(
-                                            inventoryItem.getId(),
-                                            FabricSource.SHOP,
-                                            OrderStatus.PENDING,
-                                            existingOrder.getId()
-                                    );
-
-                    BigDecimal availableStock =
-                            physicalStock.subtract(reservedQuantity);
-
-                    if (availableStock.compareTo(BigDecimal.ZERO) < 0) {
-                        availableStock = BigDecimal.ZERO;
-                    }
-
-                    if (requestedQuantity.compareTo(availableStock) > 0) {
-                        throw new RuntimeException(
-                                "Insufficient available stock for fabric: " +
-                                        inventoryItem.getName() +
-                                        ". Available: " +
-                                        availableStock
-                                                .stripTrailingZeros()
-                                                .toPlainString()
-                        );
-                    }
-
-                    BigDecimal salePrice =
-                            inventoryItem.getSalePrice();
-
-                    if (salePrice == null ||
-                            salePrice.compareTo(BigDecimal.ZERO) < 0) {
-                        throw new RuntimeException(
-                                "Invalid sale price for fabric: " +
-                                        inventoryItem.getName()
-                        );
-                    }
-
-                    fabricAmount =
-                            requestedQuantity.multiply(salePrice);
-
                     orderProduct.setInventoryItem(inventoryItem);
-                    orderProduct.setFabricQuantity(requestedQuantity);
-                    orderProduct.setFabricUnitPrice(salePrice);
-                    orderProduct.setFabricAmount(fabricAmount);
+                    orderProduct.setFabricQuantity(
+                            requestedQuantity
+                    );
+                    orderProduct.setFabricUnitPrice(
+                            fabricUnitPrice
+                    );
+                    orderProduct.setFabricAmount(
+                            fabricAmount
+                    );
 
                 } else {
+
                     orderProduct.setInventoryItem(null);
                     orderProduct.setFabricQuantity(null);
                     orderProduct.setFabricUnitPrice(null);
                     orderProduct.setFabricAmount(null);
                 }
-
-                BigDecimal stitchingAmount =
-                        silaiAmount.multiply(
-                                BigDecimal.valueOf(
-                                        productDto.getQuantity()
-                                )
-                        );
 
                 BigDecimal subtotal =
                         stitchingAmount.add(fabricAmount);
@@ -472,8 +725,12 @@ public class OrderService {
                 orderProduct.setSubtotal(subtotal);
 
                 updatedOrderProducts.add(orderProduct);
+                newTotal = newTotal.add(subtotal);
             }
 
+            /*
+             * Delete old products that are no longer present.
+             */
             for (OrderProduct existingProduct : existingOrderProducts) {
                 if (!reusedExistingProducts.contains(existingProduct)) {
                     existingOrder.getOrderProducts().remove(existingProduct);
@@ -487,12 +744,6 @@ public class OrderService {
             for (OrderProduct orderProduct : updatedOrderProducts) {
                 orderProduct.setOrder(existingOrder);
             }
-
-            BigDecimal newTotal =
-                    updatedOrderProducts.stream()
-                            .map(OrderProduct::getSubtotal)
-                            .filter(Objects::nonNull)
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             BigDecimal newAdvance =
                     dto.getAdvancePayment() != null
@@ -517,52 +768,97 @@ public class OrderService {
             Order savedOrder =
                     orderRepository.save(existingOrder);
 
+            /*
+             * =========================================================
+             * CUSTOMER LEDGER - ORDER AMOUNT DIFFERENCE
+             * =========================================================
+             */
             if (newTotal.compareTo(oldTotal) > 0) {
+
                 BigDecimal difference =
                         newTotal.subtract(oldTotal);
 
                 CustomerPaymentLedger ledger =
                         new CustomerPaymentLedger();
 
+                ledger.setCustomer(savedOrder.getCustomer());
                 ledger.setOrder(savedOrder);
                 ledger.setAmount(difference);
                 ledger.setPaymentType(PaymentType.CREDIT);
-                ledger.setRemarks("Order amount increased");
+                ledger.setPaymentDate(LocalDate.now());
+                ledger.setRemarks(
+                        "Order amount increased"
+                );
 
                 customerPaymentRepository.save(ledger);
 
             } else if (newTotal.compareTo(oldTotal) < 0) {
+
                 BigDecimal difference =
                         oldTotal.subtract(newTotal);
 
                 CustomerPaymentLedger ledger =
                         new CustomerPaymentLedger();
 
+                ledger.setCustomer(savedOrder.getCustomer());
                 ledger.setOrder(savedOrder);
                 ledger.setAmount(difference);
                 ledger.setPaymentType(PaymentType.DEBIT);
-                ledger.setRemarks("Order amount decreased");
+                ledger.setPaymentDate(LocalDate.now());
+                ledger.setRemarks(
+                        "Order amount decreased"
+                );
 
                 customerPaymentRepository.save(ledger);
             }
 
+            /*
+             * =========================================================
+             * CUSTOMER LEDGER - ADVANCE DIFFERENCE
+             * =========================================================
+             */
             if (newAdvance.compareTo(oldAdvance) > 0) {
+
                 BigDecimal difference =
                         newAdvance.subtract(oldAdvance);
 
                 CustomerPaymentLedger ledger =
                         new CustomerPaymentLedger();
 
+                ledger.setCustomer(savedOrder.getCustomer());
                 ledger.setOrder(savedOrder);
                 ledger.setAmount(difference);
                 ledger.setPaymentType(PaymentType.DEBIT);
-                ledger.setRemarks("Advance payment received");
+                ledger.setPaymentDate(LocalDate.now());
+                ledger.setRemarks(
+                        "Advance payment received"
+                );
+
+                customerPaymentRepository.save(ledger);
+
+            } else if (newAdvance.compareTo(oldAdvance) < 0) {
+
+                BigDecimal difference =
+                        oldAdvance.subtract(newAdvance);
+
+                CustomerPaymentLedger ledger =
+                        new CustomerPaymentLedger();
+
+                ledger.setCustomer(savedOrder.getCustomer());
+                ledger.setOrder(savedOrder);
+                ledger.setAmount(difference);
+                ledger.setPaymentType(PaymentType.CREDIT);
+                ledger.setPaymentDate(LocalDate.now());
+                ledger.setRemarks(
+                        "Advance payment reduced"
+                );
 
                 customerPaymentRepository.save(ledger);
             }
 
             logger.info(
-                    "Order updated successfully. Order ID: {}, Total: {}, Advance: {}, Due: {}",
+                    "Order updated successfully with FIFO reservations. " +
+                            "Order ID: {}, Total: {}, Advance: {}, Due: {}",
                     savedOrder.getId(),
                     savedOrder.getTotalProductAmount(),
                     savedOrder.getAdvancePayment(),
@@ -572,24 +868,28 @@ public class OrderService {
             return savedOrder;
 
         } catch (EntityNotFoundException e) {
+
             logger.error(
                     "Entity not found while updating order ID {}: {}",
                     orderId,
                     e.getMessage(),
                     e
             );
+
             throw new RuntimeException(
                     "Required data not found.",
                     e
             );
 
         } catch (Exception e) {
+
             logger.error(
                     "Error updating order ID {}: {}",
                     orderId,
                     e.getMessage(),
                     e
             );
+
             throw new RuntimeException(
                     e.getMessage(),
                     e
@@ -731,15 +1031,29 @@ public class OrderService {
 
 
     public List<Map<String, Object>> getOrderProducts(Order order) {
-        // get order products
         List<OrderProduct> orderProducts = order.getOrderProducts();
         return orderProducts.stream().map(op -> {
             Map<String, Object> opMap = new HashMap<>();
-            opMap.put("productName", op.getProduct().getName());
+
+            String productName;
+
+//            if (op.getOrderProductType() == OrderProductType.INVENTORY) {
+                productName = op.getInventoryItem() != null
+                        ? op.getInventoryItem().getName()
+                        : "Unknown Inventory Item";
+//            } else {
+//                productName = op.getProduct() != null
+//                        ? op.getProduct().getName()
+//                        : "Unknown Product";
+//            }
+
+            opMap.put("productName", productName);
             opMap.put("quantity", op.getQuantity());
             opMap.put("silaiType", op.getSilaiType());
             opMap.put("amount", op.getSilaiAmount());
             opMap.put("subtotal", op.getSubtotal());
+            opMap.put("orderProductType", op.getOrderProductType());
+
             return opMap;
         }).toList();
     }
@@ -991,5 +1305,20 @@ public class OrderService {
             logger.error("Error fetching upcoming deliveries: {}", e.getMessage(), e);
             throw new RuntimeException("Error fetching upcoming deliveries.", e);
         }
+    }
+
+    private String buildOrderProductKey(
+            OrderProductType orderProductType,
+            Long productId,
+            FabricSource fabricSource,
+            Long inventoryItemId
+    ) {
+        return String.valueOf(orderProductType) +
+                "|" +
+                String.valueOf(productId) +
+                "|" +
+                String.valueOf(fabricSource) +
+                "|" +
+                String.valueOf(inventoryItemId);
     }
 }

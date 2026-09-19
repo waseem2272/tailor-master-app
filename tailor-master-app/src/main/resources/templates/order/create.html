@@ -7,6 +7,54 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <style>
+        .order-summary-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 9px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .order-summary-label {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .order-summary-value {
+            color: #212529;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .payment-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 15px;
+        }
+
+        .payment-summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .payment-summary-row strong {
+            font-size: 16px;
+        }
+
+        .due-row {
+            font-size: 17px;
+            border-top: 2px solid #eeeeee;
+            margin-top: 5px;
+            padding-top: 13px;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -55,18 +103,27 @@
                     </div>
 
                     <div class="card-body">
-                        <div class="row g-3">
+                        <div class="row g-3" id="tailoringProductFields">
+                            <!-- Order Type -->
+                            <div class="col-md-3">
+                                <label for="orderProductType" class="form-label fw-bold">
+                                    Order Type
+                                </label>
+                                <select class="form-select" id="orderProductType">
+                                    <option value="TAILORING" selected>Tailoring</option>
+                                    <option value="INVENTORY">Inventory</option>
+                                </select>
+                            </div>
+
                             <!-- Product -->
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label for="productSelect" class="form-label fw-bold">
                                     Select Product
                                 </label>
-
                                 <select class="form-select" id="productSelect">
                                     <option value="" disabled selected>
                                         -- Select a Product --
                                     </option>
-
                                     <option th:each="p : ${products}"
                                             th:value="${p.id}"
                                             th:text="${p.name}">
@@ -75,11 +132,10 @@
                             </div>
 
                             <!-- Silai -->
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="silaiSelect" class="form-label fw-bold">
                                     Silai Type
                                 </label>
-
                                 <select class="form-select" id="silaiSelect">
                                     <option value="" disabled selected>
                                         -- Silai Type --
@@ -88,11 +144,10 @@
                             </div>
 
                             <!-- Quantity -->
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="quantity" class="form-label fw-bold">
                                     Quantity
                                 </label>
-
                                 <input type="number"
                                        step="1"
                                        min="1"
@@ -103,7 +158,7 @@
                         </div>
 
                         <!-- Fabric Source -->
-                        <div class="row g-3 mt-1">
+                        <div class="row g-3 mt-1" id="tailoringFabricFields">
                             <div class="col-md-4">
                                 <label for="fabricSource" class="form-label fw-bold">
                                     Fabric Source
@@ -130,13 +185,33 @@
                                         -- Select Shop Fabric --
                                     </option>
 
-                                    <option th:each="item : ${inventoryItems}"
+                                    <option th:each="item : ${fabricItems}"
                                             th:value="${item.id}"
+                                            th:data-name="${item.name}"
+                                            th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                            th:data-category="${item.category != null ? item.category.name : ''}"
+                                            th:data-color="${item.color != null ? item.color.name : ''}"
+                                            th:data-design="${item.design != null ? item.design.name : ''}"
+                                            th:data-size="${item.size != null ? item.size : ''}"
                                             th:data-stock="${item.quantity}"
                                             th:data-reserved="${reservedStockMap[item.id]}"
                                             th:data-unit="${item.unit}"
                                             th:data-sale-price="${item.salePrice}"
-                                            th:text="${item.name + ' - Stock: ' + item.quantity.stripTrailingZeros().toPlainString() + ' ' + item.unit.name()}">
+                                            th:text="${item.name
+                    + ' | '
+                    + (item.brand != null ? item.brand.name + ' | ' : '')
+                    + (item.category != null ? item.category.name + ' | ' : '')
+                    + (item.color != null ? item.color.name + ' | ' : '')
+                    + (item.design != null ? item.design.name + ' | ' : '')
+                    + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
+                    + (item.quantity.subtract(
+                        reservedStockMap[item.id] != null
+                            ? reservedStockMap[item.id]
+                            : T(java.math.BigDecimal).ZERO
+                    ).max(T(java.math.BigDecimal).ZERO))
+                    .stripTrailingZeros().toPlainString()
+                    + ' ' + item.unit.name()
+                    + ' Available'}">
                                     </option>
                                 </select>
 
@@ -165,9 +240,79 @@
                                        placeholder="e.g. 4.50">
 
                                 <small class="text-muted">
-                                    Quantity in meters
+                                    Quantity in meters or pieces
                                 </small>
                             </div>
+                        </div>
+
+                        <!-- Inventory Item -->
+                        <div class="row g-3 mt-1" id="inventoryItemContainer" style="display: none;">
+
+                            <div class="col-md-6">
+                                <label for="inventoryItemOrderSelect" class="form-label fw-bold">Inventory Item</label>
+                                <select class="form-select" id="inventoryItemOrderSelect">
+                                    <option value="" disabled selected>
+                                        -- Select Inventory Item --
+                                    </option>
+
+                                    <option th:each="item : ${inventoryItems}"
+                                            th:value="${item.id}"
+                                            th:data-name="${item.name}"
+                                            th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                            th:data-category="${item.category != null ? item.category.name : ''}"
+                                            th:data-color="${item.color != null ? item.color.name : ''}"
+                                            th:data-design="${item.design != null ? item.design.name : ''}"
+                                            th:data-size="${item.size != null ? item.size : ''}"
+                                            th:data-stock="${item.quantity}"
+                                            th:data-reserved="${reservedStockMap[item.id]}"
+                                            th:data-unit="${item.unit}"
+                                            th:data-sale-price="${item.salePrice}"
+                                            th:text="${item.name
+                    + ' | '
+                    + (item.brand != null ? item.brand.name + ' | ' : '')
+                    + (item.category != null ? item.category.name + ' | ' : '')
+                    + (item.color != null ? item.color.name + ' | ' : '')
+                    + (item.design != null ? item.design.name + ' | ' : '')
+                    + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
+                    + (item.quantity.subtract(
+                        reservedStockMap[item.id] != null
+                            ? reservedStockMap[item.id]
+                            : T(java.math.BigDecimal).ZERO
+                    ).max(T(java.math.BigDecimal).ZERO))
+                    .stripTrailingZeros().toPlainString()
+                    + ' ' + item.unit.name()
+                    + ' Available'}">
+                                    </option>
+                                </select>
+
+                                <div id="inventoryStockInfo"
+                                     class="small text-success fw-semibold mt-1"
+                                     style="display: none;">
+                                </div>
+
+                                <div id="inventoryStockError"
+                                     class="text-danger small mt-1"
+                                     style="display: none;">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="inventoryQuantity" class="form-label fw-bold">
+                                    Quantity
+                                </label>
+
+                                <input type="number"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control"
+                                       id="inventoryQuantity"
+                                       placeholder="e.g. 1">
+
+                                <small class="text-muted">
+                                    Quantity in meters or pieces
+                                </small>
+                            </div>
+
                         </div>
 
                         <!-- Additional Notes -->
@@ -216,6 +361,7 @@
                                     <th>Fabric Qty</th>
                                     <th>Fabric Amount</th>
                                     <th>Silai Amount</th>
+                                    <th>Unit Price</th>
                                     <th>Quantity</th>
                                     <th>Subtotal</th>
                                     <th>Additional Notes</th>
@@ -372,7 +518,6 @@
                     <i class="bi bi-receipt-cutoff me-2"></i>
                     Order Summary
                 </h5>
-
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="modal"
@@ -381,103 +526,125 @@
             </div>
 
             <div class="modal-body">
+
                 <!-- Customer Information -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i>
+                        <i class="bi bi-person-circle me-2"></i>
                         Customer Information
                     </div>
 
                     <div class="card-body">
-                        <p>
-                            <strong>Name:</strong>
-                            <span id="modalCustomerName">-</span>
-                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="order-summary-info">
+                                    <span class="order-summary-label">Name</span>
+                                    <span class="order-summary-value" id="modalCustomerName">-</span>
+                                </div>
+                            </div>
 
-                        <p>
-                            <strong>Phone Number:</strong>
-                            <span id="modalCustomerContact">-</span>
-                        </p>
+                            <div class="col-md-6">
+                                <div class="order-summary-info">
+                                    <span class="order-summary-label">Phone Number</span>
+                                    <span class="order-summary-value" id="modalCustomerContact">-</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Order Information -->
                 <div class="card shadow-sm border-success border-bottom border-3 mb-4">
-                    <div class="card-header bg-success text-white fw-bold">
+                    <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-calendar-check me-2"></i>
                         Order Information
                     </div>
 
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <p>
-                                    <strong>Order Date:</strong>
-                                    <span id="modalOrderDate">-</span>
-                                </p>
+                                <div class="order-summary-info">
+                                    <span class="order-summary-label">Order Date</span>
+                                    <span class="order-summary-value" id="modalOrderDate">-</span>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
-                                <p>
-                                    <strong>Delivery Date:</strong>
-                                    <span id="modalDeliveryDate">-</span>
-                                </p>
+                                <div class="order-summary-info">
+                                    <span class="order-summary-label">Delivery Date</span>
+                                    <span class="order-summary-value" id="modalDeliveryDate">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Products Summary -->
-                <div class="card border-success border-bottom border-3 shadow-sm border-0 mb-3">
-                    <div class="card-header bg-success text-white rounded-top-4">
-                        <strong>
-                            <i class="bi bi-list-check me-2"></i>
-                            Products Summary
-                        </strong>
+                <div class="card shadow-sm border-success border-bottom border-3 mb-3">
+                    <div class="card-header bg-success text-white rounded-top-4 fw-bold">
+                        <i class="bi bi-list-check me-2"></i>
+                        Products Summary
                     </div>
 
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-bordered m-0">
+                            <table class="table table-bordered table-striped table-hover align-middle m-0">
+
                                 <thead class="table-success">
                                 <tr>
                                     <th>Product</th>
+                                    <th>Type</th>
                                     <th>Silai</th>
                                     <th>Fabric Source</th>
                                     <th>Shop Fabric</th>
                                     <th>Fabric Qty</th>
                                     <th>Fabric Amount</th>
-                                    <th>Silai Amount</th>
+                                    <th>Unit Price</th>
                                     <th>Qty</th>
                                     <th>Subtotal</th>
-                                    <th>Additional Notes</th>
+                                    <th>Notes</th>
                                 </tr>
                                 </thead>
 
                                 <tbody id="orderSummaryBody">
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
                 </div>
 
                 <!-- Payment Summary -->
-                <div class="text-end mt-4">
-                    <p class="fs-5 fw-bold">
-                        Total Amount:
-                        <span id="modalTotalAmount">0.00</span>
-                    </p>
+                <div class="card shadow-sm border-success border-bottom border-3 mt-4">
+                    <div class="card-header bg-success text-white rounded-top-4 fw-bold">
+                        <i class="bi bi-wallet2 me-2"></i>
+                        Payment Summary
+                    </div>
 
-                    <p class="fs-5 fw-bold text-success">
-                        Advance Payment:
-                        <span id="modalAdvancePayment">0.00</span>
-                    </p>
+                    <div class="card-body">
+                        <div class="row justify-content-end">
+                            <div class="col-md-6 col-lg-5">
 
-                    <p class="fs-5 fw-bold text-danger">
-                        Due Payment:
-                        <span id="modalDuePayment">0.00</span>
-                    </p>
+                                <div class="payment-summary-row">
+                                    <span>Total Amount</span>
+                                    <strong id="modalTotalAmount">0.00</strong>
+                                </div>
+
+                                <div class="payment-summary-row text-success">
+                                    <span>Advance Payment</span>
+                                    <strong id="modalAdvancePayment">0.00</strong>
+                                </div>
+
+                                <div class="payment-summary-row due-row text-danger">
+                                    <span>Due Payment</span>
+                                    <strong id="modalDuePayment">0.00</strong>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <div class="modal-footer">
@@ -495,6 +662,7 @@
                     Confirm Order
                 </button>
             </div>
+
         </div>
     </div>
 </div>
@@ -509,736 +677,10 @@
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
-</script>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-
     var productSilaiData = /*[[${productDtos}]]*/ [];
-
-    let orderItems = [];
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const orderDate = document.getElementById("orderDate");
-        const deliveryDate = document.getElementById("deliveryDate");
-
-        const today = new Date().toISOString().split("T")[0];
-
-        orderDate.min = today;
-        orderDate.max = today;
-
-        deliveryDate.min = today;
-
-        setupFabricControls();
-    });
-
-    function setupFabricControls() {
-        const fabricSource = document.getElementById("fabricSource");
-        const shopFabricContainer = document.getElementById("shopFabricContainer");
-        const fabricQuantityContainer = document.getElementById("fabricQuantityContainer");
-        const inventoryItemSelect = document.getElementById("inventoryItemSelect");
-        const fabricQuantity = document.getElementById("fabricQuantity");
-        const fabricStockInfo = document.getElementById("fabricStockInfo");
-        const fabricStockError = document.getElementById("fabricStockError");
-
-        fabricSource.addEventListener("change", function () {
-            const isShopFabric = this.value === "SHOP";
-
-            shopFabricContainer.style.display = isShopFabric ? "block" : "none";
-            fabricQuantityContainer.style.display = isShopFabric ? "block" : "none";
-
-            inventoryItemSelect.value = "";
-            fabricQuantity.value = "";
-            fabricStockInfo.style.display = "none";
-            fabricStockError.style.display = "none";
-        });
-
-        inventoryItemSelect.addEventListener("change", function () {
-
-            const selectedOption =
-                this.options[this.selectedIndex];
-
-            if (!this.value) {
-                fabricStockInfo.style.display = "none";
-                fabricStockError.style.display = "none";
-                return;
-            }
-
-
-            const physicalStock =
-                parseFloat(selectedOption.dataset.stock) || 0;
-
-            const reservedStock =
-                parseFloat(selectedOption.dataset.reserved) || 0;
-
-            const unit =
-                selectedOption.dataset.unit || "METER";
-
-
-            /*
-             * Quantity of the same inventory item
-             * already added in the current order.
-             */
-            const currentOrderQuantity =
-                getCurrentOrderFabricQuantity(this.value);
-
-
-            /*
-             * Real remaining available stock.
-             *
-             * Physical stock
-             * - Existing pending reservations
-             * - Current order usage
-             */
-            let availableStock =
-                physicalStock -
-                reservedStock -
-                currentOrderQuantity;
-
-
-            if (availableStock < 0) {
-                availableStock = 0;
-            }
-
-
-            fabricStockInfo.innerHTML =
-                "Physical Stock: " +
-                physicalStock.toFixed(2) + " " + unit +
-
-                " &nbsp; | &nbsp; " +
-
-                "Reserved Stock: " +
-                reservedStock.toFixed(2) + " " + unit +
-
-                " &nbsp; | &nbsp; " +
-
-                "Current Order: " +
-                currentOrderQuantity.toFixed(2) + " " + unit +
-
-                " &nbsp; | &nbsp; " +
-
-                "Available Stock: " +
-                availableStock.toFixed(2) + " " + unit;
-
-
-            fabricStockInfo.style.display = "block";
-
-            fabricQuantity.max = availableStock;
-
-            fabricStockError.style.display = "none";
-        });
-
-        fabricQuantity.addEventListener("input", function () {
-
-            const selectedOption =
-                inventoryItemSelect.options[
-                    inventoryItemSelect.selectedIndex
-                    ];
-
-
-            if (!selectedOption || !inventoryItemSelect.value) {
-                return;
-            }
-
-
-            const physicalStock =
-                parseFloat(selectedOption.dataset.stock) || 0;
-
-            const reservedStock =
-                parseFloat(selectedOption.dataset.reserved) || 0;
-
-
-            /*
-             * Already used by this current order.
-             */
-            const currentOrderQuantity =
-                getCurrentOrderFabricQuantity(
-                    inventoryItemSelect.value
-                );
-
-
-            /*
-             * Remaining stock for this order.
-             */
-            const availableStock =
-                Math.max(
-                    0,
-                    physicalStock -
-                    reservedStock -
-                    currentOrderQuantity
-                );
-
-
-            const quantity =
-                parseFloat(this.value) || 0;
-
-
-            if (quantity > availableStock) {
-
-                fabricStockError.innerText =
-                    "Fabric quantity cannot be greater than available stock (" +
-                    availableStock.toFixed(2) +
-                    ").";
-
-                fabricStockError.style.display = "block";
-
-            } else {
-
-                fabricStockError.innerText = "";
-
-                fabricStockError.style.display = "none";
-            }
-        });
-    }
-
-    document.getElementById("productSelect").addEventListener("change", function () {
-        const selectedId = this.value;
-        const silaiSelect = document.getElementById("silaiSelect");
-
-        silaiSelect.innerHTML =
-            '<option value="" disabled selected>-- Silai Type --</option>';
-
-        const product =
-            productSilaiData.find(p => p.id == selectedId);
-
-        if (product) {
-            const opt1 = document.createElement("option");
-            opt1.value = "single";
-            opt1.text = "Single Silai - " +
-                formatAmount(product.singleSilai);
-
-            silaiSelect.appendChild(opt1);
-
-            const opt2 = document.createElement("option");
-            opt2.value = "double";
-            opt2.text = "Double Silai - " +
-                formatAmount(product.doubleSilai);
-
-            silaiSelect.appendChild(opt2);
-        }
-    });
-
-    function formatAmount(amount) {
-        const value = parseFloat(amount);
-        return isNaN(value) ? "0.00" : value.toFixed(2);
-    }
-
-    function getCurrentOrderFabricQuantity(inventoryItemId) {
-
-        let totalQuantity = 0;
-
-        orderItems.forEach(function (item) {
-
-            if (
-                item.fabricSource === "SHOP" &&
-                String(item.inventoryItemId) === String(inventoryItemId)
-            ) {
-                totalQuantity +=
-                    Number(item.fabricQuantity || 0);
-            }
-        });
-
-        return totalQuantity;
-    }
-
-    document.getElementById("addProductBtn").addEventListener("click", function () {
-        const productSelect =
-            document.getElementById("productSelect");
-
-        const silaiSelect =
-            document.getElementById("silaiSelect");
-
-        const quantityInput =
-            document.getElementById("quantity");
-
-        const additionalNotesInput =
-            document.getElementById("additionalNotes");
-
-        const fabricSource =
-            document.getElementById("fabricSource");
-
-        const inventoryItemSelect =
-            document.getElementById("inventoryItemSelect");
-
-        const fabricQuantityInput =
-            document.getElementById("fabricQuantity");
-
-        const qty =
-            parseInt(quantityInput.value);
-
-        if (!productSelect.value ||
-            !silaiSelect.value ||
-            !qty ||
-            qty < 1) {
-
-            alert("Please select product, silai type and quantity.");
-            return;
-        }
-
-        const selectedFabricSource =
-            fabricSource.value;
-
-        let inventoryItemId = null;
-        let inventoryItemName = "-";
-        let fabricQuantity = null;
-        let fabricSalePrice = 0;
-        let fabricAmount = 0;
-
-        if (selectedFabricSource === "SHOP") {
-            if (!inventoryItemSelect.value) {
-                alert("Please select shop fabric.");
-                return;
-            }
-
-            fabricQuantity =
-                parseFloat(fabricQuantityInput.value);
-
-            if (!fabricQuantity ||
-                fabricQuantity <= 0) {
-
-                alert("Please enter fabric quantity.");
-                return;
-            }
-
-            const selectedOption =
-                inventoryItemSelect.options[
-                    inventoryItemSelect.selectedIndex
-                    ];
-
-            const physicalStock =
-                parseFloat(selectedOption.dataset.stock) || 0;
-
-            const reservedStock =
-                parseFloat(selectedOption.dataset.reserved) || 0;
-
-
-            /*
-             * Fabric already used by the current order
-             * for this same inventory item.
-             */
-            const currentOrderQuantity =
-                getCurrentOrderFabricQuantity(
-                    inventoryItemSelect.value
-                );
-
-
-            /*
-             * Remaining stock available for this new line.
-             */
-            const availableStock =
-                Math.max(
-                    0,
-                    physicalStock -
-                    reservedStock -
-                    currentOrderQuantity
-                );
-
-
-            if (fabricQuantity > availableStock) {
-
-                alert(
-                    "Fabric quantity cannot be greater than available stock. " +
-                    "Available: " +
-                    availableStock.toFixed(2) +
-                    " M"
-                );
-
-                return;
-            }
-
-            inventoryItemId =
-                inventoryItemSelect.value;
-
-            inventoryItemName =
-                selectedOption.text.split(" - Stock:")[0];
-
-            fabricSalePrice =
-                parseFloat(selectedOption.dataset.salePrice) || 0;
-
-            fabricAmount =
-                fabricQuantity * fabricSalePrice;
-        }
-
-        const product =
-            productSilaiData.find(
-                p => p.id == productSelect.value
-            );
-
-        if (!product) {
-            alert("Product information not found.");
-            return;
-        }
-
-        const silaiType =
-            silaiSelect.value;
-
-        const silaiAmount =
-            silaiType === "single"
-                ? parseFloat(product.singleSilai) || 0
-                : parseFloat(product.doubleSilai) || 0;
-
-        const stitchingAmount =
-            silaiAmount * qty;
-
-        const itemAmount =
-            stitchingAmount + fabricAmount;
-
-        const additionalNotes =
-            additionalNotesInput.value.trim();
-
-        const item = {
-            productId: productSelect.value,
-            productName: productSelect.options[
-                productSelect.selectedIndex
-                ].text,
-            silaiType: silaiType,
-            silai: silaiSelect.options[
-                silaiSelect.selectedIndex
-                ].text,
-            silaiAmount: silaiAmount,
-            stitchingAmount: stitchingAmount,
-            qty: qty,
-            amount: itemAmount,
-            fabricSource: selectedFabricSource,
-            inventoryItemId: inventoryItemId,
-            inventoryItemName: inventoryItemName,
-            fabricQuantity: fabricQuantity,
-            fabricSalePrice: fabricSalePrice,
-            fabricAmount: fabricAmount,
-            additionalNotes: additionalNotes
-        };
-
-        orderItems.push(item);
-
-        renderTable();
-        updateOrderDetails();
-
-        productSelect.selectedIndex = 0;
-
-        silaiSelect.innerHTML =
-            '<option value="" disabled selected>-- Silai Type --</option>';
-
-        quantityInput.value = "";
-        additionalNotesInput.value = "";
-
-        fabricSource.value = "CUSTOMER";
-        inventoryItemSelect.value = "";
-        fabricQuantityInput.value = "";
-
-        document.getElementById("shopFabricContainer").style.display = "none";
-        document.getElementById("fabricQuantityContainer").style.display = "none";
-        document.getElementById("fabricStockInfo").style.display = "none";
-        document.getElementById("fabricStockError").style.display = "none";
-    });
-
-    function renderTable() {
-        const tbody =
-            document.querySelector("#productTable tbody");
-
-        tbody.innerHTML = "";
-
-        orderItems.forEach((item, index) => {
-            const fabricSourceText =
-                item.fabricSource === "SHOP"
-                    ? "Shop Fabric"
-                    : "Customer Fabric";
-
-            tbody.innerHTML += `
-    <tr>
-        <td>${item.productName}</td>
-        <td>${item.silai}</td>
-        <td>${fabricSourceText}</td>
-        <td>${item.fabricSource === "SHOP"
-                ? item.inventoryItemName
-                : "-"}</td>
-        <td>${item.fabricSource === "SHOP"
-                ? item.fabricQuantity.toFixed(2) + " M"
-                : "-"}</td>
-        <td>${item.fabricSource === "SHOP"
-                ? item.fabricAmount.toFixed(2)
-                : "0.00"}</td>
-        <td>${item.silaiAmount.toFixed(2)}</td>
-        <td>${item.qty}</td>
-        <td>${item.amount.toFixed(2)}</td>
-        <td>${item.additionalNotes
-                ? item.additionalNotes
-                : "-"}</td>
-        <td>
-            <button type="button"
-                    class="btn btn-sm btn-danger"
-                    onclick="deleteItem(${index})">
-                <i class="bi bi-trash"></i>
-            </button>
-        </td>
-    </tr>
-`;
-        });
-    }
-
-    function deleteItem(index) {
-        orderItems.splice(index, 1);
-        updateOrderDetails();
-        renderTable();
-    }
-
-    function updateOrderDetails() {
-        let totalAmount = 0;
-
-        orderItems.forEach(item => {
-            totalAmount += item.amount;
-        });
-
-        const totalInput =
-            document.getElementById("totalProductAmount");
-
-        const advanceInput =
-            document.getElementById("advancePayment");
-
-        const dueInput =
-            document.getElementById("duePayment");
-
-        const advanceError =
-            document.getElementById("advancePaymentError");
-
-        totalInput.value =
-            totalAmount.toFixed(2);
-
-        let advancePayment =
-            parseFloat(advanceInput.value) || 0;
-
-        if (advancePayment < 0) {
-            advanceError.innerText =
-                "Advance payment cannot be negative.";
-
-            advanceError.style.display = "block";
-            dueInput.value = totalAmount.toFixed(2);
-            return;
-        }
-
-        if (advancePayment > totalAmount) {
-            advanceError.innerText =
-                "Advance payment cannot be greater than total product amount.";
-
-            advanceError.style.display = "block";
-            dueInput.value = "0.00";
-            return;
-        }
-
-        advanceError.innerText = "";
-        advanceError.style.display = "none";
-
-        const duePayment =
-            totalAmount - advancePayment;
-
-        dueInput.value =
-            duePayment.toFixed(2);
-    }
-
-    document.getElementById("advancePayment")
-        .addEventListener("input", function () {
-
-            if (this.value < 0) {
-                this.value = 0;
-            }
-
-            updateOrderDetails();
-        });
-
-    document.getElementById("createOrderButton")
-        .addEventListener("click", function () {
-
-            if (orderItems.length === 0) {
-                alert("Please add at least one product.");
-                return;
-            }
-
-            const orderDate =
-                document.getElementById("orderDate").value;
-
-            const deliveryDate =
-                document.getElementById("deliveryDate").value;
-
-            if (!orderDate || !deliveryDate) {
-                alert("Please select order and delivery date.");
-                return;
-            }
-
-            const totalAmount =
-                parseFloat(
-                    document.getElementById("totalProductAmount").value
-                ) || 0;
-
-            const advancePayment =
-                parseFloat(
-                    document.getElementById("advancePayment").value
-                ) || 0;
-
-            if (advancePayment < 0) {
-                alert("Advance payment cannot be negative.");
-                return;
-            }
-
-            if (advancePayment > totalAmount) {
-                alert(
-                    "Advance payment cannot be greater than total product amount."
-                );
-                return;
-            }
-
-            const duePayment =
-                totalAmount - advancePayment;
-
-            document.getElementById("modalCustomerName").innerText =
-                document.getElementById("customerName").value;
-
-            document.getElementById("modalCustomerContact").innerText =
-                document.getElementById("customerPhone").value;
-
-            document.getElementById("modalOrderDate").innerText =
-                orderDate;
-
-            document.getElementById("modalDeliveryDate").innerText =
-                deliveryDate;
-
-            const summaryBody =
-                document.getElementById("orderSummaryBody");
-
-            summaryBody.innerHTML = "";
-
-            orderItems.forEach(item => {
-                const row =
-                    document.createElement("tr");
-
-                row.innerHTML = `
-    <td>${item.productName}</td>
-    <td>${item.silai}</td>
-    <td>${item.fabricSource === "SHOP"
-                    ? "Shop Fabric"
-                    : "Customer Fabric"}</td>
-    <td>${item.fabricSource === "SHOP"
-                    ? item.inventoryItemName
-                    : "-"}</td>
-    <td>${item.fabricSource === "SHOP"
-                    ? item.fabricQuantity.toFixed(2) + " M"
-                    : "-"}</td>
-    <td>${item.fabricSource === "SHOP"
-                    ? item.fabricAmount.toFixed(2)
-                    : "0.00"}</td>
-    <td>${item.silaiAmount.toFixed(2)}</td>
-    <td>${item.qty}</td>
-    <td>${item.amount.toFixed(2)}</td>
-    <td>${item.additionalNotes
-                    ? item.additionalNotes
-                    : "-"}</td>
-`;
-
-                summaryBody.appendChild(row);
-            });
-
-            document.getElementById("modalTotalAmount").innerText =
-                totalAmount.toFixed(2);
-
-            document.getElementById("modalAdvancePayment").innerText =
-                advancePayment.toFixed(2);
-
-            document.getElementById("modalDuePayment").innerText =
-                duePayment.toFixed(2);
-
-            const modalElement =
-                document.getElementById("orderSummaryModal");
-
-            const modal =
-                new bootstrap.Modal(modalElement);
-
-            modal.show();
-        });
-
-    document.getElementById("confirmOrderButton")
-        .addEventListener("click", function () {
-
-            const container =
-                document.getElementById("orderProductsInputs");
-
-            container.innerHTML = "";
-
-            orderItems.forEach((item, index) => {
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].productId`,
-                    item.productId
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].silaiType`,
-                    item.silaiType
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].silaiAmount`,
-                    item.silaiAmount
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].quantity`,
-                    item.qty
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].amount`,
-                    item.amount
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].additionalNotes`,
-                    item.additionalNotes
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].fabricSource`,
-                    item.fabricSource
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].inventoryItemId`,
-                    item.inventoryItemId
-                );
-
-                addHiddenInput(
-                    container,
-                    `orderProducts[${index}].fabricQuantity`,
-                    item.fabricQuantity
-                );
-            });
-
-            document.querySelector(".order-form").submit();
-        });
-
-    function addHiddenInput(container, name, value) {
-        const input =
-            document.createElement("input");
-
-        input.type = "hidden";
-        input.name = name;
-
-        input.value =
-            value !== null &&
-            value !== undefined
-                ? value
-                : "";
-
-        container.appendChild(input);
-    }
-
-    /*]]>*/
 </script>
+
+<script th:src="@{/js/create-order.js}"></script>
 
 </body>
 </html>

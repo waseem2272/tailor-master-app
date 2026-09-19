@@ -2,6 +2,7 @@ package com.example.tailormaster.entity;
 
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.enums.FabricSource;
+import com.example.tailormaster.enums.OrderProductType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class OrderProduct extends BaseEntity {
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private int quantity;
@@ -50,6 +51,10 @@ public class OrderProduct extends BaseEntity {
     @JoinColumn(name = "inventory_item_id")
     private InventoryItem inventoryItem;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_product_type", nullable = false, length = 20)
+    private OrderProductType orderProductType = OrderProductType.TAILORING;
+
     /**
      * Amount of fabric consumed from shop inventory.
      * Example: 4.50 meters
@@ -62,4 +67,10 @@ public class OrderProduct extends BaseEntity {
 
     @Column(name = "fabric_amount", precision = 12, scale = 2)
     private BigDecimal fabricAmount;
+
+    @Column(name = "inventory_unit_price", precision = 12, scale = 2)
+    private BigDecimal inventoryUnitPrice;
+
+    @Column(name = "inventory_amount", precision = 12, scale = 2)
+    private BigDecimal inventoryAmount;
 }

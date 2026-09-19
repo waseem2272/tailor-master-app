@@ -7,20 +7,20 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "order_inventory_usage")
+@Table(name = "order_inventory_reservation")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class OrderInventoryUsage extends BaseEntity {
+public class OrderInventoryReservation extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)
     @ToString.Exclude
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_product_id", nullable = false)
     @ToString.Exclude
     private OrderProduct orderProduct;
@@ -35,22 +35,19 @@ public class OrderInventoryUsage extends BaseEntity {
     @ToString.Exclude
     private InventoryItem inventoryItem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_batch_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "stock_batch_id", nullable = false)
     @ToString.Exclude
     private InventoryStockBatch stockBatch;
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal quantity;
 
-    @Column(name = "unit_price", precision = 12, scale = 2)
+    @Column(name = "unit_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal unitPrice;
 
-    @Column(length = 20)
-    private String unit;
-
     @Column(nullable = false)
-    private boolean reversed = false;
+    private boolean released = false;
 
-    private LocalDateTime reversedAt;
+    private LocalDateTime releasedAt;
 }

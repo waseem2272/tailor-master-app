@@ -5,6 +5,7 @@ import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.ProductMeasurementField;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
 import com.example.tailormaster.repository.customer.CustomerMeasurementRepository;
@@ -40,48 +41,58 @@ public class CustomerService {
 
     @Transactional
     public Customer createCustomerWithMeasurements(CustomerWizardDTO dto) {
-        // Step 1: Customer
+        User currentUser = authenticatedUserService.getCurrentUser();
+
         Customer customer = new Customer();
         customer.setFullName(dto.getFullName());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setEnabled(dto.isEnabled());
-        customer.setUser(authenticatedUserService.getCurrentUser());
+        customer.setUser(currentUser);
 
-        // Persist early to have an ID for FK (optional, but safe)
         customer = customerRepository.save(customer);
 
-        // Step 2 & 3: For each selected product, save measurements for its fields
-        for (Long productId : dto.getSelectedProductIds()) {
+        if (!dto.isAddTailoringMeasurements()) {
+            return customer;
+        }
+
+        List<Long> selectedProductIds = dto.getSelectedProductIds() != null
+                ? dto.getSelectedProductIds()
+                : Collections.emptyList();
+
+        Map<Long, Map<Long, String>> measurements = dto.getMeasurements() != null
+                ? dto.getMeasurements()
+                : Collections.emptyMap();
+
+        for (Long productId : selectedProductIds) {
             Product product = productService.getProductById(productId);
 
-            Map<Long, String> productFieldMap = dto.getMeasurements().get(productId);
-            if (productFieldMap == null) continue;
+            Map<Long, String> productFieldMap = measurements.get(productId);
+            if (productFieldMap == null) {
+                continue;
+            }
 
             Map<Long, ProductMeasurementField> fieldById = loadFieldMapForProduct(productId);
 
-            for (Map.Entry<Long, String> e : productFieldMap.entrySet()) {
-                Long fieldId = e.getKey();
-                String value = e.getValue();
+            for (Map.Entry<Long, String> entry : productFieldMap.entrySet()) {
+                Long fieldId = entry.getKey();
+                String value = entry.getValue();
 
-                // Skip totally empty values
-                if (value == null || value.isBlank()) continue;
+                if (value == null || value.isBlank()) {
+                    continue;
+                }
 
                 ProductMeasurementField field = fieldById.get(fieldId);
-                if (field == null) continue; // unknown field id
-
-                CustomerMeasurement cm = new CustomerMeasurement();
-                cm.setCustomer(customer);
-                cm.setProduct(product);
-                cm.setField(field);
-                cm.setValue(value);
-                // Because Customer is owning side only of OneToMany without mapping here,
-                // we just rely on CustomerMeasurementRepository (via cascade) or leave JPA to persist via flush.
-                // Here, customerRepository.save(customer) at end is enough because of cascade on Customer?
-                // Your Customer has cascade on measurements, so add to list:
-                if (customer.getMeasurements() == null) {
-                    customer.setMeasurements(new ArrayList<>());
+                if (field == null) {
+                    continue;
                 }
-                customer.getMeasurements().add(cm);
+
+                CustomerMeasurement measurement = new CustomerMeasurement();
+                measurement.setCustomer(customer);
+                measurement.setProduct(product);
+                measurement.setField(field);
+                measurement.setValue(value);
+
+                customer.getMeasurements().add(measurement);
             }
         }
 
@@ -94,61 +105,92 @@ public class CustomerService {
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setEnabled(customer.isEnabled());
 
-        // Products
-        List<Long> productIds = customer.getMeasurements().stream()
-                .map(cm -> cm.getProduct().getId())
+        List<CustomerMeasurement> measurements = customer.getMeasurements() != null
+                ? customer.getMeasurements()
+                : Collections.emptyList();
+
+        dto.setAddTailoringMeasurements(!measurements.isEmpty());
+
+        List<Long> productIds = measurements.stream()
+                .map(CustomerMeasurement::getProduct)
+                .filter(Objects::nonNull)
+                .map(Product::getId)
                 .distinct()
                 .toList();
+
         dto.setSelectedProductIds(productIds);
 
-        // Measurements
         Map<Long, Map<Long, String>> measurementMap = new HashMap<>();
-        for (CustomerMeasurement cm : customer.getMeasurements()) {
-            measurementMap
-                    .computeIfAbsent(cm.getProduct().getId(), k -> new HashMap<>())
-                    .put(cm.getField().getId(), cm.getValue());
-        }
-        dto.setMeasurements(measurementMap);
 
+        for (CustomerMeasurement measurement : measurements) {
+            if (measurement.getProduct() == null || measurement.getField() == null) {
+                continue;
+            }
+
+            measurementMap
+                    .computeIfAbsent(measurement.getProduct().getId(), key -> new HashMap<>())
+                    .put(measurement.getField().getId(), measurement.getValue());
+        }
+
+        dto.setMeasurements(measurementMap);
         return dto;
     }
 
     @Transactional
     public Customer updateCustomerWithMeasurements(Long id, CustomerWizardDTO dto) {
-        Customer customer = customerRepository.findById(id)
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        Customer customer = customerRepository.findByIdAndUser(id, currentUser)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // Update basic info
         customer.setFullName(dto.getFullName());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setEnabled(dto.isEnabled());
 
-        // Clear old measurements
         customerMeasurementRepository.deleteByCustomerId(id);
         customer.getMeasurements().clear();
 
-        // Re-insert products + measurements
-        for (Long productId : dto.getSelectedProductIds()) {
+        if (!dto.isAddTailoringMeasurements()) {
+            return customerRepository.save(customer);
+        }
+
+        List<Long> selectedProductIds = dto.getSelectedProductIds() != null
+                ? dto.getSelectedProductIds()
+                : Collections.emptyList();
+
+        Map<Long, Map<Long, String>> measurements = dto.getMeasurements() != null
+                ? dto.getMeasurements()
+                : Collections.emptyMap();
+
+        for (Long productId : selectedProductIds) {
             Product product = productService.getProductById(productId);
-            Map<Long, String> productFieldMap = dto.getMeasurements().get(productId);
-            if (productFieldMap == null) continue;
+
+            Map<Long, String> productFieldMap = measurements.get(productId);
+            if (productFieldMap == null) {
+                continue;
+            }
 
             Map<Long, ProductMeasurementField> fieldById = loadFieldMapForProduct(productId);
 
-            for (Map.Entry<Long, String> e : productFieldMap.entrySet()) {
-                String value = e.getValue();
-                if (value == null || value.isBlank()) continue;
+            for (Map.Entry<Long, String> entry : productFieldMap.entrySet()) {
+                String value = entry.getValue();
 
-                ProductMeasurementField field = fieldById.get(e.getKey());
-                if (field == null) continue;
+                if (value == null || value.isBlank()) {
+                    continue;
+                }
 
-                CustomerMeasurement cm = new CustomerMeasurement();
-                cm.setCustomer(customer);
-                cm.setProduct(product);
-                cm.setField(field);
-                cm.setValue(value);
+                ProductMeasurementField field = fieldById.get(entry.getKey());
+                if (field == null) {
+                    continue;
+                }
 
-                customer.getMeasurements().add(cm);
+                CustomerMeasurement measurement = new CustomerMeasurement();
+                measurement.setCustomer(customer);
+                measurement.setProduct(product);
+                measurement.setField(field);
+                measurement.setValue(value);
+
+                customer.getMeasurements().add(measurement);
             }
         }
 
