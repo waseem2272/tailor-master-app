@@ -2,6 +2,7 @@ package com.example.tailormaster.dto;
 
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.enums.FabricSource;
+import com.example.tailormaster.enums.OrderProductStatus;
 import com.example.tailormaster.enums.OrderProductType;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,4 +29,9 @@ public class OrderProductDto extends Product {
 
     private BigDecimal fabricQuantity;
     private OrderProductType orderProductType = OrderProductType.TAILORING;
+
+
+    private boolean alterationRequired = false;
+    private BigDecimal alterationFee = BigDecimal.ZERO;
+    private OrderProductStatus orderProductStatus;
 }

@@ -166,10 +166,6 @@
                         <i class="bi bi-box-seam me-2"></i> Inventory List
                     </div>
 
-                    <span class="small">
-                        Total Items:
-                        <strong th:text="${#lists.size(inventoryItems)}">0</strong>
-                    </span>
                 </div>
 
                 <div class="card-body">
@@ -192,275 +188,10 @@
                                 <th>Actions</th>
                             </tr>
                             </thead>
+                            <tbody></tbody>
 
-                            <tbody>
-                            <tr th:each="item, stat : ${inventoryItems}">
-
-                                <td th:text="${stat.count}">1</td>
-
-                                <td>
-                                    <strong th:text="${item.name}">Cotton</strong>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.itemType.name() == 'FABRIC'}"
-                                          class="badge bg-success">
-                                        Fabric
-                                    </span>
-
-                                    <span th:if="${item.itemType.name() == 'STITCHED'}"
-                                          class="badge bg-primary">
-                                        Stitched
-                                    </span>
-
-                                    <span th:if="${item.itemType.name() == 'WAISTCOAT'}"
-                                          class="badge bg-secondary">
-                                        Waistcoat
-                                    </span>
-
-                                    <span th:if="${item.itemType.name() == 'KURTA_PAJAMA'}"
-                                          class="badge bg-warning text-dark">
-                                        Kurta Pajama
-                                    </span>
-
-                                    <span th:if="${item.itemType.name() == 'OTHER'}"
-                                          class="badge bg-dark">
-                                        Other
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.brand != null}"
-                                          th:text="${item.brand.name}">
-                                        Gul Ahmed
-                                    </span>
-                                    <span th:unless="${item.brand != null}"
-                                          class="text-muted">
-                                        —
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.category != null}"
-                                          th:text="${item.category.name}">
-                                        Cotton
-                                    </span>
-                                    <span th:unless="${item.category != null}"
-                                          class="text-muted">
-                                        —
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.color != null and !#strings.isEmpty(item.color)}"
-                                          th:text="${item.color.name}">
-                                        Black
-                                    </span>
-                                    <span th:unless="${item.color != null and !#strings.isEmpty(item.color)}"
-                                          class="text-muted">
-                                        —
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.size != null and !#strings.isEmpty(item.size)}"
-                                          th:text="${item.size}">
-                                        Large
-                                    </span>
-                                    <span th:unless="${item.size != null and !#strings.isEmpty(item.size)}"
-                                          class="text-muted">
-                                        —
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <span th:if="${item.unit != null}"
-                                          th:text="${item.unit.name().replace('_', ' ')}">
-                                        Meter
-                                    </span>
-                                    <span th:unless="${item.unit != null}"
-                                          class="text-muted">
-                                        —
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex flex-column gap-1">
-
-                                        <!-- Physical Stock -->
-                                        <div class="small">
-                                            <span class="text-muted">Physical:</span>
-
-                                            <strong
-                                                    th:text="${item.quantity != null
-                        ? item.quantity.stripTrailingZeros().toPlainString()
-                        : '0'}">
-                                                25
-                                            </strong>
-
-                                            <span
-                                                    class="text-muted"
-                                                    th:if="${item.unit != null}"
-                                                    th:text="${' ' + item.unit.name().replace('_', ' ')}">
-                METER
-            </span>
-                                        </div>
-
-                                        <!-- Reserved Stock -->
-                                        <div class="small">
-                                            <span class="text-muted">Reserved:</span>
-
-                                            <strong
-                                                    th:text="${reservedStockMap[item.id] != null
-        ? reservedStockMap[item.id].stripTrailingZeros().toPlainString()
-        : '0'}">
-                                                0
-                                            </strong>
-
-                                            <span
-                                                    class="text-muted"
-                                                    th:if="${item.unit != null}"
-                                                    th:text="${' ' + item.unit.name().replace('_', ' ')}">
-        PIECE
-    </span>
-                                        </div>
-
-                                        <!-- Available Stock -->
-                                        <div
-                                                class="small"
-                                                th:with="
-                    physical=${item.quantity != null ? item.quantity : T(java.math.BigDecimal).ZERO},
-                    reserved=${reservedStockMap[item.id] != null ? reservedStockMap[item.id] : T(java.math.BigDecimal).ZERO},
-                    available=${physical.subtract(reserved).compareTo(T(java.math.BigDecimal).ZERO) < 0
-                        ? T(java.math.BigDecimal).ZERO
-                        : physical.subtract(reserved)}
-                ">
-
-                                            <span class="text-muted">Available:</span>
-
-                                            <strong
-                                                    th:text="${available.stripTrailingZeros().toPlainString()}">
-                                                20
-                                            </strong>
-
-                                            <span
-                                                    class="text-muted"
-                                                    th:if="${item.unit != null}"
-                                                    th:text="${' ' + item.unit.name().replace('_', ' ')}">
-                METER
-            </span>
-                                        </div>
-
-                                    </div>
-                                </td>
-
-                                <td>
-    <span th:if="${item.quantity != null
-        and item.quantity.compareTo(T(java.math.BigDecimal).ZERO) > 0
-        and currentBatchMap[item.id] != null}"
-          th:text="${currentBatchMap[item.id].purchasePrice.stripTrailingZeros().toPlainString()}">
-        2500
-    </span>
-                                    <span th:unless="${item.quantity != null
-        and item.quantity.compareTo(T(java.math.BigDecimal).ZERO) > 0
-        and currentBatchMap[item.id] != null}"
-                                          class="text-muted">
-        —
-    </span>
-                                </td>
-
-                                <td>
-    <span th:if="${item.quantity != null
-        and item.quantity.compareTo(T(java.math.BigDecimal).ZERO) > 0
-        and currentBatchMap[item.id] != null}"
-          th:text="${currentBatchMap[item.id].salePrice.stripTrailingZeros().toPlainString()}">
-        3000
-    </span>
-                                    <span th:unless="${item.quantity != null
-        and item.quantity.compareTo(T(java.math.BigDecimal).ZERO) > 0
-        and currentBatchMap[item.id] != null}"
-                                          class="text-muted">
-        —
-    </span>
-                                </td>
-
-                                <td>
-                                    <div
-                                            th:with="
-                physical=${item.quantity != null ? item.quantity : T(java.math.BigDecimal).ZERO},
-                reserved=${reservedStockMap[item.id] != null ? reservedStockMap[item.id] : T(java.math.BigDecimal).ZERO},
-                available=${physical.subtract(reserved).compareTo(T(java.math.BigDecimal).ZERO) < 0
-                    ? T(java.math.BigDecimal).ZERO
-                    : physical.subtract(reserved)}
-            ">
-
-                                        <!-- Physically no stock -->
-                                        <span
-                                                th:if="${physical.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
-                                                class="badge bg-danger">
-            Out of Stock
-        </span>
-
-                                        <!-- Physical stock exists but fully reserved -->
-                                        <span
-                                                th:if="${physical.compareTo(T(java.math.BigDecimal).ZERO) > 0
-                    and available.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
-                                                class="badge bg-secondary">
-            Reserved
-        </span>
-
-                                        <!-- Low available stock -->
-                                        <span
-                                                th:if="${available.compareTo(T(java.math.BigDecimal).ZERO) > 0
-                    and available.compareTo(item.minimumStock) <= 0}"
-                                                class="badge bg-warning text-dark">
-            Low Stock
-        </span>
-
-                                        <!-- Healthy available stock -->
-                                        <span
-                                                th:if="${available.compareTo(item.minimumStock) > 0}"
-                                                class="badge bg-success">
-            Available
-        </span>
-
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <div class="d-flex gap-1 justify-content-center">
-                                        <a th:href="@{/inventory/edit/{id}(id=${item.id})}"
-                                           class="btn btn-warning btn-sm"
-                                           title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-
-                                        <a th:href="@{/inventory/delete/{id}(id=${item.id})}"
-                                           class="btn btn-danger btn-sm"
-                                           title="Delete"
-                                           onclick="return confirm('Are you sure you want to delete this item?');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- Empty State -->
-                            <tr th:if="${#lists.isEmpty(inventoryItems)}">
-                                <td colspan="13" class="text-center py-5">
-                                    <i class="bi bi-box-seam fs-1 text-muted"></i>
-                                    <h5 class="mt-3">No Inventory Items Found</h5>
-                                    <p class="text-muted mb-3">
-                                        Start by adding your first inventory item.
-                                    </p>
-                                    <a th:href="@{/inventory/add}"
-                                       class="btn btn-success shadow rounded-pill px-4">
-                                        <i class="bi bi-plus-circle me-1"></i> Add Item
-                                    </a>
-                                </td>
-                            </tr>
-                            </tbody>
                         </table>
+
                     </div>
                 </div>
             </div>
@@ -473,9 +204,174 @@
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#inventoryTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "responsive": true,
+            "autoWidth": false,
+            "pageLength": 10,
+
+            "ajax": {
+                "url": contextPath + "inventory/datatable",
+                "type": "GET",
+                "data": function (d) {
+                    d.name = $('input[name="name"]').val();
+                    d.itemType = $('#itemTypeFilter').val();
+                    d.stockStatus = $('#stockFilter').val();
+                }
+            },
+
+            "columns": [
+                {
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {"data": "itemName"},
+                {
+                    "data": "type",
+                    "render": function (data) {
+                        if (data === "FABRIC") {
+                            return '<span class="badge bg-success">Fabric</span>';
+                        }
+                        if (data === "STITCHED") {
+                            return '<span class="badge bg-primary">Stitched</span>';
+                        }
+                        if (data === "WAISTCOAT") {
+                            return '<span class="badge bg-secondary">Waistcoat</span>';
+                        }
+                        if (data === "KURTA PAJAMA") {
+                            return '<span class="badge bg-warning text-dark">Kurta Pajama</span>';
+                        }
+                        if (data === "OTHER") {
+                            return '<span class="badge bg-dark">Other</span>';
+                        }
+                        return '<span class="text-muted">—</span>';
+                    }
+                },
+                {"data": "brand"},
+                {"data": "category"},
+                {"data": "color"},
+                {"data": "size"},
+                {"data": "unit"},
+                {
+                    "data": null,
+                    "orderable": false,
+                    "render": function (data, type, row) {
+                        return '<div class="d-flex flex-column gap-1">'
+                            + '<div class="small">'
+                            + '<span class="text-muted">Physical:</span> '
+                            + '<strong>' + row.physical + '</strong>'
+                            + (row.unit ? ' <span class="text-muted">' + row.unit + '</span>' : '')
+                            + '</div>'
+                            + '<div class="small">'
+                            + '<span class="text-muted">Reserved:</span> '
+                            + '<strong>' + row.reserved + '</strong>'
+                            + (row.unit ? ' <span class="text-muted">' + row.unit + '</span>' : '')
+                            + '</div>'
+                            + '<div class="small">'
+                            + '<span class="text-muted">Available:</span> '
+                            + '<strong>' + row.available + '</strong>'
+                            + (row.unit ? ' <span class="text-muted">' + row.unit + '</span>' : '')
+                            + '</div>'
+                            + '</div>';
+                    }
+                },
+                {
+                    "data": "purchasePrice",
+                    "render": function (data) {
+                        return data !== null
+                            ? data
+                            : '<span class="text-muted">—</span>';
+                    }
+                },
+                {
+                    "data": "salePrice",
+                    "render": function (data) {
+                        return data !== null
+                            ? data
+                            : '<span class="text-muted">—</span>';
+                    }
+                },
+                {
+                    "data": "status",
+                    "orderable": false,
+                    "render": function (data) {
+                        if (data === "Out of Stock") {
+                            return '<span class="badge bg-danger">Out of Stock</span>';
+                        }
+                        if (data === "Reserved") {
+                            return '<span class="badge bg-secondary">Reserved</span>';
+                        }
+                        if (data === "Low Stock") {
+                            return '<span class="badge bg-warning text-dark">Low Stock</span>';
+                        }
+                        if (data === "Available") {
+                            return '<span class="badge bg-success">Available</span>';
+                        }
+                        return '<span class="text-muted">—</span>';
+                    }
+                },
+                {
+                    "data": null,
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function (data, type, row) {
+
+                        return `
+            <div class="d-flex gap-1 justify-content-center">
+
+                <a href="${contextPath}inventory/batches/${row.id}"
+                   class="btn btn-info btn-sm text-white"
+                   title="Manage Batches">
+                    <i class="bi bi-layers"></i>
+                </a>
+
+                <a href="${contextPath}inventory/edit/${row.id}"
+                   class="btn btn-warning btn-sm"
+                   title="Edit">
+                    <i class="bi bi-pencil"></i>
+                </a>
+
+                <a href="${contextPath}inventory/delete/${row.id}"
+                   class="btn btn-danger btn-sm"
+                   title="Delete"
+                   onclick="return confirm('Are you sure you want to delete this item?');">
+                    <i class="bi bi-trash"></i>
+                </a>
+
+            </div>
+        `;
+                    }
+                }
+            ]
+        });
+
+        $('form[action$="/inventory/search"]').on('submit', function (e) {
+            e.preventDefault();
+
+            $('#inventoryTable').DataTable().ajax.reload();
+        });
+
+        $('#itemTypeFilter, #stockFilter').on('change', function () {
+            $('#inventoryTable').DataTable().ajax.reload();
+        });
+
+    });
+</script>
 
 <script>
     document.getElementById('itemTypeFilter')?.addEventListener('change', function () {

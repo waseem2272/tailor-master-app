@@ -2,10 +2,7 @@ package com.example.tailormaster.service;
 
 import com.example.tailormaster.dto.OrderInventoryPreviewDto;
 import com.example.tailormaster.entity.*;
-import com.example.tailormaster.enums.FabricSource;
-import com.example.tailormaster.enums.OrderProductType;
-import com.example.tailormaster.enums.StockMovementType;
-import com.example.tailormaster.enums.StockReferenceType;
+import com.example.tailormaster.enums.*;
 import com.example.tailormaster.repository.*;
 import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +39,7 @@ public class OrderInventoryService {
         User currentUser = authenticatedUserService.getCurrentUser();
 
         log.info(
-                "Starting inventory consumption. orderId={}, orderPkId={}, products={}",
+                "Starting shop fabric consumption. orderId={}, orderPkId={}, products={}",
                 order.getOrderId(),
                 order.getId(),
                 order.getOrderProducts().size()
@@ -50,10 +47,11 @@ public class OrderInventoryService {
 
         for (OrderProduct orderProduct : order.getOrderProducts()) {
 
-            OrderProductType orderProductType = orderProduct.getOrderProductType();
+            OrderProductType orderProductType =
+                    orderProduct.getOrderProductType();
 
             log.info(
-                    "Checking order product. orderProductId={}, type={}, product={}, fabricSource={}, inventoryItemId={}, fabricQuantity={}, quantity={}",
+                    "Checking order product for shop fabric. orderProductId={}, type={}, product={}, fabricSource={}, inventoryItemId={}, fabricQuantity={}, quantity={}, status={}",
                     orderProduct.getId(),
                     orderProductType,
                     orderProduct.getProduct() != null
@@ -64,13 +62,9 @@ public class OrderInventoryService {
                             ? orderProduct.getInventoryItem().getId()
                             : null,
                     orderProduct.getFabricQuantity(),
-                    orderProduct.getQuantity()
+                    orderProduct.getQuantity(),
+                    orderProduct.getStatus()
             );
-
-            if (orderProductType == OrderProductType.INVENTORY) {
-                consumeInventoryItem(order, orderProduct, currentUser);
-                continue;
-            }
 
             if (orderProductType != OrderProductType.TAILORING) {
                 continue;
@@ -80,16 +74,20 @@ public class OrderInventoryService {
                 continue;
             }
 
-            consumeShopFabricForTailoring(order, orderProduct, currentUser);
+            consumeShopFabricForTailoring(
+                    order,
+                    orderProduct,
+                    currentUser
+            );
         }
 
         log.info(
-                "Finished inventory consumption for order {}",
+                "Finished shop fabric consumption for order {}",
                 order.getOrderId()
         );
     }
 
-    private void consumeInventoryItem(
+    public void consumeInventoryItem(
             Order order,
             OrderProduct orderProduct,
             User currentUser
@@ -193,7 +191,7 @@ public class OrderInventoryService {
 
         List<OrderInventoryReservation> reservations =
                 orderInventoryReservationRepository
-                        .findByUserAndOrderProductIdAndReleasedFalse(
+                        .findByUserAndOrderProductIdAndReleasedFalseOrderByIdAsc(
                                 currentUser,
                                 orderProduct.getId()
                         );
@@ -301,7 +299,7 @@ public class OrderInventoryService {
             movement.setReason(movementReason);
             movement.setNotes(
                     "Order ID: " + order.getOrderId() +
-                            ", Batch ID: " + batch.getId() +
+                            ", Batch Code / Roll: " + batch.getBatchCode() +
                             ", Unit Price: " + reservation.getUnitPrice()
             );
 
@@ -360,110 +358,93 @@ public class OrderInventoryService {
         );
     }
 
-    public void reverseShopFabric(Order order) {
-        if (order == null) {
+    @Transactional
+    public void reverseInventoryItem(Order order, OrderProduct orderProduct) {
+        if (order == null || orderProduct == null) {
+            return;
+        }
+
+        if (orderProduct.getOrderProductType() != OrderProductType.INVENTORY) {
             return;
         }
 
         User currentUser = authenticatedUserService.getCurrentUser();
 
-        List<OrderInventoryReservation> reservations =
-                orderInventoryReservationRepository
-                        .findByUserAndOrderIdAndReleasedFalse(
-                                currentUser,
-                                order.getId()
-                        );
-
-        for (OrderInventoryReservation reservation : reservations) {
-            reservation.setReleased(true);
-            reservation.setReleasedAt(LocalDateTime.now());
-            orderInventoryReservationRepository.save(reservation);
-
-            log.info(
-                    "Inventory reservation released. orderId={}, orderProductId={}, inventoryItemId={}, batchId={}, quantity={}",
-                    order.getOrderId(),
-                    reservation.getOrderProduct().getId(),
-                    reservation.getInventoryItem().getId(),
-                    reservation.getStockBatch().getId(),
-                    reservation.getQuantity()
-            );
-        }
-
         List<OrderInventoryUsage> usages =
                 orderInventoryUsageRepository
-                        .findByUserAndOrderIdAndReversedFalse(
+                        .findByUserAndOrderProductIdAndReversedFalseOrderByIdAsc(
                                 currentUser,
-                                order.getId()
+                                orderProduct.getId()
                         );
 
         for (OrderInventoryUsage usage : usages) {
 
-            InventoryItem inventoryItem =
-                    inventoryItemRepository.findByIdForUpdate(
-                            usage.getInventoryItem().getId(),
-                            currentUser
-                    ).orElseThrow(() -> new IllegalStateException(
-                            "Inventory item not found: " +
-                                    usage.getInventoryItem().getId()
-                    ));
-
-            BigDecimal currentStock = inventoryItem.getQuantity() != null
-                    ? inventoryItem.getQuantity()
-                    : BigDecimal.ZERO;
-
-            BigDecimal restoredStock =
-                    currentStock.add(usage.getQuantity());
-
-            inventoryItem.setQuantity(restoredStock);
-            inventoryItemRepository.save(inventoryItem);
-
             InventoryStockBatch batch = usage.getStockBatch();
 
-            if (batch != null) {
-                BigDecimal batchRemaining =
-                        batch.getRemainingQuantity() != null
-                                ? batch.getRemainingQuantity()
-                                : BigDecimal.ZERO;
-
-                batch.setRemainingQuantity(
-                        batchRemaining.add(usage.getQuantity())
-                );
-
-                inventoryStockBatchRepository.save(batch);
-
-                log.info(
-                        "FIFO batch restored. orderId={}, orderProductId={}, inventoryItemId={}, batchId={}, quantity={}, batchRemaining={}",
-                        order.getOrderId(),
-                        usage.getOrderProduct().getId(),
-                        inventoryItem.getId(),
-                        batch.getId(),
-                        usage.getQuantity(),
-                        batch.getRemainingQuantity()
-                );
-            } else {
-                log.warn(
-                        "Historical usage has no stock batch. usageId={}, orderProductId={}, inventoryItemId={}",
-                        usage.getId(),
-                        usage.getOrderProduct().getId(),
-                        inventoryItem.getId()
+            if (batch == null) {
+                throw new IllegalStateException(
+                        "Stock batch is missing for inventory usage: " +
+                                usage.getId()
                 );
             }
+
+            BigDecimal usageQuantity =
+                    usage.getQuantity() != null
+                            ? usage.getQuantity()
+                            : BigDecimal.ZERO;
+
+            if (usageQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            BigDecimal currentBatchRemaining =
+                    batch.getRemainingQuantity() != null
+                            ? batch.getRemainingQuantity()
+                            : BigDecimal.ZERO;
+
+            batch.setRemainingQuantity(
+                    currentBatchRemaining.add(usageQuantity)
+            );
+            batch.setActive(true);
+
+            inventoryStockBatchRepository.save(batch);
+
+            InventoryItem inventoryItem = usage.getInventoryItem();
+
+            if (inventoryItem == null) {
+                throw new IllegalStateException(
+                        "Inventory item is missing for inventory usage: " +
+                                usage.getId()
+                );
+            }
+
+            BigDecimal currentStock =
+                    inventoryItem.getQuantity() != null
+                            ? inventoryItem.getQuantity()
+                            : BigDecimal.ZERO;
+
+            inventoryItem.setQuantity(
+                    currentStock.add(usageQuantity)
+            );
+
+            inventoryItemRepository.save(inventoryItem);
 
             StockMovement movement = new StockMovement();
             movement.setInventoryItem(inventoryItem);
             movement.setUser(currentUser);
             movement.setMovementType(StockMovementType.IN);
-            movement.setQuantity(usage.getQuantity());
+            movement.setQuantity(usageQuantity);
+            movement.setUnitPrice(usage.getUnitPrice());
             movement.setReferenceType(StockReferenceType.ORDER);
             movement.setReferenceId(order.getId());
-            movement.setReason("Order Cancellation - Stock Reversal");
+            movement.setReason("Cancelled Order Product - Inventory Reversal");
             movement.setNotes(
-                    "Stock restored for cancelled Order ID: " +
-                            order.getOrderId() +
-                            (batch != null
-                                    ? ", Batch ID: " + batch.getId()
-                                    : "")
+                    "Order ID: " + order.getOrderId() +
+                            ", Order Product ID: " + orderProduct.getId() +
+                            ", Batch Code / Roll: " + batch.getBatchCode() +
+                            ", Unit Price: " + usage.getUnitPrice()
             );
+            movement.setCreatedBy(currentUser.getId());
 
             stockMovementRepository.save(movement);
 
@@ -473,14 +454,254 @@ public class OrderInventoryService {
             orderInventoryUsageRepository.save(usage);
 
             log.info(
-                    "Inventory stock reversed. orderId={}, orderProductId={}, inventoryItemId={}, quantity={}, restoredStock={}",
+                    "Inventory product consumption reversed. orderId={}, orderProductId={}, inventoryItemId={}, batchId={}, quantity={}, unitPrice={}, batchRemaining={}, inventoryStock={}",
                     order.getOrderId(),
-                    usage.getOrderProduct().getId(),
+                    orderProduct.getId(),
                     inventoryItem.getId(),
-                    usage.getQuantity(),
-                    restoredStock
+                    batch.getId(),
+                    usageQuantity,
+                    usage.getUnitPrice(),
+                    batch.getRemainingQuantity(),
+                    inventoryItem.getQuantity()
             );
         }
+    }
+
+    @Transactional
+    public void reverseShopFabric(Order order, OrderProduct orderProduct) {
+        if (order == null || orderProduct == null) {
+            return;
+        }
+
+        if (orderProduct.getOrderProductType() != OrderProductType.TAILORING) {
+            return;
+        }
+
+        if (orderProduct.getFabricSource() != FabricSource.SHOP) {
+            return;
+        }
+
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        List<OrderInventoryUsage> usages =
+                orderInventoryUsageRepository
+                        .findByUserAndOrderProductIdAndReversedFalseOrderByIdAsc(
+                                currentUser,
+                                orderProduct.getId()
+                        );
+
+        for (OrderInventoryUsage usage : usages) {
+
+            InventoryStockBatch batch = usage.getStockBatch();
+
+            if (batch == null) {
+                throw new IllegalStateException(
+                        "Stock batch is missing for inventory usage: " +
+                                usage.getId()
+                );
+            }
+
+            BigDecimal usageQuantity =
+                    usage.getQuantity() != null
+                            ? usage.getQuantity()
+                            : BigDecimal.ZERO;
+
+            if (usageQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            BigDecimal currentBatchRemaining =
+                    batch.getRemainingQuantity() != null
+                            ? batch.getRemainingQuantity()
+                            : BigDecimal.ZERO;
+
+            batch.setRemainingQuantity(
+                    currentBatchRemaining.add(usageQuantity)
+            );
+
+            batch.setActive(true);
+
+            inventoryStockBatchRepository.save(batch);
+
+            InventoryItem inventoryItem = usage.getInventoryItem();
+
+            if (inventoryItem == null) {
+                throw new IllegalStateException(
+                        "Inventory item is missing for inventory usage: " +
+                                usage.getId()
+                );
+            }
+
+            BigDecimal currentStock =
+                    inventoryItem.getQuantity() != null
+                            ? inventoryItem.getQuantity()
+                            : BigDecimal.ZERO;
+
+            inventoryItem.setQuantity(
+                    currentStock.add(usageQuantity)
+            );
+
+            inventoryItemRepository.save(inventoryItem);
+
+            StockMovement movement = new StockMovement();
+            movement.setInventoryItem(inventoryItem);
+            movement.setUser(currentUser);
+            movement.setMovementType(StockMovementType.IN);
+            movement.setQuantity(usageQuantity);
+            movement.setUnitPrice(usage.getUnitPrice());
+            movement.setReferenceType(StockReferenceType.ORDER);
+            movement.setReferenceId(order.getId());
+            movement.setReason("Cancelled Order Product - Shop Fabric Reversal");
+            movement.setNotes(
+                    "Order ID: " + order.getOrderId() +
+                            ", Order Product ID: " + orderProduct.getId() +
+                            ", Batch Code / Roll: " + batch.getBatchCode() +
+                            ", Unit Price: " + usage.getUnitPrice()
+            );
+            movement.setCreatedBy(currentUser.getId());
+
+            stockMovementRepository.save(movement);
+
+            usage.setReversed(true);
+            usage.setReversedAt(LocalDateTime.now());
+
+            orderInventoryUsageRepository.save(usage);
+
+            log.info(
+                    "Shop fabric consumption reversed. orderId={}, orderProductId={}, inventoryItemId={}, batchId={}, quantity={}, unitPrice={}, batchRemaining={}, inventoryStock={}",
+                    order.getOrderId(),
+                    orderProduct.getId(),
+                    inventoryItem.getId(),
+                    batch.getId(),
+                    usageQuantity,
+                    usage.getUnitPrice(),
+                    batch.getRemainingQuantity(),
+                    inventoryItem.getQuantity()
+            );
+        }
+    }
+
+    @Transactional
+    public void reverseShopFabric(Order order) {
+        if (order == null || order.getOrderProducts() == null) {
+            return;
+        }
+
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        for (OrderProduct orderProduct : order.getOrderProducts()) {
+
+            if (orderProduct.getOrderProductType() != OrderProductType.TAILORING) {
+                continue;
+            }
+
+            if (orderProduct.getFabricSource() != FabricSource.SHOP) {
+                continue;
+            }
+
+            List<OrderInventoryUsage> usages =
+                    orderInventoryUsageRepository
+                            .findByUserAndOrderProductIdAndReversedFalseOrderByIdAsc(
+                                    currentUser,
+                                    orderProduct.getId()
+                            );
+
+            for (OrderInventoryUsage usage : usages) {
+
+                InventoryStockBatch batch = usage.getStockBatch();
+
+                if (batch == null) {
+                    throw new IllegalStateException(
+                            "Stock batch is missing for inventory usage: " +
+                                    usage.getId()
+                    );
+                }
+
+                BigDecimal usageQuantity =
+                        usage.getQuantity() != null
+                                ? usage.getQuantity()
+                                : BigDecimal.ZERO;
+
+                if (usageQuantity.compareTo(BigDecimal.ZERO) <= 0) {
+                    continue;
+                }
+
+                BigDecimal currentBatchRemaining =
+                        batch.getRemainingQuantity() != null
+                                ? batch.getRemainingQuantity()
+                                : BigDecimal.ZERO;
+
+                batch.setRemainingQuantity(
+                        currentBatchRemaining.add(usageQuantity)
+                );
+
+                batch.setActive(true);
+
+                inventoryStockBatchRepository.save(batch);
+
+                InventoryItem inventoryItem = usage.getInventoryItem();
+
+                if (inventoryItem == null) {
+                    throw new IllegalStateException(
+                            "Inventory item is missing for inventory usage: " +
+                                    usage.getId()
+                    );
+                }
+
+                BigDecimal currentStock =
+                        inventoryItem.getQuantity() != null
+                                ? inventoryItem.getQuantity()
+                                : BigDecimal.ZERO;
+
+                inventoryItem.setQuantity(
+                        currentStock.add(usageQuantity)
+                );
+
+                inventoryItemRepository.save(inventoryItem);
+
+                StockMovement movement = new StockMovement();
+                movement.setInventoryItem(inventoryItem);
+                movement.setUser(currentUser);
+                movement.setMovementType(StockMovementType.IN);
+                movement.setQuantity(usageQuantity);
+                movement.setUnitPrice(usage.getUnitPrice());
+                movement.setReferenceType(StockReferenceType.ORDER);
+                movement.setReferenceId(order.getId());
+                movement.setReason("Cancelled Order - Shop Fabric Reversal");
+                movement.setNotes(
+                        "Order ID: " + order.getOrderId() +
+                                ", Batch Code / Roll: " + batch.getBatchCode() +
+                                ", Unit Price: " + usage.getUnitPrice()
+                );
+                movement.setCreatedBy(
+                        currentUser.getId()
+                );
+
+                stockMovementRepository.save(movement);
+
+                usage.setReversed(true);
+                usage.setReversedAt(LocalDateTime.now());
+
+                orderInventoryUsageRepository.save(usage);
+
+                log.info(
+                        "Shop fabric consumption reversed. orderId={}, orderProductId={}, inventoryItemId={}, batchId={}, quantity={}, unitPrice={}, batchRemaining={}, inventoryStock={}",
+                        order.getOrderId(),
+                        orderProduct.getId(),
+                        inventoryItem.getId(),
+                        batch.getId(),
+                        usageQuantity,
+                        usage.getUnitPrice(),
+                        batch.getRemainingQuantity(),
+                        inventoryItem.getQuantity()
+                );
+            }
+        }
+
+        log.info(
+                "Finished shop fabric reversal for cancelled order {}",
+                order.getOrderId()
+        );
     }
 
     public BigDecimal reserveInventory(
@@ -814,6 +1035,41 @@ public class OrderInventoryService {
                     reservation.getOrderProduct().getId(),
                     reservation.getInventoryItem().getId(),
                     reservation.getStockBatch().getId(),
+                    reservation.getQuantity()
+            );
+        }
+    }
+
+    public void releaseOrderProductReservation(OrderProduct orderProduct) {
+        if (orderProduct == null) {
+            return;
+        }
+
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        List<OrderInventoryReservation> reservations =
+                orderInventoryReservationRepository
+                        .findByUserAndOrderProductIdAndReleasedFalseOrderByIdAsc(
+                                currentUser,
+                                orderProduct.getId()
+                        );
+
+        for (OrderInventoryReservation reservation : reservations) {
+
+            reservation.setReleased(true);
+            reservation.setReleasedAt(LocalDateTime.now());
+
+            orderInventoryReservationRepository.save(reservation);
+
+            log.info(
+                    "Order product inventory reservation released. orderProductId={}, inventoryItemId={}, batchId={}, quantity={}",
+                    orderProduct.getId(),
+                    reservation.getInventoryItem() != null
+                            ? reservation.getInventoryItem().getId()
+                            : null,
+                    reservation.getStockBatch() != null
+                            ? reservation.getStockBatch().getId()
+                            : null,
                     reservation.getQuantity()
             );
         }

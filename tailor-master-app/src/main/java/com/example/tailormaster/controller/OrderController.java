@@ -3,10 +3,7 @@ package com.example.tailormaster.controller;
 import com.example.tailormaster.dto.*;
 import com.example.tailormaster.entity.*;
 import com.example.tailormaster.entity.product.Product;
-import com.example.tailormaster.enums.FabricSource;
-import com.example.tailormaster.enums.ItemType;
-import com.example.tailormaster.enums.OrderProductType;
-import com.example.tailormaster.enums.OrderStatus;
+import com.example.tailormaster.enums.*;
 import com.example.tailormaster.service.InventoryItemService;
 import com.example.tailormaster.service.OrderInventoryService;
 import com.example.tailormaster.service.UserService;
@@ -442,7 +439,6 @@ public class OrderController {
             order.setDeliveryDate(orderDto.getDeliveryDate());
 
             List<OrderProduct> orderProducts = new ArrayList<>();
-            BigDecimal finalTotal = BigDecimal.ZERO;
 
             for (OrderProductDto orderProductDto : orderDto.getOrderProducts()) {
                 OrderProductType orderProductType = orderProductDto.getOrderProductType();
@@ -477,6 +473,30 @@ public class OrderController {
                         );
                     }
 
+                    if (orderProductDto.getQuantity() == null ||
+                            orderProductDto.getQuantity() <= 0) {
+                        throw new IllegalArgumentException(
+                                "Inventory quantity must be greater than zero."
+                        );
+                    }
+
+                    boolean alterationRequired = orderProductDto.isAlterationRequired();
+
+                    BigDecimal alterationFee = orderProductDto.getAlterationFee() != null
+                            ? orderProductDto.getAlterationFee()
+                            : BigDecimal.ZERO;
+
+                    if (alterationRequired &&
+                            alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new IllegalArgumentException(
+                                "Alteration fee must be greater than zero when alteration is required."
+                        );
+                    }
+
+                    if (!alterationRequired) {
+                        alterationFee = BigDecimal.ZERO;
+                    }
+
                     orderProduct.setProduct(null);
                     orderProduct.setInventoryItem(inventoryItem);
                     orderProduct.setSilaiType(null);
@@ -485,15 +505,27 @@ public class OrderController {
                     orderProduct.setFabricQuantity(null);
                     orderProduct.setFabricUnitPrice(null);
                     orderProduct.setFabricAmount(null);
+
+                    orderProduct.setAlterationRequired(alterationRequired);
+                    orderProduct.setAlterationFee(alterationFee);
+
                     orderProduct.setInventoryUnitPrice(null);
                     orderProduct.setInventoryAmount(null);
                     orderProduct.setSubtotal(BigDecimal.ZERO);
+
+                    orderProduct.setStatus(
+                            alterationRequired
+                                    ? OrderProductStatus.PENDING_FOR_ALTERATION
+                                    : OrderProductStatus.INSTANT_DELIVERED
+                    );
 
                     orderProducts.add(orderProduct);
                     continue;
                 }
 
-                Product product = productService.getProductById(orderProductDto.getProductId());
+                Product product = productService.getProductById(
+                        orderProductDto.getProductId()
+                );
 
                 if (product == null) {
                     throw new IllegalArgumentException(
@@ -506,10 +538,9 @@ public class OrderController {
                 orderProduct.setSilaiType(orderProductDto.getSilaiType());
                 orderProduct.setSilaiAmount(orderProductDto.getSilaiAmount());
 
-                BigDecimal stitchingAmount = orderProductDto.getSilaiAmount()
-                        .multiply(BigDecimal.valueOf(orderProductDto.getQuantity()));
-
-                BigDecimal fabricAmount = BigDecimal.ZERO;
+                BigDecimal stitchingAmount =
+                        orderProductDto.getSilaiAmount()
+                                .multiply(BigDecimal.valueOf(orderProductDto.getQuantity()));
 
                 FabricSource fabricSource = orderProductDto.getFabricSource();
 
@@ -522,11 +553,13 @@ public class OrderController {
                 if (fabricSource == FabricSource.SHOP) {
                     if (orderProductDto.getInventoryItemId() == null) {
                         throw new IllegalArgumentException(
-                                "Shop fabric must be selected for product: " + product.getName()
+                                "Shop fabric must be selected for product: " +
+                                        product.getName()
                         );
                     }
 
-                    BigDecimal requestedQuantity = orderProductDto.getFabricQuantity();
+                    BigDecimal requestedQuantity =
+                            orderProductDto.getFabricQuantity();
 
                     if (requestedQuantity == null ||
                             requestedQuantity.compareTo(BigDecimal.ZERO) <= 0) {
@@ -537,15 +570,20 @@ public class OrderController {
                     }
 
                     InventoryItem inventoryItem =
-                            inventoryItemService.getById(orderProductDto.getInventoryItemId());
+                            inventoryItemService.getById(
+                                    orderProductDto.getInventoryItemId()
+                            );
 
                     if (inventoryItem == null) {
-                        throw new IllegalArgumentException("Selected fabric was not found.");
+                        throw new IllegalArgumentException(
+                                "Selected fabric was not found."
+                        );
                     }
 
                     if (Boolean.FALSE.equals(inventoryItem.getActive())) {
                         throw new IllegalArgumentException(
-                                "Selected fabric is inactive: " + inventoryItem.getName()
+                                "Selected fabric is inactive: " +
+                                        inventoryItem.getName()
                         );
                     }
 
@@ -566,11 +604,13 @@ public class OrderController {
                     orderProduct.setFabricAmount(null);
                 }
 
-                BigDecimal subtotal = stitchingAmount.add(fabricAmount);
-                orderProduct.setSubtotal(subtotal);
+                orderProduct.setAlterationRequired(false);
+                orderProduct.setAlterationFee(BigDecimal.ZERO);
+                orderProduct.setSubtotal(stitchingAmount);
+
+                orderProduct.setStatus(OrderProductStatus.PENDING);
 
                 orderProducts.add(orderProduct);
-                finalTotal = finalTotal.add(subtotal);
             }
 
             order.setOrderProducts(orderProducts);
@@ -579,22 +619,19 @@ public class OrderController {
                     ? orderDto.getAdvancePayment()
                     : BigDecimal.ZERO;
 
-            BigDecimal finalDue = finalTotal.subtract(advance);
-
             order.setAdvancePayment(advance);
-            order.setDuePayment(finalDue);
-            order.setTotalProductAmount(finalTotal);
+            order.setDuePayment(BigDecimal.ZERO);
+            order.setTotalProductAmount(BigDecimal.ZERO);
 
             logger.info(
-                    "Order built successfully. customerId={}, products={}, total={}, advance={}, due={}",
+                    "Order built successfully. customerId={}, products={}, advance={}",
                     customerId,
                     orderProducts.size(),
-                    finalTotal,
-                    advance,
-                    finalDue
+                    advance
             );
 
             return order;
+
         } catch (EntityNotFoundException e) {
             logger.error(
                     "Required entity not found while building order. customerId={}: {}",
@@ -603,6 +640,7 @@ public class OrderController {
                     e
             );
             throw new RuntimeException("Required data not found.", e);
+
         } catch (Exception e) {
             logger.error(
                     "Error building order. customerId={}: {}",
@@ -616,199 +654,107 @@ public class OrderController {
 
     private BigDecimal calculateOrderTotal(CustomerOrderDto orderDto, BindingResult result) {
         BigDecimal totalAmount = BigDecimal.ZERO;
-
         for (int i = 0; i < orderDto.getOrderProducts().size(); i++) {
             OrderProductDto product = orderDto.getOrderProducts().get(i);
             OrderProductType orderProductType = product.getOrderProductType();
-
             if (orderProductType == null) {
-                result.rejectValue(
-                        "orderProducts[" + i + "].orderProductType",
-                        "error.orderProducts[" + i + "].orderProductType",
-                        "Order product type is required."
-                );
+                result.rejectValue("orderProducts[" + i + "].orderProductType", "error.orderProducts[" + i + "].orderProductType", "Order product type is required.");
                 continue;
             }
-
             if (product.getQuantity() == null || product.getQuantity() < 1) {
-                result.rejectValue(
-                        "orderProducts[" + i + "].quantity",
-                        "error.orderProducts[" + i + "].quantity",
-                        "Quantity must be at least 1."
-                );
+                result.rejectValue("orderProducts[" + i + "].quantity", "error.orderProducts[" + i + "].quantity", "Quantity must be at least 1.");
                 continue;
             }
-
             if (orderProductType == OrderProductType.INVENTORY) {
                 if (product.getInventoryItemId() == null) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Inventory item must be selected."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Inventory item must be selected.");
                     continue;
                 }
-
-                InventoryItem inventoryItem =
-                        inventoryItemService.getById(product.getInventoryItemId());
-
+                InventoryItem inventoryItem = inventoryItemService.getById(product.getInventoryItemId());
                 if (inventoryItem == null) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Selected inventory item was not found."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Selected inventory item was not found.");
                     continue;
                 }
-
                 if (Boolean.FALSE.equals(inventoryItem.getActive())) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Selected inventory item is inactive."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Selected inventory item is inactive.");
                     continue;
                 }
-
-                BigDecimal stock = inventoryItem.getQuantity() != null
-                        ? inventoryItem.getQuantity()
-                        : BigDecimal.ZERO;
-
-                BigDecimal requestedQuantity =
-                        BigDecimal.valueOf(product.getQuantity());
-
-                BigDecimal reservedQuantity = orderProductService.getReservedQuantity(
-                        inventoryItem.getId(),
-                        FabricSource.SHOP,
-                        OrderStatus.PENDING
-                );
-
+                BigDecimal stock = inventoryItem.getQuantity() != null ? inventoryItem.getQuantity() : BigDecimal.ZERO;
+                BigDecimal requestedQuantity = BigDecimal.valueOf(product.getQuantity());
+                BigDecimal reservedQuantity = orderProductService.getReservedQuantity(inventoryItem.getId(), FabricSource.SHOP, OrderStatus.PENDING);
                 BigDecimal availableStock = stock.subtract(reservedQuantity);
-
                 if (requestedQuantity.compareTo(availableStock) > 0) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].quantity",
-                            "error.orderProducts[" + i + "].quantity",
-                            "Insufficient inventory stock. Available: " +
-                                    availableStock.max(BigDecimal.ZERO)
-                                            .stripTrailingZeros()
-                                            .toPlainString()
-                    );
+                    result.rejectValue("orderProducts[" + i + "].quantity", "error.orderProducts[" + i + "].quantity", "Insufficient inventory stock. Available: " + availableStock.max(BigDecimal.ZERO).stripTrailingZeros().toPlainString());
                     continue;
                 }
-
-                totalAmount = totalAmount.add(
-                        requestedQuantity.multiply(inventoryItem.getSalePrice())
-                );
+                boolean alterationRequired = product.isAlterationRequired();
+                BigDecimal alterationFee = product.getAlterationFee() != null ? product.getAlterationFee() : BigDecimal.ZERO;
+                if (alterationRequired) {
+                    if (alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
+                        result.rejectValue("orderProducts[" + i + "].alterationFee", "error.orderProducts[" + i + "].alterationFee", "Alteration fee must be greater than zero when alteration is required.");
+                        continue;
+                    }
+                } else {
+                    alterationFee = BigDecimal.ZERO;
+                }
+                BigDecimal inventoryAmount;
+                try {
+                    OrderInventoryPreviewDto preview = orderInventoryService.previewInventoryAmount(inventoryItem.getId(), requestedQuantity);
+                    inventoryAmount = preview.getTotalAmount();
+                } catch (IllegalArgumentException e) {
+                    result.rejectValue("orderProducts[" + i + "].quantity", "error.orderProducts[" + i + "].quantity", e.getMessage());
+                    continue;
+                }
+                totalAmount = totalAmount.add(inventoryAmount.add(alterationFee));
                 continue;
             }
-
             if (product.getProductId() == null) {
-                result.rejectValue(
-                        "orderProducts[" + i + "].productId",
-                        "error.orderProducts[" + i + "].productId",
-                        "Product must be selected."
-                );
+                result.rejectValue("orderProducts[" + i + "].productId", "error.orderProducts[" + i + "].productId", "Product must be selected.");
                 continue;
             }
-
-            if (product.getSilaiAmount() == null ||
-                    product.getSilaiAmount().compareTo(BigDecimal.ZERO) < 0) {
-                result.rejectValue(
-                        "orderProducts[" + i + "].silaiAmount",
-                        "error.orderProducts[" + i + "].silaiAmount",
-                        "Invalid Silai amount."
-                );
+            if (product.getSilaiAmount() == null || product.getSilaiAmount().compareTo(BigDecimal.ZERO) < 0) {
+                result.rejectValue("orderProducts[" + i + "].silaiAmount", "error.orderProducts[" + i + "].silaiAmount", "Invalid Silai amount.");
                 continue;
             }
-
-            BigDecimal stitchingAmount =
-                    product.getSilaiAmount()
-                            .multiply(BigDecimal.valueOf(product.getQuantity()));
-
+            BigDecimal stitchingAmount = product.getSilaiAmount().multiply(BigDecimal.valueOf(product.getQuantity()));
             BigDecimal fabricAmount = BigDecimal.ZERO;
-
             FabricSource fabricSource = product.getFabricSource();
-
             if (fabricSource == null) {
                 fabricSource = FabricSource.CUSTOMER;
             }
-
             if (fabricSource == FabricSource.SHOP) {
                 if (product.getInventoryItemId() == null) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Shop fabric must be selected."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Shop fabric must be selected.");
                     continue;
                 }
-
-                if (product.getFabricQuantity() == null ||
-                        product.getFabricQuantity().compareTo(BigDecimal.ZERO) <= 0) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].fabricQuantity",
-                            "error.orderProducts[" + i + "].fabricQuantity",
-                            "Fabric quantity must be greater than zero."
-                    );
+                if (product.getFabricQuantity() == null || product.getFabricQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+                    result.rejectValue("orderProducts[" + i + "].fabricQuantity", "error.orderProducts[" + i + "].fabricQuantity", "Fabric quantity must be greater than zero.");
                     continue;
                 }
-
-                InventoryItem inventoryItem =
-                        inventoryItemService.getById(product.getInventoryItemId());
-
+                InventoryItem inventoryItem = inventoryItemService.getById(product.getInventoryItemId());
                 if (inventoryItem == null) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Selected fabric was not found."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Selected fabric was not found.");
                     continue;
                 }
-
                 if (Boolean.FALSE.equals(inventoryItem.getActive())) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Selected fabric is inactive."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Selected fabric is inactive.");
                     continue;
                 }
-
-                BigDecimal stock = inventoryItem.getQuantity() != null
-                        ? inventoryItem.getQuantity()
-                        : BigDecimal.ZERO;
-
+                BigDecimal stock = inventoryItem.getQuantity() != null ? inventoryItem.getQuantity() : BigDecimal.ZERO;
                 if (product.getFabricQuantity().compareTo(stock) > 0) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].fabricQuantity",
-                            "error.orderProducts[" + i + "].fabricQuantity",
-                            "Insufficient fabric stock."
-                    );
+                    result.rejectValue("orderProducts[" + i + "].fabricQuantity", "error.orderProducts[" + i + "].fabricQuantity", "Insufficient fabric stock.");
                     continue;
                 }
-
-                BigDecimal salePrice = inventoryItem.getSalePrice();
-
-                if (salePrice == null ||
-                        salePrice.compareTo(BigDecimal.ZERO) < 0) {
-                    result.rejectValue(
-                            "orderProducts[" + i + "].inventoryItemId",
-                            "error.orderProducts[" + i + "].inventoryItemId",
-                            "Sale price is not configured for selected fabric."
-                    );
+                try {
+                    OrderInventoryPreviewDto preview = orderInventoryService.previewInventoryAmount(inventoryItem.getId(), product.getFabricQuantity());
+                    fabricAmount = preview.getTotalAmount();
+                } catch (IllegalArgumentException e) {
+                    result.rejectValue("orderProducts[" + i + "].fabricQuantity", "error.orderProducts[" + i + "].fabricQuantity", e.getMessage());
                     continue;
                 }
-
-                fabricAmount =
-                        product.getFabricQuantity().multiply(salePrice);
             }
-
-            totalAmount = totalAmount.add(
-                    stitchingAmount.add(fabricAmount)
-            );
+            totalAmount = totalAmount.add(stitchingAmount.add(fabricAmount));
         }
-
         return totalAmount;
     }
 
@@ -1166,33 +1112,46 @@ public class OrderController {
 
     @PostMapping("/update-order-status")
     @ResponseBody
-    public ResponseEntity<?> updateOrderStatus(@RequestBody OrderStatusUpdateDto dto) {
-        logger.info("Attempting to update order status for order ID: {}", dto.getOrderId());
+    public ResponseEntity<?> updateOrderStatus(
+            @RequestBody OrderStatusUpdateDto dto) {
+
+        logger.info(
+                "Attempting to update order status for order ID: {}",
+                dto != null ? dto.getOrderId() : null
+        );
+
         try {
-            Order order = orderService.findById(dto.getOrderId());
-
-            if (order == null) {
-                logger.warn("Order not found with ID {} for status update.", dto.getOrderId());
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
-            }
-            logger.debug("Fetched order for status update (ID {}): {}", dto.getOrderId(), order);
-
-//            order.setStatus(dto.getStatus());
-            logger.debug("Updated order status to: {}", dto.getStatus());
-            if (dto.getStatus() == OrderStatus.COMPLETED) {
-                order.setCabinetNo(dto.getCabinetNo());
-                logger.debug("Set cabinet number to: {}", dto.getCabinetNo());
-            } else {
-                order.setCabinetNo(null); // Clear cabinet number if status is not COMPLETED
-                logger.debug("Cleared cabinet number as status is not COMPLETED.");
-            }
-
             orderService.updateOrderStatus(dto);
-            logger.info("Order status updated successfully for ID: {}", dto.getOrderId());
-            return ResponseEntity.ok("Order status updated successfully!");
+
+            logger.info(
+                    "Order status updated successfully for ID: {}",
+                    dto.getOrderId()
+            );
+
+            return ResponseEntity.ok(
+                    "Order status updated successfully!"
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            logger.warn(
+                    "Invalid order status update. orderId={}, message={}",
+                    dto != null ? dto.getOrderId() : null,
+                    e.getMessage()
+            );
+
+            return ResponseEntity.badRequest().body(e.getMessage());
+
         } catch (Exception e) {
-            logger.error("An error occurred while updating order status for ID {}: {}", dto.getOrderId(), e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating order status: " + e.getMessage());
+
+            logger.error(
+                    "An error occurred while updating order status for ID {}",
+                    dto != null ? dto.getOrderId() : null,
+                    e
+            );
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while updating order status.");
         }
     }
 
@@ -1300,6 +1259,26 @@ public class OrderController {
                     e
             );
             throw e;
+        }
+    }
+
+    @PostMapping("/update-order-product-status")
+    @ResponseBody
+    public ResponseEntity<?> updateOrderProductStatus(
+            @RequestBody OrderProductStatusUpdateDto dto) {
+        try {
+            orderService.updateOrderProductStatus(dto);
+            return ResponseEntity.ok("Product status updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            logger.error(
+                    "Error updating order product status. orderProductId={}",
+                    dto != null ? dto.getOrderProductId() : null,
+                    e
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating product status.");
         }
     }
 }

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Inventory Batches</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <style>
+        #batchTable th,
+        #batchTable td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2 class="page-title d-flex align-items-center mb-4">
+                    <i class="bi bi-layers me-2"></i>
+                    Inventory Batches
+                </h2>
+
+                <a th:href="@{/inventory}"
+                   class="btn btn-success shadow rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Inventory
+                </a>
+
+            </div>
+
+            <!-- Success Message -->
+            <div th:if="${successMessage != null}"
+                 class="alert alert-success alert-dismissible fade show"
+                 role="alert">
+
+                <i class="bi bi-check-circle me-2"></i>
+
+                <span th:text="${successMessage}">
+                    Batch updated successfully.
+                </span>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage != null}"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                <span th:text="${errorMessage}">
+                    Unable to load inventory batches.
+                </span>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+            <!-- Inventory Item Card -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-seam me-2"></i>
+                        Inventory Item
+                    </div>
+
+                    <span class="small">
+                        Total Physical Stock:
+                        <strong th:text="${inventoryItem.quantity != null
+                            ? inventoryItem.quantity.stripTrailingZeros().toPlainString()
+                            : '0'}">
+                            9
+                        </strong>
+
+                        <span th:if="${inventoryItem.unit != null}"
+                              th:text="${' ' + inventoryItem.unit.name().replace('_', ' ')}">
+                            METER
+                        </span>
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+                            <label class="form-label text-muted mb-1">
+                                Item Name
+                            </label>
+
+                            <div class="fw-semibold"
+                                 th:text="${inventoryItem.name}">
+                                Cotton
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label text-muted mb-1">
+                                Brand
+                            </label>
+
+                            <div>
+                                <span th:if="${inventoryItem.brand != null}"
+                                      th:text="${inventoryItem.brand.name}">
+                                    Gul Ahmed
+                                </span>
+
+                                <span th:unless="${inventoryItem.brand != null}"
+                                      class="text-muted">
+                                    —
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label text-muted mb-1">
+                                Category
+                            </label>
+
+                            <div>
+                                <span th:if="${inventoryItem.category != null}"
+                                      th:text="${inventoryItem.category.name}">
+                                    Cotton
+                                </span>
+
+                                <span th:unless="${inventoryItem.category != null}"
+                                      class="text-muted">
+                                    —
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label text-muted mb-1">
+                                Unit
+                            </label>
+
+                            <div>
+                                <span th:if="${inventoryItem.unit != null}"
+                                      th:text="${inventoryItem.unit.name().replace('_', ' ')}">
+                                    METER
+                                </span>
+
+                                <span th:unless="${inventoryItem.unit != null}"
+                                      class="text-muted">
+                                    —
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Batch Table -->
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-layers me-2"></i>
+                        Batches / Rolls
+                    </div>
+
+                    <span class="small">
+                        Total Batches:
+                        <strong th:text="${#lists.size(batches)}">0</strong>
+                    </span>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+
+                        <table id="batchTable"
+                               class="table table-bordered table-hover table-striped">
+
+                            <thead class="table-success text-dark">
+
+                            <tr>
+                                <th>#</th>
+                                <th>Batch / Roll ID</th>
+                                <th>Received Quantity</th>
+                                <th>Remaining Quantity</th>
+                                <th>Purchase Price</th>
+                                <th>Sale Price</th>
+                                <th>Received Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                            <tr th:each="batch, stat : ${batches}">
+
+                                <td th:text="${stat.count}">
+                                    1
+                                </td>
+
+                                <td>
+                                    <strong th:text="${batch.batchCode}">
+                                        A-102
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <span th:text="${batch.receivedQuantity != null
+                                        ? batch.receivedQuantity.stripTrailingZeros().toPlainString()
+                                        : '0'}">
+                                        5
+                                    </span>
+
+                                    <span th:if="${inventoryItem.unit != null}"
+                                          class="text-muted"
+                                          th:text="${' ' + inventoryItem.unit.name().replace('_', ' ')}">
+                                        METER
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong th:text="${batch.remainingQuantity != null
+                                        ? batch.remainingQuantity.stripTrailingZeros().toPlainString()
+                                        : '0'}">
+                                        5
+                                    </strong>
+
+                                    <span th:if="${inventoryItem.unit != null}"
+                                          class="text-muted"
+                                          th:text="${' ' + inventoryItem.unit.name().replace('_', ' ')}">
+                                        METER
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span th:text="${batch.purchasePrice != null
+                                        ? batch.purchasePrice.stripTrailingZeros().toPlainString()
+                                        : '0'}">
+                                        100
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span th:text="${batch.salePrice != null
+                                        ? batch.salePrice.stripTrailingZeros().toPlainString()
+                                        : '0'}">
+                                        150
+                                    </span>
+                                </td>
+
+                                <td th:text="${batch.receivedDate != null
+                                    ? #temporals.format(batch.receivedDate, 'dd-MM-yyyy HH:mm')
+                                    : '—'}">
+                                    26-09-2026 22:00
+                                </td>
+
+                                <td>
+
+                                    <span th:if="${batch.remainingQuantity != null
+                                        and batch.remainingQuantity.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                          class="badge bg-success">
+                                        Available
+                                    </span>
+
+                                    <span th:unless="${batch.remainingQuantity != null
+                                        and batch.remainingQuantity.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                          class="badge bg-secondary">
+                                        Consumed
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    <div class="d-flex gap-1 justify-content-center">
+
+                                        <a th:if="${batch.remainingQuantity != null
+        and batch.remainingQuantity.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                           th:href="@{/inventory/batches/{batchId}/edit(batchId=${batch.id})}"
+                                           class="btn btn-warning btn-sm"
+                                           title="Edit Price">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <button th:unless="${batch.remainingQuantity != null
+        and batch.remainingQuantity.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                                type="button"
+                                                class="btn btn-secondary btn-sm"
+                                                title="Consumed batch"
+                                                disabled>
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            <!-- Empty State -->
+                            <tr th:if="${#lists.isEmpty(batches)}">
+
+                                <td colspan="9"
+                                    class="text-center py-5">
+
+                                    <i class="bi bi-layers fs-1 text-muted"></i>
+
+                                    <h5 class="mt-3">
+                                        No Batches Found
+                                    </h5>
+
+                                    <p class="text-muted mb-3">
+                                        This inventory item has no stock batches.
+                                    </p>
+
+                                    <a th:href="@{/inventory}"
+                                       class="btn btn-success shadow rounded-pill px-4">
+                                        <i class="bi bi-arrow-left me-1"></i>
+                                        Back to Inventory
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script> $(document).ready(function () {
+    $('#batchTable').DataTable();
+}); </script>
+
+</body>
+</html>

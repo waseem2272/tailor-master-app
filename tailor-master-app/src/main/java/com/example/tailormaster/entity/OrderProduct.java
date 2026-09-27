@@ -2,6 +2,7 @@ package com.example.tailormaster.entity;
 
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.enums.FabricSource;
+import com.example.tailormaster.enums.OrderProductStatus;
 import com.example.tailormaster.enums.OrderProductType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,30 +36,28 @@ public class OrderProduct extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String additionalNotes;
 
-    /**
-     * CUSTOMER = Customer brought their own fabric
-     * SHOP = Fabric will be consumed from shop inventory
-     */
     @Enumerated(EnumType.STRING)
     @Column(name = "fabric_source", length = 20)
     private FabricSource fabricSource = FabricSource.CUSTOMER;
 
-    /**
-     * Shop inventory fabric selected for this order product.
-     * Null when customer provides fabric.
-     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_item_id")
     private InventoryItem inventoryItem;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_product_type", nullable = false, length = 20)
+    @Column(name = "order_product_type", nullable = false, length = 50)
     private OrderProductType orderProductType = OrderProductType.TAILORING;
 
-    /**
-     * Amount of fabric consumed from shop inventory.
-     * Example: 4.50 meters
-     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 30)
+    private OrderProductStatus status;
+
+    @Column(name = "alteration_required", nullable = false)
+    private boolean alterationRequired = false;
+
+    @Column(name = "alteration_fee", precision = 12, scale = 2)
+    private BigDecimal alterationFee = BigDecimal.ZERO;
+
     @Column(name = "fabric_quantity", precision = 12, scale = 2)
     private BigDecimal fabricQuantity;
 

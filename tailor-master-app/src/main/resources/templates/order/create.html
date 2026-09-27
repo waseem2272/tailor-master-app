@@ -313,6 +313,40 @@
                                 </small>
                             </div>
 
+                            <div class="col-md-3" id="inventoryAlterationContainer">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="alterationRequired">
+
+                                    <label class="form-check-label fw-bold"
+                                           for="alterationRequired">
+                                        Alteration Required
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3"
+                                 id="alterationFeeContainer"
+                                 style="display: none;">
+                                <label for="alterationFee"
+                                       class="form-label fw-bold">
+                                    Alteration Fee
+                                </label>
+
+                                <input type="number"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control"
+                                       id="alterationFee"
+                                       placeholder="e.g. 500.00">
+
+                                <div id="alterationFeeError"
+                                     class="text-danger small mt-1"
+                                     style="display: none;">
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- Additional Notes -->
@@ -365,6 +399,7 @@
                                     <th>Quantity</th>
                                     <th>Subtotal</th>
                                     <th>Additional Notes</th>
+                                    <th>Alteration</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -602,6 +637,7 @@
                                     <th>Unit Price</th>
                                     <th>Qty</th>
                                     <th>Subtotal</th>
+                                    <th>Alteration</th>
                                     <th>Notes</th>
                                 </tr>
                                 </thead>

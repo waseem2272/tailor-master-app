@@ -11,6 +11,11 @@
         background-color: #6f42c1 !important;
     }
 
+    .order-product-status {
+        min-width: 180px;
+        width: auto;
+    }
+
     .order-info-row {
         display: flex;
         justify-content: space-between;
@@ -244,21 +249,46 @@
                                 </div>
                             </div> <!-- Status Update -->
                             <div class="row mt-4"
-                                 th:if="${order.status?.name() != 'COMPLETED' and order.status?.name() != 'CANCELLED' and order.status?.name() != 'DELIVERED'}">
+                                 th:if="${order.status?.name() != 'COMPLETED' and
+             order.status?.name() != 'CANCELLED' and
+             order.status?.name() != 'DELIVERED'}">
+
                                 <div class="col-12">
-                                    <div class="d-flex flex-wrap align-items-center gap-2"><label for="orderStatus"
-                                                                                                  class="fw-bold mb-0">
-                                        Order Status </label> <select id="orderStatus" name="status"
-                                                                      class="form-select w-auto">
-                                        <option th:each="status : ${order.status?.values()}" th:value="${status}"
-                                                th:text="${status}" th:selected="${order.status == status}"></option>
-                                    </select> <input type="text" id="cabinetNo" name="cabinetNo"
-                                                     class="form-control w-auto d-none" placeholder="Cabinet No"
-                                                     th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
-                                        <button type="button" id="updateOrderStatusBtn"
-                                                class="btn btn-success shadow-sm rounded-pill px-4"><i
-                                                class="bi bi-check-circle me-1"></i> Update
+                                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                                        <label for="orderStatus" class="fw-bold mb-0">
+                                            Order Status
+                                        </label>
+
+                                        <select id="orderStatus" name="status" class="form-select w-auto">
+
+                                            <th:block th:if="${order.status?.name() == 'PENDING'}">
+                                                <option value="PENDING" selected>PENDING</option>
+                                                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                                                <option value="CANCELLED">CANCELLED</option>
+                                            </th:block>
+
+                                            <th:block th:if="${order.status?.name() == 'IN_PROGRESS'}">
+                                                <option value="IN_PROGRESS" selected>IN_PROGRESS</option>
+                                                <option value="COMPLETED">COMPLETED</option>
+                                            </th:block>
+
+                                        </select>
+
+                                        <input type="text"
+                                               id="cabinetNo"
+                                               name="cabinetNo"
+                                               class="form-control w-auto d-none"
+                                               placeholder="Cabinet No"
+                                               th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
+
+                                        <button type="button"
+                                                id="updateOrderStatusBtn"
+                                                class="btn btn-success shadow-sm rounded-pill px-4">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Update
                                         </button>
+
                                     </div>
                                 </div>
                             </div>
@@ -280,6 +310,7 @@
                                 <th>#</th>
                                 <th>Product / Item</th>
                                 <th>Type</th>
+                                <th>Status</th>
                                 <th>Silai</th>
                                 <th>Silai Amount</th>
                                 <th>Unit Price</th>
@@ -287,6 +318,7 @@
                                 <th>Fabric / Source</th>
                                 <th>Fabric Qty</th>
                                 <th>Fabric Amount</th>
+                                <th>Alteration Charges</th>
                                 <th>Subtotal</th>
                                 <th>Additional Notes</th>
                                 <th>Actions</th>
@@ -299,7 +331,6 @@
                                 <!-- # -->
                                 <td class="text-center" th:text="${i.count}"></td>
 
-                                <!-- Product / Item -->
                                 <!-- Product / Item -->
                                 <td>
                                     <!-- Inventory Item -->
@@ -354,6 +385,80 @@
                             <i class="bi bi-scissors me-1"></i>
                             Tailoring
                         </span>
+                                </td>
+
+                                <!-- Status -->
+                                <td class="text-center">
+                                    <select class="form-select form-select-sm order-product-status"
+                                            th:data-order-product-id="${item.id}"
+                                            th:data-current-status="${item.status?.name()}"
+                                            th:disabled="${order.status?.name() == 'CANCELLED' || order.status?.name() == 'DELIVERED' || item.status?.name() == 'CANCELLED'}">
+
+                                        <!-- TAILORING -->
+                                        <th:block th:if="${item.orderProductType?.name() == 'TAILORING'}">
+
+                                            <option value="PENDING"
+                                                    th:selected="${item.status?.name() == 'PENDING'}">
+                                                Pending
+                                            </option>
+
+                                            <option value="IN_PROGRESS"
+                                                    th:selected="${item.status?.name() == 'IN_PROGRESS'}">
+                                                In Progress
+                                            </option>
+
+                                            <option value="COMPLETED"
+                                                    th:selected="${item.status?.name() == 'COMPLETED'}">
+                                                Completed
+                                            </option>
+
+                                            <option value="CANCELLED"
+                                                    th:if="${item.status?.name() == 'PENDING' || item.status?.name() == 'CANCELLED'}"
+                                                    th:selected="${item.status?.name() == 'CANCELLED'}">
+                                                Cancelled
+                                            </option>
+
+                                        </th:block>
+
+                                        <!-- INVENTORY WITH ALTERATION -->
+                                        <th:block
+                                                th:if="${item.orderProductType?.name() == 'INVENTORY' && item.alterationRequired}">
+
+                                            <option value="PENDING_FOR_ALTERATION"
+                                                    th:selected="${item.status?.name() == 'PENDING_FOR_ALTERATION'}">
+                                                Pending for Alteration
+                                            </option>
+
+                                            <option value="ALTERATION_IN_PROGRESS"
+                                                    th:selected="${item.status?.name() == 'ALTERATION_IN_PROGRESS'}">
+                                                Alteration in Progress
+                                            </option>
+
+                                            <option value="COMPLETED"
+                                                    th:selected="${item.status?.name() == 'COMPLETED'}">
+                                                Completed
+                                            </option>
+
+                                            <option value="CANCELLED"
+                                                    th:if="${item.status?.name() == 'PENDING_FOR_ALTERATION' || item.status?.name() == 'CANCELLED'}"
+                                                    th:selected="${item.status?.name() == 'CANCELLED'}">
+                                                Cancelled
+                                            </option>
+
+                                        </th:block>
+
+                                        <!-- INVENTORY WITHOUT ALTERATION -->
+                                        <th:block
+                                                th:if="${item.orderProductType?.name() == 'INVENTORY' && !item.alterationRequired}">
+
+                                            <option value="INSTANT_DELIVERED"
+                                                    th:selected="${item.status?.name() == 'INSTANT_DELIVERED'}">
+                                                Instant Delivered
+                                            </option>
+
+                                        </th:block>
+
+                                    </select>
                                 </td>
 
                                 <!-- Silai -->
@@ -473,6 +578,12 @@
                             -
                         </span>
                                 </td>
+                                <!-- Alteration Charges -->
+                                <td class="amount-cell">
+                        <span class="format-amount"
+                              th:text="${item.alterationFee != null ? item.alterationFee : 0}">
+                        </span>
+                                </td>
 
                                 <!-- Subtotal -->
                                 <td class="amount-cell">
@@ -513,16 +624,15 @@
                             </tr>
                             </tbody>
                         </table>
+                        <div id="orderProductStatusMessage"></div>
                     </div>
                 </div>
             </div> <!-- Order Actions -->
             <div class="d-flex justify-content-center flex-wrap gap-2 order-actions mt-4 mb-4">
-                <!--<a
-                    th:href="@{/orders/edit/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
-                    class="btn btn-warning shadow-sm"> <i class="bi bi-pencil me-1"></i> Edit Order </a>-->
                 <a
-                    th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
-                    class="btn btn-success shadow-sm"> <i class="bi bi-receipt me-1"></i> Generate Order Receipt </a> <a
+                        th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
+                        class="btn btn-success shadow-sm"> <i class="bi bi-receipt me-1"></i> Generate Order Receipt
+                </a> <a
                     th:href="@{/orders}" class="btn btn-secondary shadow-sm"> <i
                     class="bi bi-arrow-left-circle me-1"></i> Back to Orders </a></div>
         </div>
@@ -534,7 +644,11 @@
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
-<script th:inline="javascript"> var contextPath = [[@{/}]]; </script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+    var csrfToken = $("meta[name='_csrf']").attr("content");
+    var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+</script>
 <script> function toggleCabinetField() {
     let selectedStatus = $("#orderStatus").val();
     if (selectedStatus === "COMPLETED") {
@@ -545,8 +659,6 @@
 }
 
 function updateOrderStatus() {
-    var csrfToken = $("meta[name='_csrf']").attr("content");
-    var csrfHeader = $("meta[name='_csrf_header']").attr("content");
     let orderId = $("#orderId").val();
     let status = $("#orderStatus").val();
     let cabinetNo = $("#cabinetNo").val();
@@ -587,6 +699,80 @@ $(function () {
     toggleCabinetField();
     $("#orderStatus").change(toggleCabinetField);
     $("#updateOrderStatusBtn").click(updateOrderStatus);
-}); </script>
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".order-product-status").forEach(function (select) {
+        select.addEventListener("change", function () {
+            const orderProductId = this.dataset.orderProductId;
+            const newStatus = this.value;
+            const previousStatus = this.dataset.currentStatus;
+
+            if (!orderProductId || !newStatus) {
+                return;
+            }
+
+            const csrfToken = $("meta[name='_csrf']").attr("content");
+            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+            this.disabled = true;
+
+            fetch(contextPath + "orders/update-order-product-status", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify({
+                    orderProductId: Number(orderProductId),
+                    status: newStatus
+                })
+            })
+                .then(async response => {
+                    const message = await response.text();
+
+                    if (!response.ok) {
+                        throw new Error(message || "Failed to update product status.");
+                    }
+
+                    return message;
+                })
+                .then(message => {
+                    this.dataset.currentStatus = newStatus;
+                    this.disabled = false;
+                    showProductStatusAlert("success", message || "Product status updated successfully!");
+                })
+                .catch(error => {
+                    console.error("Product status update failed:", error);
+                    this.value = previousStatus;
+                    this.disabled = false;
+                    showProductStatusAlert("danger", error.message || "Failed to update product status.");
+                });
+        });
+    });
+});
+
+function showProductStatusAlert(type, message) {
+    let icon = type === "success"
+        ? `<i class="bi bi-check-circle-fill me-2"></i>`
+        : `<i class="bi bi-x-circle-fill me-2"></i>`;
+
+    let alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
+            ${icon}${message}
+            <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    $("#orderProductStatusMessage").html(alertHtml);
+
+    setTimeout(() => {
+        $("#orderProductStatusMessage .alert").fadeOut(500, function () {
+            $(this).remove();
+        });
+    }, 4000);
+}
+
+</script>
 </body>
 </html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Batch Price</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2 class="page-title d-flex align-items-center mb-4">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Edit Batch Price
+                </h2>
+
+                <a th:href="@{/inventory/batches/{id}(id=${inventoryItem.id})}"
+                   class="btn btn-success shadow rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Batches
+                </a>
+
+            </div>
+
+            <!-- Error Message -->
+            <div th:if="${errorMessage != null}"
+                 class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
+
+                <i class="bi bi-exclamation-triangle me-2"></i>
+
+                <span th:text="${errorMessage}">
+                    Unable to edit batch price.
+                </span>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+            <!-- Batch Information -->
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-layers me-2"></i>
+                        Batch Information
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <label class="form-label text-muted mb-1">
+                                Inventory Item
+                            </label>
+
+                            <div class="fw-semibold"
+                                 th:text="${inventoryItem.name}">
+                                Cotton
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label text-muted mb-1">
+                                Batch / Roll ID
+                            </label>
+
+                            <div class="fw-semibold"
+                                 th:text="${batch.batchCode}">
+                                A-102
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label text-muted mb-1">
+                                Remaining Quantity
+                            </label>
+
+                            <div class="fw-semibold">
+
+                                <span th:text="${batch.remainingQuantity != null
+                                    ? batch.remainingQuantity.stripTrailingZeros().toPlainString()
+                                    : '0'}">
+                                    5
+                                </span>
+
+                                <span th:if="${inventoryItem.unit != null}"
+                                      class="text-muted"
+                                      th:text="${' ' + inventoryItem.unit.name().replace('_', ' ')}">
+                                    METER
+                                </span>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Price Form -->
+            <div class="card border-success border-bottom border-3 shadow-sm mt-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+                    <div class="d-flex align-items-center"><i class="bi bi-currency-exchange me-2"></i>
+                        Update Price
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/inventory/batches/{batchId}/edit(batchId=${batch.id})}"
+                          method="post">
+
+                        <div class="row g-3">
+
+                            <!-- Purchase Price -->
+                            <div class="col-md-6">
+
+                                <label for="purchasePrice"
+                                       class="form-label fw-semibold">
+                                    Purchase Price <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="purchasePrice"
+                                       name="purchasePrice"
+                                       class="form-control rounded-pill"
+                                       min="0"
+                                       step="0.01"
+                                       th:value="${batch.purchasePrice}"
+                                       required>
+
+                                <div class="form-text">
+                                    Price per unit for the remaining stock.
+                                </div>
+
+                            </div>
+
+                            <!-- Sale Price -->
+                            <div class="col-md-6">
+
+                                <label for="salePrice"
+                                       class="form-label fw-semibold">
+                                    Sale Price <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="salePrice"
+                                       name="salePrice"
+                                       class="form-control rounded-pill"
+                                       min="0"
+                                       step="0.01"
+                                       th:value="${batch.salePrice}"
+                                       required>
+
+                                <div class="form-text">
+                                    Selling price per unit for the remaining stock.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+
+                            <a th:href="@{/inventory/batches/{id}(id=${inventoryItem.id})}"
+                               class="btn btn-secondary rounded-pill px-4">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-success rounded-pill px-4">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Update Price
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>

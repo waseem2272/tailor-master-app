@@ -1,6 +1,7 @@
 package com.example.tailormaster.service.order;
 
 import com.example.tailormaster.dto.OrderProductDto;
+import com.example.tailormaster.dto.OrderProductStatusUpdateDto;
 import com.example.tailormaster.dto.OrderStatusUpdateDto;
 import com.example.tailormaster.dto.UpdateCustomerOrderDto;
 import com.example.tailormaster.entity.*;
@@ -55,12 +56,10 @@ public class OrderService {
     // Save an order
     @Transactional
     public Order save(Order order) {
-
         User currentUser = authenticatedUserService.getCurrentUser();
         order.setUser(currentUser);
 
         Order savedOrder = orderRepository.save(order);
-
         BigDecimal finalTotal = BigDecimal.ZERO;
 
         for (OrderProduct orderProduct : savedOrder.getOrderProducts()) {
@@ -73,51 +72,68 @@ public class OrderService {
                     );
                 }
 
-                BigDecimal quantity =
-                        BigDecimal.valueOf(orderProduct.getQuantity());
+                BigDecimal quantity = BigDecimal.valueOf(orderProduct.getQuantity());
 
-                BigDecimal inventoryAmount =
-                        orderInventoryService.reserveInventory(
-                                savedOrder,
-                                orderProduct,
-                                orderProduct.getInventoryItem().getId(),
-                                quantity
-                        );
+                BigDecimal inventoryAmount = orderInventoryService.reserveInventory(
+                        savedOrder,
+                        orderProduct,
+                        orderProduct.getInventoryItem().getId(),
+                        quantity
+                );
 
-                BigDecimal inventoryUnitPrice =
-                        quantity.compareTo(BigDecimal.ZERO) > 0
-                                ? inventoryAmount.divide(
-                                quantity,
-                                2,
-                                RoundingMode.HALF_UP
-                        )
-                                : BigDecimal.ZERO;
+                BigDecimal inventoryUnitPrice = quantity.compareTo(BigDecimal.ZERO) > 0
+                        ? inventoryAmount.divide(quantity, 2, RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO;
+
+                BigDecimal alterationFee = orderProduct.isAlterationRequired()
+                        ? (orderProduct.getAlterationFee() != null
+                        ? orderProduct.getAlterationFee()
+                        : BigDecimal.ZERO)
+                        : BigDecimal.ZERO;
+
+                if (orderProduct.isAlterationRequired()) {
+                    orderProduct.setStatus(OrderProductStatus.PENDING_FOR_ALTERATION);
+                } else {
+                    orderProduct.setStatus(OrderProductStatus.INSTANT_DELIVERED);
+                }
+
+                BigDecimal subtotal = inventoryAmount.add(alterationFee);
 
                 orderProduct.setInventoryAmount(inventoryAmount);
                 orderProduct.setInventoryUnitPrice(inventoryUnitPrice);
-                orderProduct.setSubtotal(inventoryAmount);
+                orderProduct.setAlterationFee(alterationFee);
+                orderProduct.setSubtotal(subtotal);
 
                 orderProductRepository.save(orderProduct);
 
-                finalTotal = finalTotal.add(inventoryAmount);
+                orderInventoryService.consumeInventoryItem(
+                        savedOrder,
+                        orderProduct,
+                        currentUser
+                );
+
+                finalTotal = finalTotal.add(subtotal);
 
                 logger.info(
-                        "Inventory order product reserved. orderId={}, orderProductId={}, quantity={}, amount={}, unitPrice={}",
+                        "Inventory order product consumed. orderId={}, orderProductId={}, quantity={}, inventoryAmount={}, alterationRequired={}, alterationFee={}, subtotal={}, status={}, unitPrice={}",
                         savedOrder.getOrderId(),
                         orderProduct.getId(),
                         quantity,
                         inventoryAmount,
+                        orderProduct.isAlterationRequired(),
+                        alterationFee,
+                        subtotal,
+                        orderProduct.getStatus(),
                         inventoryUnitPrice
                 );
 
                 continue;
             }
 
-            BigDecimal stitchingAmount =
-                    orderProduct.getSilaiAmount() != null
-                            ? orderProduct.getSilaiAmount()
-                            .multiply(BigDecimal.valueOf(orderProduct.getQuantity()))
-                            : BigDecimal.ZERO;
+            BigDecimal stitchingAmount = orderProduct.getSilaiAmount() != null
+                    ? orderProduct.getSilaiAmount()
+                    .multiply(BigDecimal.valueOf(orderProduct.getQuantity()))
+                    : BigDecimal.ZERO;
 
             BigDecimal fabricAmount = BigDecimal.ZERO;
 
@@ -125,22 +141,21 @@ public class OrderService {
                     orderProduct.getInventoryItem() != null &&
                     orderProduct.getFabricQuantity() != null) {
 
-                fabricAmount =
-                        orderInventoryService.reserveInventory(
-                                savedOrder,
-                                orderProduct,
-                                orderProduct.getInventoryItem().getId(),
-                                orderProduct.getFabricQuantity()
-                        );
+                fabricAmount = orderInventoryService.reserveInventory(
+                        savedOrder,
+                        orderProduct,
+                        orderProduct.getInventoryItem().getId(),
+                        orderProduct.getFabricQuantity()
+                );
 
-                BigDecimal fabricUnitPrice =
-                        orderProduct.getFabricQuantity().compareTo(BigDecimal.ZERO) > 0
-                                ? fabricAmount.divide(
-                                orderProduct.getFabricQuantity(),
-                                2,
-                                RoundingMode.HALF_UP
-                        )
-                                : BigDecimal.ZERO;
+                BigDecimal fabricUnitPrice = orderProduct.getFabricQuantity()
+                        .compareTo(BigDecimal.ZERO) > 0
+                        ? fabricAmount.divide(
+                        orderProduct.getFabricQuantity(),
+                        2,
+                        RoundingMode.HALF_UP
+                )
+                        : BigDecimal.ZERO;
 
                 orderProduct.setFabricAmount(fabricAmount);
                 orderProduct.setFabricUnitPrice(fabricUnitPrice);
@@ -190,8 +205,7 @@ public class OrderService {
             debitEntry.setAmount(advance);
             debitEntry.setPaymentType(PaymentType.DEBIT);
             debitEntry.setRemarks(
-                    "Advance payment at order creation#" +
-                            savedOrder.getOrderId()
+                    "Advance payment at order creation#" + savedOrder.getOrderId()
             );
             debitEntry.setPaymentDate(LocalDate.now());
             customerPaymentRepository.save(debitEntry);
@@ -207,74 +221,247 @@ public class OrderService {
         );
 
         return savedOrder;
-
     }
 
     @Transactional
     public void updateOrderStatus(OrderStatusUpdateDto orderStatusUpdateDto) {
         try {
             User currentUser = authenticatedUserService.getCurrentUser();
-
-            Order existingOrder = orderRepository.findByIdAndUser(
-                    orderStatusUpdateDto.getOrderId(),
-                    currentUser
-            ).orElseThrow(() ->
-                    new RuntimeException("Order not found")
-            );
-
+            if (orderStatusUpdateDto == null || orderStatusUpdateDto.getOrderId() == null) {
+                throw new IllegalArgumentException("Order ID is required.");
+            }
+            if (orderStatusUpdateDto.getStatus() == null) {
+                throw new IllegalArgumentException("Order status is required.");
+            }
+            Order existingOrder = orderRepository.findByIdAndUser(orderStatusUpdateDto.getOrderId(), currentUser).orElseThrow(() -> new IllegalArgumentException("Order not found."));
             OrderStatus oldStatus = existingOrder.getStatus();
             OrderStatus newStatus = orderStatusUpdateDto.getStatus();
+            if (oldStatus == null) {
+                throw new IllegalStateException("Current order status is missing.");
+            }
+            logger.info("Updating order status. orderId={}, oldStatus={}, newStatus={}", existingOrder.getOrderId(), oldStatus, newStatus);
+            if (oldStatus == newStatus) {
+                logger.info("Order status is already {}. No status transition required. orderId={}", newStatus, existingOrder.getOrderId());
+                if (newStatus == OrderStatus.COMPLETED) {
+                    existingOrder.setCabinetNo(orderStatusUpdateDto.getCabinetNo());
+                } else {
+                    existingOrder.setCabinetNo(null);
+                }
+                existingOrder.setUser(currentUser);
+                orderRepository.save(existingOrder);
+                return;
+            }
+            boolean validTransition = (oldStatus == OrderStatus.PENDING && (newStatus == OrderStatus.IN_PROGRESS || newStatus == OrderStatus.COMPLETED || newStatus == OrderStatus.CANCELLED)) || (oldStatus == OrderStatus.IN_PROGRESS && newStatus == OrderStatus.COMPLETED);
+            if (!validTransition) {
+                throw new IllegalArgumentException("Invalid order status transition: " + oldStatus + " -> " + newStatus);
+            } /* * PENDING -> IN_PROGRESS / COMPLETED * * Shop fabric is consumed when tailoring work starts * or when the order is directly completed. */
+            if (oldStatus == OrderStatus.PENDING && (newStatus == OrderStatus.IN_PROGRESS || newStatus == OrderStatus.COMPLETED)) {
+                logger.info("Consuming shop fabric stock for order {}", existingOrder.getOrderId());
+                orderInventoryService.consumeShopFabric(existingOrder);
+            } /* * IN_PROGRESS -> COMPLETED * * No additional inventory consumption is required. */
+            if (oldStatus == OrderStatus.IN_PROGRESS && newStatus == OrderStatus.COMPLETED) {
+                logger.info("Completing order. orderId={}", existingOrder.getOrderId());
+            } /* * PENDING -> CANCELLED * * Shop fabric was only reserved at order creation, * so release the reservation. */
+            if (oldStatus == OrderStatus.PENDING && newStatus == OrderStatus.CANCELLED) {
+                logger.info("Releasing shop fabric reservations for cancelled order {}", existingOrder.getOrderId());
+                orderInventoryService.reverseShopFabric(existingOrder);
+            }
+            existingOrder.setStatus(newStatus);
+            if (newStatus == OrderStatus.COMPLETED) {
+                existingOrder.setCabinetNo(orderStatusUpdateDto.getCabinetNo());
+            } else {
+                existingOrder.setCabinetNo(null);
+            }
+            existingOrder.setUser(currentUser);
+            orderRepository.save(existingOrder);
+            logger.info("Order status updated successfully. orderId={}, oldStatus={}, newStatus={}", existingOrder.getOrderId(), oldStatus, newStatus);
+        } catch (Exception e) {
+            logger.error("Error while updating order status. orderId={}", orderStatusUpdateDto != null ? orderStatusUpdateDto.getOrderId() : null, e);
+            throw e;
+        }
+    }
+
+    @Transactional
+    public void updateOrderProductStatus(OrderProductStatusUpdateDto dto) {
+        try {
+            if (dto == null || dto.getOrderProductId() == null) {
+                throw new IllegalArgumentException("Order product ID is required.");
+            }
+
+            if (dto.getStatus() == null) {
+                throw new IllegalArgumentException("Product status is required.");
+            }
+
+            User currentUser = authenticatedUserService.getCurrentUser();
+
+            OrderProduct orderProduct = orderProductRepository
+                    .findByIdAndOrderUser(dto.getOrderProductId(), currentUser)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Order product not found.")
+                    );
+
+            Order order = orderProduct.getOrder();
+
+            if (order == null) {
+                throw new IllegalStateException("Order is missing for this product.");
+            }
+
+            if (order.getStatus() == OrderStatus.CANCELLED ||
+                    order.getStatus() == OrderStatus.DELIVERED) {
+                throw new IllegalArgumentException(
+                        "Product status cannot be changed after order is cancelled or delivered."
+                );
+            }
+
+            OrderProductType productType = orderProduct.getOrderProductType();
+
+            if (productType == null) {
+                throw new IllegalStateException(
+                        "Order product type is missing."
+                );
+            }
+
+            OrderProductStatus oldStatus = orderProduct.getStatus();
+            OrderProductStatus newStatus = dto.getStatus();
+
+            if (oldStatus == null) {
+                throw new IllegalStateException(
+                        "Current product status is missing."
+                );
+            }
+
+            if (oldStatus == OrderProductStatus.CANCELLED) {
+                if (newStatus == OrderProductStatus.CANCELLED) {
+                    return;
+                }
+
+                throw new IllegalArgumentException(
+                        "Cancelled product status cannot be changed."
+                );
+            }
+
+            /*
+             * =========================================================
+             * INVENTORY PRODUCT
+             * =========================================================
+             */
+            if (productType == OrderProductType.INVENTORY) {
+
+                if (!orderProduct.isAlterationRequired()) {
+
+                    if (oldStatus != OrderProductStatus.INSTANT_DELIVERED ||
+                            newStatus != OrderProductStatus.INSTANT_DELIVERED) {
+                        throw new IllegalArgumentException(
+                                "This inventory product is already instantly delivered."
+                        );
+                    }
+
+                    return;
+                }
+
+                if (oldStatus == OrderProductStatus.PENDING_FOR_ALTERATION &&
+                        newStatus == OrderProductStatus.CANCELLED) {
+
+                    orderInventoryService.reverseInventoryItem(
+                            order,
+                            orderProduct
+                    );
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == OrderProductStatus.PENDING_FOR_ALTERATION &&
+                        newStatus == OrderProductStatus.ALTERATION_IN_PROGRESS) {
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == OrderProductStatus.ALTERATION_IN_PROGRESS &&
+                        newStatus == OrderProductStatus.COMPLETED) {
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == newStatus) {
+
+                    return;
+
+                } else {
+                    throw new IllegalArgumentException(
+                            "Invalid inventory alteration status transition: " +
+                                    oldStatus + " -> " + newStatus
+                    );
+                }
+            }
+
+            /*
+             * =========================================================
+             * TAILORING PRODUCT
+             * =========================================================
+             */
+            else if (productType == OrderProductType.TAILORING) {
+
+                if (oldStatus == OrderProductStatus.PENDING &&
+                        newStatus == OrderProductStatus.IN_PROGRESS) {
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == OrderProductStatus.IN_PROGRESS &&
+                        newStatus == OrderProductStatus.COMPLETED) {
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == OrderProductStatus.PENDING &&
+                        newStatus == OrderProductStatus.CANCELLED) {
+
+                    orderInventoryService.releaseOrderProductReservation(
+                            orderProduct
+                    );
+
+                    orderProduct.setStatus(newStatus);
+
+                } else if (oldStatus == newStatus) {
+
+                    return;
+
+                } else {
+                    throw new IllegalArgumentException(
+                            "Invalid tailoring status transition: " +
+                                    oldStatus + " -> " + newStatus
+                    );
+                }
+            }
+
+            orderProductRepository.save(orderProduct);
 
             logger.info(
-                    "Updating order status. orderId={}, oldStatus={}, newStatus={}",
-                    existingOrder.getOrderId(),
+                    "Order product status updated successfully. orderId={}, orderProductId={}, type={}, oldStatus={}, newStatus={}",
+                    order.getOrderId(),
+                    orderProduct.getId(),
+                    productType,
                     oldStatus,
                     newStatus
             );
 
-            if (oldStatus == OrderStatus.PENDING &&
-                    (newStatus == OrderStatus.IN_PROGRESS ||
-                            newStatus == OrderStatus.COMPLETED)) {
+        } catch (IllegalArgumentException e) {
 
-                logger.info(
-                        "Consuming shop fabric stock for order {}",
-                        existingOrder.getOrderId()
-                );
-
-                orderInventoryService.consumeShopFabric(existingOrder);
-            }
-
-            if (oldStatus != OrderStatus.CANCELLED &&
-                    newStatus == OrderStatus.CANCELLED) {
-
-                logger.info(
-                        "Reversing shop fabric stock for cancelled order {}",
-                        existingOrder.getOrderId()
-                );
-
-                orderInventoryService.reverseShopFabric(existingOrder);
-            }
-
-            existingOrder.setStatus(newStatus);
-            existingOrder.setCabinetNo(orderStatusUpdateDto.getCabinetNo());
-            existingOrder.setUser(currentUser);
-
-            orderRepository.save(existingOrder);
-
-            logger.info(
-                    "Order status updated successfully. orderId={}, status={}",
-                    existingOrder.getOrderId(),
-                    newStatus
-            );
-
-        } catch (Exception e) {
-            logger.error(
-                    "Error while updating order status. orderId={}",
-                    orderStatusUpdateDto != null ? orderStatusUpdateDto.getOrderId() : null,
-                    e
+            logger.warn(
+                    "Invalid order product status update. orderProductId={}, message={}",
+                    dto != null ? dto.getOrderProductId() : null,
+                    e.getMessage()
             );
 
             throw e;
+
+        } catch (Exception e) {
+
+            logger.error(
+                    "Error updating order product status. orderProductId={}",
+                    dto != null ? dto.getOrderProductId() : null,
+                    e
+            );
+
+            throw new RuntimeException(
+                    "Error updating product status.",
+                    e
+            );
         }
     }
 
@@ -1012,6 +1199,8 @@ public class OrderService {
         orderMap.put("orderId", order.getOrderId());
         orderMap.put("customer", "<span>" + order.getCustomer().getFullName() + "</span><br>" +
                 "<small class='text-muted'>" + order.getCustomer().getPhoneNumber() + "</small>");
+        orderMap.put("customerName", order.getCustomer().getFullName());
+        orderMap.put("customerPhone", order.getCustomer().getPhoneNumber());
         orderMap.put("orderDate", order.getOrderDate());
         orderMap.put("deliveryDate", order.getDeliveryDate());
         orderMap.put("status", order.getStatus().name());
@@ -1034,72 +1223,109 @@ public class OrderService {
         List<OrderProduct> orderProducts = order.getOrderProducts();
         return orderProducts.stream().map(op -> {
             Map<String, Object> opMap = new HashMap<>();
-
-            String productName;
-
-//            if (op.getOrderProductType() == OrderProductType.INVENTORY) {
-                productName = op.getInventoryItem() != null
-                        ? op.getInventoryItem().getName()
-                        : "Unknown Inventory Item";
-//            } else {
-//                productName = op.getProduct() != null
-//                        ? op.getProduct().getName()
-//                        : "Unknown Product";
-//            }
-
-            opMap.put("productName", productName);
+            OrderProductType type = op.getOrderProductType();
+            opMap.put("orderProductType", type != null ? type.name() : null);
             opMap.put("quantity", op.getQuantity());
-            opMap.put("silaiType", op.getSilaiType());
-            opMap.put("amount", op.getSilaiAmount());
             opMap.put("subtotal", op.getSubtotal());
-            opMap.put("orderProductType", op.getOrderProductType());
-
+            if (type == OrderProductType.INVENTORY) {
+                String productName = op.getInventoryItem() != null ? op.getInventoryItem().getName() : "Unknown Inventory Item";
+                opMap.put("productName", productName);
+                opMap.put("silaiType", null);
+                opMap.put("amount", op.getInventoryAmount());
+                opMap.put("inventoryItemName", productName);
+                opMap.put("inventoryUnitPrice", op.getInventoryUnitPrice());
+                opMap.put("inventoryAmount", op.getInventoryAmount());
+                opMap.put("fabricSource", null);
+                opMap.put("fabricQuantity", null);
+                opMap.put("fabricUnitPrice", null);
+                opMap.put("fabricAmount", null);
+                opMap.put("alterationRequired", op.isAlterationRequired());
+                opMap.put("alterationFee", op.getAlterationFee());
+            } else if (type == OrderProductType.TAILORING) {
+                String productName = op.getProduct() != null ? op.getProduct().getName() : "Unknown Product";
+                opMap.put("productName", productName);
+                opMap.put("silaiType", op.getSilaiType());
+                opMap.put("amount", op.getSilaiAmount());
+                opMap.put("inventoryItemName", op.getInventoryItem() != null ? op.getInventoryItem().getName() : null);
+                opMap.put("inventoryUnitPrice", op.getInventoryUnitPrice());
+                opMap.put("inventoryAmount", op.getInventoryAmount());
+                opMap.put("fabricSource", op.getFabricSource() != null ? op.getFabricSource().name() : null);
+                opMap.put("fabricQuantity", op.getFabricQuantity());
+                opMap.put("fabricUnitPrice", op.getFabricUnitPrice());
+                opMap.put("fabricAmount", op.getFabricAmount());
+            } else {
+                opMap.put("productName", "Unknown Product");
+                opMap.put("silaiType", op.getSilaiType());
+                opMap.put("amount", op.getSilaiAmount());
+            }
             return opMap;
         }).toList();
     }
 
     @Transactional
     public void markOrderAsPickedUp(Order order, BigDecimal amountReceived) {
-        logger.info("Attempting the Order: {} mark as picked up with amount received: {}", order, amountReceived);
+        logger.info("Attempting to mark order {} as picked up with amount received: {}", order.getOrderId(), amountReceived);
+
         try {
-            BigDecimal dueAmount = order.getDuePayment();
-            BigDecimal advancePayment = order.getAdvancePayment();
+            if (order.getStatus() != OrderStatus.COMPLETED) {
+                throw new IllegalArgumentException(
+                        "Only completed orders can be picked up."
+                );
+            }
 
-            // ✅ Validate amount received
-//            if (amountReceived.compareTo(BigDecimal.ZERO) <= 0) {
-//                throw new IllegalArgumentException("Amount received must be greater than 0.");
-//            }
+            if (order.getPickupStatus() == PickupStatus.PICKED_UP) {
+                throw new IllegalArgumentException(
+                        "Order has already been picked up."
+                );
+            }
+
+            if (amountReceived == null) {
+                amountReceived = BigDecimal.ZERO;
+            }
+
+            if (amountReceived.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException(
+                        "Amount received cannot be negative."
+                );
+            }
+
+            BigDecimal dueAmount = order.getDuePayment() != null
+                    ? order.getDuePayment()
+                    : BigDecimal.ZERO;
+
+            BigDecimal advancePayment = order.getAdvancePayment() != null
+                    ? order.getAdvancePayment()
+                    : BigDecimal.ZERO;
+
             if (amountReceived.compareTo(dueAmount) > 0) {
-                throw new IllegalArgumentException("Amount received cannot be greater than due.");
+                throw new IllegalArgumentException(
+                        "Amount received cannot be greater than due."
+                );
             }
 
-            // set due amount to zero if received amount is equals to due
-            if (amountReceived.compareTo(dueAmount) == 0) {
-                order.setDuePayment(BigDecimal.ZERO);
-            } else {
-                order.setDuePayment(dueAmount.subtract(amountReceived));
-            }
+            BigDecimal outstandingDueAmount =
+                    dueAmount.subtract(amountReceived).max(BigDecimal.ZERO);
 
-            // ✅ Calculate Outstanding Due
-            BigDecimal outstandingDueAmount = dueAmount.subtract(amountReceived).max(BigDecimal.ZERO);
-
+            order.setDuePayment(outstandingDueAmount);
             order.setPickupStatus(PickupStatus.PICKED_UP);
-            order.setPickedUpWithDue(outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0); // TRUE if any due remains
+            order.setPickedUpWithDue(
+                    outstandingDueAmount.compareTo(BigDecimal.ZERO) > 0
+            );
             order.setPickupDate(LocalDateTime.now());
-            order.setStatus(OrderStatus.DELIVERED);
 
-            // ✅ Update the outstanding due amount field
+            order.setStatus(OrderStatus.DELIVERED);
             order.setOutstandingDueAmount(outstandingDueAmount);
-            order.setPaidAmount(advancePayment.add(amountReceived.max(BigDecimal.ZERO)));
+            order.setPaidAmount(
+                    advancePayment.add(amountReceived)
+            );
 
             order.setUser(authenticatedUserService.getCurrentUser());
             orderRepository.save(order);
 
-            // ✅ Insert payment entry for amount received (CREDIT)
             CustomerPaymentLedger payment = new CustomerPaymentLedger();
             payment.setCustomer(order.getCustomer());
             payment.setOrder(order);
-            payment.setPaymentType(PaymentType.DEBIT); // CREDIT means payment received
+            payment.setPaymentType(PaymentType.DEBIT);
 
             if (amountReceived.compareTo(dueAmount) == 0) {
                 payment.setRemarks("Full payment received at pickup");
@@ -1113,13 +1339,31 @@ public class OrderService {
             payment.setPaymentDate(LocalDate.now());
             customerPaymentRepository.save(payment);
 
-            logger.info("Order with ID {} marked as picked up. Amount received: {}, Outstanding due: {}", order.getId(), amountReceived, outstandingDueAmount);
+            logger.info(
+                    "Order {} marked as picked up. Amount received={}, outstanding due={}",
+                    order.getOrderId(),
+                    amountReceived,
+                    outstandingDueAmount
+            );
+
         } catch (IllegalArgumentException e) {
-            logger.warn("Invalid input for marking order {} as picked up: {}", order.getId(), e.getMessage());
+            logger.warn(
+                    "Invalid input for marking order {} as picked up: {}",
+                    order.getOrderId(),
+                    e.getMessage()
+            );
             throw e;
         } catch (Exception e) {
-            logger.error("Error marking order {} as picked up: {}", order.getId(), e.getMessage(), e);
-            throw new RuntimeException("Error marking order as picked up.", e);
+            logger.error(
+                    "Error marking order {} as picked up: {}",
+                    order.getOrderId(),
+                    e.getMessage(),
+                    e
+            );
+            throw new RuntimeException(
+                    "Error marking order as picked up.",
+                    e
+            );
         }
     }
 
@@ -1155,9 +1399,9 @@ public class OrderService {
             order.setPaidAmount(order.getPaidAmount().add(paymentAmount));
             order.setOutstandingDueAmount(outstandingDue.subtract(paymentAmount));
 
-            if (order.getOutstandingDueAmount().compareTo(BigDecimal.ZERO) == 0) {
-                order.setStatus(OrderStatus.DELIVERED);
-            }
+//            if (order.getOutstandingDueAmount().compareTo(BigDecimal.ZERO) == 0) {
+//                order.setStatus(OrderStatus.DELIVERED);
+//            }
 
             order.setUser(authenticatedUserService.getCurrentUser());
             Order updatedOrder = orderRepository.save(order);

@@ -24,7 +24,7 @@ public interface OrderInventoryReservationRepository
             Long orderProductId
     );
 
-    List<OrderInventoryReservation> findByUserAndOrderProductIdAndReleasedFalse(
+    List<OrderInventoryReservation> findByUserAndOrderProductIdAndReleasedFalseOrderByIdAsc(
             User user,
             Long orderProductId
     );

@@ -143,53 +143,123 @@
                             <div class="card-header bg-light text-success fw-bold">
                                 <i class="bi bi-boxes me-2"></i>Stock & Pricing
                             </div>
+
                             <div class="card-body">
+
+                                <div th:if="${inventoryItem.id != null}" class="alert alert-info py-2 mb-3">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Purchase Price and Sale Price can only be updated through Batches.
+                                    Minimum Stock can be edited here.
+                                </div>
+
                                 <div class="row g-3">
+
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="unit" class="form-label fw-semibold">Unit <span class="text-danger">*</span></label>
-                                        <select th:field="*{unit}" id="unit" class="form-select rounded-pill" required>
+                                        <label for="unit" class="form-label fw-semibold">
+                                            Unit <span class="text-danger">*</span>
+                                        </label>
+                                        <select th:field="*{unit}" id="unit"
+                                                class="form-select rounded-pill"
+                                                required
+                                                th:disabled="${inventoryItem.id != null}">
                                             <option value="">Select Unit</option>
-                                            <option th:each="unit : ${units}" th:value="${unit}"
-                                                    th:text="${unit.name().replace('_', ' ')}">Meter
+                                            <option th:each="unit : ${units}"
+                                                    th:value="${unit}"
+                                                    th:text="${unit.name().replace('_', ' ')}">
+                                                Meter
                                             </option>
                                         </select>
+                                        <input th:if="${inventoryItem.id != null}"
+                                               type="hidden"
+                                               th:field="*{unit}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="quantity" class="form-label fw-semibold">Quantity <span
-                                                class="text-danger">*</span></label>
-                                        <input type="number" th:field="*{quantity}" id="quantity"
-                                               class="form-control rounded-pill" min="0" step="0.01" placeholder="0.00"
-                                               required>
+                                        <label for="quantity" class="form-label fw-semibold">
+                                            Quantity <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="number"
+                                               th:field="*{quantity}"
+                                               id="quantity"
+                                               class="form-control rounded-pill"
+                                               min="0"
+                                               step="0.01"
+                                               placeholder="0.00"
+                                               required
+                                               th:disabled="${inventoryItem.id != null}">
+                                        <input th:if="${inventoryItem.id != null}"
+                                               type="hidden"
+                                               th:field="*{quantity}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="purchasePrice" class="form-label fw-semibold">Purchase Price</label>
+                                        <label for="purchasePrice" class="form-label fw-semibold">
+                                            Purchase Price
+                                        </label>
                                         <div class="input-group">
                                             <span class="input-group-text rounded-start-pill">Rs.</span>
-                                            <input type="number" th:field="*{purchasePrice}" id="purchasePrice"
-                                                   class="form-control rounded-end-pill" min="0" step="0.01"
-                                                   placeholder="0.00">
+                                            <input type="number"
+                                                   th:field="*{purchasePrice}"
+                                                   id="purchasePrice"
+                                                   class="form-control rounded-end-pill"
+                                                   min="0"
+                                                   step="0.01"
+                                                   placeholder="0.00"
+                                                   th:disabled="${inventoryItem.id != null}">
                                         </div>
+                                        <input th:if="${inventoryItem.id != null}"
+                                               type="hidden"
+                                               th:field="*{purchasePrice}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="salePrice" class="form-label fw-semibold">Sale Price</label>
+                                        <label for="salePrice" class="form-label fw-semibold">
+                                            Sale Price
+                                        </label>
                                         <div class="input-group">
                                             <span class="input-group-text rounded-start-pill">Rs.</span>
-                                            <input type="number" th:field="*{salePrice}" id="salePrice"
-                                                   class="form-control rounded-end-pill" min="0" step="0.01"
-                                                   placeholder="0.00">
+                                            <input type="number"
+                                                   th:field="*{salePrice}"
+                                                   id="salePrice"
+                                                   class="form-control rounded-end-pill"
+                                                   min="0"
+                                                   step="0.01"
+                                                   placeholder="0.00"
+                                                   th:disabled="${inventoryItem.id != null}">
                                         </div>
+                                        <input th:if="${inventoryItem.id != null}"
+                                               type="hidden"
+                                               th:field="*{salePrice}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="minimumStock" class="form-label fw-semibold">Minimum Stock</label>
-                                        <input type="number" th:field="*{minimumStock}" id="minimumStock"
-                                               class="form-control rounded-pill" min="0" step="0.01"
+                                        <label for="minimumStock" class="form-label fw-semibold">
+                                            Minimum Stock
+                                        </label>
+                                        <input type="number"
+                                               th:field="*{minimumStock}"
+                                               id="minimumStock"
+                                               class="form-control rounded-pill"
+                                               min="0"
+                                               step="0.01"
                                                placeholder="e.g. 5">
                                         <small class="text-muted">Low-stock alert threshold</small>
                                     </div>
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="batchCode" class="form-label fw-semibold">
+                                            Batch / Roll ID <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text"
+                                               name="batchCode"
+                                               id="batchCode"
+                                               class="form-control rounded-pill"
+                                               maxlength="100"
+                                               placeholder="e.g. GA458721"
+                                               th:disabled="${inventoryItem.id != null}"
+                                               required>
+                                        <small class="text-muted">Enter the supplier barcode or roll/batch number</small>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -221,13 +291,15 @@
         </div>
     </div>
 </div>
-
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
-
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 <script>
     const itemTypeSelect = document.getElementById('itemType');
     const unit = document.getElementById('unit');

@@ -1,5 +1,6 @@
 package com.example.tailormaster.repository;
 
+import com.example.tailormaster.entity.InventoryItem;
 import com.example.tailormaster.entity.InventoryStockBatch;
 import com.example.tailormaster.entity.User;
 import jakarta.persistence.LockModeType;
@@ -11,14 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InventoryStockBatchRepository extends JpaRepository<InventoryStockBatch, Long> {
-
-    List<InventoryStockBatch> findByInventoryItem_UserAndInventoryItem_IdOrderByReceivedDateAscIdAsc(
-            User user,
-            Long inventoryItemId
-    );
 
     List<InventoryStockBatch> findByUserAndInventoryItemIdAndRemainingQuantityGreaterThanOrderByReceivedDateAscIdAsc(
             User user,
@@ -38,5 +35,15 @@ public interface InventoryStockBatchRepository extends JpaRepository<InventorySt
     List<InventoryStockBatch> findAvailableBatchesForUpdate(
             @Param("user") User user,
             @Param("inventoryItemId") Long inventoryItemId
+    );
+
+    Optional<InventoryStockBatch> findByUserAndBatchCode(
+            User user,
+            String batchCode
+    );
+
+    List<InventoryStockBatch> findByUserAndInventoryItemOrderByReceivedDateAsc(
+            User user,
+            InventoryItem inventoryItem
     );
 }

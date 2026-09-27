@@ -137,15 +137,36 @@
 
                                     <option th:each="item : ${inventoryItems}"
                                             th:value="${item.id}"
-                                            th:data-stock="${item.quantity}"
+                                            th:data-name="${item.name}"
+                                            th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                            th:data-category="${item.category != null ? item.category.name : ''}"
+                                            th:data-color="${item.color != null ? item.color.name : ''}"
+                                            th:data-design="${item.design != null ? item.design.name : ''}"
+                                            th:data-size="${item.size != null ? item.size : ''}"
+                                            th:data-stock="${availableStock[item.id].stripTrailingZeros().toPlainString()}"
+                                            th:data-reserved="${reservedStockMap[item.id]}"
+                                            th:data-unit="${item.unit}"
+                                            th:data-sale-price="${item.salePrice}"
                                             th:text="${item.name
-                                                + ' | '
-                                                + item.itemType.name()
-                                                + ' | Current Stock: '
-                                                + item.quantity.stripTrailingZeros().toPlainString()}">
-
-                                        Cotton | FABRIC | Current Stock: 25
-
+            + ' | '
+            + (item.brand != null ? item.brand.name + ' | ' : '')
+            + (item.category != null ? item.category.name + ' | ' : '')
+            + (item.color != null ? item.color.name + ' | ' : '')
+            + (item.design != null ? item.design.name + ' | ' : '')
+            + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
+            + 'Batch: '
+            + (!#lists.isEmpty(stockBatches[item.id])
+                ? #strings.listJoin(stockBatches[item.id].![batchCode], ', ')
+                : 'No Batch')
+            + ' | '
+            + (item.quantity.subtract(
+                reservedStockMap[item.id] != null
+                    ? reservedStockMap[item.id]
+                    : T(java.math.BigDecimal).ZERO
+            ).max(T(java.math.BigDecimal).ZERO))
+            .stripTrailingZeros().toPlainString()
+            + ' ' + item.unit.name()
+            + ' Available'}">
                                     </option>
 
                                 </select>
@@ -175,6 +196,24 @@
 
                                 </div>
 
+                            </div>
+
+                            <!-- Batch / Roll ID -->
+                            <div class="col-md-6">
+                                <label for="batchCode" class="form-label fw-semibold">
+                                    Batch / Roll ID
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       id="batchCode"
+                                       name="batchCode"
+                                       class="form-control rounded-pill"
+                                       maxlength="100"
+                                       placeholder="e.g. GA458721"
+                                       required>
+                                <div class="form-text">
+                                    Enter the supplier barcode or roll/batch number.
+                                </div>
                             </div>
 
                             <!-- Quantity -->
@@ -332,10 +371,14 @@
         </div>
     </div>
 </div>
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 

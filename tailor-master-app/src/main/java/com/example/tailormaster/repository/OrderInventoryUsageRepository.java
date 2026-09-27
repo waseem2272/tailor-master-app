@@ -13,10 +13,8 @@ public interface OrderInventoryUsageRepository
 
     boolean existsByUserAndOrderProductId(User user, Long orderProductId);
 
-    List<OrderInventoryUsage> findByUserAndOrderId(User user, Long orderId);
-
-    List<OrderInventoryUsage> findByUserAndOrderIdAndReversedFalse(
+    List<OrderInventoryUsage> findByUserAndOrderProductIdAndReversedFalseOrderByIdAsc(
             User user,
-            Long orderId
+            Long orderProductId
     );
 }

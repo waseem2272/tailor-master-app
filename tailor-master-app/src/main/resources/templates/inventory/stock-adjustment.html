@@ -47,11 +47,58 @@
                                 <select name="inventoryItemId" id="inventoryItemId" class="form-select rounded-pill"
                                         required>
                                     <option value="">Select Inventory Item</option>
-                                    <option th:each="item : ${inventoryItems}" th:value="${item.id}"
-                                            th:data-stock="${item.quantity}" th:data-unit="${item.unit.name()}"
-                                            th:text="${item.name + ' (' + item.unit.name() + ')'}">Cotton (METER)
+                                    <option th:each="item : ${inventoryItems}"
+                                            th:value="${item.id}"
+                                            th:data-name="${item.name}"
+                                            th:data-brand="${item.brand != null ? item.brand.name : ''}"
+                                            th:data-category="${item.category != null ? item.category.name : ''}"
+                                            th:data-color="${item.color != null ? item.color.name : ''}"
+                                            th:data-design="${item.design != null ? item.design.name : ''}"
+                                            th:data-size="${item.size != null ? item.size : ''}"
+                                            th:data-stock="${availableStock[item.id].stripTrailingZeros().toPlainString()}"
+                                            th:data-reserved="${reservedStockMap[item.id]}"
+                                            th:data-unit="${item.unit}"
+                                            th:data-sale-price="${item.salePrice}"
+                                            th:data-batches="${!#lists.isEmpty(batchOptions[item.id]) ? #strings.listJoin(batchOptions[item.id].![batchCode + '::' + remainingQuantity], '|') : ''}"
+                                            th:text="${item.name
+            + ' | '
+            + (item.brand != null ? item.brand.name + ' | ' : '')
+            + (item.category != null ? item.category.name + ' | ' : '')
+            + (item.color != null ? item.color.name + ' | ' : '')
+            + (item.design != null ? item.design.name + ' | ' : '')
+            + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
+            + 'Batch: '
+            + (!#lists.isEmpty(stockBatches[item.id])
+                ? #strings.listJoin(stockBatches[item.id].![batchCode], ', ')
+                : 'No Batch')
+            + ' | '
+            + (item.quantity.subtract(
+                reservedStockMap[item.id] != null
+                    ? reservedStockMap[item.id]
+                    : T(java.math.BigDecimal).ZERO
+            ).max(T(java.math.BigDecimal).ZERO))
+            .stripTrailingZeros().toPlainString()
+            + ' ' + item.unit.name()
+            + ' Available'}">
                                     </option>
                                 </select>
+                            </div>
+
+                            <!-- Batch / Roll ID -->
+                            <div class="col-md-6">
+                                <label for="batchCode" class="form-label fw-semibold">
+                                    Batch / Roll ID <span class="text-danger">*</span>
+                                </label>
+                                <select id="batchCode"
+                                        name="batchCode"
+                                        class="form-select rounded-pill"
+                                        disabled
+                                        required>
+                                    <option value="">Select Batch / Roll ID</option>
+                                </select>
+                                <div class="form-text">
+                                    Select the exact batch or roll you want to adjust.
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -108,15 +155,20 @@
         </div>
     </div>
 </div>
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 
 <script>
     const itemSelect = document.getElementById('inventoryItemId');
+    const batchSelect = document.getElementById('batchCode');
     const currentStock = document.getElementById('currentStock');
     const currentUnit = document.getElementById('currentUnit');
     const newQuantity = document.getElementById('newQuantity');
@@ -124,6 +176,9 @@
 
     itemSelect?.addEventListener('change', function () {
         const selected = this.options[this.selectedIndex];
+
+        batchSelect.innerHTML = '<option value="">Select Batch / Roll ID</option>';
+        batchSelect.disabled = true;
 
         if (!this.value) {
             currentStock.textContent = '0';
@@ -139,18 +194,52 @@
         newQuantity.value = '';
         differenceBox.className = 'alert mt-2 mb-0 d-none';
         differenceBox.textContent = '';
+
+        const batches = selected.dataset.batches || '';
+
+        if (batches) {
+            batches.split('|').forEach(function (batch) {
+                const parts = batch.split('::');
+                const batchCode = parts[0];
+                const remainingQuantity = parts[1];
+
+                const option = document.createElement('option');
+                option.value = batchCode;
+                option.dataset.stock = remainingQuantity;
+                option.textContent = batchCode + ' | ' + remainingQuantity + ' ' + (selected.dataset.unit || '');
+
+                batchSelect.appendChild(option);
+            });
+
+            batchSelect.disabled = false;
+        }
+    });
+
+    batchSelect?.addEventListener('change', function () {
+        const selectedBatch = this.options[this.selectedIndex];
+
+        newQuantity.value = '';
+        differenceBox.className = 'alert mt-2 mb-0 d-none';
+        differenceBox.textContent = '';
+
+        if (!this.value || !selectedBatch) {
+            currentStock.textContent = '0';
+            return;
+        }
+
+        currentStock.textContent = parseFloat(selectedBatch.dataset.stock || '0');
     });
 
     newQuantity?.addEventListener('input', function () {
-        const selected = itemSelect.options[itemSelect.selectedIndex];
+        const selectedBatch = batchSelect.options[batchSelect.selectedIndex];
 
-        if (!itemSelect.value || !selected || this.value === '') {
+        if (!itemSelect.value || !batchSelect.value || !selectedBatch || this.value === '') {
             differenceBox.className = 'alert mt-2 mb-0 d-none';
             differenceBox.textContent = '';
             return;
         }
 
-        const current = parseFloat(selected.dataset.stock || '0');
+        const current = parseFloat(selectedBatch.dataset.stock || '0');
         const newValue = parseFloat(this.value);
 
         if (isNaN(newValue)) return;
@@ -171,11 +260,19 @@
 
     document.getElementById('adjustmentForm')?.addEventListener('submit', function (event) {
         const selected = itemSelect.options[itemSelect.selectedIndex];
+        const selectedBatch = batchSelect.options[batchSelect.selectedIndex];
         const newValue = parseFloat(newQuantity.value);
 
         if (!itemSelect.value || !selected) {
             event.preventDefault();
             alert('Please select an inventory item.');
+            return;
+        }
+
+        if (!batchSelect.value || !selectedBatch) {
+            event.preventDefault();
+            alert('Please select a Batch / Roll ID.');
+            batchSelect.focus();
             return;
         }
 
@@ -186,7 +283,7 @@
             return;
         }
 
-        const current = parseFloat(selected.dataset.stock || '0');
+        const current = parseFloat(selectedBatch.dataset.stock || '0');
 
         if (newValue === current) {
             event.preventDefault();

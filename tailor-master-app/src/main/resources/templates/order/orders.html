@@ -15,6 +15,45 @@
         .badge-completed {
             background-color: #6f42c1 !important;
         }
+
+        .pickup-product-card {
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+        .pickup-product-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .pickup-product-title {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .pickup-product-meta {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .pickup-product-amount {
+            font-weight: 700;
+            color: #198f3a;
+            white-space: nowrap;
+        }
+
+        .pickup-status {
+            font-size: 11px;
+            padding: 5px 8px;
+        }
+
+        .pickup-summary {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
     </style>
 </head>
 <body>
@@ -37,12 +76,14 @@
                            class="btn btn-light btn-sm ms-2">
                             <i class="bi bi-eye"></i> View Details
                         </a>
-                        <a th:if="${orderId}" th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
+                        <a th:if="${orderId}"
+                           th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
                            class="btn btn-light btn-sm ms-2">
                             <i class="bi bi-receipt"></i> Generate Order Receipt
                         </a>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
             </div>
 
@@ -53,7 +94,8 @@
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>
-                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
                 </div>
             </div>
 
@@ -151,67 +193,46 @@
 <div class="modal fade" id="pickupModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 shadow">
-            <div class="modal-header bg-success text-white rounded-top-4">
-                <h5 class="modal-title fw-bold" id="pickupModalLabel">
-                    <i class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up
-                </h5>
+            <div class="modal-header bg-success text-white rounded-top-4"><h5 class="modal-title fw-bold"
+                                                                              id="pickupModalLabel"><i
+                    class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up </h5>
                 <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-tag me-2"></i>Order ID:</strong>
-                        <span id="modalOrderId" class="ms-2"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
-                        <span id="modalCustomerName" class="ms-2"></span>
-                    </li>
-
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-calendar-event me-2"></i>Total Amount:</strong>
-                        <span id="modalTotalAmount" class="ms-2"></span>
-                    </li>
-
-
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-calendar-event me-2"></i>Advance Payment:</strong>
-                        <span id="modalAdvancePayment" class="ms-2"></span>
-                    </li>
-
-                    <li class="list-group-item">
-                        <strong><i class="bi bi-cash me-2"></i>Due Amount:</strong>
-                        <span id="modalDueAmount" class="ms-2 text-danger fw-bold"></span>
-                    </li>
-
+                    <li class="list-group-item"><strong><i class="bi bi-tag me-2"></i>Order ID:</strong> <span
+                            id="modalOrderId" class="ms-2"></span></li>
+                    <li class="list-group-item"><strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
+                        <span id="modalCustomerName" class="ms-2"></span></li>
+                    <li class="list-group-item"><strong><i class="bi bi-cash-stack me-2"></i>Total Amount:</strong>
+                        <span id="modalTotalAmount" class="ms-2"></span></li>
+                    <li class="list-group-item"><strong><i class="bi bi-cash-coin me-2"></i>Advance Payment:</strong>
+                        <span id="modalAdvancePayment" class="ms-2"></span></li>
+                    <li class="list-group-item"><strong><i class="bi bi-cash me-2"></i>Due Amount:</strong> <span
+                            id="modalDueAmount" class="ms-2 text-danger fw-bold"></span></li>
                 </ul>
-
                 <div id="modalProductDetails" class="mt-4">
-                    <h6 class="fw-bold"><i class="bi bi-box-seam me-2"></i>Products in Order</h6>
-                    <ul class="list-group list-group-flush" id="productList"></ul>
+                    <div class="d-flex align-items-center justify-content-between mb-2"><h6 class="fw-bold mb-0"><i
+                            class="bi bi-box-seam me-2 text-success"></i>Products in Order </h6> <span
+                            id="modalProductCount" class="badge bg-light text-dark border"></span></div>
+                    <div id="productList"></div>
                 </div>
-
-                <div class="mt-4 p-3 bg-light rounded border">
-                    <label for="amountReceived" class="form-label fw-bold">
-                        <i class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup:
-                    </label>
-                    <input type="number" min="0" step="0.01" id="amountReceived" class="form-control fw-bold" placeholder="Enter amount received">
-                    <small class="text-muted ms-1">You can adjust if partial payment is made.</small>
-                </div>
-                <div id="amountReceivedError" class="text-danger mt-1"></div> <!-- Error message appears here -->
-
-                <div class="alert alert-warning mt-3" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <div class="mt-4 p-3 bg-light rounded border"><label for="amountReceived" class="form-label fw-bold"> <i
+                        class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup: </label> <input
+                        type="number" min="0" step="0.01" id="amountReceived" class="form-control fw-bold"
+                        placeholder="Enter amount received"> <small class="text-muted ms-1">You can adjust if partial
+                    payment is made.</small></div>
+                <div id="amountReceivedError" class="text-danger mt-1"></div>
+                <div class="alert alert-warning mt-3" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i>
                     پک اپ کرنے سے پہلے، کسٹمر سے بقایا رقم ضرور وصول کر لیں۔
                 </div>
             </div>
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                        class="bi bi-x-circle me-1"></i> Cancel
                 </button>
-                <button type="button" id="confirmPickupBtn" class="btn btn-success">
-                    <i class="bi bi-check-circle me-1"></i> Confirm Pickup
+                <button type="button" id="confirmPickupBtn" class="btn btn-success"><i
+                        class="bi bi-check-circle me-1"></i> Confirm Pickup
                 </button>
             </div>
         </div>
@@ -273,10 +294,10 @@
                 }
             },
             "columns": [
-                { "data": "orderId" },
-                { "data": "customer" },
-                { "data": "orderDate" },
-                { "data": "deliveryDate" },
+                {"data": "orderId"},
+                {"data": "customer"},
+                {"data": "orderDate"},
+                {"data": "deliveryDate"},
                 {
                     "data": null,
                     "orderable": false,
@@ -323,7 +344,7 @@
                         return `<span class="${badgeClass}">${data}</span>`;
                     }
                 },
-                { "data": "cabinetNo" },
+                {"data": "cabinetNo"},
                 {
                     "data": null,
                     "orderable": false,
@@ -378,7 +399,7 @@
                               data-total-amount="${row.totalProductAmount}"
                               data-advance-payment="${row.advancePayment}"
                               data-due="${row.duePayment}"
-                              data-customer-name="${row.customer}"
+                                data-customer-name="${row.customerName}"
                               data-delivery-date="${row.deliveryDate}"
                               data-bs-toggle="modal"
                               data-bs-target="#pickupModal">
@@ -444,102 +465,207 @@
             const button = $(this);
             const row = table.row(button.closest('tr')).data();
 
-            const orderId = $(this).data('order-id');
+            const orderId = button.data('order-id');
             const customerName = $(this).data('customer-name');
-            const orderDbId = $(this).data('order-db-id');
-            const totalAmount = parseFloat($(this).data('total-amount')).toFixed(2);
-            const advancePayment = parseFloat($(this).data('advance-payment')).toFixed(2);
-            const dueAmount = parseFloat($(this).data('due')).toFixed(2);
+            // $('#modalCustomerName').text(customerName);
+            const orderDbId = button.data('order-db-id');
 
-            $('#modalOrderId').text(orderId);
-            $('#modalCustomerName').html(customerName);
-            $('#modalOrderDbId').val(orderDbId);
-            $('#modalTotalAmount').text(totalAmount);
-            $('#modalAdvancePayment').text(advancePayment);
-            $('#modalDueAmount').text(dueAmount);
+            const totalAmount = parseFloat(button.data('total-amount')) || 0;
+            const advancePayment = parseFloat(button.data('advance-payment')) || 0;
+            const dueAmount = parseFloat(button.data('due')) || 0;
+
+            $('#modalOrderId').text(orderId || '-');
+            $('#modalCustomerName').text(customerName || '-');
+            $('#modalOrderDbId').val(orderDbId || '');
+
+            $('#modalTotalAmount').text(formatAmount(totalAmount));
+            $('#modalAdvancePayment').text(formatAmount(advancePayment));
+            $('#modalDueAmount').text(dueAmount.toFixed(2));
+
             $('#confirmPickupBtn').data('order-db-id', orderDbId);
-            $('#amountReceived').val(dueAmount);
+            $('#amountReceived').val(dueAmount.toFixed(2));
 
-            $('#productList').empty();
+            renderPickupProducts(row.orderProducts);
 
-            if (row.orderProducts && row.orderProducts.length > 0) {
-                row.orderProducts.forEach(op => {
-                    const item = `
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <span class="fw-semibold">${op.productName}</span>
-                            <small class="text-muted d-block">
-                                Qty: ${op.quantity},
-                                Silai Type: ${op.silaiType},
-                                Amount: ${op.amount}
-                            </small>
-                        </div>
-                        <span class="fw-bold text-end">${(op.subtotal).toFixed(2)}</span>
-                    </li>
-                `;
-
-                    $('#productList').append(item);
-                });
-            } else {
-                $('#productList').append(
-                    `<li class="list-group-item text-muted">No products found.</li>`
-                );
-            }
+            $('#amountReceivedError').text('');
         });
+
+        function formatAmount(value) {
+            const amount = parseFloat(value);
+
+            if (isNaN(amount)) {
+                return 'Rs. 0.00';
+            }
+
+            return 'Rs. ' + amount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function escapeHtml(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getProductType(orderProduct) {
+            return orderProduct.orderProductType || 'TAILORING';
+        }
+
+        function getProductName(orderProduct) {
+
+            if (getProductType(orderProduct) === 'INVENTORY') {
+                return orderProduct.inventoryItemName ||
+                    orderProduct.itemName ||
+                    orderProduct.productName ||
+                    'Inventory Item';
+            }
+
+            return orderProduct.productName ||
+                orderProduct.product ||
+                'Tailoring Product';
+        }
+
+        function getProductStatus(orderProduct) {
+            return orderProduct.status || 'PENDING';
+        }
+
+        function getStatusBadge(status) {
+
+            const statusConfig = {
+                PENDING: {
+                    className: 'bg-secondary',
+                    icon: 'bi-hourglass-split',
+                    text: 'Pending'
+                },
+                IN_PROGRESS: {
+                    className: 'bg-primary',
+                    icon: 'bi-arrow-repeat',
+                    text: 'In Progress'
+                },
+                COMPLETED: {
+                    className: 'badge-completed',
+                    icon: 'bi-check2-circle',
+                    text: 'Completed'
+                },
+                DELIVERED: {
+                    className: 'bg-success',
+                    icon: 'bi-box-seam',
+                    text: 'Delivered'
+                },
+                CANCELLED: {
+                    className: 'bg-danger',
+                    icon: 'bi-x-circle',
+                    text: 'Cancelled'
+                }
+            };
+
+            const config = statusConfig[status] || statusConfig.PENDING;
+
+            return `
+        <span class="badge ${config.className} pickup-status">
+            <i class="bi ${config.icon} me-1"></i>${config.text}
+        </span>
+    `;
+        }
+
+        function renderPickupProducts(orderProducts) {
+            const productList = $('#productList');
+            productList.empty();
+            if (!orderProducts || orderProducts.length === 0) {
+                $('#modalProductCount').text('0 Items');
+                productList.html(` <div class="alert alert-light border text-muted mb-0"> <i class="bi bi-info-circle me-2"></i> No products found. </div> `);
+                return;
+            }
+            $('#modalProductCount').text(orderProducts.length + (orderProducts.length === 1 ? ' Item' : ' Items'));
+            orderProducts.forEach(function (op, index) {
+                const type = getProductType(op);
+                const name = getProductName(op);
+                const quantity = parseFloat(op.quantity) || 0;
+                const subtotal = parseFloat(op.subtotal) || 0;
+                let typeBadge = '';
+                if (type === 'INVENTORY') {
+                    typeBadge = ` <span class="badge bg-warning text-dark"> <i class="bi bi-box-seam me-1"></i>Inventory </span> `;
+                } else {
+                    typeBadge = ` <span class="badge bg-primary"> <i class="bi bi-scissors me-1"></i>Tailoring </span> `;
+                }
+                let details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity}</strong> </span> `;
+                if (type === 'TAILORING') {
+                    const silaiType = op.silaiType || '-';
+                    const silaiAmount = parseFloat(op.silaiAmount || op.amount) || 0;
+                    details += ` <span class="me-3"> <i class="bi bi-scissors me-1"></i> Silai: <strong>${escapeHtml(silaiType)}</strong> </span> <span> Silai Amount: <strong>${formatAmount(silaiAmount)}</strong> </span> `;
+                    if (op.fabricSource === 'SHOP') {
+                        const fabricQuantity = parseFloat(op.fabricQuantity) || 0;
+                        details += ` <div class="mt-1"> <i class="bi bi-layers me-1"></i> Shop Fabric ${op.inventoryItemName ? `: <strong>${escapeHtml(op.inventoryItemName)}</strong>` : ''} ${fabricQuantity > 0 ? ` | Qty: <strong>${fabricQuantity}</strong>` : ''} </div> `;
+                    } else if (op.fabricSource === 'CUSTOMER') {
+                        details += ` <div class="mt-1"> <i class="bi bi-person me-1"></i> Customer Fabric </div> `;
+                    }
+                } else {
+                    const unitPrice = parseFloat(op.inventoryUnitPrice || op.unitPrice || op.salePrice) || 0;
+                    const alterationRequired = op.alterationRequired === true;
+                    const alterationFee = parseFloat(op.alterationFee) || 0;
+                    const productStatus = op.status || op.orderProductStatus || '-';
+                    details += ` <span> <i class="bi bi-tag me-1"></i> Unit Price: <strong>${formatAmount(unitPrice)}</strong> </span> `;
+                    if (op.inventoryAmount !== undefined && op.inventoryAmount !== null) {
+                        details += ` <div class="mt-1"> <i class="bi bi-cash-stack me-1"></i> Inventory Amount: <strong>${formatAmount(op.inventoryAmount)}</strong> </div> `;
+                    }
+                    details += ` <div class="mt-1"> <i class="bi bi-wrench-adjustable me-1"></i> Alteration: <strong>${alterationRequired ? 'Required' : 'Not Required'}</strong> ${alterationRequired ? ` | Fee: <strong>${formatAmount(alterationFee)}</strong>` : ''} </div> `;
+                    if (productStatus !== '-') {
+                        const statusLabels = {
+                            INSTANT_DELIVERED: 'Instant Delivered',
+                            PENDING_FOR_ALTERATION: 'Pending for Alteration',
+                            ALTERATION_IN_PROGRESS: 'Alteration in Progress',
+                            COMPLETED: 'Completed'
+                        };
+                        details += ` <div class="mt-1"> <i class="bi bi-info-circle me-1"></i> Status: <strong>${escapeHtml(statusLabels[productStatus] || productStatus)}</strong> </div> `;
+                    }
+                }
+                productList.append(` <div class="pickup-product-card shadow-sm"> <div class="d-flex justify-content-between align-items-start gap-3"> <div class="flex-grow-1"> <div class="d-flex flex-wrap align-items-center gap-2 mb-1"> <span class="text-muted small">#${index + 1}</span> <span class="pickup-product-title"> ${escapeHtml(name)} </span> ${typeBadge} </div> <div class="pickup-product-meta"> ${details} </div> </div> <div class="pickup-product-amount"> ${formatAmount(subtotal)} </div> </div> </div> `);
+            });
+        }
     });
 
     $('#confirmPickupBtn').on('click', function () {
-
         const confirmPickupBtn = this;
+        const csrfToken = $("meta[name='_csrf']").attr("content");
+        const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+        const orderDbId = $(this).data('order-db-id');
+        const dueAmount =
+            parseFloat($('#modalDueAmount').text().replace(/[^0-9.-]+/g, '')) || 0;
 
-        var csrfToken = $("meta[name='_csrf']").attr("content");
-        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+        const amountReceived =
+            parseFloat($('#amountReceived').val()) || 0;
 
-        let orderDbId = $(this).data('order-db-id');
-        let dueAmount = parseFloat($('#modalDueAmount').text());
-        let amountReceived = parseFloat($('#amountReceived').val() || 0);
+        $('#amountReceivedError').text('');
 
-        if (amountReceived > dueAmount) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Invalid Amount',
-                text: 'Amount received cannot be greater than due.'
-            });
+        if (amountReceived < 0) {
+            $('#amountReceivedError').text('Amount received cannot be negative.');
             return false;
         }
-        // else if (amountReceived < 0) {
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'Invalid Amount',
-        //         text: 'Amount received cannot be less than 0.'
-        //     });
-        //     return false;
-        // }
-        // else if (amountReceived === 0) {  // ✅ Added Zero Validation
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'Invalid Amount',
-        //         text: 'Amount received must be greater than 0.'
-        //     });
-        //     return false;
-        // }
 
-        // 🔹 Disable button to prevent double click
+        if (amountReceived > dueAmount) {
+            $('#amountReceivedError').text('Amount received cannot be greater than due.');
+            return false;
+        }
         confirmPickupBtn.disabled = true;
         confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
-
         $.ajax({
             url: contextPath + "orders/pickup",
             method: "POST",
             contentType: "application/json",
-            data: JSON.stringify({
-                orderId: orderDbId,
-                amountReceived: amountReceived
-            }),
+            data: JSON.stringify({orderId: orderDbId, amountReceived: amountReceived}),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrfHeader, csrfToken);
             },
-            success: function (response) {
+            success: function () {
                 $('#pickupModal').modal('hide');
                 Swal.fire({
                     icon: 'success',
@@ -553,16 +679,12 @@
             },
             error: function (xhr) {
                 let errorMessage = "Something went wrong!";
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;  // ✅ Extracts the correct error message
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.error || xhr.responseJSON.message || errorMessage;
+                } else if (xhr.responseText) {
+                    errorMessage = xhr.responseText;
                 }
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error updating order',
-                    text: errorMessage
-                });
-
+                Swal.fire({icon: 'error', title: 'Error updating order', text: errorMessage});
                 confirmPickupBtn.disabled = false;
                 confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
             }

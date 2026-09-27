@@ -200,6 +200,32 @@ function setupOrderProductType() {
     const inventoryQuantityInput =
         document.getElementById("inventoryQuantity");
 
+    const alterationRequired =
+        document.getElementById("alterationRequired");
+
+    const alterationFeeContainer =
+        document.getElementById("alterationFeeContainer");
+
+    const alterationFee =
+        document.getElementById("alterationFee");
+
+    const alterationFeeError =
+        document.getElementById("alterationFeeError");
+
+    alterationRequired.addEventListener("change", function () {
+        const checked = this.checked;
+
+        alterationFeeContainer.style.display =
+            checked ? "block" : "none";
+
+        alterationFeeError.style.display = "none";
+        alterationFeeError.textContent = "";
+
+        if (!checked) {
+            alterationFee.value = "";
+        }
+    });
+
     function updateFields() {
 
         inventoryItemOrderSelect.value = "";
@@ -231,6 +257,11 @@ function setupOrderProductType() {
         if (!isInventory) {
             inventoryItemOrderSelect.value = "";
             inventoryQuantityInput.value = "";
+
+            alterationRequired.checked = false;
+            alterationFee.value = "";
+            alterationFeeContainer.style.display = "none";
+            alterationFeeError.style.display = "none";
         }
     }
 
@@ -315,6 +346,36 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         }
 
         const qty = parseFloat(inventoryQuantityInput.value);
+
+        const alterationRequired =
+            document.getElementById("alterationRequired").checked;
+
+        const alterationFeeInput =
+            document.getElementById("alterationFee");
+
+        const alterationFeeError =
+            document.getElementById("alterationFeeError");
+
+        let alterationFee = 0;
+
+        if (alterationRequired) {
+            alterationFee =
+                parseFloat(alterationFeeInput.value);
+
+            if (!alterationFee || alterationFee <= 0) {
+                alterationFeeError.textContent =
+                    "Please enter a valid alteration fee.";
+
+                alterationFeeError.style.display = "block";
+                alterationFeeInput.focus();
+                return;
+            }
+
+            alterationFeeError.textContent = "";
+            alterationFeeError.style.display = "none";
+        } else {
+            alterationFee = 0;
+        }
 
         if (!qty || qty <= 0) {
             alert("Please enter a valid inventory quantity.");
@@ -406,6 +467,12 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     return;
                 }
 
+                const inventoryAmount =
+                    parseFloat(data.totalAmount) || 0;
+
+                const itemAmount =
+                    inventoryAmount + alterationFee;
+
                 const item = {
                     orderProductType: "INVENTORY",
                     productId: null,
@@ -415,7 +482,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     silaiAmount: 0,
                     stitchingAmount: 0,
                     qty: qty,
-                    amount: parseFloat(data.totalAmount) || 0,
+                    amount: itemAmount,
                     fabricSource: "CUSTOMER",
                     inventoryItemId: inventoryItemId,
                     inventoryItemName: inventoryItemName,
@@ -425,8 +492,13 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     fabricAmount: 0,
                     inventoryUnitPrice:
                         parseFloat(data.averageUnitPrice) || 0,
-                    inventoryAmount:
-                        parseFloat(data.totalAmount) || 0,
+                    inventoryAmount: inventoryAmount,
+                    alterationRequired: alterationRequired,
+                    alterationFee: alterationFee,
+                    orderProductStatus:
+                        alterationRequired
+                            ? "PENDING_FOR_ALTERATION"
+                            : "INSTANT_DELIVERED",
                     additionalNotes: additionalNotes
                 };
 
@@ -437,6 +509,11 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                 inventoryItemOrderSelect.selectedIndex = 0;
                 inventoryQuantityInput.value = "";
                 additionalNotesInput.value = "";
+
+                document.getElementById("alterationRequired").checked = false;
+                document.getElementById("alterationFee").value = "";
+                document.getElementById("alterationFeeContainer").style.display = "none";
+                document.getElementById("alterationFeeError").style.display = "none";
 
                 const inventoryStockInfo =
                     document.getElementById("inventoryStockInfo");
@@ -855,6 +932,14 @@ function renderTable() {
             ? item.additionalNotes
             : "-"}
                 </td>
+                
+                <td>
+    ${isInventory
+            ? item.alterationRequired
+                ? "Yes - Rs. " + item.alterationFee.toFixed(2)
+                : "No"
+            : "-"}
+</td>
 
                 <td>
                     <button type="button"
@@ -1017,6 +1102,11 @@ document.getElementById("createOrderButton")
                 <td>${(item.inventoryUnitPrice || 0).toFixed(2)}</td>
                 <td>${item.qty}</td>
                 <td>${(item.amount || 0).toFixed(2)}</td>
+                <td>
+    ${item.alterationRequired
+                    ? "Yes - Rs. " + (item.alterationFee || 0).toFixed(2)
+                    : "No"}
+</td>
                 <td>${item.additionalNotes || "-"}</td>
             `;
 
@@ -1041,6 +1131,7 @@ document.getElementById("createOrderButton")
                 <td>${(item.silaiAmount || 0).toFixed(2)}</td>
                 <td>${item.qty}</td>
                 <td>${(item.amount || 0).toFixed(2)}</td>
+                <td>-</td>
                 <td>${item.additionalNotes || "-"}</td>
             `;
             }
@@ -1107,6 +1198,24 @@ document.getElementById("confirmOrderButton")
                     container,
                     `orderProducts[${index}].inventoryItemId`,
                     item.inventoryItemId
+                );
+
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].alterationRequired`,
+                    item.alterationRequired
+                );
+
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].alterationFee`,
+                    item.alterationFee
+                );
+
+                addHiddenInput(
+                    container,
+                    `orderProducts[${index}].orderProductStatus`,
+                    item.orderProductStatus
                 );
 
             } else {

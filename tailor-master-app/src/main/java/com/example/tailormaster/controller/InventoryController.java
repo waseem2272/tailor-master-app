@@ -5,12 +5,19 @@ import com.example.tailormaster.entity.InventoryStockBatch;
 import com.example.tailormaster.entity.StockMovement;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.enums.*;
+import com.example.tailormaster.repository.InventoryStockBatchRepository;
 import com.example.tailormaster.repository.orderproduct.OrderProductRepository;
 import com.example.tailormaster.service.*;
 import com.example.tailormaster.service.orderproduct.OrderProductService;
 import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,46 +43,19 @@ public class InventoryController {
     private final InventoryColorService inventoryColorService;
     private final InventoryDesignService inventoryDesignService;
     private final OrderInventoryService orderInventoryService;
+    private final InventoryStockBatchRepository inventoryStockBatchRepository;
 
     @GetMapping
     public String inventoryList(Model model) {
         try {
-            log.info("Loading inventory item list");
+            log.info("Loading inventory item list page");
 
-            List<InventoryItem> inventoryItems =
-                    inventoryItemService.getAllActive();
-
-            model.addAttribute(
-                    "inventoryItems",
-                    inventoryItems
-            );
-
-            Map<Long, BigDecimal> reservedStockMap =
-                    getReservedStockMap(inventoryItems);
-
-            model.addAttribute(
-                    "reservedStockMap",
-                    reservedStockMap
-            );
-
-            Map<Long, InventoryStockBatch> currentBatchMap =
-                    inventoryItemService.getCurrentBatchMap(inventoryItems);
-
-            model.addAttribute("currentBatchMap", currentBatchMap);
-
-            log.info(
-                    "Inventory item list loaded successfully. Total items: {}",
-                    inventoryItems.size()
-            );
             model.addAttribute("activePage", "inventory");
+
             return "inventory/list";
 
         } catch (Exception e) {
-
-            log.error(
-                    "Error while loading inventory item list",
-                    e
-            );
+            log.error("Error while loading inventory item list page", e);
 
             model.addAttribute(
                     "errorMessage",
@@ -86,34 +66,143 @@ public class InventoryController {
         }
     }
 
-    private Map<Long, BigDecimal> getReservedStockMap(
-            List<InventoryItem> inventoryItems) {
+//    @GetMapping
+//    public String inventoryList(Model model) {
+//        try {
+//            log.info("Loading inventory item list");
+//
+//            List<InventoryItem> inventoryItems =
+//                    inventoryItemService.getAllActive();
+//
+//            model.addAttribute(
+//                    "inventoryItems",
+//                    inventoryItems
+//            );
+//
+//            Map<Long, BigDecimal> reservedStockMap =
+//                    inventoryItemService.getReservedStockMap(inventoryItems);
+//
+//            model.addAttribute(
+//                    "reservedStockMap",
+//                    reservedStockMap
+//            );
+//
+//            Map<Long, BigDecimal> availableStock = inventoryItemService.getAvailableStock(inventoryItems, reservedStockMap);
+//            model.addAttribute("availableStock", availableStock);
+//
+//            Map<Long, InventoryStockBatch> currentBatchMap =
+//                    inventoryItemService.getCurrentBatchMap(inventoryItems);
+//
+//            Map<Long, List<InventoryStockBatch>> stockBatches =
+//                    inventoryItemService.getStockBatchesByItems(inventoryItems);
+//
+//            model.addAttribute("stockBatches", stockBatches);
+//
+//            model.addAttribute("currentBatchMap", currentBatchMap);
+//
+//            log.info(
+//                    "Inventory item list loaded successfully. Total items: {}",
+//                    inventoryItems.size()
+//            );
+//            model.addAttribute("activePage", "inventory");
+//            return "inventory/list";
+//
+//        } catch (Exception e) {
+//
+//            log.error(
+//                    "Error while loading inventory item list",
+//                    e
+//            );
+//
+//            model.addAttribute(
+//                    "errorMessage",
+//                    "Unable to load inventory items."
+//            );
+//
+//            return "inventory/list";
+//        }
+//    }
 
-        Map<Long, BigDecimal> reservedStockMap =
-                new HashMap<>();
+    @GetMapping("/datatable")
+    public ResponseEntity<Map<String, Object>> getInventoryDatatable(
+            @RequestParam("draw") int draw,
+            @RequestParam("start") int start,
+            @RequestParam("length") int length,
+            @RequestParam(value = "search[value]", required = false) String searchValue,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "itemType", required = false) String itemType,
+            @RequestParam(value = "stockStatus", required = false) String stockStatus,
+            @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
+            @RequestParam(value = "order[0][dir]", required = false) String sortDirection) {
 
-        for (InventoryItem item : inventoryItems) {
+        try {
+            log.info(
+                    "Fetching paginated inventory for datatable. draw={}, start={}, length={}, search={}, column={}, direction={}",
+                    draw,
+                    start,
+                    length,
+                    searchValue,
+                    columnIndex,
+                    sortDirection
+            );
 
-            BigDecimal reservedQuantity = BigDecimal.ZERO;
+            Map<String, Object> response =
+                    inventoryItemService.getPaginatedInventory(
+                            draw,
+                            start,
+                            length,
+                            searchValue,
+                            name,
+                            itemType,
+                            stockStatus,
+                            columnIndex,
+                            sortDirection
+                    );
 
-//            if (item.getItemType() == ItemType.FABRIC) {
-                reservedQuantity =
-                        orderInventoryService
-                                .getReservedQuantity(item.getId());
-//            }
+            log.info(
+                    "Inventory datatable fetched successfully. draw={}, response={}",
+                    draw,
+                    response
+            );
 
-            reservedStockMap.put(
-                    item.getId(),
-                    reservedQuantity
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            log.warn(
+                    "Invalid inventory datatable request: {}",
+                    e.getMessage()
+            );
+
+            return ResponseEntity.badRequest().body(
+                    createErrorResponse(
+                            "Invalid request parameters: " + e.getMessage()
+                    )
+            );
+
+        } catch (Exception e) {
+            log.error(
+                    "Unexpected error while fetching inventory datatable",
+                    e
+            );
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    createErrorResponse(
+                            "An unexpected error occurred. Please try again."
+                    )
             );
         }
-
-        return reservedStockMap;
     }
 
-    // =========================
-    // Add Item Form
-    // =========================
+    private Map<String, Object> createErrorResponse(String message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("draw", 0);
+        response.put("recordsTotal", 0);
+        response.put("recordsFiltered", 0);
+        response.put("data", List.of());
+        response.put("error", message);
+        return response;
+    }
+
     @GetMapping("/add")
     public String addItemForm(Model model) {
         try {
@@ -141,10 +230,13 @@ public class InventoryController {
     // Save Item
     // =========================
     @PostMapping("/save")
-    public String saveItem(@ModelAttribute("inventoryItem") InventoryItem inventoryItem, RedirectAttributes redirectAttributes) {
+    public String saveItem(
+            @ModelAttribute("inventoryItem") InventoryItem inventoryItem,
+            @RequestParam(value = "batchCode", required = false) String batchCode,
+            RedirectAttributes redirectAttributes) {
         try {
             log.info("Saving inventory item. Name: {}, Type: {}", inventoryItem.getName(), inventoryItem.getItemType());
-            inventoryItemService.save(inventoryItem);
+            inventoryItemService.save(inventoryItem, batchCode);
             log.info("Inventory item saved successfully. Item ID: {}", inventoryItem.getId());
             redirectAttributes.addFlashAttribute("successMessage", "Stock added successfully.");
             return "redirect:/inventory";
@@ -164,7 +256,8 @@ public class InventoryController {
             log.info("Opening inventory item for edit. Item ID: {}", id);
             User user = authenticatedUserService.getCurrentUser();
 
-            model.addAttribute("inventoryItem", new InventoryItem());
+            InventoryItem inventoryItem = inventoryItemService.getById(id);
+            model.addAttribute("inventoryItem", inventoryItem);
             model.addAttribute("brands", inventoryBrandService.getActiveBrands(user));
             model.addAttribute("categories", inventoryCategoryService.getActiveCategories(user));
             model.addAttribute("colors", inventoryColorService.getActiveColors(user));
@@ -217,7 +310,7 @@ public class InventoryController {
             );
 
             Map<Long, BigDecimal> reservedStockMap =
-                    getReservedStockMap(inventoryItems);
+                    inventoryItemService.getReservedStockMap(inventoryItems);
 
             model.addAttribute(
                     "reservedStockMap",
@@ -251,7 +344,13 @@ public class InventoryController {
         try {
             log.info("Loading Stock In page");
             List<InventoryItem> inventoryItems = inventoryItemService.findAllActive();
+            Map<Long, List<InventoryStockBatch>> stockBatches = inventoryItemService.getStockBatchesByItems(inventoryItems);
+            model.addAttribute("stockBatches", stockBatches);
+            Map<Long, BigDecimal> reservedStockMap = inventoryItemService.getReservedStockMap(inventoryItems);
+            Map<Long, BigDecimal> availableStock = inventoryItemService.getAvailableStock(inventoryItems, reservedStockMap);
+            model.addAttribute("availableStock", availableStock);
             model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("reservedStockMap", reservedStockMap);
             model.addAttribute("activePage", "inventory/stock-in");
             return "inventory/stock-in";
         } catch (Exception e) {
@@ -267,6 +366,7 @@ public class InventoryController {
     @PostMapping("/stock-in")
     public String stockIn(
             @RequestParam("inventoryItemId") Long inventoryItemId,
+            @RequestParam("batchCode") String batchCode,
             @RequestParam("quantity") BigDecimal quantity,
             @RequestParam("purchasePrice") BigDecimal purchasePrice,
             @RequestParam("salePrice") BigDecimal salePrice,
@@ -274,27 +374,30 @@ public class InventoryController {
             @RequestParam(value = "notes", required = false) String notes,
             RedirectAttributes redirectAttributes) {
         try {
-            log.info("Stock In request received. itemId={}, quantity={}, purchasePrice={}, salePrice={}, reason={}",
-                    inventoryItemId, quantity, purchasePrice, salePrice, reason);
+            log.info("Stock In request received. itemId={}, batchCode={}, quantity={}, purchasePrice={}, salePrice={}, reason={}",
+                    inventoryItemId, batchCode, quantity, purchasePrice, salePrice, reason);
 
             inventoryItemService.stockIn(inventoryItemId,
+                    batchCode,
                     quantity,
                     purchasePrice,
                     salePrice,
                     reason,
                     notes);
 
-            log.info("Stock In completed successfully. itemId={}, quantity={}", inventoryItemId, quantity);
+            log.info("Stock In completed successfully. itemId={}, batchCode={}, quantity={}",
+                    inventoryItemId, batchCode, quantity);
+
             redirectAttributes.addFlashAttribute("successMessage", "Stock added successfully.");
             return "redirect:/inventory";
         } catch (IllegalArgumentException e) {
-            log.warn("Invalid Stock In request. itemId={}, quantity={}, error={}",
-                    inventoryItemId, quantity, e.getMessage());
+            log.warn("Invalid Stock In request. itemId={}, batchCode={}, quantity={}, error={}",
+                    inventoryItemId, batchCode, quantity, e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/inventory/stock-in";
         } catch (Exception e) {
-            log.error("Unexpected error while processing Stock In. itemId={}, quantity={}",
-                    inventoryItemId, quantity, e);
+            log.error("Unexpected error while processing Stock In. itemId={}, batchCode={}, quantity={}",
+                    inventoryItemId, batchCode, quantity, e);
             redirectAttributes.addFlashAttribute("errorMessage", "Unable to add stock. Please try again.");
             return "redirect:/inventory/stock-in";
         }
@@ -305,7 +408,11 @@ public class InventoryController {
         try {
             log.info("Loading Stock Out page");
             List<InventoryItem> inventoryItems = inventoryItemService.findAllActive();
+            Map<Long, BigDecimal> reservedStockMap = inventoryItemService.getReservedStockMap(inventoryItems);
+            Map<Long, BigDecimal> availableStock = inventoryItemService.getAvailableStock(inventoryItems, reservedStockMap);
+            model.addAttribute("availableStock", availableStock);
             model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("reservedStockMap", reservedStockMap);
             model.addAttribute("activePage", "inventory/stock-out");
             return "inventory/stock-out";
         } catch (Exception e) {
@@ -353,40 +460,160 @@ public class InventoryController {
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false) StockMovementType movementType,
             Model model) {
+
         try {
-            log.info("Loading stock movement history. itemId={}, movementType={}",
-                    itemId, movementType);
+            log.info(
+                    "Loading stock movement history page. itemId={}, movementType={}",
+                    itemId,
+                    movementType
+            );
 
-            List<StockMovement> movements;
-
-            if (itemId != null && movementType != null) {
-                movements = stockMovementService.getByItemAndMovementType(
-                        itemId,
-                        movementType
-                );
-            } else if (itemId != null) {
-                movements = stockMovementService.getByItemId(itemId);
-            } else if (movementType != null) {
-                movements = stockMovementService.getByMovementType(movementType);
-            } else {
-                movements = stockMovementService.getAll();
-            }
-
-            model.addAttribute("movements", movements);
-            model.addAttribute("inventoryItems", inventoryItemService.findAllActive());
-            model.addAttribute("movementTypes", StockMovementType.values());
+            model.addAttribute(
+                    "inventoryItems",
+                    inventoryItemService.findAllActive()
+            );
+            model.addAttribute(
+                    "movementTypes",
+                    StockMovementType.values()
+            );
             model.addAttribute("selectedItemId", itemId);
             model.addAttribute("selectedMovementType", movementType);
-
-            log.info("Stock movement history loaded successfully. Total movements: {}",
-                    movements.size());
             model.addAttribute("activePage", "inventory/movements");
+
             return "inventory/movements";
+
         } catch (Exception e) {
-            log.error("Error while loading stock movement history", e);
-            model.addAttribute("errorMessage",
-                    "Unable to load stock movement history.");
-            return "inventory/list";
+            log.error(
+                    "Error while loading stock movement history page",
+                    e
+            );
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Unable to load stock movement history."
+            );
+
+            return "inventory/movements";
+        }
+    }
+
+    @GetMapping("/movements/datatable")
+    public ResponseEntity<Map<String, Object>> getStockMovementsDatatable(
+            @RequestParam("draw") int draw,
+            @RequestParam("start") int start,
+            @RequestParam("length") int length,
+            @RequestParam(required = false) Long itemId,
+            @RequestParam(required = false) StockMovementType movementType) {
+
+        try {
+            log.info(
+                    "Fetching paginated stock movements. draw={}, start={}, length={}, itemId={}, movementType={}",
+                    draw,
+                    start,
+                    length,
+                    itemId,
+                    movementType
+            );
+
+            if (start < 0 || length <= 0) {
+                throw new IllegalArgumentException(
+                        "Start index and length must be greater than zero."
+                );
+            }
+
+            int page = start / length;
+
+            Page<StockMovement> movementPage =
+                    stockMovementService.getPaginated(
+                            page,
+                            length,
+                            itemId,
+                            movementType
+                    );
+
+            Map<String, Object> response = new HashMap<>();
+
+            response.put("draw", draw);
+            response.put("recordsTotal", movementPage.getTotalElements());
+            response.put("recordsFiltered", movementPage.getTotalElements());
+            List<Map<String, Object>> movementData =
+                    movementPage.getContent()
+                            .stream()
+                            .map(movement -> {
+
+                                Map<String, Object> data = new HashMap<>();
+
+                                data.put(
+                                        "createdAt",
+                                        movement.getCreatedAt()
+                                );
+
+                                data.put(
+                                        "inventoryItem",
+                                        movement.getInventoryItem() != null
+                                                ? Map.of(
+                                                "name",
+                                                movement.getInventoryItem().getName(),
+                                                "unit",
+                                                movement.getInventoryItem().getUnit() != null
+                                                        ? movement.getInventoryItem().getUnit().name()
+                                                        : null
+                                        )
+                                                : null
+                                );
+
+                                data.put(
+                                        "movementType",
+                                        movement.getMovementType() != null
+                                                ? movement.getMovementType().name()
+                                                : null
+                                );
+
+                                data.put("quantity", movement.getQuantity());
+                                data.put("unitPrice", movement.getUnitPrice());
+                                data.put("reason", movement.getReason());
+                                data.put("notes", movement.getNotes());
+
+                                return data;
+                            })
+                            .toList();
+
+            response.put("data", movementData);
+
+            log.info(
+                    "Stock movements fetched successfully. draw={}, total={}, returned={}",
+                    draw,
+                    movementPage.getTotalElements(),
+                    movementPage.getNumberOfElements()
+            );
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            log.warn(
+                    "Invalid stock movement datatable request: {}",
+                    e.getMessage()
+            );
+
+            return ResponseEntity.badRequest().body(
+                    createErrorResponse(
+                            "Invalid request parameters: " + e.getMessage()
+                    )
+            );
+
+        } catch (Exception e) {
+            log.error(
+                    "Unexpected error while fetching stock movements",
+                    e
+            );
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(
+                            createErrorResponse(
+                                    "An unexpected error occurred. Please try again."
+                            )
+                    );
         }
     }
 
@@ -401,7 +628,16 @@ public class InventoryController {
             List<InventoryItem> inventoryItems =
                     inventoryItemService.findAllActive();
 
+            Map<Long, BigDecimal> reservedStockMap = inventoryItemService.getReservedStockMap(inventoryItems);
+            Map<Long, List<InventoryStockBatch>> stockBatches = inventoryItemService.getStockBatchesByItems(inventoryItems);
+            Map<Long, List<Map<String, Object>>> batchOptions =
+                    inventoryItemService.getBatchOptionsByItems(inventoryItems);
+            model.addAttribute("batchOptions", batchOptions);
+            model.addAttribute("stockBatches", stockBatches);
+            Map<Long, BigDecimal> availableStock = inventoryItemService.getAvailableStock(inventoryItems, reservedStockMap);
+            model.addAttribute("availableStock", availableStock);
             model.addAttribute("inventoryItems", inventoryItems);
+            model.addAttribute("reservedStockMap", reservedStockMap);
             model.addAttribute("activePage", "inventory/stock-adjustment");
             return "inventory/stock-adjustment";
         } catch (Exception e) {
@@ -418,6 +654,7 @@ public class InventoryController {
     @PostMapping("/stock-adjustment")
     public String adjustStock(
             @RequestParam("inventoryItemId") Long inventoryItemId,
+            @RequestParam("batchCode") String batchCode,
             @RequestParam("newQuantity") BigDecimal newQuantity,
             @RequestParam(value = "reason", required = false) String reason,
             @RequestParam(value = "notes", required = false) String notes,
@@ -425,22 +662,25 @@ public class InventoryController {
 
         try {
             log.info(
-                    "Stock Adjustment request received. itemId={}, newQuantity={}, reason={}",
+                    "Stock Adjustment request received. itemId={}, batchCode={}, newQuantity={}, reason={}",
                     inventoryItemId,
+                    batchCode,
                     newQuantity,
                     reason
             );
 
             inventoryItemService.adjustStock(
                     inventoryItemId,
+                    batchCode,
                     newQuantity,
                     reason,
                     notes
             );
 
             log.info(
-                    "Stock Adjustment completed successfully. itemId={}, newQuantity={}",
+                    "Stock Adjustment completed successfully. itemId={}, batchCode={}, newQuantity={}",
                     inventoryItemId,
+                    batchCode,
                     newQuantity
             );
 
@@ -453,8 +693,9 @@ public class InventoryController {
 
         } catch (IllegalArgumentException e) {
             log.warn(
-                    "Invalid Stock Adjustment request. itemId={}, newQuantity={}, error={}",
+                    "Invalid Stock Adjustment request. itemId={}, batchCode={}, newQuantity={}, error={}",
                     inventoryItemId,
+                    batchCode,
                     newQuantity,
                     e.getMessage()
             );
@@ -468,8 +709,9 @@ public class InventoryController {
 
         } catch (Exception e) {
             log.error(
-                    "Unexpected error while adjusting stock. itemId={}, newQuantity={}",
+                    "Unexpected error while adjusting stock. itemId={}, batchCode={}, newQuantity={}",
                     inventoryItemId,
+                    batchCode,
                     newQuantity,
                     e
             );
@@ -481,5 +723,176 @@ public class InventoryController {
 
             return "redirect:/inventory/stock-adjustment";
         }
+    }
+
+    @GetMapping("/batches/{id}")
+    public String manageBatches(
+            @PathVariable("id") Long inventoryItemId,
+            Model model) {
+
+        try {
+            log.info("Loading batches for inventory item. itemId={}", inventoryItemId);
+
+            User user = authenticatedUserService.getCurrentUser();
+
+            InventoryItem item = inventoryItemService.getById(inventoryItemId);
+
+            List<InventoryStockBatch> batches =
+                    inventoryStockBatchRepository
+                            .findByUserAndInventoryItemOrderByReceivedDateAsc(
+                                    user,
+                                    item
+                            );
+
+            model.addAttribute("inventoryItem", item);
+            model.addAttribute("batches", batches);
+            model.addAttribute("activePage", "inventory");
+
+            return "inventory/batches";
+
+        } catch (Exception e) {
+            log.error(
+                    "Error while loading inventory batches. itemId={}",
+                    inventoryItemId,
+                    e
+            );
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Unable to load inventory batches."
+            );
+
+            return "inventory/batches";
+        }
+    }
+
+    @GetMapping("/batches/{batchId}/edit")
+    public String editBatchPrice(
+            @PathVariable("batchId") Long batchId,
+            Model model) {
+
+        try {
+            log.info("Loading batch for price edit. batchId={}", batchId);
+
+            User user = authenticatedUserService.getCurrentUser();
+
+            InventoryStockBatch batch =
+                    inventoryStockBatchRepository.findById(batchId)
+                            .orElseThrow(() -> new IllegalArgumentException(
+                                    "Batch / Roll ID not found: " + batchId));
+
+            if (!batch.getUser().getId().equals(user.getId())) {
+                throw new IllegalArgumentException("Batch not found.");
+            }
+
+            if (batch.getRemainingQuantity() == null
+                    || batch.getRemainingQuantity().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException(
+                        "Consumed batch price cannot be edited.");
+            }
+
+            model.addAttribute("batch", batch);
+            model.addAttribute("inventoryItem", batch.getInventoryItem());
+            model.addAttribute("activePage", "inventory");
+
+            return "inventory/batch-price-edit";
+
+        } catch (Exception e) {
+            log.error(
+                    "Error while loading batch for price edit. batchId={}",
+                    batchId,
+                    e
+            );
+
+            model.addAttribute(
+                    "errorMessage",
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "Unable to load batch."
+            );
+
+            return "inventory/batches";
+        }
+    }
+
+    @PostMapping("/batches/{batchId}/edit")
+    public String updateBatchPrice(
+            @PathVariable("batchId") Long batchId,
+            @RequestParam("purchasePrice") BigDecimal purchasePrice,
+            @RequestParam("salePrice") BigDecimal salePrice,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            log.info(
+                    "Batch price update request received. batchId={}, purchasePrice={}, salePrice={}",
+                    batchId,
+                    purchasePrice,
+                    salePrice
+            );
+
+            inventoryItemService.updateBatchPrice(
+                    batchId,
+                    purchasePrice,
+                    salePrice
+            );
+
+            log.info(
+                    "Batch price updated successfully. batchId={}, purchasePrice={}, salePrice={}",
+                    batchId,
+                    purchasePrice,
+                    salePrice
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Batch price updated successfully."
+            );
+
+            return "redirect:/inventory/batches/" +
+                    inventoryStockBatchRepository.findById(batchId)
+                            .map(batch -> batch.getInventoryItem().getId())
+                            .orElseThrow(() -> new IllegalArgumentException(
+                                    "Batch not found: " + batchId
+                            ));
+
+        } catch (IllegalArgumentException e) {
+            log.warn(
+                    "Invalid batch price update. batchId={}, error={}",
+                    batchId,
+                    e.getMessage()
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    e.getMessage()
+            );
+
+            return "redirect:/inventory/batches/" + getInventoryItemId(batchId);
+
+        } catch (Exception e) {
+            log.error(
+                    "Unexpected error while updating batch price. batchId={}",
+                    batchId,
+                    e
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Unable to update batch price. Please try again."
+            );
+
+            return "redirect:/inventory/batches/" + getInventoryItemId(batchId);
+        }
+    }
+
+    private Long getInventoryItemId(Long batchId) {
+        User user = authenticatedUserService.getCurrentUser();
+
+        return inventoryStockBatchRepository.findById(batchId)
+                .filter(batch -> batch.getUser().getId().equals(user.getId()))
+                .map(batch -> batch.getInventoryItem().getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Batch not found: " + batchId
+                ));
     }
 }

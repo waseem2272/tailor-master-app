@@ -25,6 +25,9 @@ public class InventoryStockBatch extends BaseEntity {
     @ToString.Exclude
     private User user;
 
+    @Column(name = "batch_code", nullable = false, length = 100)
+    private String batchCode;
+
     @Column(name = "received_quantity", nullable = false, precision = 12, scale = 2)
     private BigDecimal receivedQuantity = BigDecimal.ZERO;
 
