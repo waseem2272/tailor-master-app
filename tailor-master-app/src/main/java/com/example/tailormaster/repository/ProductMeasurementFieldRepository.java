@@ -13,4 +13,6 @@ public interface ProductMeasurementFieldRepository extends JpaRepository<Product
 
     void deleteByProductId(Long productId);
     List<ProductMeasurementField> findByProductIdOrderByIdAsc(Long productId);
+
+    List<ProductMeasurementField> findByProductIdAndEnabledTrue(Long productId);
 }
