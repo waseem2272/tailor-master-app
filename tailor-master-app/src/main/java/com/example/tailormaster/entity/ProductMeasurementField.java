@@ -25,4 +25,6 @@ public class ProductMeasurementField extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    private boolean enabled = true;
 }

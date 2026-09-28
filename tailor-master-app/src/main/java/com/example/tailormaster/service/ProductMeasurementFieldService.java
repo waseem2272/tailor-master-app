@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,47 +19,90 @@ public class ProductMeasurementFieldService {
     private final ProductRepository productRepository;
 
     public List<ProductMeasurementField> getMeasurementFieldsByProductId(Long productId) {
-        return productMeasurementFieldRepository.findByProductId(productId);
-
+        return productMeasurementFieldRepository
+                .findByProductIdAndEnabledTrue(productId);
     }
 
     @Transactional
     public void saveFields(Long productId, List<ProductMeasurementFieldDTO> dtos) {
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        // fetch existing fields
         List<ProductMeasurementField> existingFields =
                 productMeasurementFieldRepository.findByProductId(productId);
 
         Map<Long, ProductMeasurementField> existingFieldMap = existingFields.stream()
                 .collect(Collectors.toMap(ProductMeasurementField::getId, f -> f));
 
+        Set<Long> submittedFieldIds = new HashSet<>();
+
         List<ProductMeasurementField> fieldsToSave = new ArrayList<>();
 
-        for (ProductMeasurementFieldDTO dto : dtos) {
-            if (dto.getId() != null && existingFieldMap.containsKey(dto.getId())) {
-                // update existing field
-                ProductMeasurementField field = existingFieldMap.get(dto.getId());
-                field.setFieldName(dto.getFieldName());
-                field.setFieldType(dto.getFieldType());
-                field.setOptions(dto.getOptions() != null ? String.join(",", dto.getOptions()) : null);
+        if (dtos != null) {
+            for (ProductMeasurementFieldDTO dto : dtos) {
+
+                if (dto.getFieldName() == null || dto.getFieldName().isBlank()) {
+                    continue;
+                }
+
+                if (dto.getId() != null && existingFieldMap.containsKey(dto.getId())) {
+
+                    ProductMeasurementField field = existingFieldMap.get(dto.getId());
+
+                    field.setFieldName(dto.getFieldName().trim());
+                    field.setFieldType(dto.getFieldType());
+                    field.setEnabled(true);
+
+                    if ("DROPDOWN".equals(dto.getFieldType())
+                            && dto.getOptions() != null
+                            && !dto.getOptions().isEmpty()) {
+
+                        field.setOptions(String.join(",", dto.getOptions()));
+
+                    } else {
+                        field.setOptions(null);
+                    }
+
+                    submittedFieldIds.add(dto.getId());
+                    fieldsToSave.add(field);
+
+                } else {
+
+                    ProductMeasurementField newField = new ProductMeasurementField();
+
+                    newField.setFieldName(dto.getFieldName().trim());
+                    newField.setFieldType(dto.getFieldType());
+                    newField.setEnabled(true);
+                    newField.setProduct(product);
+
+                    if ("DROPDOWN".equals(dto.getFieldType())
+                            && dto.getOptions() != null
+                            && !dto.getOptions().isEmpty()) {
+
+                        newField.setOptions(String.join(",", dto.getOptions()));
+
+                    } else {
+                        newField.setOptions(null);
+                    }
+
+                    fieldsToSave.add(newField);
+                }
+            }
+        }
+
+        // Fields removed from the form are only disabled.
+        // They are NOT physically deleted because CustomerMeasurement
+        // may still reference them.
+        for (ProductMeasurementField field : existingFields) {
+
+            if (!submittedFieldIds.contains(field.getId())) {
+                field.setEnabled(false);
                 fieldsToSave.add(field);
-            } else {
-                // create new field
-                ProductMeasurementField newField = new ProductMeasurementField();
-                newField.setFieldName(dto.getFieldName());
-                newField.setFieldType(dto.getFieldType());
-                newField.setOptions(dto.getOptions() != null ? String.join(",", dto.getOptions()) : null);
-                newField.setProduct(product);
-                fieldsToSave.add(newField);
             }
         }
 
         productMeasurementFieldRepository.saveAll(fieldsToSave);
-
-        // optional: handle old fields that are no longer in DTO
-        // instead of delete -> mark inactive (add a status column)
     }
 
 
