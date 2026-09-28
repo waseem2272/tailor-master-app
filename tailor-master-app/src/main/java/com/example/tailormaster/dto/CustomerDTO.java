@@ -13,12 +13,14 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @ToString
 public class CustomerDTO {
+    private String bookNumber;
     private String fullName;
     private String phoneNumber;
     private String createdAt;
     private String encryptedId;
 
     public CustomerDTO(Customer customer, ThymeleafUtil thymeleafUtil) {
+        this.bookNumber = customer.getBookNumber();
         this.fullName = customer.getFullName();
         this.phoneNumber = customer.getPhoneNumber();
         this.createdAt = customer.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

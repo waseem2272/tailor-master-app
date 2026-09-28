@@ -37,17 +37,37 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
-                                <div class="text-muted small mb-1"><i class="bi bi-person me-1"></i> Customer Name</div>
-                                <div class="fw-semibold" th:text="${customer.fullName}"> Customer Name</div>
+                                <div class="text-muted small mb-1">
+                                    <i class="bi bi-book me-1"></i> Book Number
+                                </div>
+                                <div class="fw-semibold"
+                                     th:text="${customer.bookNumber != null and !customer.bookNumber.isBlank() ? customer.bookNumber : '-'}">
+                                    -
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+
+                        <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
-                                <div class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i> Phone Number
+                                <div class="text-muted small mb-1">
+                                    <i class="bi bi-person me-1"></i> Customer Name
                                 </div>
-                                <div class="fw-semibold" th:text="${customer.phoneNumber}"> Phone Number</div>
+                                <div class="fw-semibold" th:text="${customer.fullName}">
+                                    Customer Name
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="border rounded-3 p-3 bg-light h-100">
+                                <div class="text-muted small mb-1">
+                                    <i class="bi bi-telephone me-1"></i> Phone Number
+                                </div>
+                                <div class="fw-semibold" th:text="${customer.phoneNumber}">
+                                    Phone Number
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -100,6 +120,33 @@
                     </div>
                 </div>
             </div> <!-- No Measurements -->
+
+            <!-- Add Measurement -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center">
+                    <i class="bi bi-rulers me-2"></i> Add Measurement
+                </div>
+
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="measurementProduct" class="form-label fw-semibold">
+                                Select Product
+                            </label>
+                            <select id="measurementProduct" class="form-select">
+                                <option value="">Select Product</option>
+                                <option th:each="product : ${products}"
+                                        th:value="${product.id}"
+                                        th:text="${product.name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="measurementFieldsContainer" class="row g-3 mt-1"></div>
+                </div>
+            </div>
+
             <div th:if="${productMeasurementsMap == null or productMeasurementsMap.isEmpty()}"
                  class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4"><i
@@ -294,5 +341,90 @@
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:inline="javascript"> var contextPath = [[@{/}]]; </script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const productSelect = document.getElementById("measurementProduct");
+        const fieldsContainer = document.getElementById("measurementFieldsContainer");
+
+        productSelect.addEventListener("change", function () {
+            const productId = this.value;
+            fieldsContainer.innerHTML = "";
+
+            if (!productId) {
+                return;
+            }
+
+            fetch(`${contextPath}customers/${productId}/fields`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load measurement fields");
+                    }
+                    return response.json();
+                })
+                .then(fields => {
+                    if (fields.length === 0) {
+                        fieldsContainer.innerHTML = `
+                            <div class="col-12">
+                                <div class="alert alert-info mb-0">
+                                    No measurement fields found for this product.
+                                </div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    fields.forEach(field => {
+                        const col = document.createElement("div");
+                        col.className = "col-md-6";
+
+                        let fieldHtml = `
+                            <label class="form-label fw-semibold">${field.fieldName}</label>
+                        `;
+
+                        if (field.fieldType === "DROPDOWN") {
+                            fieldHtml += `
+        <select class="form-select" data-field-id="${field.id}">
+            <option value="">Select ${field.fieldName}</option>
+    `;
+
+                            if (field.options) {
+                                field.options.split(",").forEach(option => {
+                                    const value = option.trim();
+
+                                    if (value) {
+                                        fieldHtml += `
+                    <option value="${value}">${value}</option>
+                `;
+                                    }
+                                });
+                            }
+
+                            fieldHtml += `</select>`;
+                        } else if (field.fieldType === "TEXT") {
+                            fieldHtml += `
+        <input type="text"
+               class="form-control"
+               data-field-id="${field.id}"
+               placeholder="Enter ${field.fieldName}">
+    `;
+                        }
+
+                        col.innerHTML = fieldHtml;
+                        fieldsContainer.appendChild(col);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error loading measurement fields:", error);
+                    fieldsContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger mb-0">
+                                Failed to load measurement fields.
+                            </div>
+                        </div>
+                    `;
+                });
+        });
+    });
+</script>
 </body>
 </html>

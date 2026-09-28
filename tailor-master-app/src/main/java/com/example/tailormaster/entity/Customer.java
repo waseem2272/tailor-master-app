@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class Customer extends BaseEntity {
+    private String bookNumber;
     private String fullName;
     private String phoneNumber;
 

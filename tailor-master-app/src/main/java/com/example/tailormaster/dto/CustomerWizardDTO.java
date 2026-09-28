@@ -12,6 +12,7 @@ import java.util.Map;
 // CustomerWizardDTO.java
 @Data
 public class CustomerWizardDTO {
+    private String bookNumber;
     @NotBlank
     private String fullName;
 

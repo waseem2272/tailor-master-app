@@ -160,10 +160,6 @@ public class CustomerController {
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
-
-            // just pass customer
-//            model.addAttribute("customer", customer);
-//            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             // Map Customer → DTO
             CustomerWizardDTO form = customerService.mapToWizardDTO(customer);
 
@@ -207,74 +203,6 @@ public class CustomerController {
             return "customer/create-customer-wizard";
         }
     }
-
-    /*@GetMapping("/edit/{id}")
-    public String showEditCustomerForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
-        logger.info("Displaying edit form for customer ID (encrypted): {}", id);
-        try {
-//            // Decrypt and validate customer ID
-            Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
-            if (customerId == null) {
-                logger.warn("Invalid customer ID provided for edit: {}", id);
-                return "redirect:/customers";
-            }
-
-            Customer customer = customerService.getCustomerById(customerId);
-            if (customer == null) {
-                logger.warn("Customer not found with ID {} for editing.", customerId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
-                return "redirect:/customers";
-            }
-
-//            // Fetch all active products
-//            List<Product> allActiveProducts = productService.getAllActiveProducts();
-//
-//            CustomerRegistrationDTO registrationDTO = Utility.populateCustomerRegistrationDTO(allActiveProducts, customer, measurementService.getMeasurement(customerId));
-//            model.addAttribute("registrationDTO", registrationDTO);
-            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-            logger.info("Populated CustomerRegistrationDTO for edit form: {}", registrationDTO);
-            return "customer/update";
-//
-        } catch (Exception e) {
-            logger.error("Error loading customer edit form for ID (encrypted) {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error loading customer edit: " + e.getMessage());
-            return "redirect:/customers"; // Keep only one return statement
-        }
-
-        return null;
-    }*/
-
-    // update customer
-//    @PostMapping("/update")
-//    public String updateCustomer(CustomerRegistrationDTO registrationDTO,
-//            @RequestParam(value = "productIds", required = false) Long[] productIds,
-//            @RequestParam("encryptedCustomerId") String encryptedCustomerId,
-//            RedirectAttributes redirectAttributes,
-//            Model model) {
-//        logger.info("Attempting to update customer with encrypted ID: {}", encryptedCustomerId);
-//        try {
-//            // Decrypt and validate customer ID
-//            Long customerId = validation.validateAndFetchCustomer(encryptedCustomerId, redirectAttributes);
-//            if (customerId == null) {
-//                logger.warn("Invalid customer ID provided for update: {}", encryptedCustomerId);
-//                return "redirect:/customers";
-//            }
-//            logger.debug("Decrypted customer ID for update: {}", customerId);
-//            // set decrypted customer id
-//            registrationDTO.getCustomer().setId(customerId);
-//
-//            Customer updatedCustomer = customerService.updateCustomer(registrationDTO, productIds);
-//            logger.info("Customer updated successfully with ID: {}", updatedCustomer.getId());
-//            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
-//            redirectAttributes.addFlashAttribute("customerId", updatedCustomer.getId());
-//            return "redirect:/customers";
-//        } catch (Exception e) {
-//            logger.error("Error updating customer with encrypted ID {}: {}", encryptedCustomerId, e.getMessage(), e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Customer: " + e.getMessage());
-//            return "redirect:/customers";
-//        }
-//        return null;
-//    }
 
     @GetMapping("/details/{id}")
     public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
@@ -371,6 +299,7 @@ public class CustomerController {
             model.addAttribute("orderIds", orderIds);
             model.addAttribute("orderTypes", orderTypes);
 
+            model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("customer", customer);
             model.addAttribute("productMeasurementsMap", productMeasurementsMap);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());

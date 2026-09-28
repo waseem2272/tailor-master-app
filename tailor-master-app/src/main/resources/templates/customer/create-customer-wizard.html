@@ -1,428 +1,728 @@
 <!DOCTYPE html>
+
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'">Create Customer</title>
+<head>
+    <title th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'">Create Customer</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
-    <style> .wizard-nav {
-        border-bottom: 0;
-        gap: 8px;
-    }
-
-    .wizard-nav .nav-link {
-        border: 1px solid #dee2e6;
-        border-radius: 10px;
-        color: #495057;
-        font-weight: 500;
-        background: #fff;
-    }
-
-    .wizard-nav .nav-link.active {
-        color: #198f3a;
-        border-color: #198f3a;
-        background: #d8eee3;
-        font-weight: 700;
-    }
-
-    .required::after {
-        content: " *";
-        color: #dc3545;
-    }
-
-    .is-invalid + .invalid-feedback {
-        display: block;
-    }
-
-    .product-card {
-        border: 1px solid #dee2e6;
-        border-radius: 12px;
-        padding: 14px;
-        transition: .2s ease;
-        height: 100%;
-    }
-
-    .product-card:hover {
-        border-color: #198f3a;
-        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .06);
-    }
-
-    .sticky-actions {
-        position: sticky;
-        bottom: 0;
-        background: #fff;
-        padding: 12px 0;
-        z-index: 10;
-    } </style>
+    <style>
+        .wizard-nav {
+            border-bottom: 0;
+            gap: 8px;
+        }
+        .wizard-nav .nav-link {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            color: #495057;
+            font-weight: 500;
+            background: #fff;
+        }
+        .wizard-nav .nav-link.active {
+            color: #198f3a;
+            border-color: #198f3a;
+            background: #d8eee3;
+            font-weight: 700;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .is-invalid + .invalid-feedback {
+            display: block;
+        }
+        .product-card {
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 14px;
+            transition: .2s ease;
+            height: 100%;
+        }
+        .product-card:hover {
+            border-color: #198f3a;
+            box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .06);
+        }
+        .sticky-actions {
+            position: sticky;
+            bottom: 0;
+            background: #fff;
+            padding: 12px 0;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
+
             <form th:action="${isEdit} ? @{/customers/{id}/edit(id=${customerId})} : @{/customers/create}"
-                  th:object="${form}" method="post" id="customerWizardForm" novalidate><h2
-                    class="page-title d-flex align-items-center mb-4"><i class="bi me-2"
-                                                                         th:classappend="${isEdit} ? 'bi-pencil-square' : 'bi-person-fill-add'"></i>
-                <span th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'"></span></h2>
-                <ul class="nav wizard-nav mb-4" id="wizardTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#step1" type="button"
-                                role="tab"><i class="bi bi-person me-1"></i> Customer Info
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#step2" type="button" role="tab">
-                            <i class="bi bi-box-seam me-1"></i> Product Selection
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#step3" type="button" role="tab">
-                            <i class="bi bi-rulers me-1"></i> Measurements
-                        </button>
-                    </li>
-                </ul>
-                <div class="tab-content"> <!-- STEP 1 -->
-                    <div class="tab-pane fade show active" id="step1" role="tabpanel">
-                        <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-info-circle me-2"></i> Customer Information
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6"><label class="form-label required" for="fullName">Full
-                                        Name</label> <input th:field="*{fullName}" id="fullName" class="form-control"
-                                                            autocomplete="name" required>
-                                        <div class="invalid-feedback">Full name is required.</div>
-                                    </div>
-                                    <div class="col-md-6"><label class="form-label required" for="phoneNumber">Phone
-                                        Number</label> <input th:field="*{phoneNumber}" id="phoneNumber"
-                                                              class="form-control" autocomplete="tel" required
-                                                              pattern="^03\\d{9}$">
-                                        <div class="invalid-feedback">Enter a valid phone number (e.g., 03001234567).
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check mt-2"><input class="form-check-input" type="checkbox"
-                                                                            th:field="*{enabled}" id="enabled"> <label
-                                                class="form-check-label" for="enabled">Enabled</label></div>
+                  th:object="${form}"
+                  method="post"
+                  id="customerWizardForm"
+                  novalidate>
+
+                <!-- ==================== CREATE CUSTOMER ==================== -->
+                <div th:if="${!isEdit}">
+                    <h2 class="page-title d-flex align-items-center mb-4">
+                        <i class="bi bi-person-fill-add me-2"></i>
+                        <span>Create Customer</span>
+                    </h2>
+
+                    <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                        <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Customer Information
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label required" for="fullName">Full Name</label>
+                                    <input th:field="*{fullName}"
+                                           id="fullName"
+                                           class="form-control"
+                                           autocomplete="name"
+                                           required>
+                                    <div class="invalid-feedback">
+                                        Full name is required.
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between"><a th:href="@{/customers}"
-                                                                       class="btn btn-secondary shadow rounded-pill px-4">
-                            <i class="bi bi-x-circle me-1"></i> Cancel </a>
-                            <div>
-                                <button type="button" id="saveCustomerFromStep1"
-                                        class="btn btn-success shadow rounded-pill px-4"><i
-                                        class="bi bi-check-circle me-1"></i> Save Customer
-                                </button>
-                                <button type="button" id="toStep2"
-                                        class="btn btn-success shadow rounded-pill px-4 ms-2"> Next <i
-                                        class="bi bi-arrow-right ms-1"></i></button>
-                            </div>
-                        </div>
-                    </div> <!-- STEP 2 -->
-                    <div class="tab-pane fade" id="step2" role="tabpanel">
-                        <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-box-seam me-2"></i> Select Tailoring Products
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3" id="productsGrid">
-                                    <div class="col-md-4" th:each="p : ${products}">
-                                        <div class="product-card">
-                                            <div class="form-check form-switch mb-0"><input
-                                                    class="form-check-input product-checkbox" type="checkbox"
-                                                    th:value="${p.id}" th:data-name="${p.name}"
-                                                    th:field="*{selectedProductIds}" th:id="${'product_'+p.id}"> <label
-                                                    class="form-check-label fw-bold" th:for="${'product_'+p.id}"
-                                                    th:text="${p.name}"></label></div>
-                                        </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label" for="bookNumber">Book Number</label>
+                                    <input type="text"
+                                           th:field="*{bookNumber}"
+                                           id="bookNumber"
+                                           class="form-control"
+                                           autocomplete="off">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label required" for="phoneNumber">Phone Number</label>
+                                    <input th:field="*{phoneNumber}"
+                                           id="phoneNumber"
+                                           class="form-control"
+                                           autocomplete="tel"
+                                           required
+                                           pattern="^03\d{9}$">
+                                    <div class="invalid-feedback">
+                                        Enter a valid phone number (e.g., 03001234567).
                                     </div>
                                 </div>
-                                <div th:if="${#lists.isEmpty(products)}" class="text-center text-muted py-4"><i
-                                        class="bi bi-box fs-2 d-block mb-2"></i> No active tailoring products are
-                                    available.
-                                    <div class="small mt-1"> Create a product from the Products section first.</div>
-                                </div>
-                                <div class="text-danger small d-none mt-3" id="productError"><i
-                                        class="bi bi-exclamation-circle me-1"></i> Please select at least one product.
-                                </div>
+
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-secondary shadow rounded-pill px-4" id="backToStep1"><i
-                                    class="bi bi-arrow-left me-1"></i> Back
-                            </button>
-                            <div>
-                                <button type="button" class="btn btn-success shadow rounded-pill px-4"
-                                        id="saveCustomerFromStep2"><i class="bi bi-check-circle me-1"></i> Save Customer
-                                </button>
-                                <button type="button" id="toStep3"
-                                        class="btn btn-success shadow rounded-pill px-4 ms-2"> Next <i
-                                        class="bi bi-arrow-right ms-1"></i></button>
-                            </div>
-                        </div>
-                    </div> <!-- STEP 3 -->
-                    <div class="tab-pane fade" id="step3" role="tabpanel">
-                        <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                                <i class="bi bi-rulers me-2"></i> Customer Measurements
-                            </div>
-                            <div class="card-body">
-                                <div id="measurementsContainer"></div>
-                                <div id="noMeasurementFields" class="text-center text-muted py-4 d-none"><i
-                                        class="bi bi-rulers fs-2 d-block mb-2"></i> No measurement fields have been
-                                    defined for the selected product.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="sticky-actions d-flex justify-content-between">
-                            <button type="button" class="btn btn-secondary shadow rounded-pill px-4" id="backToStep2"><i
-                                    class="bi bi-arrow-left me-1"></i> Back
-                            </button>
-                            <button type="button" class="btn btn-success shadow rounded-pill px-4"
-                                    id="openConfirmationModal"><i class="bi bi-check-circle me-1"></i> Save Customer
-                            </button>
                         </div>
                     </div>
-                </div> <!-- Confirmation Modal -->
-                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content rounded-4 shadow">
-                            <div class="modal-header bg-success text-white rounded-top-4"><h5 class="modal-title"><i
-                                    class="bi bi-check-circle me-2"></i> Confirm Submission </h5>
-                                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+
+                    <div class="d-flex justify-content-between">
+                        <a th:href="@{/customers}"
+                           class="btn btn-secondary shadow rounded-pill px-4">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Cancel
+                        </a>
+
+                        <button type="button"
+                                id="saveCustomerFromCreate"
+                                class="btn btn-success shadow rounded-pill px-4">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Save Customer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ==================== EDIT CUSTOMER ==================== -->
+                <div th:if="${isEdit}">
+                    <h2 class="page-title d-flex align-items-center mb-4">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        <span>Edit Customer</span>
+                    </h2>
+
+                    <ul class="nav wizard-nav mb-4" id="wizardTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#step1"
+                                    type="button"
+                                    role="tab">
+                                <i class="bi bi-person me-1"></i>
+                                Customer Info
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#step2"
+                                    type="button"
+                                    role="tab">
+                                <i class="bi bi-box-seam me-1"></i>
+                                Product Selection
+                            </button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#step3"
+                                    type="button"
+                                    role="tab">
+                                <i class="bi bi-rulers me-1"></i>
+                                Measurements
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <!-- EDIT STEP 1 -->
+                        <div class="tab-pane fade show active" id="step1" role="tabpanel">
+                            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Customer Information
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label required" for="fullName">Full Name</label>
+                                            <input th:field="*{fullName}"
+                                                   id="fullName"
+                                                   class="form-control"
+                                                   autocomplete="name"
+                                                   required>
+                                            <div class="invalid-feedback">
+                                                Full name is required.
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="bookNumber">Book Number</label>
+                                            <input type="text"
+                                                   th:field="*{bookNumber}"
+                                                   id="bookNumber"
+                                                   class="form-control"
+                                                   autocomplete="off">
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label required" for="phoneNumber">Phone Number</label>
+                                            <input th:field="*{phoneNumber}"
+                                                   id="phoneNumber"
+                                                   class="form-control"
+                                                   autocomplete="tel"
+                                                   required
+                                                   pattern="^03\d{9}$">
+                                            <div class="invalid-feedback">
+                                                Enter a valid phone number (e.g., 03001234567).
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       th:field="*{enabled}"
+                                                       id="enabled">
+                                                <label class="form-check-label" for="enabled">
+                                                    Enabled
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="modal-body"
-                                 th:text="${isEdit} ? 'Are you sure you want to update this customer?' : 'Are you sure you want to create this customer with the provided details?'"></div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary rounded-pill px-4"
-                                        data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i> Cancel
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/customers}"
+                                   class="btn btn-secondary shadow rounded-pill px-4">
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Cancel
+                                </a>
+
+                                <div>
+                                    <button type="button"
+                                            id="saveCustomerFromStep1"
+                                            class="btn btn-success shadow rounded-pill px-4">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Save Customer
+                                    </button>
+
+                                    <button type="button"
+                                            id="toStep2"
+                                            class="btn btn-success shadow rounded-pill px-4 ms-2">
+                                        Next
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EDIT STEP 2 -->
+                        <div class="tab-pane fade" id="step2" role="tabpanel">
+                            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                                    <i class="bi bi-box-seam me-2"></i>
+                                    Select Tailoring Products
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row g-3" id="productsGrid">
+                                        <div class="col-md-4" th:each="p : ${products}">
+                                            <div class="product-card">
+                                                <div class="form-check form-switch mb-0">
+                                                    <input class="form-check-input product-checkbox"
+                                                           type="checkbox"
+                                                           th:value="${p.id}"
+                                                           th:data-name="${p.name}"
+                                                           th:field="*{selectedProductIds}"
+                                                           th:id="${'product_'+p.id}">
+
+                                                    <label class="form-check-label fw-bold"
+                                                           th:for="${'product_'+p.id}"
+                                                           th:text="${p.name}">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div th:if="${#lists.isEmpty(products)}"
+                                         class="text-center text-muted py-4">
+                                        <i class="bi bi-box fs-2 d-block mb-2"></i>
+                                        No active tailoring products are available.
+                                        <div class="small mt-1">
+                                            Create a product from the Products section first.
+                                        </div>
+                                    </div>
+
+                                    <div class="text-danger small d-none mt-3" id="productError">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        Please select at least one product.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <button type="button"
+                                        class="btn btn-secondary shadow rounded-pill px-4"
+                                        id="backToStep1">
+                                    <i class="bi bi-arrow-left me-1"></i>
+                                    Back
                                 </button>
-                                <button type="submit" class="btn btn-success rounded-pill px-4" id="confirmSubmit"
-                                        th:text="${isEdit} ? 'Yes, Update' : 'Yes, Submit'"></button>
+
+                                <div>
+                                    <button type="button"
+                                            class="btn btn-success shadow rounded-pill px-4"
+                                            id="saveCustomerFromStep2">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Save Customer
+                                    </button>
+
+                                    <button type="button"
+                                            id="toStep3"
+                                            class="btn btn-success shadow rounded-pill px-4 ms-2">
+                                        Next
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EDIT STEP 3 -->
+                        <div class="tab-pane fade" id="step3" role="tabpanel">
+                            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                                    <i class="bi bi-rulers me-2"></i>
+                                    Customer Measurements
+                                </div>
+
+                                <div class="card-body">
+                                    <div id="measurementsContainer"></div>
+
+                                    <div id="noMeasurementFields"
+                                         class="text-center text-muted py-4 d-none">
+                                        <i class="bi bi-rulers fs-2 d-block mb-2"></i>
+                                        No measurement fields have been defined for the selected product.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sticky-actions d-flex justify-content-between">
+                                <button type="button"
+                                        class="btn btn-secondary shadow rounded-pill px-4"
+                                        id="backToStep2">
+                                    <i class="bi bi-arrow-left me-1"></i>
+                                    Back
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-success shadow rounded-pill px-4"
+                                        id="openConfirmationModal">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Save Customer
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- CONFIRMATION MODAL -->
+                <div class="modal fade"
+                     id="confirmationModal"
+                     tabindex="-1"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 shadow">
+
+                            <div class="modal-header bg-success text-white rounded-top-4">
+                                <h5 class="modal-title">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Confirm Submission
+                                </h5>
+
+                                <button type="button"
+                                        class="btn-close bg-light"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                </button>
+                            </div>
+
+                            <div class="modal-body"
+                                 th:text="${isEdit}
+                             ? 'Are you sure you want to update this customer?'
+                             : 'Are you sure you want to create this customer?'">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button"
+                                        class="btn btn-secondary rounded-pill px-4"
+                                        data-bs-dismiss="modal">
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Cancel
+                                </button>
+
+                                <button type="submit"
+                                        class="btn btn-success rounded-pill px-4"
+                                        id="confirmSubmit"
+                                        th:text="${isEdit} ? 'Yes, Update' : 'Yes, Create'">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </form>
         </div>
     </div>
+
 </div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
+
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+
 <script th:src="@{/js/dashboard-notifications.js}"></script>
-<script th:inline="javascript"> var contextPath = [[@{/}]]; var formMeasurements = [[${form.measurements}]]; var isEdit = [[${isEdit != null ? isEdit : false}]]; </script>
-<script> document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("customerWizardForm");
-    const step1Tab = document.querySelector('[data-bs-target="#step1"]');
-    const step2Tab = document.querySelector('[data-bs-target="#step2"]');
-    const step3Tab = document.querySelector('[data-bs-target="#step3"]');
-    const toStep2 = document.getElementById("toStep2");
-    const toStep3 = document.getElementById("toStep3");
-    const backToStep1 = document.getElementById("backToStep1");
-    const backToStep2 = document.getElementById("backToStep2");
-    const saveCustomerFromStep1 = document.getElementById("saveCustomerFromStep1");
-    const saveCustomerFromStep2 = document.getElementById("saveCustomerFromStep2");
-    const productError = document.getElementById("productError");
 
-    function validateCustomerInfo() {
-        const name = document.getElementById("fullName");
-        const phone = document.getElementById("phoneNumber");
-        let valid = true;
-        if (!name.value.trim()) {
-            name.classList.add("is-invalid");
-            valid = false;
-        } else {
-            name.classList.remove("is-invalid");
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+    var formMeasurements = [[${form.measurements}]];
+    var isEdit = [[${isEdit != null ? isEdit : false}]];
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("customerWizardForm");
+        const step1Tab = document.querySelector('[data-bs-target="#step1"]');
+        const step2Tab = document.querySelector('[data-bs-target="#step2"]');
+        const step3Tab = document.querySelector('[data-bs-target="#step3"]');
+        const toStep2 = document.getElementById("toStep2");
+        const toStep3 = document.getElementById("toStep3");
+        const backToStep1 = document.getElementById("backToStep1");
+        const backToStep2 = document.getElementById("backToStep2");
+        const saveCustomerFromStep1 = document.getElementById("saveCustomerFromStep1");
+        const saveCustomerFromStep2 = document.getElementById("saveCustomerFromStep2");
+        const saveCustomerFromCreate = document.getElementById("saveCustomerFromCreate");
+        const productError = document.getElementById("productError");
+
+        function validateCustomerInfo() {
+            const name = document.getElementById("fullName");
+            const phone = document.getElementById("phoneNumber");
+
+            if (!name || !phone) {
+                return true;
+            }
+
+            let valid = true;
+
+            if (!name.value.trim()) {
+                name.classList.add("is-invalid");
+                valid = false;
+            } else {
+                name.classList.remove("is-invalid");
+            }
+
+            const phoneRegex = /^03\d{9}$/;
+
+            if (!phone.value.trim() || !phoneRegex.test(phone.value.trim())) {
+                phone.classList.add("is-invalid");
+                valid = false;
+            } else {
+                phone.classList.remove("is-invalid");
+            }
+
+            return valid;
         }
-        const phoneRegex = /^03\d{9}$/;
-        if (!phone.value.trim() || !phoneRegex.test(phone.value.trim())) {
-            phone.classList.add("is-invalid");
-            valid = false;
-        } else {
-            phone.classList.remove("is-invalid");
+
+        function selectTab(tab) {
+            if (tab) {
+                new bootstrap.Tab(tab).show();
+            }
         }
-        return valid;
-    }
 
-    function selectTab(tab) {
-        new bootstrap.Tab(tab).show();
-    }
+        function openConfirmation() {
+            if (!validateCustomerInfo()) {
+                selectTab(step1Tab);
+                return;
+            }
 
-    function openConfirmation() {
-        if (!validateCustomerInfo()) {
+            new bootstrap.Modal(
+                document.getElementById("confirmationModal")
+            ).show();
+        }
+
+        saveCustomerFromCreate?.addEventListener("click", function () {
+            openConfirmation();
+        });
+
+        toStep2?.addEventListener("click", function () {
+            if (validateCustomerInfo()) {
+                selectTab(step2Tab);
+            }
+        });
+
+        backToStep1?.addEventListener("click", function () {
             selectTab(step1Tab);
-            return;
-        }
-        new bootstrap.Modal(document.getElementById("confirmationModal")).show();
-    }
+        });
 
-    toStep2?.addEventListener("click", function () {
-        if (validateCustomerInfo()) {
+        toStep3?.addEventListener("click", async function () {
+            if (!validateCustomerInfo()) {
+                selectTab(step1Tab);
+                return;
+            }
+
+            const selectedProducts = document.querySelectorAll(".product-checkbox:checked");
+
+            if (!selectedProducts.length) {
+                productError?.classList.remove("d-none");
+                return;
+            }
+
+            productError?.classList.add("d-none");
+
+            try {
+                await buildMeasurementsUI();
+                selectTab(step3Tab);
+            } catch (error) {
+                console.error("Error building measurement fields:", error);
+                alert("Unable to load measurement fields. Please try again.");
+            }
+        });
+
+        backToStep2?.addEventListener("click", function () {
             selectTab(step2Tab);
-        }
-    });
-    backToStep1?.addEventListener("click", function () {
-        selectTab(step1Tab);
-    });
-    toStep3?.addEventListener("click", async function () {
-        if (!validateCustomerInfo()) {
-            selectTab(step1Tab);
-            return;
-        }
-        const selectedProducts = document.querySelectorAll(".product-checkbox:checked");
-        if (!selectedProducts.length) {
-            productError.classList.remove("d-none");
-            return;
-        }
-        productError.classList.add("d-none");
-        try {
-            await buildMeasurementsUI();
-            selectTab(step3Tab);
-        } catch (error) {
-            console.error("Error building measurement fields:", error);
-            alert("Unable to load measurement fields. Please try again.");
-        }
-    });
-    backToStep2?.addEventListener("click", function () {
-        selectTab(step2Tab);
-    });
-    saveCustomerFromStep1?.addEventListener("click", function () {
-        openConfirmation();
-    });
-    saveCustomerFromStep2?.addEventListener("click", function () {
-        openConfirmation();
-    });
-    document.getElementById("openConfirmationModal")?.addEventListener("click", function () {
-        if (!validateCustomerInfo()) {
-            selectTab(step1Tab);
-            return;
-        }
-        const selectedProducts = document.querySelectorAll(".product-checkbox:checked");
-        if (!selectedProducts.length) {
-            selectTab(step2Tab);
-            productError.classList.remove("d-none");
-            return;
-        }
-        new bootstrap.Modal(document.getElementById("confirmationModal")).show();
-    });
+        });
 
-    async function fetchFields(productId) {
-        const response = await fetch(`${contextPath}customers/${productId}/fields`);
-        if (!response.ok) {
-            throw new Error("Failed to load measurement fields.");
-        }
-        return await response.json();
-    }
+        saveCustomerFromStep1?.addEventListener("click", function () {
+            openConfirmation();
+        });
 
-    async function buildMeasurementsUI() {
-        const container = document.getElementById("measurementsContainer");
-        const noMeasurementFields = document.getElementById("noMeasurementFields");
-        container.innerHTML = "";
-        noMeasurementFields.classList.add("d-none");
-        const selected = Array.from(document.querySelectorAll(".product-checkbox")).filter(cb => cb.checked).map(cb => ({
-            id: parseInt(cb.value, 10),
-            name: cb.dataset.name
-        }));
-        let totalFields = 0;
-        for (const product of selected) {
-            const fields = await fetchFields(product.id);
-            totalFields += fields.length;
-            const card = document.createElement("div");
-            card.className = "card shadow-sm mb-4 border-0 rounded-4";
-            const header = document.createElement("div");
-            header.className = "card-header bg-success text-white fw-bold d-flex align-items-center";
-            header.innerHTML = `<i class="bi bi-box-seam me-2"></i> <span>${escapeHtml(product.name)}</span>`;
-            card.appendChild(header);
-            if (!fields.length) {
+        saveCustomerFromStep2?.addEventListener("click", function () {
+            openConfirmation();
+        });
+
+        document.getElementById("openConfirmationModal")?.addEventListener("click", function () {
+            if (!validateCustomerInfo()) {
+                selectTab(step1Tab);
+                return;
+            }
+
+            const selectedProducts = document.querySelectorAll(".product-checkbox:checked");
+
+            if (!selectedProducts.length) {
+                selectTab(step2Tab);
+                productError?.classList.remove("d-none");
+                return;
+            }
+
+            new bootstrap.Modal(
+                document.getElementById("confirmationModal")
+            ).show();
+        });
+
+        async function fetchFields(productId) {
+            const response = await fetch(`${contextPath}customers/${productId}/fields`);
+
+            if (!response.ok) {
+                throw new Error("Failed to load measurement fields.");
+            }
+
+            return await response.json();
+        }
+
+        async function buildMeasurementsUI() {
+            const container = document.getElementById("measurementsContainer");
+            const noMeasurementFields = document.getElementById("noMeasurementFields");
+
+            if (!container || !noMeasurementFields) {
+                return;
+            }
+
+            container.innerHTML = "";
+            noMeasurementFields.classList.add("d-none");
+
+            const selected = Array.from(
+                document.querySelectorAll(".product-checkbox")
+            )
+                .filter(cb => cb.checked)
+                .map(cb => ({
+                    id: parseInt(cb.value, 10),
+                    name: cb.dataset.name
+                }));
+
+            let totalFields = 0;
+
+            for (const product of selected) {
+                const fields = await fetchFields(product.id);
+                totalFields += fields.length;
+
+                const card = document.createElement("div");
+                card.className = "card shadow-sm mb-4 border-0 rounded-4";
+
+                const header = document.createElement("div");
+                header.className = "card-header bg-success text-white fw-bold d-flex align-items-center";
+                header.innerHTML = `<i class="bi bi-box-seam me-2"></i> <span>${escapeHtml(product.name)}</span>`;
+
+                card.appendChild(header);
+
+                if (!fields.length) {
+                    const body = document.createElement("div");
+                    body.className = "card-body text-muted";
+                    body.innerHTML = `<i class="bi bi-info-circle me-1"></i> No measurement fields have been defined for this product.`;
+                    card.appendChild(body);
+                    container.appendChild(card);
+                    continue;
+                }
+
                 const body = document.createElement("div");
-                body.className = "card-body text-muted";
-                body.innerHTML = `<i class="bi bi-info-circle me-1"></i> No measurement fields have been defined for this product.`;
+                body.className = "card-body p-0";
+
+                const table = document.createElement("table");
+                table.className = "table table-bordered table-hover mb-0 align-middle";
+
+                table.innerHTML = `
+                <thead class="table-success text-dark">
+                    <tr>
+                        <th>Measurement Field</th>
+                        <th class="text-center">Value</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+
+                const tbody = table.querySelector("tbody");
+
+                fields.forEach(field => {
+                    const inputName = `measurements[${product.id}][${field.id}]`;
+                    const existing = formMeasurements?.[product.id]?.[field.id] ?? "";
+
+                    const row = document.createElement("tr");
+                    const fieldCell = document.createElement("td");
+                    const valueCell = document.createElement("td");
+
+                    fieldCell.textContent = field.fieldName;
+                    valueCell.className = "text-center";
+
+                    if (field.fieldType === "NUMBER") {
+                        const input = document.createElement("input");
+                        input.type = "number";
+                        input.step = "0.01";
+                        input.className = "form-control";
+                        input.name = inputName;
+                        input.value = existing;
+                        input.placeholder = field.fieldName;
+                        valueCell.appendChild(input);
+                    } else if (field.fieldType === "DROPDOWN") {
+                        const select = document.createElement("select");
+                        select.className = "form-select";
+                        select.name = inputName;
+
+                        const defaultOption = document.createElement("option");
+                        defaultOption.value = "";
+                        defaultOption.textContent = "Select";
+                        select.appendChild(defaultOption);
+
+                        (field.options || "")
+                            .split(",")
+                            .map(option => option.trim())
+                            .filter(Boolean)
+                            .forEach(option => {
+                                const optionElement = document.createElement("option");
+                                optionElement.value = option;
+                                optionElement.textContent = option;
+                                optionElement.selected = option === existing;
+                                select.appendChild(optionElement);
+                            });
+
+                        valueCell.appendChild(select);
+                    } else {
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.className = "form-control";
+                        input.name = inputName;
+                        input.value = existing;
+                        input.placeholder = field.fieldName;
+                        valueCell.appendChild(input);
+                    }
+
+                    row.appendChild(fieldCell);
+                    row.appendChild(valueCell);
+                    tbody.appendChild(row);
+                });
+
+                body.appendChild(table);
                 card.appendChild(body);
                 container.appendChild(card);
-                continue;
             }
-            const body = document.createElement("div");
-            body.className = "card-body p-0";
-            const table = document.createElement("table");
-            table.className = "table table-bordered table-hover mb-0 align-middle";
-            table.innerHTML = ` <thead class="table-success text-dark"> <tr> <th>Measurement Field</th> <th class="text-center">Value</th> </tr> </thead> <tbody></tbody>`;
-            const tbody = table.querySelector("tbody");
-            fields.forEach(field => {
-                const inputName = `measurements[${product.id}][${field.id}]`;
-                const existing = formMeasurements?.[product.id]?.[field.id] ?? "";
-                const row = document.createElement("tr");
-                const fieldCell = document.createElement("td");
-                fieldCell.textContent = field.fieldName;
-                const valueCell = document.createElement("td");
-                valueCell.className = "text-center";
-                if (field.fieldType === "NUMBER") {
-                    const input = document.createElement("input");
-                    input.type = "number";
-                    input.step = "0.01";
-                    input.className = "form-control";
-                    input.name = inputName;
-                    input.value = existing;
-                    input.placeholder = field.fieldName;
-                    valueCell.appendChild(input);
-                } else if (field.fieldType === "DROPDOWN") {
-                    const select = document.createElement("select");
-                    select.className = "form-select";
-                    select.name = inputName;
-                    const defaultOption = document.createElement("option");
-                    defaultOption.value = "";
-                    defaultOption.textContent = "Select";
-                    select.appendChild(defaultOption);
-                    (field.options || "").split(",").map(option => option.trim()).filter(Boolean).forEach(option => {
-                        const optionElement = document.createElement("option");
-                        optionElement.value = option;
-                        optionElement.textContent = option;
-                        optionElement.selected = option === existing;
-                        select.appendChild(optionElement);
-                    });
-                    valueCell.appendChild(select);
-                } else {
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.className = "form-control";
-                    input.name = inputName;
-                    input.value = existing;
-                    input.placeholder = field.fieldName;
-                    valueCell.appendChild(input);
-                }
-                row.appendChild(fieldCell);
-                row.appendChild(valueCell);
-                tbody.appendChild(row);
-            });
-            body.appendChild(table);
-            card.appendChild(body);
-            container.appendChild(card);
-        }
-        if (!totalFields) {
-            noMeasurementFields.classList.remove("d-none");
-        }
-    }
 
-    function escapeHtml(value) {
-        const div = document.createElement("div");
-        div.textContent = value ?? "";
-        return div.innerHTML;
-    }
-
-    form.addEventListener("submit", function (event) {
-        if (!validateCustomerInfo()) {
-            event.preventDefault();
-            selectTab(step1Tab);
+            if (!totalFields) {
+                noMeasurementFields.classList.remove("d-none");
+            }
         }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value ?? "";
+            return div.innerHTML;
+        }
+
+        form.addEventListener("submit", function (event) {
+            if (!validateCustomerInfo()) {
+                event.preventDefault();
+                selectTab(step1Tab);
+            }
+        });
     });
-}); </script>
+</script>
+
 </body>
 </html>

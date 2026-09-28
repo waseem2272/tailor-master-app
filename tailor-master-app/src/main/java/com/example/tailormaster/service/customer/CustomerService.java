@@ -44,6 +44,7 @@ public class CustomerService {
         User currentUser = authenticatedUserService.getCurrentUser();
 
         Customer customer = new Customer();
+        customer.setBookNumber(dto.getBookNumber());
         customer.setFullName(dto.getFullName());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setEnabled(dto.isEnabled());
@@ -102,6 +103,7 @@ public class CustomerService {
     public CustomerWizardDTO mapToWizardDTO(Customer customer) {
         CustomerWizardDTO dto = new CustomerWizardDTO();
         dto.setFullName(customer.getFullName());
+        dto.setBookNumber(customer.getBookNumber());
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setEnabled(customer.isEnabled());
 
@@ -144,6 +146,7 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         customer.setFullName(dto.getFullName());
+        customer.setBookNumber(dto.getBookNumber());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setEnabled(dto.isEnabled());
 
