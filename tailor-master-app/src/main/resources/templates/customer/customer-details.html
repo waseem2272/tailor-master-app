@@ -6,8 +6,11 @@
     <title>Customer Details | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         .badge-completed {
             background-color: #6f42c1 !important;
@@ -72,82 +75,87 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- Products & Measurements -->
-            <div th:if="${productMeasurementsMap != null and !productMeasurementsMap.isEmpty()}"
-                 class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-rulers me-2"></i> Products & Measurements
-                    </div>
-                    <span class="small"> Products: <strong th:text="${productMeasurementsMap.size()}">0</strong> </span>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-lg-6" th:each="entry, stat : ${productMeasurementsMap}">
-                            <div class="card border shadow-sm rounded-3"> <!-- Product Header -->
-                                <div class="card-header bg-success-subtle d-flex align-items-center justify-content-between py-2"
-                                     role="button" data-bs-toggle="collapse"
-                                     th:data-bs-target="'#measurement_' + ${stat.index}" aria-expanded="false">
-                                    <div class="d-flex align-items-center"><i
-                                            class="bi bi-box-seam text-success me-2"></i>
-                                        <div>
-                                            <div class="fw-semibold" th:text="${entry.key.name}"> Product Name</div>
-                                            <small class="text-muted"> <span th:text="${entry.value.size()}">0</span>
-                                                measurements </small></div>
-                                    </div>
-                                    <i class="bi bi-chevron-down text-success"></i></div> <!-- Measurement Details -->
-                                <div th:id="'measurement_' + ${stat.index}" class="collapse">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-bordered table-hover mb-0 align-middle">
-                                            <thead class="table-success text-dark">
-                                            <tr>
-                                                <th>Measurement</th>
-                                                <th class="text-center">Value</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="measurement : ${entry.value}">
-                                                <td><span th:text="${measurement.field.fieldName}"> Measurement </span>
-                                                </td>
-                                                <td class="text-center fw-semibold"><span
-                                                        th:text="${measurement.value}"> Value </span></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- No Measurements -->
-
-            <!-- Add Measurement -->
-            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center">
-                    <i class="bi bi-rulers me-2"></i> Add Measurement
-                </div>
-
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="measurementProduct" class="form-label fw-semibold">
-                                Select Product
-                            </label>
-                            <select id="measurementProduct" class="form-select">
-                                <option value="">Select Product</option>
-                                <option th:each="product : ${products}"
-                                        th:value="${product.id}"
-                                        th:text="${product.name}">
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="measurementFieldsContainer" class="row g-3 mt-1"></div>
-                </div>
             </div>
 
-            <div th:if="${productMeasurementsMap == null or productMeasurementsMap.isEmpty()}"
+            <!-- Measurements -->
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
+
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-rulers me-2"></i>
+                        Measurements
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-light btn-sm rounded-pill px-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addMeasurementModal">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Measurement
+                    </button>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table id="measurementsTable"
+                               class="table table-bordered table-hover table-striped">
+
+                            <thead class="table-success text-dark">
+                            <tr>
+                                <th>Product</th>
+                                <th>Created Date</th>
+                                <th>Last Updated</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            <tr th:each="entry : ${productMeasurementsMap}">
+
+                                <td class="fw-semibold"
+                                    th:text="${entry.key.name}">
+                                    Product Name
+                                </td>
+
+                                <td class="fw-semibold"
+                                    th:text="${#temporals.format(entry.key.createdAt, 'dd-MMM-yyyy')}">
+                                </td>
+
+                                <td class="fw-semibold"
+                                    th:text="${#temporals.format(entry.key.updatedAt, 'dd-MMM-yyyy')}">
+                                </td>
+
+                                <td class="text-center">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success rounded-pill px-3 me-1 edit-measurement-btn"
+                                            th:attr="data-product-id=${entry.key.id}">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        Edit
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                        <i class="bi bi-printer me-1"></i>
+                                        Download
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--<div th:if="${productMeasurementsMap == null or productMeasurementsMap.isEmpty()}"
                  class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4"><i
                         class="bi bi-box-seam me-2"></i> Customer Type
@@ -156,203 +164,156 @@
                         class="fw-semibold mt-3"> General / Inventory Customer </h5>
                     <p class="text-muted mb-0"> No tailoring products or measurements are associated with this
                         customer. </p></div>
-            </div> <!-- Customer Ledger -->
-            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-journal-text me-2"></i> Customer Ledger</div>
-                    <span class="small"> Total Orders: <strong th:text="${orderLedgerMap.size()}">0</strong> </span>
-                </div>
-                <div class="card-body"> <!-- Ledger Summary -->
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-4">
-                            <div class="border rounded-3 p-3 text-center bg-light h-100">
-                                <div class="text-muted small mb-1"><i class="bi bi-bag-check me-1"></i> Total Orders
-                                </div>
-                                <h4 class="fw-bold mb-0" th:text="${orderLedgerMap.size()}"> 0 </h4></div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="border border-success rounded-3 p-3 text-center bg-success-subtle h-100">
-                                <div class="text-success small mb-1"><i class="bi bi-arrow-down-circle me-1"></i> Total
-                                    Credit
-                                </div>
-                                <h5 class="fw-bold text-success mb-0"
-                                    th:text="${#numbers.formatDecimal(totalCredit, 1, 'COMMA', 2, 'POINT')}"> 0.00 </h5>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="border border-danger rounded-3 p-3 text-center bg-danger-subtle h-100">
-                                <div class="text-danger small mb-1"><i class="bi bi-arrow-up-circle me-1"></i> Total
-                                    Debit
-                                </div>
-                                <h5 class="fw-bold text-danger mb-0"
-                                    th:text="${#numbers.formatDecimal(totalDebit, 1, 'COMMA', 2, 'POINT')}"> 0.00 </h5>
-                            </div>
-                        </div>
-                    </div> <!-- Outstanding Balance -->
-                    <div class="row justify-content-center mb-4">
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 text-center bg-light">
-                                <div class="text-muted small mb-1"><i class="bi bi-wallet2 me-1"></i> Outstanding
-                                    Balance
-                                </div>
-                                <h4 class="fw-bold mb-0"
-                                    th:classappend="${totalCredit.subtract(totalDebit) >= 0} ? ' text-success' : ' text-danger'"
-                                    th:text="${#numbers.formatDecimal( totalCredit.subtract(totalDebit), 1, 'COMMA', 2, 'POINT' )}">
-                                    0.00 </h4></div>
-                        </div>
-                    </div> <!-- Orders -->
-                    <div th:each="orderEntry : ${orderLedgerMap}" class="card border shadow-sm rounded-3 mb-3">
+            </div>-->
+            <!-- Customer Ledger -->
 
-                        <div class="card-header bg-success-subtle d-flex justify-content-between align-items-center">
-
-                            <!-- LEFT SIDE -->
-                            <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
-
-                                <!-- Collapse trigger ONLY -->
-                                <div class="d-flex flex-wrap align-items-center gap-2"
-                                     role="button"
-                                     data-bs-toggle="collapse"
-                                     th:data-bs-target="'#order_' + ${orderEntry.key}"
-                                     aria-expanded="false">
-
-                                    <i class="bi bi-receipt"></i>
-
-                                    <span>Order:</span>
-
-                                </div>
-
-                                <!-- ORDER ID - COMPLETELY OUTSIDE COLLAPSE TRIGGER -->
-                                <a th:href="@{/orders/details/{id}(id=${thymeleafUtil.encryptId(orderIds[orderEntry.key])})}"
-                                   th:text="${orderEntry.key}"
-                                   class="text-success text-decoration-none fw-bold">
-                                    ORDER
-                                </a>
-
-                                <!-- Order Type -->
-                                <span th:if="${orderTypes[orderEntry.key] == 'INVENTORY'}"
-                                      class="badge bg-primary">
-                <i class="bi bi-box-seam me-1"></i>
-                Inventory
-            </span>
-
-                                <span th:if="${orderTypes[orderEntry.key] == 'TAILORING'}"
-                                      class="badge bg-success">
-                <i class="bi bi-scissors me-1"></i>
-                Tailoring
-            </span>
-
-                                <span th:if="${orderTypes[orderEntry.key] == 'MIXED'}"
-                                      class="badge bg-warning text-dark">
-                <i class="bi bi-layers-fill me-1"></i>
-                Mixed
-            </span>
-
-                                <!-- Order Status -->
-                                <span th:classappend="${orderStatuses[orderEntry.key]?.name() == 'COMPLETED'
-                    ? ' badge badge-completed'
-                    : (orderStatuses[orderEntry.key]?.name() == 'DELIVERED'
-                    ? ' badge bg-success'
-                    : (orderStatuses[orderEntry.key]?.name() == 'CANCELLED'
-                    ? ' badge bg-danger'
-                    : (orderStatuses[orderEntry.key]?.name() == 'IN_PROGRESS'
-                    ? ' badge bg-primary'
-                    : ' badge bg-secondary')))}"
-                                      th:text="${orderStatuses[orderEntry.key]?.name()}">
-                PENDING
-            </span>
-
-                            </div>
-
-                            <!-- CHEVRON - COLLAPSE TRIGGER -->
-                            <div role="button"
-                                 data-bs-toggle="collapse"
-                                 th:data-bs-target="'#order_' + ${orderEntry.key}"
-                                 aria-expanded="false"
-                                 class="ms-2 px-2">
-
-                                <i class="bi bi-chevron-down text-success"></i>
-
-                            </div>
-
-                        </div>
-
-                        <!-- COLLAPSE CONTENT -->
-                        <div th:id="'order_' + ${orderEntry.key}"
-                             class="collapse">
-
-                            <div class="table-responsive">
-
-                                <table class="table table-sm table-bordered table-hover mb-0 align-middle">
-
-                                    <thead class="table-success text-dark">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                        <th>Description</th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    <tr th:each="entry, iterStat : ${orderEntry.value}">
-
-                                        <td th:text="${iterStat.count}">1</td>
-
-                                        <td th:text="${#temporals.format(entry.paymentDate, 'yyyy-MM-dd')}">
-                                            2026-01-01
-                                        </td>
-
-                                        <td>
-                        <span th:text="${entry.paymentType}"
-                              th:classappend="${entry.paymentType == 'CREDIT'}
-                                  ? ' text-success fw-semibold'
-                                  : ' text-danger fw-semibold'">
-                            CREDIT
-                        </span>
-                                        </td>
-
-                                        <td th:text="${#numbers.formatDecimal(entry.amount, 1, 'COMMA', 2, 'POINT')}">
-                                            0.00
-                                        </td>
-
-                                        <td th:text="${entry.remarks}">
-                                            -
-                                        </td>
-
-                                    </tr>
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
+
+<!-- Add Measurement Modal -->
+<div class="modal fade"
+     id="addMeasurementModal"
+     tabindex="-1"
+     aria-labelledby="addMeasurementModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <div>
+                    <h5 class="modal-title fw-semibold mb-1"
+                        id="addMeasurementModalLabel">
+                        <i class="bi bi-rulers me-2"></i>
+                        Add Measurement
+                    </h5>
+                    <small class="text-white">
+                        Select a product and enter its measurements
+                    </small>
+                </div>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-4 p-3 border rounded-3 bg-light">
+
+                    <label for="measurementProduct"
+                           class="form-label fw-semibold">
+                        <i class="bi bi-box-seam me-1 text-success"></i>
+                        Product
+                    </label>
+
+                    <select id="measurementProduct"
+                            class="form-select">
+                        <option value="">Select Product</option>
+
+                        <option th:each="product : ${products}"
+                                th:value="${product.id}"
+                                th:text="${product.name}">
+                        </option>
+                    </select>
+
+                    <div class="form-text">
+                        Select the product to load its measurement fields.
+                    </div>
+
+                </div>
+
+                <div id="measurementFieldsContainer"
+                     class="row g-3">
+                </div>
+
+                <div id="measurementNotesContainer"
+                     class="mt-4"
+                     style="display: none;">
+
+                    <label for="measurementNotes"
+                           class="form-label fw-semibold">
+                        Additional Notes / Instructions
+                    </label>
+
+                    <textarea id="measurementNotes"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Enter any additional notes or instructions for this measurement..."></textarea>
+
+                    <div class="form-text">
+                        Add any special instructions or notes for this customer's measurement.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancel
+                </button>
+
+                <button type="button"
+                        id="saveMeasurementBtn"
+                        class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Save Measurement
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
-<script th:inline="javascript"> var contextPath = [[@{/}]]; </script>
 <script th:inline="javascript">
+    var contextPath = [[@{/}]];
+    var customerId = [[${customer.id}]];
+    const csrfToken = $("meta[name='_csrf']").attr("content");
+    const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+</script>
+<script th:inline="javascript">
+
+        $(document).ready(function () {
+
+        $('#measurementsTable').DataTable({
+            language: {
+                emptyTable: "No measurements found for this customer."
+            }
+        });
+
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
+
+        const measurementModal = document.getElementById("addMeasurementModal");
         const productSelect = document.getElementById("measurementProduct");
         const fieldsContainer = document.getElementById("measurementFieldsContainer");
+        const notesContainer = document.getElementById("measurementNotesContainer");
 
         productSelect.addEventListener("change", function () {
+
             const productId = this.value;
             fieldsContainer.innerHTML = "";
+            notesContainer.style.display = "none";
 
             if (!productId) {
                 return;
             }
+
+            notesContainer.style.display = "block";
 
             fetch(`${contextPath}customers/${productId}/fields`)
                 .then(response => {
@@ -362,6 +323,7 @@
                     return response.json();
                 })
                 .then(fields => {
+
                     if (fields.length === 0) {
                         fieldsContainer.innerHTML = `
                             <div class="col-12">
@@ -374,39 +336,51 @@
                     }
 
                     fields.forEach(field => {
+
                         const col = document.createElement("div");
                         col.className = "col-md-6";
 
                         let fieldHtml = `
-                            <label class="form-label fw-semibold">${field.fieldName}</label>
+                            <label class="form-label fw-semibold">
+                                ${field.fieldName}
+                            </label>
                         `;
 
-                        if (field.fieldType === "DROPDOWN") {
+                        if (field.fieldType === "TEXT") {
+
                             fieldHtml += `
-        <select class="form-select" data-field-id="${field.id}">
-            <option value="">Select ${field.fieldName}</option>
-    `;
+                                <input type="text"
+                                       class="form-control"
+                                       data-field-id="${field.id}"
+                                       placeholder="Enter ${field.fieldName}">
+                            `;
+
+                        } else if (field.fieldType === "DROPDOWN") {
+
+                            fieldHtml += `
+                                <select class="form-select"
+                                        data-field-id="${field.id}">
+                                    <option value="">
+                                        Select ${field.fieldName}
+                                    </option>
+                            `;
 
                             if (field.options) {
                                 field.options.split(",").forEach(option => {
+
                                     const value = option.trim();
 
                                     if (value) {
                                         fieldHtml += `
-                    <option value="${value}">${value}</option>
-                `;
+                                            <option value="${value}">
+                                                ${value}
+                                            </option>
+                                        `;
                                     }
                                 });
                             }
 
                             fieldHtml += `</select>`;
-                        } else if (field.fieldType === "TEXT") {
-                            fieldHtml += `
-        <input type="text"
-               class="form-control"
-               data-field-id="${field.id}"
-               placeholder="Enter ${field.fieldName}">
-    `;
                         }
 
                         col.innerHTML = fieldHtml;
@@ -414,7 +388,9 @@
                     });
                 })
                 .catch(error => {
+
                     console.error("Error loading measurement fields:", error);
+
                     fieldsContainer.innerHTML = `
                         <div class="col-12">
                             <div class="alert alert-danger mb-0">
@@ -424,7 +400,95 @@
                     `;
                 });
         });
+
+        measurementModal.addEventListener("hidden.bs.modal", function () {
+            productSelect.value = "";
+            fieldsContainer.innerHTML = "";
+        });
+
+        document.getElementById("saveMeasurementBtn").addEventListener("click", function () {
+
+            const productId = productSelect.value;
+
+            if (!productId) {
+                alert("Please select a product.");
+                return;
+            }
+
+            const measurementFields =
+                fieldsContainer.querySelectorAll("[data-field-id]");
+
+            if (measurementFields.length === 0) {
+                alert("No measurement fields found for this product.");
+                return;
+            }
+
+            const measurements = {};
+
+            measurementFields.forEach(field => {
+                const fieldId = field.getAttribute("data-field-id");
+                measurements[fieldId] = field.value;
+            });
+
+            const notes = document.getElementById("measurementNotes").value.trim();
+
+            const requestData = {
+                notes: notes,
+                measurements: measurements
+            };
+
+            console.log("Product ID:", productId);
+            console.log("Notes:", notes);
+            console.log("Measurements:", measurements);
+            console.log("Request Data:", requestData);
+
+            fetch(`${contextPath}customers/${customerId}/measurements?productId=${productId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to save measurement");
+                    }
+
+                    return response.json();
+                })
+                .then(result => {
+
+                    if (result.success) {
+                        alert(result.message);
+
+                        bootstrap.Modal
+                            .getInstance(measurementModal)
+                            .hide();
+
+                        location.reload();
+
+                    } else {
+                        alert(result.message);
+                    }
+                })
+                .catch(error => {
+
+                    console.error("Error saving measurement:", error);
+                    alert("Failed to save measurement. Please try again.");
+                });
+        });
+
+        $(document).on('click', '.edit-measurement-btn', function () {
+
+            const productId = $(this).data('product-id');
+
+            console.log("Edit Measurement Product ID:", productId);
+
+        });
+
     });
 </script>
+
 </body>
 </html>

@@ -2,9 +2,11 @@ package com.example.tailormaster.service;
 
 import com.example.tailormaster.dto.ProductMeasurementFieldDTO;
 import com.example.tailormaster.entity.ProductMeasurementField;
+import com.example.tailormaster.entity.User;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
 import com.example.tailormaster.repository.product.ProductRepository;
+import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +19,15 @@ import java.util.stream.Collectors;
 public class ProductMeasurementFieldService {
     private final ProductMeasurementFieldRepository productMeasurementFieldRepository;
     private final ProductRepository productRepository;
+    private final AuthenticatedUserService authenticatedUserService;
+
+    public Long getCurrentUserId() {
+        return authenticatedUserService.getCurrentUser().getId();
+    }
 
     public List<ProductMeasurementField> getMeasurementFieldsByProductId(Long productId) {
         return productMeasurementFieldRepository
-                .findByProductIdAndEnabledTrue(productId);
+                .findByUserIdAndProductIdAndEnabledTrue(getCurrentUserId(), productId);
     }
 
     @Transactional
@@ -30,7 +37,7 @@ public class ProductMeasurementFieldService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         List<ProductMeasurementField> existingFields =
-                productMeasurementFieldRepository.findByProductId(productId);
+                productMeasurementFieldRepository.findByUserIdAndProductId(getCurrentUserId(), productId);
 
         Map<Long, ProductMeasurementField> existingFieldMap = existingFields.stream()
                 .collect(Collectors.toMap(ProductMeasurementField::getId, f -> f));

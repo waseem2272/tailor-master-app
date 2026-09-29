@@ -7,12 +7,19 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CustomerMeasurementRepository extends JpaRepository<CustomerMeasurement, Long> {
-    List<CustomerMeasurement> findByCustomerId(Long customerId); // Correct method
+    List<CustomerMeasurement> findByUserIdAndCustomerId(
+            Long userId,
+            Long customerId
+    );
 
-    List<CustomerMeasurement> findByCustomerIdAndProductIdOrderByCreatedAtDesc(
+    List<CustomerMeasurement> findByUserIdAndCustomerIdAndProductIdOrderByCreatedAtDesc(
+            Long userId,
             Long customerId,
             Long productId
     );
 
-    void deleteByCustomerId(Long id);
+    void deleteByUserIdAndCustomerId(
+            Long userId,
+            Long customerId
+    );
 }

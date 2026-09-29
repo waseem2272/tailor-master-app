@@ -1,16 +1,13 @@
 package com.example.tailormaster.controller;
 
+import com.example.tailormaster.dto.CustomerMeasurementRequest;
 import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
-import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.entity.ProductMeasurementField;
-import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.entity.product.Product;
-import com.example.tailormaster.enums.OrderProductType;
-import com.example.tailormaster.enums.OrderStatus;
-import com.example.tailormaster.enums.PaymentType;
 import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
+import com.example.tailormaster.service.ProductMeasurementFieldService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.customerledger.CustomerPaymentLedgerService;
@@ -29,7 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +44,7 @@ public class CustomerController {
     private final CustomerMeasurementService measurementService;
     private final Validation validation;
     private final CustomerPaymentLedgerService customerPaymentLedgerService;
-    private final ProductMeasurementFieldRepository fieldRepository;
+    private final ProductMeasurementFieldService productMeasurementFieldService;
 
     // List all customers
     @GetMapping
@@ -104,7 +100,7 @@ public class CustomerController {
         productService.getProductById(productId);
 
         List<ProductMeasurementField> fields =
-                fieldRepository.findByProductIdOrderByIdAsc(productId);
+                productMeasurementFieldService.getMeasurementFieldsByProductId(productId);
 
         return fields.stream().map(field -> {
             Map<String, Object> result = new HashMap<>();
@@ -230,75 +226,6 @@ public class CustomerController {
                     measurements.stream()
                             .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
 
-            Map<String, List<CustomerPaymentLedger>> orderLedgerMap = new LinkedHashMap<>();
-            Map<String, BigDecimal> orderBalances = new HashMap<>();
-            Map<String, OrderStatus> orderStatuses = new HashMap<>();
-            Map<String, Long> orderIds = new HashMap<>();
-            Map<String, String> orderTypes = new HashMap<>();
-
-            BigDecimal totalCredit = BigDecimal.ZERO;
-            BigDecimal totalDebit = BigDecimal.ZERO;
-
-            List<CustomerPaymentLedger> ledgerEntries =
-                    customerPaymentLedgerService.findByCustomerIdOrderByOrderIdAscPaymentDateAsc(customerId);
-
-            for (CustomerPaymentLedger payment : ledgerEntries) {
-                Order order = payment.getOrder();
-                if (order == null) {
-                    continue;
-                }
-
-                String orderId = order.getOrderId();
-
-                orderLedgerMap
-                        .computeIfAbsent(orderId, k -> new ArrayList<>())
-                        .add(payment);
-
-                orderStatuses.put(orderId, order.getStatus());
-                orderIds.put(orderId, order.getId());
-
-                if (!orderTypes.containsKey(orderId)) {
-                    boolean hasInventory = order.getOrderProducts() != null &&
-                            order.getOrderProducts().stream()
-                                    .anyMatch(orderProduct ->
-                                            orderProduct.getOrderProductType() == OrderProductType.INVENTORY);
-
-                    boolean hasTailoring = order.getOrderProducts() != null &&
-                            order.getOrderProducts().stream()
-                                    .anyMatch(orderProduct ->
-                                            orderProduct.getOrderProductType() != null &&
-                                                    orderProduct.getOrderProductType() != OrderProductType.INVENTORY);
-
-                    if (hasInventory && hasTailoring) {
-                        orderTypes.put(orderId, "MIXED");
-                    } else if (hasInventory) {
-                        orderTypes.put(orderId, "INVENTORY");
-                    } else {
-                        orderTypes.put(orderId, "TAILORING");
-                    }
-                }
-
-                BigDecimal balance = orderBalances.getOrDefault(orderId, BigDecimal.ZERO);
-
-                if (payment.getPaymentType() == PaymentType.CREDIT) {
-                    balance = balance.add(payment.getAmount());
-                    totalCredit = totalCredit.add(payment.getAmount());
-                } else {
-                    balance = balance.subtract(payment.getAmount());
-                    totalDebit = totalDebit.add(payment.getAmount());
-                }
-
-                orderBalances.put(orderId, balance);
-            }
-
-            model.addAttribute("totalCredit", totalCredit);
-            model.addAttribute("totalDebit", totalDebit);
-            model.addAttribute("orderLedgerMap", orderLedgerMap);
-            model.addAttribute("orderBalances", orderBalances);
-            model.addAttribute("orderStatuses", orderStatuses);
-            model.addAttribute("orderIds", orderIds);
-            model.addAttribute("orderTypes", orderTypes);
-
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("customer", customer);
             model.addAttribute("productMeasurementsMap", productMeasurementsMap);
@@ -321,6 +248,76 @@ public class CustomerController {
         }
 
         return "customer/customer-details";
+    }
+
+    @PostMapping("/{customerId}/measurements")
+    @ResponseBody
+    public Map<String, Object> saveCustomerMeasurements(
+            @PathVariable Long customerId,
+            @RequestParam Long productId,
+            @RequestBody CustomerMeasurementRequest request) {
+
+        logger.info("========== SAVE MEASUREMENT ENDPOINT HIT ==========");
+        logger.info("customerId={}, productId={}, notes={}, measurements={}",
+                customerId,
+                productId,
+                request.getNotes(),
+                request.getMeasurements());
+
+        try {
+            measurementService.saveMeasurements(
+                    customerId,
+                    productId,
+                    request.getMeasurements(), request.getNotes());
+
+            logger.info("Measurements saved successfully for customerId={}, productId={}",
+                    customerId, productId);
+
+            return Map.of(
+                    "success", true,
+                    "message", "Measurement saved successfully!"
+            );
+
+        } catch (Exception ex) {
+            logger.error(
+                    "Error saving measurements for customerId={}, productId={}",
+                    customerId,
+                    productId,
+                    ex
+            );
+
+            return Map.of(
+                    "success", false,
+                    "message", "Failed to save measurement."
+            );
+        }
+    }
+
+    @GetMapping("/{customerId}/measurements")
+    @ResponseBody
+    public List<Map<String, Object>> getCustomerMeasurements(
+            @PathVariable Long customerId,
+            @RequestParam Long productId) {
+
+        logger.info(
+                "Loading measurements for customerId={}, productId={}",
+                customerId,
+                productId
+        );
+
+        List<CustomerMeasurement> measurements =
+                measurementService.getMeasurement(customerId, productId);
+
+        return measurements.stream().map(measurement -> {
+
+            Map<String, Object> result = new HashMap<>();
+
+            result.put("fieldId", measurement.getField().getId());
+            result.put("value", measurement.getValue());
+
+            return result;
+
+        }).collect(Collectors.toList());
     }
 
     // Delete customer

@@ -150,7 +150,7 @@ public class CustomerService {
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setEnabled(dto.isEnabled());
 
-        customerMeasurementRepository.deleteByCustomerId(id);
+        customerMeasurementRepository.deleteByUserIdAndCustomerId(currentUser.getId(), id);
         customer.getMeasurements().clear();
 
         if (!dto.isAddTailoringMeasurements()) {
@@ -201,7 +201,7 @@ public class CustomerService {
     }
 
     private Map<Long, ProductMeasurementField> loadFieldMapForProduct(Long productId) {
-        List<ProductMeasurementField> fields = fieldRepository.findByProductIdOrderByIdAsc(productId);
+        List<ProductMeasurementField> fields = fieldRepository.findByUserIdAndProductIdOrderByIdAsc(authenticatedUserService.getCurrentUser().getId(), productId);
         return fields.stream()
                 .collect(Collectors.toMap(ProductMeasurementField::getId, f -> f));
     }

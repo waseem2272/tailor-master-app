@@ -21,4 +21,12 @@ public class CustomerMeasurement extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "field_id")
     private ProductMeasurementField field;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_product_measurement_id")
+    private CustomerProductMeasurement customerProductMeasurement;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

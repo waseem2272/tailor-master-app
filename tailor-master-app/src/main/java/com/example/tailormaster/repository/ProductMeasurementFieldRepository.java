@@ -9,10 +9,18 @@ import java.util.List;
 @Repository
 public interface ProductMeasurementFieldRepository extends JpaRepository<ProductMeasurementField, Long> {
 
-    List<ProductMeasurementField> findByProductId(Long productId);
+    List<ProductMeasurementField> findByUserIdAndProductId(
+            Long userId,
+            Long productId
+    );
 
-    void deleteByProductId(Long productId);
-    List<ProductMeasurementField> findByProductIdOrderByIdAsc(Long productId);
+    List<ProductMeasurementField> findByUserIdAndProductIdOrderByIdAsc(
+            Long userId,
+            Long productId
+    );
 
-    List<ProductMeasurementField> findByProductIdAndEnabledTrue(Long productId);
+    List<ProductMeasurementField> findByUserIdAndProductIdAndEnabledTrue(
+            Long userId,
+            Long productId
+    );
 }
