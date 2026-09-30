@@ -114,25 +114,26 @@
 
                             <tbody>
 
-                            <tr th:each="entry : ${productMeasurementsMap}">
+                            <tr th:each="measurement : ${customerProductMeasurements}">
 
                                 <td class="fw-semibold"
-                                    th:text="${entry.key.name}">
+                                    th:text="${measurement.product.name}">
                                     Product Name
                                 </td>
 
                                 <td class="fw-semibold"
-                                    th:text="${#temporals.format(entry.key.createdAt, 'dd-MMM-yyyy')}">
+                                    th:text="${#temporals.format(measurement.createdAt, 'dd-MMM-yyyy')}">
                                 </td>
 
                                 <td class="fw-semibold"
-                                    th:text="${#temporals.format(entry.key.updatedAt, 'dd-MMM-yyyy')}">
+                                    th:text="${#temporals.format(measurement.updatedAt, 'dd-MMM-yyyy')}">
                                 </td>
 
                                 <td class="text-center">
+
                                     <button type="button"
                                             class="btn btn-sm btn-outline-success rounded-pill px-3 me-1 edit-measurement-btn"
-                                            th:attr="data-product-id=${entry.key.id}">
+                                            th:attr="data-measurement-id=${measurement.id}">
                                         <i class="bi bi-pencil-square me-1"></i>
                                         Edit
                                     </button>
@@ -142,6 +143,7 @@
                                         <i class="bi bi-printer me-1"></i>
                                         Download
                                     </button>
+
                                 </td>
 
                             </tr>
@@ -272,6 +274,107 @@
     </div>
 </div>
 
+<div class="modal fade"
+     id="editMeasurementModal"
+     tabindex="-1"
+     aria-labelledby="editMeasurementModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <div>
+                    <h5 class="modal-title fw-semibold mb-1"
+                        id="editMeasurementModalLabel">
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Measurement
+                    </h5>
+                    <small class="text-white">
+                        Update the customer's measurements
+                    </small>
+                </div>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-4 p-3 border rounded-3 bg-light">
+
+                    <label for="editMeasurementProduct"
+                           class="form-label fw-semibold">
+                        <i class="bi bi-box-seam me-1 text-success"></i>
+                        Product
+                    </label>
+
+                    <select id="editMeasurementProduct"
+                            class="form-select"
+                            disabled>
+                        <option value="">Select Product</option>
+
+                        <option th:each="product : ${products}"
+                                th:value="${product.id}"
+                                th:text="${product.name}">
+                        </option>
+                    </select>
+
+                    <div class="form-text">
+                        Product cannot be changed while editing a measurement.
+                    </div>
+
+                </div>
+
+                <div id="editMeasurementFieldsContainer"
+                     class="row g-3">
+                </div>
+
+                <div id="editMeasurementNotesContainer"
+                     class="mt-4">
+
+                    <label for="editMeasurementNotes"
+                           class="form-label fw-semibold">
+                        Additional Notes / Instructions
+                    </label>
+
+                    <textarea id="editMeasurementNotes"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Enter any additional notes or instructions for this measurement..."></textarea>
+
+                    <div class="form-text">
+                        Update any special instructions or notes for this customer's measurement.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    Cancel
+                </button>
+
+                <button type="button"
+                        id="updateMeasurementBtn"
+                        class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Update Measurement
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -286,7 +389,7 @@
 </script>
 <script th:inline="javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
 
         $('#measurementsTable').DataTable({
             language: {
@@ -480,11 +583,146 @@
         });
 
         $(document).on('click', '.edit-measurement-btn', function () {
+            const measurementId = $(this).data('measurement-id');
 
-            const productId = $(this).data('product-id');
+            console.log("Edit Customer Product Measurement ID:", measurementId);
 
-            console.log("Edit Measurement Product ID:", productId);
+            fetch(`${contextPath}customers/measurements/${measurementId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load measurement");
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    console.log("Edit Measurement Response:", result);
 
+                    if (!result.success) {
+                        alert(result.message || "Failed to load measurement.");
+                        return;
+                    }
+
+                    const measurement = result.measurement;
+                    document.getElementById('updateMeasurementBtn').dataset.measurementId = measurement.id;
+
+                    $('#editMeasurementProduct').val(measurement.productId);
+                    $('#editMeasurementNotes').val(measurement.notes || '');
+
+                    const fieldsContainer = document.getElementById('editMeasurementFieldsContainer');
+                    fieldsContainer.innerHTML = '';
+
+                    measurement.measurements.forEach(field => {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-6';
+
+                        let fieldHtml = `
+        <label class="form-label fw-semibold">
+            ${field.fieldName}
+    </label>
+        `;
+
+                        if (field.fieldType === 'TEXT') {
+                            fieldHtml += `
+        <input type="text"
+        class="form-control edit-measurement-field"
+        data-field-id="${field.fieldId}"
+        value="${field.value || ''}"
+        placeholder="Enter ${field.fieldName}">
+            `;
+                        } else if (field.fieldType === 'DROPDOWN') {
+                            fieldHtml += `
+            <select class="form-select edit-measurement-field"
+        data-field-id="${field.fieldId}">
+            <option value="">Select ${field.fieldName}</option>
+        `;
+
+                            if (field.options) {
+                                field.options.split(',').forEach(option => {
+                                    const value = option.trim();
+
+                                    if (value) {
+                                        fieldHtml += `
+        <option value="${value}" ${value === field.value ? 'selected' : ''}>
+        ${value}
+    </option>
+        `;
+                                    }
+                                });
+                            }
+
+                            fieldHtml += `</select>`;
+                        }
+
+                        col.innerHTML = fieldHtml;
+                        fieldsContainer.appendChild(col);
+                    });
+
+                    const editModal = new bootstrap.Modal(
+                        document.getElementById('editMeasurementModal')
+                    );
+
+                    editModal.show();
+                })
+                .catch(error => {
+                    console.error("Error loading edit measurement:", error);
+                    alert("Failed to load measurement.");
+                });
+        });
+
+        document.getElementById('updateMeasurementBtn').addEventListener('click', function () {
+            const measurementId = this.dataset.measurementId;
+            const notes = document.getElementById('editMeasurementNotes').value.trim();
+            const measurements = {};
+
+            document.querySelectorAll('#editMeasurementFieldsContainer .edit-measurement-field')
+                .forEach(field => {
+                    measurements[field.dataset.fieldId] = field.value;
+                });
+
+            const requestData = {
+                notes: notes,
+                measurements: measurements
+            };
+
+            console.log("Measurement ID:", measurementId);
+            console.log("Notes:", notes);
+            console.log("Measurements:", measurements);
+            console.log("Request Data:", requestData);
+
+            fetch(`${contextPath}customers/measurements/${measurementId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to update measurement");
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    console.log("Update Measurement Response:", result);
+
+                    if (!result.success) {
+                        alert(result.message || "Failed to update measurement.");
+                        return;
+                    }
+
+                    alert(result.message || "Measurement updated successfully!");
+
+                    bootstrap.Modal.getInstance(
+                        document.getElementById('editMeasurementModal')
+                    ).hide();
+
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Error updating measurement:", error);
+                    alert("Failed to update measurement.");
+                });
         });
 
     });

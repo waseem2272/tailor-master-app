@@ -22,4 +22,6 @@ public interface CustomerMeasurementRepository extends JpaRepository<CustomerMea
             Long userId,
             Long customerId
     );
+
+    List<CustomerMeasurement> findByUserIdAndCustomerProductMeasurementIdOrderByIdAsc(Long userId, Long customerProductMeasurementId);
 }

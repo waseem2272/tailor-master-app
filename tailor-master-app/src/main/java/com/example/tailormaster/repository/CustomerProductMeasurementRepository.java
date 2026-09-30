@@ -19,4 +19,9 @@ public interface CustomerProductMeasurementRepository
             Long customerId,
             Long productId
     );
+
+    Optional<CustomerProductMeasurement> findByUserIdAndId(
+            Long userId,
+            Long id
+    );
 }

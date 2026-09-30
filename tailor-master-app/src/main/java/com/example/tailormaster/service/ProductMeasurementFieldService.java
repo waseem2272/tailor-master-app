@@ -60,6 +60,7 @@ public class ProductMeasurementFieldService {
                     field.setFieldName(dto.getFieldName().trim());
                     field.setFieldType(dto.getFieldType());
                     field.setEnabled(true);
+                    field.setUser(authenticatedUserService.getCurrentUser());
 
                     if ("DROPDOWN".equals(dto.getFieldType())
                             && dto.getOptions() != null
@@ -82,6 +83,7 @@ public class ProductMeasurementFieldService {
                     newField.setFieldType(dto.getFieldType());
                     newField.setEnabled(true);
                     newField.setProduct(product);
+                    newField.setUser(authenticatedUserService.getCurrentUser());
 
                     if ("DROPDOWN".equals(dto.getFieldType())
                             && dto.getOptions() != null

@@ -1,9 +1,11 @@
 package com.example.tailormaster.controller;
 
 import com.example.tailormaster.dto.CustomerMeasurementRequest;
+import com.example.tailormaster.dto.CustomerMeasurementResponse;
 import com.example.tailormaster.dto.CustomerWizardDTO;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
+import com.example.tailormaster.entity.CustomerProductMeasurement;
 import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
@@ -201,22 +203,35 @@ public class CustomerController {
     }
 
     @GetMapping("/details/{id}")
-    public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+    public String showCustomerDetails(
+            @PathVariable String id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         logger.info("Displaying details for customer ID (encrypted): {}", id);
+
         try {
             Long customerId = validation.decryptAndValidateId(id);
+
             if (customerId == null) {
                 logger.warn("Invalid customer ID provided: {}", id);
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        "Invalid customer ID."
+                );
                 return "redirect:/customers";
             }
 
             logger.debug("Decrypted customer ID: {}", customerId);
 
             Customer customer = customerService.getCustomerById(customerId);
+
             if (customer == null) {
                 logger.warn("Customer not found with ID: {}", customerId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        "Customer not found."
+                );
                 return "redirect:/customers";
             }
 
@@ -224,26 +239,30 @@ public class CustomerController {
 
             Map<Product, List<CustomerMeasurement>> productMeasurementsMap =
                     measurements.stream()
-                            .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
+                            .collect(Collectors.groupingBy(
+                                    CustomerMeasurement::getProduct
+                            ));
+
+            List<CustomerProductMeasurement> customerProductMeasurements =
+                    measurementService.getCustomerProductMeasurements(customerId);
 
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("customer", customer);
             model.addAttribute("productMeasurementsMap", productMeasurementsMap);
+            model.addAttribute("customerProductMeasurements", customerProductMeasurements);
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
             logger.info("Fetched customer details: {}", customer);
+            logger.info("Fetched {} customer product measurements for customerId={}", customerProductMeasurements.size(), customerId);
 
         } catch (Exception e) {
-            logger.error(
-                    "Error loading customer details for ID (encrypted) {}: {}",
-                    id,
-                    e.getMessage(),
-                    e
-            );
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
+            logger.error("Error loading customer details for ID (encrypted) {}: {}",
+                    id, e.getMessage(), e);
+
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Error loading customer details: " + e.getMessage()
             );
+
             return "redirect:/customers";
         }
 
@@ -318,6 +337,62 @@ public class CustomerController {
             return result;
 
         }).collect(Collectors.toList());
+    }
+
+    @GetMapping("/measurements/{measurementId}")
+    @ResponseBody
+    public Map<String, Object> getCustomerProductMeasurement(@PathVariable Long measurementId) {
+        logger.info("========== GET CUSTOMER PRODUCT MEASUREMENT ENDPOINT HIT ==========");
+        logger.info("Fetching customer product measurement, measurementId={}", measurementId);
+        try {
+            CustomerMeasurementResponse measurement = measurementService.getCustomerProductMeasurement(measurementId);
+            logger.info("Customer product measurement fetched successfully, measurementId={}, customerId={}, productId={}",
+                    measurementId, measurement.getCustomerId(), measurement.getProductId());
+            return Map.of("success", true, "measurement", measurement);
+        } catch (Exception ex) {
+            logger.error("Error fetching customer product measurement, measurementId={}: {}", measurementId, ex.getMessage(), ex);
+            return Map.of("success", false, "message", "Failed to load measurement.");
+        }
+    }
+
+    @PutMapping("/measurements/{measurementId}")
+    @ResponseBody
+    public Map<String, Object> updateCustomerProductMeasurement(
+            @PathVariable Long measurementId,
+            @RequestBody CustomerMeasurementRequest request) {
+
+        logger.info("========== UPDATE CUSTOMER PRODUCT MEASUREMENT ENDPOINT HIT ==========");
+        logger.info("measurementId={}, notes={}, measurements={}",
+                measurementId, request.getNotes(), request.getMeasurements());
+
+        try {
+            measurementService.updateCustomerProductMeasurement(
+                    measurementId,
+                    request.getMeasurements(),
+                    request.getNotes()
+            );
+
+            logger.info("Customer product measurement updated successfully, measurementId={}",
+                    measurementId);
+
+            return Map.of(
+                    "success", true,
+                    "message", "Measurement updated successfully!"
+            );
+
+        } catch (Exception ex) {
+            logger.error(
+                    "Error updating customer product measurement, measurementId={}: {}",
+                    measurementId,
+                    ex.getMessage(),
+                    ex
+            );
+
+            return Map.of(
+                    "success", false,
+                    "message", "Failed to update measurement."
+            );
+        }
     }
 
     // Delete customer

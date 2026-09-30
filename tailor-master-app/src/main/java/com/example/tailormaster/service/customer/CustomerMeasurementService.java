@@ -1,5 +1,7 @@
 package com.example.tailormaster.service.customer;
 
+import com.example.tailormaster.dto.CustomerMeasurementFieldResponse;
+import com.example.tailormaster.dto.CustomerMeasurementResponse;
 import com.example.tailormaster.entity.Customer;
 import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.CustomerProductMeasurement;
@@ -111,6 +113,80 @@ public class CustomerMeasurementService {
             measurement.setUser(authenticatedUserService.getCurrentUser());
             measurement.setValue(value.trim());
 
+            measurementRepository.save(measurement);
+        }
+    }
+
+    public List<CustomerProductMeasurement> getCustomerProductMeasurements(Long customerId) {
+        return customerProductMeasurementRepository.findByUserIdAndCustomerId(
+                getCurrentUserId(),
+                customerId
+        );
+    }
+
+    public CustomerMeasurementResponse getCustomerProductMeasurement(Long id) {
+        Long userId = getCurrentUserId();
+        CustomerProductMeasurement measurement = customerProductMeasurementRepository.findByUserIdAndId(userId, id)
+                .orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
+        List<CustomerMeasurement> customerMeasurements =
+                measurementRepository.findByUserIdAndCustomerProductMeasurementIdOrderByIdAsc(userId, id);
+        List<CustomerMeasurementFieldResponse> fields = customerMeasurements.stream()
+                .map(item -> new CustomerMeasurementFieldResponse(
+                        item.getField().getId(),
+                        item.getField().getFieldName(),
+                        item.getField().getFieldType(),
+                        item.getValue(),
+                        item.getField().getOptions()
+                ))
+                .collect(Collectors.toList());
+        return new CustomerMeasurementResponse(
+                measurement.getId(),
+                measurement.getCustomer().getId(),
+                measurement.getProduct().getId(),
+                measurement.getNotes(),
+                fields
+        );
+    }
+
+    @Transactional
+    public void updateCustomerProductMeasurement(Long measurementId,
+                                                 Map<Long, String> measurements,
+                                                 String notes) {
+
+        Long userId = getCurrentUserId();
+
+        CustomerProductMeasurement customerProductMeasurement =
+                customerProductMeasurementRepository.findByUserIdAndId(userId, measurementId)
+                        .orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
+
+        customerProductMeasurement.setNotes(notes != null ? notes.trim() : null);
+        customerProductMeasurementRepository.save(customerProductMeasurement);
+
+        List<CustomerMeasurement> existingMeasurements =
+                measurementRepository.findByUserIdAndCustomerProductMeasurementIdOrderByIdAsc(
+                        userId,
+                        measurementId
+                );
+
+        Map<Long, CustomerMeasurement> existingMeasurementMap =
+                existingMeasurements.stream()
+                        .collect(Collectors.toMap(
+                                item -> item.getField().getId(),
+                                item -> item
+                        ));
+
+        for (Map.Entry<Long, String> entry : measurements.entrySet()) {
+
+            Long fieldId = entry.getKey();
+            String value = entry.getValue();
+
+            CustomerMeasurement measurement = existingMeasurementMap.get(fieldId);
+
+            if (measurement == null) {
+                continue;
+            }
+
+            measurement.setValue(value != null ? value.trim() : null);
             measurementRepository.save(measurement);
         }
     }
