@@ -8,7 +8,6 @@ import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.CustomerProductMeasurement;
 import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.product.Product;
-import com.example.tailormaster.repository.ProductMeasurementFieldRepository;
 import com.example.tailormaster.service.ProductMeasurementFieldService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
@@ -21,7 +20,6 @@ import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,7 +85,7 @@ public class CustomerController {
             model.addAttribute("form", form);
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("isEdit", false);
-            return "customer/create-customer-wizard";
+            return "customer/create-customer";
         } catch (Exception ex) {
             logger.error("Error while showing create customer form: {}", ex.getMessage(), ex);
             model.addAttribute("errorMessage", "Something went wrong while loading the form.");
@@ -124,7 +122,7 @@ public class CustomerController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("isEdit", false);
-            return "customer/create-customer-wizard";
+            return "customer/create-customer";
         }
 
         try {
@@ -137,39 +135,43 @@ public class CustomerController {
             model.addAttribute("errorMessage", "Failed to create customer. Please try again.");
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("isEdit", false);
-            return "customer/create-customer-wizard";
+            return "customer/create-customer";
         }
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditForm(@PathVariable String id,
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
         try {
-
-            // Decrypt and validate customer ID
             Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
+
             if (customerId == null) {
                 logger.warn("Invalid customer ID provided for edit: {}", id);
                 return "redirect:/customers";
             }
 
             Customer customer = customerService.getCustomerById(customerId);
+
             if (customer == null) {
                 logger.warn("Customer not found with ID {} for editing.", customerId);
                 redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
                 return "redirect:/customers";
             }
-            // Map Customer → DTO
+
             CustomerWizardDTO form = customerService.mapToWizardDTO(customer);
 
             model.addAttribute("form", form);
-            model.addAttribute("products", productService.getAllActiveProducts());
-            model.addAttribute("isEdit", true); // 🔑 flag for Thymeleaf
             model.addAttribute("customerId", customerId);
 
-            return "customer/create-customer-wizard"; // reuse same template
+            return "customer/edit-customer";
+
         } catch (Exception ex) {
             logger.error("Error while showing edit customer form: {}", ex.getMessage(), ex);
-            redirectAttributes.addFlashAttribute("errorMessage", "Something went wrong while loading edit form.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Something went wrong while loading edit form."
+            );
             return "redirect:/customers";
         }
     }
@@ -180,25 +182,34 @@ public class CustomerController {
                                  BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
+
         if (bindingResult.hasErrors()) {
-            model.addAttribute("products", productService.getAllActiveProducts());
-            model.addAttribute("isEdit", true);
             model.addAttribute("customerId", id);
-            return "customer/create-customer-wizard";
+            return "customer/edit-customer";
         }
 
         try {
-            Customer updatedCustomer = customerService.updateCustomerWithMeasurements(id, form);
+            Customer updatedCustomer = customerService.updateCustomer(id, form);
+
             logger.info("Customer updated successfully: {}", updatedCustomer);
-            redirectAttributes.addFlashAttribute("successMessage", "Customer updated successfully!");
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Customer updated successfully!"
+            );
+
             return "redirect:/customers";
+
         } catch (Exception ex) {
             logger.error("Error while updating customer: {}", ex.getMessage(), ex);
-            model.addAttribute("errorMessage", "Failed to update customer. Please try again.");
-            model.addAttribute("products", productService.getAllActiveProducts());
-            model.addAttribute("isEdit", true);
+
+            model.addAttribute(
+                    "errorMessage",
+                    "Failed to update customer. Please try again."
+            );
             model.addAttribute("customerId", id);
-            return "customer/create-customer-wizard";
+
+            return "customer/edit-customer";
         }
     }
 
@@ -392,6 +403,46 @@ public class CustomerController {
                     "success", false,
                     "message", "Failed to update measurement."
             );
+        }
+    }
+
+    @GetMapping("/measurements/{measurementId}/print")
+    public String printCustomerMeasurement(@PathVariable Long measurementId,
+                                           Model model,
+                                           RedirectAttributes redirectAttributes) {
+
+        logger.info("========== CUSTOMER MEASUREMENT PRINT ENDPOINT HIT ==========");
+        logger.info("Printing customer measurement, measurementId={}", measurementId);
+
+        try {
+            CustomerProductMeasurement measurement =
+                    measurementService.getCustomerProductMeasurementEntity(measurementId);
+
+            List<CustomerMeasurement> customerMeasurements =
+                    measurementService.getCustomerMeasurementsByParentId(measurementId);
+
+            model.addAttribute("measurement", measurement);
+            model.addAttribute("customerMeasurements", customerMeasurements);
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            logger.info("Customer measurement print data loaded successfully, measurementId={}",
+                    measurementId);
+
+            return "customer/customer-measurement";
+
+        } catch (Exception ex) {
+            logger.error(
+                    "Error loading customer measurement for print, measurementId={}: {}",
+                    measurementId,
+                    ex.getMessage(),
+                    ex
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Failed to load customer measurement."
+            );
+
+            return "redirect:/customers";
         }
     }
 

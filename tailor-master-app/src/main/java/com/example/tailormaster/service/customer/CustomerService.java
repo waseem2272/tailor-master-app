@@ -105,36 +105,6 @@ public class CustomerService {
         dto.setFullName(customer.getFullName());
         dto.setBookNumber(customer.getBookNumber());
         dto.setPhoneNumber(customer.getPhoneNumber());
-        dto.setEnabled(customer.isEnabled());
-
-        List<CustomerMeasurement> measurements = customer.getMeasurements() != null
-                ? customer.getMeasurements()
-                : Collections.emptyList();
-
-        dto.setAddTailoringMeasurements(!measurements.isEmpty());
-
-        List<Long> productIds = measurements.stream()
-                .map(CustomerMeasurement::getProduct)
-                .filter(Objects::nonNull)
-                .map(Product::getId)
-                .distinct()
-                .toList();
-
-        dto.setSelectedProductIds(productIds);
-
-        Map<Long, Map<Long, String>> measurementMap = new HashMap<>();
-
-        for (CustomerMeasurement measurement : measurements) {
-            if (measurement.getProduct() == null || measurement.getField() == null) {
-                continue;
-            }
-
-            measurementMap
-                    .computeIfAbsent(measurement.getProduct().getId(), key -> new HashMap<>())
-                    .put(measurement.getField().getId(), measurement.getValue());
-        }
-
-        dto.setMeasurements(measurementMap);
         return dto;
     }
 
@@ -211,50 +181,19 @@ public class CustomerService {
         return customerRepository.findByIdAndUser(id, authenticatedUserService.getCurrentUser()).orElse(null);
     }
 
-    public Customer createCustomer(Customer customer) {
-        logger.info("Creating customer: {}", customer.getFullName());
-        customer.setUser(authenticatedUserService.getCurrentUser());
-        Customer savedCustomer = customerRepository.save(customer);
-        logger.debug("Customer created with ID: {}", savedCustomer.getId());
-        return savedCustomer;
-    }
+    @Transactional
+    public Customer updateCustomer(Long id, CustomerWizardDTO dto) {
+        User currentUser = authenticatedUserService.getCurrentUser();
 
-//    @Transactional
-//    public Customer updateCustomer(CustomerRegistrationDTO registrationDTO, Long[] productIds) {
-//        Long customerId = registrationDTO.getCustomer().getId();
-//
-//        Set<Product> products = new HashSet<>();
-//
-//        for (Long productId : productIds) {
-//            Product product = productService.getProductById(productId);
-//            products.add(product);
-//        }
-//
-//        logger.info("Updating customer with ID: {}", customerId);
-//
-//        Customer existingCustomer = customerRepository.findByIdAndUser(customerId, authenticatedUserService.getCurrentUser())
-//                .orElseThrow(() -> {
-//                    logger.error("Customer not found with ID: {}", customerId);
-//                    return new IllegalArgumentException("Customer not found");
-//                });
-//
-//        existingCustomer.setFullName(registrationDTO.getCustomer().getFullName());
-//        existingCustomer.setPhoneNumber(registrationDTO.getCustomer().getPhoneNumber());
-//        existingCustomer.getMeasurements().clear();
-//
-//        for (Product product : products) {
-//            CustomerMeasurement measurement = new CustomerMeasurement();
-//                measurement.setCustomer(existingCustomer);
-//                measurement.setProduct(product);
-//
-//            CustomerMeasurement measurement1 = Utility.populateCustomerMeasurement(measurement, registrationDTO);
-//            existingCustomer.getMeasurements().add(measurement1);
-//        }
-//        existingCustomer.setUser(authenticatedUserService.getCurrentUser());
-//        Customer updatedCustomer = customerRepository.save(existingCustomer);
-//        logger.debug("Customer updated successfully: {}", updatedCustomer.getId());
-//        return updatedCustomer;
-//    }
+        Customer customer = customerRepository.findByIdAndUser(id, currentUser)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customer.setFullName(dto.getFullName());
+        customer.setBookNumber(dto.getBookNumber());
+        customer.setPhoneNumber(dto.getPhoneNumber());
+
+        return customerRepository.save(customer);
+    }
 
     public void deleteCustomer(Long id) {
         logger.info("Deleting customer with ID: {}", id);

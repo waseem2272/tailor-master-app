@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Measurement</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
+    <style>
+        body {
+            background: #f1f4f3;
+        }
+
+        .measurement-page {
+            max-width: 900px;
+            margin: 35px auto;
+        }
+
+        .measurement-card {
+            background: #fff;
+            border: 1px solid #dfe5e2;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .measurement-header {
+            background: linear-gradient(135deg, #198754, #157347);
+            color: #fff;
+            padding: 24px 30px;
+            position: relative;
+        }
+
+        .measurement-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .measurement-header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .header-icon {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+        }
+
+        .customer-summary {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .customer-name {
+            font-size: 19px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+
+        .customer-meta {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-box {
+            background: #f8faf9;
+            border: 1px solid #e3e8e5;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .info-label {
+            font-size: 10px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #212529;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .measurements-section {
+            padding: 22px 25px 25px;
+        }
+
+        .measurements-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .measurements-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .measurements-title i {
+            color: #198754;
+        }
+
+        .measurement-count {
+            background: #e9f7ef;
+            color: #198754;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .measurement-item {
+            display: flex;
+            align-items: center;
+            min-height: 43px;
+            border: 1px solid #e1e6e3;
+            border-radius: 9px;
+            overflow: hidden;
+            background: #fff;
+            transition: 0.2s ease;
+        }
+
+        .measurement-field {
+            flex: 1;
+            padding: 10px 13px;
+            background: #f8faf9;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .measurement-value {
+            min-width: 105px;
+            padding: 7px 10px;
+            margin-right: 5px;
+            border-radius: 6px;
+            background: #e9f7ef;
+            color: #157347;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .notes {
+            margin-top: 18px;
+            padding: 12px 14px;
+            background: #f8faf9;
+            border: 1px solid #e1e6e3;
+            border-radius: 10px;
+        }
+
+        .notes-label {
+            font-size: 10px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .notes-value {
+            font-size: 13px;
+            color: #343a40;
+            white-space: pre-wrap;
+        }
+
+        .empty-measurement {
+            padding: 30px;
+            text-align: center;
+            color: #6c757d;
+            border: 1px dashed #ced4da;
+            border-radius: 9px;
+        }
+
+        .measurement-footer {
+            padding: 11px 25px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .measurement-page {
+                margin: 15px;
+            }
+
+            .measurement-header {
+                padding: 20px;
+            }
+
+            .header-icon {
+                right: 20px;
+            }
+
+            .customer-summary,
+            .measurements-section {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .info-grid,
+            .measurement-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 8mm;
+            }
+
+            html,
+            body {
+                width: 100%;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+            }
+
+            .content,
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .measurement-page {
+                width: 100%;
+                max-width: none;
+                margin: 0 !important;
+            }
+
+            .measurement-card {
+                width: 100%;
+                margin: 0 !important;
+                border: 1px solid #000 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .measurement-header {
+                padding: 14px 18px !important;
+                background: #198754 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .measurement-header h3 {
+                font-size: 20px !important;
+            }
+
+            .measurement-header p {
+                font-size: 10px !important;
+            }
+
+            .header-icon {
+                width: 38px !important;
+                height: 38px !important;
+                right: 18px !important;
+                font-size: 18px !important;
+            }
+
+            .customer-summary {
+                padding: 12px 18px !important;
+            }
+
+            .customer-name {
+                font-size: 16px !important;
+            }
+
+            .customer-meta {
+                font-size: 10px !important;
+            }
+
+            .info-grid {
+                gap: 6px !important;
+                margin-top: 8px !important;
+            }
+
+            .info-box {
+                padding: 6px 8px !important;
+                border-radius: 5px !important;
+            }
+
+            .info-label {
+                font-size: 8px !important;
+            }
+
+            .info-value {
+                font-size: 10px !important;
+            }
+
+            .measurements-section {
+                padding: 12px 18px 15px !important;
+            }
+
+            .measurements-heading {
+                margin-bottom: 8px !important;
+            }
+
+            .measurements-title {
+                font-size: 13px !important;
+            }
+
+            .measurement-count {
+                padding: 3px 7px !important;
+                font-size: 9px !important;
+            }
+
+            .measurement-grid {
+                gap: 5px !important;
+            }
+
+            .measurement-item {
+                min-height: 34px !important;
+                border-radius: 5px !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .measurement-field {
+                padding: 6px 9px !important;
+                font-size: 10px !important;
+            }
+
+            .measurement-value {
+                min-width: 75px !important;
+                padding: 4px 7px !important;
+                margin-right: 3px !important;
+                font-size: 10px !important;
+            }
+
+            .notes {
+                margin-top: 10px !important;
+                padding: 7px 9px !important;
+            }
+
+            .notes-label {
+                font-size: 8px !important;
+            }
+
+            .notes-value {
+                font-size: 10px !important;
+            }
+
+            .measurement-footer {
+                padding: 6px 18px !important;
+            }
+
+            .measurement-footer .small {
+                font-size: 8px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="content">
+    <div class="main-content">
+
+        <div class="measurement-page">
+
+            <div class="measurement-card">
+
+                <div class="measurement-header">
+                    <h3>Customer Measurement</h3>
+                    <p>Tailoring Measurement Record</p>
+
+                    <div class="header-icon">
+                        <i class="bi bi-rulers"></i>
+                    </div>
+                </div>
+
+                <div class="customer-summary">
+
+                    <div class="customer-name"
+                         th:text="${measurement.customer.fullName}">
+                        Customer Name
+                    </div>
+
+                    <div class="info-grid">
+
+                        <div class="info-box">
+                            <div class="info-label">
+                                <i class="bi bi-box-seam-fill me-1"></i>
+                                Product
+                            </div>
+                            <div class="product-value"
+                                 th:text="${measurement.product.name}">
+                                Product Name
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">
+                                <i class="bi bi-telephone-fill me-1"></i>
+                                Customer Phone
+                            </div>
+                            <div class="info-value"
+                                 th:text="${measurement.customer.phoneNumber}">
+                                Phone Number
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">
+                                <i class="bi bi-bookmark-fill me-1"></i>
+                                Book Number
+                            </div>
+                            <div class="info-value"
+                                 th:text="${measurement.customer.bookNumber}">
+                                Book Number
+                            </div>
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-label">
+                                <i class="bi bi-calendar3 me-1"></i>
+                               Measurement Date
+                            </div>
+                            <div class="info-value"
+                                 th:text="${#temporals.format(measurement.createdAt, 'dd-MM-yyyy')}">
+                                01-01-2026
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="measurements-section">
+
+                    <div class="measurements-heading">
+
+                        <div class="measurements-title">
+                            <i class="bi bi-rulers"></i>
+                            <span>Measurements</span>
+                        </div>
+
+                        <span class="measurement-count"
+                              th:if="${customerMeasurements != null}"
+                              th:text="${customerMeasurements.size() + ' Fields'}">
+                            0 Fields
+                        </span>
+
+                    </div>
+
+                    <div th:if="${customerMeasurements != null and !customerMeasurements.isEmpty()}">
+
+                        <div class="measurement-grid">
+
+                            <div class="measurement-item"
+                                 th:each="m : ${customerMeasurements}">
+
+                                <div class="measurement-field"
+                                     th:text="${m.field.fieldName}">
+                                    Chest
+                                </div>
+
+                                <div class="measurement-value"
+                                     th:text="${m.value}">
+                                    40
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div th:if="${customerMeasurements == null or customerMeasurements.isEmpty()}"
+                         class="empty-measurement">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <div>No measurements found.</div>
+                    </div>
+
+                    <div class="notes"
+                         th:if="${measurement.notes != null and !#strings.isEmpty(measurement.notes)}">
+
+                        <div class="notes-label">Additional Notes</div>
+
+                        <div class="notes-value"
+                             th:text="${measurement.notes}">
+                            No additional notes
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="measurement-footer">
+                    <div class="small text-muted">
+                        Customer measurement record
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center no-print mt-4">
+
+                <button type="button"
+                        class="btn btn-success me-2"
+                        onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i>
+                    Print
+                </button>
+
+                <a th:href="@{'/customers/details/' + ${thymeleafUtil.encryptId(measurement.customer.id)}}"
+                   class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

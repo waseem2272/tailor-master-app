@@ -8,132 +8,293 @@
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
 <body>
+
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-            <form id="productForm" th:action="@{/products/create}" th:object="${product}" method="post" onsubmit="return validateForm()">
+
+            <form id="productForm"
+                  th:action="@{/products/create}"
+                  th:object="${product}"
+                  method="post"
+                  onsubmit="return validateForm()">
+
                 <h2 class="page-title d-flex align-items-center mb-4">
-                    <i class="bi bi-box-seam-fill me-2"></i> نیا پروڈکٹ بنائیں
+                    <i class="bi bi-box-seam-fill me-2"></i>
+                    Create New Product
                 </h2>
-                <p class="text-danger fw-bold">* والے خانے لازمی پر کریں</p>
+
+                <p class="text-danger fw-bold">
+                    Fields marked with * are required.
+                </p>
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> پروڈکٹ کی معلومات
+                        <i class="bi bi-info-circle me-2"></i>
+                        Product Information
                     </div>
 
                     <div class="card-body">
+
                         <div class="row">
+
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">سلائی کی قسم <span class="text-danger">*</span></label>
-                                <input type="text" id="name" th:field="*{name}" class="form-control" required>
-                                <div id="nameError" class="text-danger error-message"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="singleSilai" class="form-label">سنگل سلائی <span class="text-danger">*</span></label>
-                                <input type="number" id="singleSilai" th:field="*{singleSilai}" class="form-control" step="0.01" required>
-                                <div id="singleSilaiError" class="text-danger error-message"></div>
+                                <label for="name" class="form-label">
+                                    Product Name
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="name"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       required>
+
+                                <div id="nameError"
+                                     class="text-danger error-message">
+                                </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="doubleSilai" class="form-label">ڈبل سلائی <span class="text-danger">*</span></label>
-                                <input type="number" id="doubleSilai" th:field="*{doubleSilai}" class="form-control" step="0.01" required>
-                                <div id="doubleSilaiError" class="text-danger error-message"></div>
+                                <label for="singleSilai" class="form-label">
+                                    Single Stitching
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="singleSilai"
+                                       th:field="*{singleSilai}"
+                                       class="form-control"
+                                       step="0.01"
+                                       required>
+
+                                <div id="singleSilaiError"
+                                     class="text-danger error-message">
+                                </div>
                             </div>
 
-                            <div class="text-center">
-                                <button type="button" class="btn btn-success rounded-pill shadow-sm" id="openModal">
-                                    <i class="bi bi-check-circle"></i> محفوظ کریں
+                            <div class="col-md-6 mb-3">
+                                <label for="doubleSilai" class="form-label">
+                                    Double Stitching
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="doubleSilai"
+                                       th:field="*{doubleSilai}"
+                                       class="form-control"
+                                       step="0.01"
+                                       required>
+
+                                <div id="doubleSilaiError"
+                                     class="text-danger error-message">
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="text-center mt-3">
+
+                                <button type="button"
+                                        class="btn btn-success rounded-pill shadow-sm px-4"
+                                        id="openModal">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Save
                                 </button>
-                                <a th:href="@{/products}" class="btn btn-secondary rounded-pill shadow-sm">
-                                    <i class="bi bi-x-circle"></i> منسوخ کریں
+
+                                <a th:href="@{/products}"
+                                   class="btn btn-secondary rounded-pill shadow-sm px-4">
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Cancel
                                 </a>
+
                             </div>
+
                         </div>
+
                     </div>
                 </div>
-
             </form>
+
         </div>
     </div>
 </div>
 
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<div class="modal fade"
+     id="confirmModal"
+     tabindex="-1"
+     aria-labelledby="confirmModalLabel"
+     aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
+
         <div class="modal-content rounded-4 shadow">
+
             <div class="modal-header bg-success text-white rounded-top-4">
-                <h5 class="modal-title" id="confirmModalLabel">پروڈکٹ کی تصدیق</h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                کیا آپ واقعی یہ پروڈکٹ محفوظ کرنا چاہتے ہیں؟
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">منسوخ کریں</button>
-                <button type="button" class="btn btn-success rounded-pill" id="confirmSubmit">
-                    <i class="bi bi-check-circle"></i> جی ہاں، محفوظ کریں
+
+                <h5 class="modal-title" id="confirmModalLabel">
+                    Product Confirmation
+                </h5>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
                 </button>
+
             </div>
+
+            <div class="modal-body">
+                Are you sure you want to save this product?
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary rounded-pill"
+                        data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        class="btn btn-success rounded-pill"
+                        id="confirmSubmit">
+                    <i class="bi bi-check-circle"></i>
+                    Yes, Save
+                </button>
+
+            </div>
+
         </div>
     </div>
 </div>
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+
+<!--
+<div th:replace="~{fragments/footer :: footer}"></div>
+-->
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("openModal").addEventListener("click", function (event) {
-            event.preventDefault();
-            if (validateForm()) {
-                var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-                confirmModal.show();
-            }
-        });
-        document.getElementById("confirmSubmit").addEventListener("click", function () {
-            document.getElementById("productForm").submit();
-        });
-    });
 
-    function validateForm() {
-        let isValid = true;
-        document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
-
+        const form = document.getElementById("productForm");
         const name = document.getElementById("name");
         const singleSilai = document.getElementById("singleSilai");
         const doubleSilai = document.getElementById("doubleSilai");
+        const openModal = document.getElementById("openModal");
+        const confirmSubmit = document.getElementById("confirmSubmit");
 
-        if (name.value.trim() === "") {
-            showError(name, "Product name is required.");
-            isValid = false;
+        if (!form || !name || !singleSilai || !doubleSilai ||
+            !openModal || !confirmSubmit) {
+            return;
         }
-        if (singleSilai.value.trim() === "" || parseFloat(singleSilai.value) <= 0) {
-            showError(singleSilai, "Single Silai must be greater than 0.");
-            isValid = false;
-        }
-        if (doubleSilai.value.trim() === "" || parseFloat(doubleSilai.value) <= 0) {
-            showError(doubleSilai, "Double Silai must be greater than 0.");
-            isValid = false;
-        }
-        return isValid;
-    }
 
-    function showError(input, message) {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "text-danger error-message";
-        errorDiv.textContent = message;
-        input.parentNode.appendChild(errorDiv);
-    }
+        function validateName() {
+
+            if (!name.value.trim()) {
+                name.classList.add("is-invalid");
+                return false;
+            }
+
+            name.classList.remove("is-invalid");
+            return true;
+        }
+
+        function validateSingleSilai() {
+
+            const value = parseFloat(singleSilai.value);
+
+            if (singleSilai.value.trim() === "" || value <= 0) {
+                singleSilai.classList.add("is-invalid");
+                return false;
+            }
+
+            singleSilai.classList.remove("is-invalid");
+            return true;
+        }
+
+        function validateDoubleSilai() {
+
+            const value = parseFloat(doubleSilai.value);
+
+            if (doubleSilai.value.trim() === "" || value <= 0) {
+                doubleSilai.classList.add("is-invalid");
+                return false;
+            }
+
+            doubleSilai.classList.remove("is-invalid");
+            return true;
+        }
+
+        function validateForm() {
+
+            const nameValid = validateName();
+            const singleSilaiValid = validateSingleSilai();
+            const doubleSilaiValid = validateDoubleSilai();
+
+            return nameValid &&
+                singleSilaiValid &&
+                doubleSilaiValid;
+        }
+
+        openModal.addEventListener("click", function () {
+
+            if (!validateForm()) {
+                return;
+            }
+
+            const confirmModal =
+                new bootstrap.Modal(
+                    document.getElementById("confirmModal")
+                );
+
+            confirmModal.show();
+        });
+
+        confirmSubmit.addEventListener("click", function () {
+            form.submit();
+        });
+
+        name.addEventListener("input", function () {
+            if (name.value.trim()) {
+                name.classList.remove("is-invalid");
+            }
+        });
+
+        singleSilai.addEventListener("input", function () {
+
+            const value = parseFloat(singleSilai.value);
+
+            if (singleSilai.value.trim() !== "" && value > 0) {
+                singleSilai.classList.remove("is-invalid");
+            }
+        });
+
+        doubleSilai.addEventListener("input", function () {
+
+            const value = parseFloat(doubleSilai.value);
+
+            if (doubleSilai.value.trim() !== "" && value > 0) {
+                doubleSilai.classList.remove("is-invalid");
+            }
+        });
+
+    });
 </script>
+
 </body>
 </html>

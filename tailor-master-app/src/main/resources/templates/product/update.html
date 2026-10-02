@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Update Product</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
@@ -7,63 +8,148 @@
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
+
 <body>
+
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
+
     <div class="main-content">
+
         <div class="container-fluid">
+
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-box-seam-fill me-2"></i> ڈیزائن میں تبدیلی کریں
+                <i class="bi bi-box-seam-fill me-2"></i>
+                Update Product
             </h2>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
+
+            <div th:if="${errorMessage}"
+                 class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
+                 role="alert">
+
                 <div class="d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                     <span th:text="${errorMessage}"></span>
                 </div>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <p class="text-danger fw-bold">جن خانوں پر * لگا ہے وہ لازمی ہیں</p>
 
-            <form id="updateProductForm" th:action="@{/products/update}" th:object="${product}" method="post" onsubmit="return validateForm()">
-                <input type="hidden" name="encryptedProductId"
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <p class="text-danger fw-bold">
+                Fields marked with * are required.
+            </p>
+
+            <form id="updateProductForm"
+                  th:action="@{/products/update}"
+                  th:object="${product}"
+                  method="post"
+                  onsubmit="return validateForm()">
+
+                <input type="hidden"
+                       name="encryptedProductId"
                        th:if="${thymeleafUtil != null}"
                        th:value="${thymeleafUtil.encryptId(product.id)}"/>
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> ڈیزائن کی معلومات
+                        <i class="bi bi-info-circle me-2"></i>
+                        Product Information
                     </div>
 
                     <div class="card-body">
+
                         <div class="row">
+
                             <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">ڈیزائن کا نام <span class="text-danger">*</span></label>
-                                <input type="text" id="name" th:field="*{name}" class="form-control" required>
-                                <div id="nameError" class="text-danger error-message"></div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="singleSilai" class="form-label">سنگل سلائی کا ریٹ <span class="text-danger">*</span></label>
-                                <input type="number" id="singleSilai" th:field="*{singleSilai}" class="form-control" step="0.01" required>
-                                <div id="singleSilaiError" class="text-danger error-message"></div>
+
+                                <label for="name" class="form-label">
+                                    Product Name
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="name"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       required>
+
+                                <div id="nameError"
+                                     class="text-danger error-message">
+                                </div>
+
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="doubleSilai" class="form-label">ڈبل سلائی کا ریٹ <span class="text-danger">*</span></label>
-                                <input type="number" id="doubleSilai" th:field="*{doubleSilai}" class="form-control" step="0.01" required>
-                                <div id="doubleSilaiError" class="text-danger error-message"></div>
+
+                                <label for="singleSilai" class="form-label">
+                                    Single Silai Rate
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="singleSilai"
+                                       th:field="*{singleSilai}"
+                                       class="form-control"
+                                       step="0.01"
+                                       required>
+
+                                <div id="singleSilaiError"
+                                     class="text-danger error-message">
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+
+                                <label for="doubleSilai" class="form-label">
+                                    Double Silai Rate
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="number"
+                                       id="doubleSilai"
+                                       th:field="*{doubleSilai}"
+                                       class="form-control"
+                                       step="0.01"
+                                       required>
+
+                                <div id="doubleSilaiError"
+                                     class="text-danger error-message">
+                                </div>
+
                             </div>
 
                             <div class="text-center">
-                                <button type="button" class="btn btn-success shadow rounded-pill px-4" id="openModal">
-                                    <i class="bi bi-check-circle"></i> اپڈیٹ کریں
+
+                                <button type="button"
+                                        class="btn btn-success shadow rounded-pill px-4"
+                                        id="openModal">
+
+                                    <i class="bi bi-check-circle"></i>
+                                    Update
+
                                 </button>
-                                <a th:href="@{/products}" class="btn btn-secondary shadow rounded-pill px-4">
-                                    <i class="bi bi-x-circle me-1"></i> واپس جائیں
+
+                                <a th:href="@{/products}"
+                                   class="btn btn-secondary shadow rounded-pill px-4">
+
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Back
+
                                 </a>
+
                             </div>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -71,85 +157,184 @@
             </form>
 
         </div>
+
     </div>
 
 </div>
 
+
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<div class="modal fade"
+     id="confirmModal"
+     tabindex="-1"
+     aria-labelledby="confirmModalLabel"
+     aria-hidden="true">
+
     <div class="modal-dialog modal-dialog-centered">
+
         <div class="modal-content rounded-4 shadow">
+
             <div class="modal-header bg-success text-white rounded-top-4">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Update</h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <h5 class="modal-title" id="confirmModalLabel">
+                    Confirm Update
+                </h5>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
             </div>
-            <div class="modal-body text-center">
+
+            <div class="modal-body">
                 Are you sure you want to update this product?
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Cancel
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="bi bi-x-circle"></i>
+                    Cancel
+
                 </button>
-                <button type="button" class="btn btn-success" id="confirmSubmit">
-                    <i class="bi bi-check-circle"></i> Yes, Update
+
+                <button type="button"
+                        class="btn btn-success"
+                        id="confirmSubmit">
+
+                    <i class="bi bi-check-circle"></i>
+                    Yes, Update
+
                 </button>
+
             </div>
 
         </div>
+
     </div>
+
 </div>
+
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
+
+<!--
+<div th:replace="~{fragments/footer :: footer}"></div>
+-->
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("openModal").addEventListener("click", function (event) {
-            event.preventDefault();
-            if (validateForm()) {
-                new bootstrap.Modal(document.getElementById('confirmModal')).show();
-            }
-        });
 
-        document.getElementById("confirmSubmit").addEventListener("click", function () {
-            document.getElementById("updateProductForm").submit();
-        });
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.getElementById("openModal")
+            .addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                if (validateForm()) {
+
+                    new bootstrap.Modal(
+                        document.getElementById('confirmModal')
+                    ).show();
+
+                }
+            });
+
+
+        document.getElementById("confirmSubmit")
+            .addEventListener("click", function () {
+
+                document.getElementById("updateProductForm").submit();
+
+            });
+
     });
 
-    function validateForm() {
-        let isValid = true;
-        document.querySelectorAll(".error-message").forEach(el => el.textContent = "");
 
-        const name = document.getElementById("name");
-        const singleSilai = document.getElementById("singleSilai");
-        const doubleSilai = document.getElementById("doubleSilai");
+    function validateForm() {
+
+        let isValid = true;
+
+        document.querySelectorAll(".error-message")
+            .forEach(el => el.textContent = "");
+
+        const name =
+            document.getElementById("name");
+
+        const singleSilai =
+            document.getElementById("singleSilai");
+
+        const doubleSilai =
+            document.getElementById("doubleSilai");
+
 
         if (name.value.trim() === "") {
-            showError(name, "Product name is required.");
+
+            showError(
+                name,
+                "Product name is required."
+            );
+
             isValid = false;
         }
-        if (singleSilai.value.trim() === "" || parseFloat(singleSilai.value) <= 0) {
-            showError(singleSilai, "Single Silai must be greater than 0.");
+
+
+        if (singleSilai.value.trim() === ""
+            || parseFloat(singleSilai.value) <= 0) {
+
+            showError(
+                singleSilai,
+                "Single Silai rate must be greater than 0."
+            );
+
             isValid = false;
         }
-        if (doubleSilai.value.trim() === "" || parseFloat(doubleSilai.value) <= 0) {
-            showError(doubleSilai, "Double Silai must be greater than 0.");
+
+
+        if (doubleSilai.value.trim() === ""
+            || parseFloat(doubleSilai.value) <= 0) {
+
+            showError(
+                doubleSilai,
+                "Double Silai rate must be greater than 0."
+            );
+
             isValid = false;
         }
+
+
         return isValid;
     }
 
+
     function showError(input, message) {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "text-danger small error-message mt-1";
+
+        const errorDiv =
+            document.createElement("div");
+
+        errorDiv.className =
+            "text-danger small error-message mt-1";
+
         errorDiv.textContent = message;
+
         input.parentNode.appendChild(errorDiv);
     }
+
 </script>
+
 </body>
 </html>

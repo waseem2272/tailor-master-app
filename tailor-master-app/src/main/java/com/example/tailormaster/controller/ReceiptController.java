@@ -2,7 +2,6 @@ package com.example.tailormaster.controller;
 
 import com.example.tailormaster.dto.ReceiptDTO;
 import com.example.tailormaster.entity.*;
-import com.example.tailormaster.entity.product.Product;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.order.OrderService;

@@ -190,4 +190,19 @@ public class CustomerMeasurementService {
             measurementRepository.save(measurement);
         }
     }
+
+
+    public CustomerProductMeasurement getCustomerProductMeasurementEntity(Long measurementId) {
+        return customerProductMeasurementRepository.findByUserIdAndId(
+                getCurrentUserId(),
+                measurementId
+        ).orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
+    }
+
+    public List<CustomerMeasurement> getCustomerMeasurementsByParentId(Long measurementId) {
+        return measurementRepository.findByUserIdAndCustomerProductMeasurementIdOrderByIdAsc(
+                getCurrentUserId(),
+                measurementId
+        );
+    }
 }

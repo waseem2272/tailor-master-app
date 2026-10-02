@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Edit Customer</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
+
+    <style>
+        .customer-card {
+            border: 0;
+            border-bottom: 3px solid #198f3a;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 .25rem 1rem rgba(0, 0, 0, .08);
+        }
+
+        .customer-card .card-header {
+            background: #198f3a;
+            color: #fff;
+            padding: 16px 22px;
+            font-weight: 700;
+        }
+
+        .customer-card .card-body {
+            padding: 28px;
+        }
+
+        .field-icon {
+            color: #198f3a;
+            margin-right: 5px;
+        }
+
+        .form-control {
+            min-height: 46px;
+            border-radius: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #198f3a;
+            box-shadow: 0 0 0 .2rem rgba(25, 143, 58, .12);
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .info-box {
+            background: #f7fbf8;
+            border: 1px solid #e0eee4;
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #5f6b63;
+            font-size: .9rem;
+        }
+
+        .btn-rounded {
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <!-- PAGE HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h2 class="page-title d-flex align-items-center mb-0">
+                    <i class="bi bi-person-vcard text-success me-2"></i>
+                    Edit Customer
+                </h2>
+
+                <a th:href="@{/customers}"
+                   class="btn btn-secondary btn-rounded shadow-sm">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back
+                </a>
+
+            </div>
+
+            <!-- CUSTOMER INFORMATION -->
+            <div class="card customer-card mb-4">
+
+                <div class="card-header d-flex align-items-center">
+                    <i class="bi bi-person-lines-fill me-2 fs-5"></i>
+                    Customer Information
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/customers/{id}/edit(id=${customerId})}"
+                          th:object="${form}"
+                          method="post"
+                          id="editCustomerForm"
+                          novalidate>
+
+                        <div class="row g-4">
+
+                            <!-- FULL NAME -->
+                            <div class="col-md-6">
+
+                                <label for="fullName"
+                                       class="form-label fw-semibold required">
+                                    <i class="bi bi-person field-icon"></i>
+                                    Full Name
+                                </label>
+
+                                <input type="text"
+                                       th:field="*{fullName}"
+                                       id="fullName"
+                                       class="form-control"
+                                       placeholder="Enter customer full name"
+                                       autocomplete="name"
+                                       required>
+
+                                <div class="invalid-feedback">
+                                    Full name is required.
+                                </div>
+
+                                <div th:if="${#fields.hasErrors('fullName')}"
+                                     class="text-danger small mt-1"
+                                     th:errors="*{fullName}">
+                                </div>
+
+                            </div>
+
+                            <!-- BOOK NUMBER -->
+                            <div class="col-md-6">
+
+                                <label for="bookNumber"
+                                       class="form-label fw-semibold">
+                                    <i class="bi bi-journal-text field-icon"></i>
+                                    Book Number
+                                </label>
+
+                                <input type="text"
+                                       th:field="*{bookNumber}"
+                                       id="bookNumber"
+                                       class="form-control"
+                                       placeholder="Enter book number"
+                                       autocomplete="off">
+
+                                <div class="form-text">
+                                    Optional customer reference number.
+                                </div>
+
+                                <div th:if="${#fields.hasErrors('bookNumber')}"
+                                     class="text-danger small mt-1"
+                                     th:errors="*{bookNumber}">
+                                </div>
+
+                            </div>
+
+                            <!-- PHONE NUMBER -->
+                            <div class="col-md-6">
+
+                                <label for="phoneNumber"
+                                       class="form-label fw-semibold required">
+                                    <i class="bi bi-telephone field-icon"></i>
+                                    Phone Number
+                                </label>
+
+                                <input type="tel"
+                                       th:field="*{phoneNumber}"
+                                       id="phoneNumber"
+                                       class="form-control"
+                                       placeholder="03001234567"
+                                       autocomplete="tel"
+                                       pattern="^03\d{9}$"
+                                       required>
+
+                                <div class="invalid-feedback">
+                                    Enter a valid Pakistani phone number
+                                    (e.g. 03001234567).
+                                </div>
+
+                                <div th:if="${#fields.hasErrors('phoneNumber')}"
+                                     class="text-danger small mt-1"
+                                     th:errors="*{phoneNumber}">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- INFO MESSAGE -->
+                        <div class="info-box mt-4">
+                            <i class="bi bi-info-circle me-2 text-success"></i>
+                            Customer measurements can be managed separately
+                            from the <strong>Customer Details</strong> page.
+                        </div>
+
+                        <!-- ERROR MESSAGE -->
+                        <div th:if="${errorMessage}"
+                             class="alert alert-danger mt-4 mb-0">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <span th:text="${errorMessage}"></span>
+                        </div>
+
+                        <!-- ACTIONS -->
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a th:href="@{/customers}"
+                               class="btn btn-secondary btn-rounded shadow-sm">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    id="updateCustomerButton"
+                                    class="btn btn-success btn-rounded shadow">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Update Customer
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const form = document.getElementById("editCustomerForm");
+        const name = document.getElementById("fullName");
+        const phone = document.getElementById("phoneNumber");
+
+        if (!form || !name || !phone) {
+            return;
+        }
+
+        const phoneRegex = /^03\d{9}$/;
+
+        function validateName() {
+            const value = name.value.trim();
+
+            if (value.length === 0) {
+                name.classList.add("is-invalid");
+                return false;
+            }
+
+            name.classList.remove("is-invalid");
+            return true;
+        }
+
+        function validatePhone() {
+            const value = phone.value.trim();
+
+            if (!phoneRegex.test(value)) {
+                phone.classList.add("is-invalid");
+                return false;
+            }
+
+            phone.classList.remove("is-invalid");
+            return true;
+        }
+
+        form.addEventListener("submit", function (event) {
+
+            const nameValid = validateName();
+            const phoneValid = validatePhone();
+
+            if (!nameValid || !phoneValid) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+
+        name.addEventListener("input", function () {
+            if (name.value.trim().length > 0) {
+                name.classList.remove("is-invalid");
+            }
+        });
+
+        phone.addEventListener("input", function () {
+            if (phoneRegex.test(phone.value.trim())) {
+                phone.classList.remove("is-invalid");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
