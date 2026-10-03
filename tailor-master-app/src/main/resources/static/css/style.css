@@ -1,28 +1,20 @@
 .sidebar {
-    background: #dee2e6;
-    color: #333;
-
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
     height: 100vh;
     max-height: 100vh;
-
-    position: fixed;
-    width: 270px;
-    left: 0;
-    top: 0;
-
+    background: #dee2e6;
+    color: #333;
     overflow-y: auto;
     overflow-x: hidden;
-
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    z-index: 1050;
-
     box-sizing: border-box;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    z-index: 1050;
 }
-
-/* =========================
-   Sidebar Scrollbar
-   ========================= */
 
 .sidebar::-webkit-scrollbar {
     width: 6px;
@@ -41,205 +33,38 @@
     background: #868e96;
 }
 
-/* Sidebar links */
+.sidebar-brand {
+    min-height: 55px;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: #ffffff;
+}
+
 .sidebar a {
-    color: #333;
-    text-decoration: none;
     display: block;
     padding: 10px 20px;
+    color: #333;
     font-size: 16px;
-}
-/* Active link styling */
-.sidebar a.active {
-    background-color: #198754; /* Bootstrap's bg-success color */
-    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Hover state - grey background on hover */
 .sidebar a:hover {
-    background-color: #d1e7dd; /* Bootstrap alert-success light green */
-    color: #0f5132; /* Optional: Adjust the text color for better contrast */
+    background-color: #d1e7dd;
+    color: #0f5132;
 }
 
-/* Optional: ensure active link text color stays white on hover */
+.sidebar a.active,
 .sidebar a.active:hover {
     background-color: #198754;
     color: #fff;
 }
 
-.sidebar.collapsed {
-    margin-left: -250px; /* Hides it */
-}
-
-/*.hamburger-btn {*/
-/*    position: fixed;*/
-/*    top: 15px;*/
-/*    left: 15px;*/
-/*    background: #ffffff;*/
-/*    border: none;*/
-/*    padding: 8px 10px;*/
-/*    border-radius: 5px;*/
-/*    box-shadow: 0 0 5px rgba(0,0,0,0.1);*/
-/*    cursor: pointer;*/
-/*    z-index: 1100;*/
-/*    display: none; !* show only on small screens *!*/
-/*}*/
-
-.content {
-    margin-left: 260px;
-    padding: 20px;
-    transition: margin-left 0.3s;
-}
-
-/* When sidebar is hidden (on large screens) */
-body.sidebar-open .sidebar {
-    transform: translateX(0);
-}
-
-@media (min-width: 993px) {
-    .sidebar {
-        transform: translateX(0);
-    }
-
-    body.sidebar-open .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .content {
-        margin-left: 260px;
-    }
-
-    body.sidebar-open .content {
-        margin-left: 0;
-    }
-
-    body.sidebar-expanded .content {
-        margin-left: 250px;
-    }
-
-    /*.hamburger-btn {*/
-    /*    display: none; !* Hidden on large screens *!*/
-    /*}*/
-}
-
-@media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.show {
-        transform: translateX(0);
-    }
-
-    .content {
-        margin-left: 0;
-    }
-
-    /*.hamburger-btn {*/
-    /*    display: block;*/
-    /*}*/
-}
-
-.badge-counter {
-    position: absolute;
-    transform: scale(0.8);
-    transform-origin: top right;
-    top: 0.25rem;
-    right: 0.25rem;
-    font-size: 0.75rem;
-    background-color: #e74a3b;
-    color: white;
-    padding: 0.25em 0.4em;
-    border-radius: 10rem;
-}
-
-.topbar-divider {
-    height: 2.375rem;
-    width: 0;
-    border-right: 1px solid #e3e6f0;
-    margin: 0 1rem;
-}
-.custom-dropdown {
-    margin-right: 1.5rem; /* Adjust as needed */
-}
-.no-arrow-dropdown::after {
-    display: none !important;
-}
-/* Scroll container for notifications */
-.max-height-scroll {
-    max-height: 320px;
-    overflow-y: auto;
-}
-
-/* Ensure alerts have a fixed layout with wrapping text */
-.notification-wrap {
-    width: 300px; /* or any width that fits your dropdown design */
-    white-space: normal !important;
-    word-wrap: break-word;
-    text-wrap: wrap;
-}
-
-
-/* Notification item styling */
-.notification-item {
-    transition: background-color 0.2s ease;
-    border-radius: 0.375rem;
-}
-
-/* Subtle hover */
-.notification-item:hover {
-    background-color: #f1f1f1;
-}
-
-
-.footer {
-    background: #f8f9fa;
-    text-align: center;
-    padding: 10px 0;
-}
 
 /* =========================
-   Sidebar Submenu
-   ========================= */
-
-.sidebar .submenu {
-    background: rgba(0, 0, 0, 0.03);
-}
-
-/* Submenu links */
-.sidebar .submenu a {
-    display: block;
-    padding: 8px 20px 8px 55px !important;
-    font-size: 14px !important;
-    color: #333;
-}
-
-/* Submenu icons */
-.sidebar .submenu a i {
-    font-size: 14px;
-    margin-right: 8px;
-}
-
-/* Submenu active */
-.sidebar .submenu a.active {
-    background-color: #198754;
-    color: #fff;
-}
-
-/* Submenu hover */
-.sidebar .submenu a:hover {
-    background-color: #d1e7dd;
-    color: #0f5132;
-}
-
-/* Active hover */
-.sidebar .submenu a.active:hover {
-    background-color: #198754;
-    color: #fff;
-}
-
-/* =========================
-   Inventory Parent
+   Inventory Submenu
    ========================= */
 
 .sidebar #inventory-toggle {
@@ -250,11 +75,278 @@ body.sidebar-open .sidebar {
     font-size: 12px;
     margin-top: 4px;
 }
-/* Inventory submenu indentation */
+
 .sidebar #inventory-submenu {
     padding-left: 20px !important;
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .sidebar #inventory-submenu a {
-    padding-left: 20px !important;
+    padding: 8px 20px 8px 20px !important;
+    font-size: 14px;
+}
+
+.sidebar #inventory-submenu a i {
+    font-size: 14px;
+}
+
+.inventory-arrow {
+    font-size: 12px;
+    margin-top: 4px;
+    transition: transform 0.2s ease;
+}
+
+#inventory-toggle[aria-expanded="true"] .inventory-arrow {
+    transform: rotate(180deg);
+}
+
+
+/* =========================
+   Main Content
+   ========================= */
+
+.content {
+    margin-left: 270px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+
+/* =========================
+   Navbar
+   ========================= */
+
+.navbar.topbar {
+    min-height: 64px;
+    margin-left: 270px;
+    width: calc(100% - 270px);
+    position: relative;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    z-index: 1040;
+}
+
+.sidebar-toggle-btn {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar.topbar .nav-link {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar.topbar .nav-link:hover {
+    color: #198f3a !important;
+    transform: translateY(-1px);
+}
+
+.navbar.topbar .dropdown-menu {
+    margin-top: 8px;
+}
+
+.no-arrow-dropdown::after {
+    display: none !important;
+}
+
+
+/* =========================
+   Notification
+   ========================= */
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 18px;
+    height: 18px;
+    padding: 2px 5px;
+    background-color: #dc3545;
+    color: #fff;
+    border-radius: 50rem;
+    font-size: 0.65rem;
+    line-height: 14px;
+    text-align: center;
+}
+
+.notification-dropdown {
+    width: 320px;
+    margin-top: 8px;
+}
+
+.max-height-scroll {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.notification-wrap {
+    width: 300px;
+    white-space: normal !important;
+    word-wrap: break-word;
+    text-wrap: wrap;
+}
+
+.notification-item {
+    transition: background-color 0.2s ease;
+    border-radius: 0.375rem;
+}
+
+.notification-item:hover {
+    background-color: #f1f1f1;
+}
+
+
+/* =========================
+   Trial Banner
+   ========================= */
+
+.trial-banner {
+    min-height: 38px;
+    padding: 7px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffc107;
+    color: #212529;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 270px;
+    width: calc(100% - 270px);
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    position: relative;
+    z-index: 1040;
+}
+
+
+/* =========================
+   Footer
+   ========================= */
+
+.footer {
+    background: #f8f9fa;
+    text-align: center;
+    padding: 10px 0;
+}
+
+
+/* =========================
+   Sidebar Open / Close
+   ========================= */
+
+body.sidebar-open .sidebar {
+    transform: translateX(-100%);
+}
+
+body.sidebar-open .content {
+    margin-left: 0;
+}
+
+body.sidebar-open .navbar.topbar {
+    margin-left: 0;
+    width: 100%;
+}
+
+body.sidebar-open .trial-banner {
+    margin-left: 0;
+    width: 100%;
+}
+
+
+/* =========================
+   Mobile / Tablet
+   ========================= */
+
+@media (max-width: 992px) {
+
+    .sidebar {
+        width: 270px;
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
+
+    body.sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0 !important;
+        padding: 15px;
+    }
+
+    .navbar.topbar {
+        margin-left: 0 !important;
+        width: 100% !important;
+        min-height: 60px;
+    }
+
+    .trial-banner {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .sidebar-toggle-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .navbar.topbar .dropdown-menu {
+        width: 320px;
+        max-width: calc(100vw - 30px);
+    }
+
+    body.sidebar-open::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 1040;
+    }
+
+    body.sidebar-open .sidebar {
+        z-index: 1050;
+    }
+}
+
+
+/* =========================
+   Dashboard KPI Cards
+   ========================= */
+
+.dashboard-kpi-link {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+}
+
+.dashboard-kpi-card {
+    height: 100%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-kpi-link:hover .dashboard-kpi-card {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dashboard-kpi-link:hover .dashboard-kpi-arrow {
+    transform: translateX(4px);
+}
+
+.dashboard-kpi-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.dashboard-kpi-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-kpi-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dashboard-kpi-card .card-body {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }

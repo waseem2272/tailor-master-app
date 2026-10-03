@@ -84,6 +84,7 @@ public class GlobalControllerAdvice {
 
                 // Add shop name to model
                 model.addAttribute("shopName", tempUser.getShopName());
+                model.addAttribute("fullName", tempUser.getFullName());
 
                 // Trial message logic
                 LocalDate today = LocalDate.now();

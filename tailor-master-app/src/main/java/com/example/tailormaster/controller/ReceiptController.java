@@ -177,21 +177,36 @@ public class ReceiptController {
             logger.info("Fetched customer for measurement generation: {}", customer);
             // get measurement
 
-            List<CustomerMeasurement> measurement = customerMeasurementService.getMeasurement(customer.getId(), orderProduct.getProduct().getId());
-            if (measurement == null || measurement.isEmpty()) {
+            CustomerProductMeasurement measurement =
+                    customerMeasurementService.getCustomerProductMeasurement(
+                            customer.getId(),
+                            orderProduct.getProduct().getId()
+                    );
+
+            List<CustomerMeasurement> customerMeasurements =
+                    customerMeasurementService.getCustomerMeasurementsByParentId(
+                            measurement.getId()
+                    );
+
+            if (customerMeasurements == null || customerMeasurements.isEmpty()) {
                 logger.warn("Measurement not found with customer ID: {}", customer.getId());
                 redirectAttributes.addFlashAttribute("errorMessage", "Measurement not found.");
                 return "redirect:/orders";
             }
-            logger.debug("Fetched customer measurement: {}", measurement);
+            logger.debug("Fetched customer product measurement: {}", measurement);
+            logger.debug("Fetched customer measurements: {}", customerMeasurements);
 
             model.addAttribute("order", order);
             model.addAttribute("orderProduct", orderProduct);
             model.addAttribute("quantity", orderProduct.getQuantity());
             model.addAttribute("measurement", measurement);
+            model.addAttribute("customerMeasurements", customerMeasurements);
+            model.addAttribute("backToOrder", true);
+            model.addAttribute("backOrderId",
+                    new ThymeleafUtil().encryptId(order.getId()));
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
 
-            return "order/customer-measurement"; // Show the measurement page
+            return "customer/customer-measurement"; // Show the measurement page
         } catch (Exception e) {
             logger.error("An error occurred while generating receipt for order ID {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while generating the receipt.");

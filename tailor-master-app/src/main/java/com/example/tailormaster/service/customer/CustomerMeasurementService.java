@@ -205,4 +205,14 @@ public class CustomerMeasurementService {
                 measurementId
         );
     }
+
+    public CustomerProductMeasurement getCustomerProductMeasurement(Long customerId, Long productId) {
+        return customerProductMeasurementRepository
+                .findByUserIdAndCustomerIdAndProductId(
+                        getCurrentUserId(),
+                        customerId,
+                        productId
+                )
+                .orElseThrow(() -> new IllegalArgumentException("Measurement not found"));
+    }
 }

@@ -16,6 +16,30 @@ document.addEventListener("DOMContentLoaded", function () {
     setupInventoryStockValidation();
 });
 
+function showAddProductAlert(message, type = "danger") {
+    const alertBox = document.getElementById("addProductAlert");
+
+    if (!alertBox) return;
+
+    alertBox.className = `alert alert-${type} mt-3`;
+    alertBox.textContent = message;
+    alertBox.classList.remove("d-none");
+
+    setTimeout(() => {
+        alertBox.classList.add("d-none");
+        alertBox.textContent = "";
+    }, 5000);
+}
+
+function hideAddProductAlert() {
+    const alertBox = document.getElementById("addProductAlert");
+
+    if (!alertBox) return;
+
+    alertBox.classList.add("d-none");
+    alertBox.textContent = "";
+}
+
 function setupFabricControls() {
     const fabricSource = document.getElementById("fabricSource");
     const shopFabricContainer = document.getElementById("shopFabricContainer");
@@ -212,6 +236,12 @@ function setupOrderProductType() {
     const alterationFeeError =
         document.getElementById("alterationFeeError");
 
+    const additionalNotesContainer =
+        document.getElementById("additionalNotesContainer");
+
+    const additionalNotesInput =
+        document.getElementById("additionalNotes");
+
     alterationRequired.addEventListener("change", function () {
         const checked = this.checked;
 
@@ -238,6 +268,13 @@ function setupOrderProductType() {
 
         const isInventory =
             orderProductType.value === "INVENTORY";
+
+        additionalNotesContainer.style.display =
+            isInventory ? "" : "none";
+
+        if (!isInventory) {
+            additionalNotesInput.value = "";
+        }
 
         productSelect.closest(".col-md-4").style.display =
             isInventory ? "none" : "";
@@ -327,6 +364,9 @@ function getCurrentOrderInventoryQuantity(inventoryItemId) {
 }
 
 document.getElementById("addProductBtn").addEventListener("click", function () {
+
+    hideAddProductAlert();
+
     const orderProductType = document.getElementById("orderProductType").value;
     const productSelect = document.getElementById("productSelect");
     const silaiSelect = document.getElementById("silaiSelect");
@@ -341,7 +381,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
     if (orderProductType === "INVENTORY") {
         if (!inventoryItemOrderSelect.value) {
-            alert("Please select an inventory item.");
+            showAddProductAlert("Please select an inventory item.");
             return;
         }
 
@@ -378,7 +418,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         }
 
         if (!qty || qty <= 0) {
-            alert("Please enter a valid inventory quantity.");
+            showAddProductAlert("Please enter a valid inventory quantity.");
             return;
         }
 
@@ -548,7 +588,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         !silaiSelect.value ||
         !qty ||
         qty < 1) {
-        alert(
+        showAddProductAlert(
             "Please select product, silai type and quantity."
         );
         return;
@@ -564,7 +604,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
     if (selectedFabricSource === "SHOP") {
         if (!inventoryItemSelect.value) {
-            alert("Please select shop fabric.");
+            showAddProductAlert("Please select shop fabric.");
             return;
         }
 
@@ -572,7 +612,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
             parseFloat(fabricQuantityInput.value);
 
         if (!fabricQuantity || fabricQuantity <= 0) {
-            alert("Please enter fabric quantity.");
+            showAddProductAlert("Please enter fabric quantity.");
             return;
         }
 
@@ -601,7 +641,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
             );
 
         if (fabricQuantity > availableStock) {
-            alert(
+            showAddProductAlert(
                 "Fabric quantity cannot be greater than available stock. " +
                 "Available: " +
                 availableStock.toFixed(2) +
@@ -676,7 +716,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     );
 
                 if (!product) {
-                    alert(
+                    showAddProductAlert(
                         "Product information not found."
                     );
                     return;
@@ -731,8 +771,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     fabricSalePrice,
                     fabricAmount:
                     fabricAmount,
-                    additionalNotes:
-                    additionalNotes
+                    additionalNotes: ""
                 };
 
                 orderItems.push(item);
@@ -789,7 +828,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         );
 
     if (!product) {
-        alert("Product information not found.");
+        showAddProductAlert("Product information not found.");
         return;
     }
 
@@ -828,7 +867,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         fabricQuantity: fabricQuantity,
         fabricSalePrice: fabricSalePrice,
         fabricAmount: fabricAmount,
-        additionalNotes: additionalNotes
+        additionalNotes: ""
     };
 
     orderItems.push(item);
@@ -1028,7 +1067,7 @@ document.getElementById("createOrderButton")
     .addEventListener("click", function () {
 
         if (orderItems.length === 0) {
-            alert("Please add at least one product.");
+            showAddProductAlert("Please add at least one product.");
             return;
         }
 
@@ -1039,7 +1078,7 @@ document.getElementById("createOrderButton")
             document.getElementById("deliveryDate").value;
 
         if (!orderDate || !deliveryDate) {
-            alert("Please select order and delivery date.");
+            showAddProductAlert("Please select order and delivery date.");
             return;
         }
 
@@ -1068,10 +1107,13 @@ document.getElementById("createOrderButton")
         const duePayment = totalAmount - advancePayment;
 
         document.getElementById("modalCustomerName").innerText =
-            document.getElementById("customerName").value;
+            document.getElementById("customerName").innerText;
 
         document.getElementById("modalCustomerContact").innerText =
-            document.getElementById("customerPhone").value;
+            document.getElementById("customerPhone").innerText;
+
+        document.getElementById("modalCustomerBookNumber").innerText =
+            document.getElementById("bookNumber").innerText;
 
         document.getElementById("modalOrderDate").innerText =
             orderDate;
@@ -1156,7 +1198,6 @@ document.getElementById("createOrderButton")
 
         modal.show();
     });
-;
 
 document.getElementById("confirmOrderButton")
     .addEventListener("click", function () {

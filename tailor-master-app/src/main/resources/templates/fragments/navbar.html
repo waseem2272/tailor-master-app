@@ -1,42 +1,41 @@
-
 <div th:fragment="navbar">
-    <div th:if="${trialMessage}" class="bg-warning text-dark py-2">
-        <div class="d-flex justify-content-center align-items-center">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span th:text="${trialMessage}" class="fw-semibold"></span>
-        </div>
+    <div th:if="${trialMessage}" class="trial-banner">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${trialMessage}"></span>
     </div>
-    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-        <button id="toggleSidebarBtn" class="btn btn-success rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+    <nav class="navbar navbar-expand navbar-light bg-white topbar shadow-sm px-3">
+        <button id="toggleSidebarBtn"
+                type="button"
+                class="sidebar-toggle-btn btn btn-success rounded-circle d-flex align-items-center justify-content-center shadow-sm">
             <i class="bi bi-list text-white fs-4"></i>
         </button>
 
-        <!--Topbar Navbar-->
-        <ul class="navbar-nav ms-auto">
-
-            <!-- Notification Bell -->
-            <li class="nav-item dropdown no-arrow mx-1 position-relative">
-                <a class="nav-link dropdown-toggle no-arrow-dropdown" href="#" id="notificationsDropdown"
-                   role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="bi bi-bell-fill fa-fw"></i>
-                    <span class="badge badge-danger badge-counter" id="notificationCount">0</span>
+        <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item dropdown mx-2 position-relative">
+                <a class="nav-link position-relative p-2" href="#" id="notificationsDropdown"
+                   role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                    <i class="bi bi-bell-fill fs-5 text-secondary"></i>
+                    <span id="notificationCount" class="notification-count">0</span>
                 </a>
-                <div class="dropdown-list dropdown-menu dropdown-menu-end shadow animated--grow-in"
+
+                <div class="dropdown-menu dropdown-menu-end notification-dropdown shadow border-0 rounded-3 p-0"
                      aria-labelledby="notificationsDropdown" id="notificationDropdownList">
-                    <div id="notificationList" class="p-0"></div>
+                    <div id="notificationList"></div>
                 </div>
             </li>
 
+            <li class="nav-item d-none d-sm-block">
+                <div class="vr mx-2 text-muted"></div>
+            </li>
 
-            <!-- Divider -->
-            <div class="topbar-divider d-none d-sm-block"></div>
-
-            <!--User Information-->
-            <li class="nav-item dropdown no-arrow">
-                <span class="me-2 d-none d-lg-inline fw-bold text-dark"
-                      style="font-size: 1rem; font-family: 'Noto Nastaliq Urdu', serif;"
-                      th:text="'خوش آمدید، ' + ${#authentication.name}"></span>
+            <li class="nav-item">
+                <span class="d-flex align-items-center fw-semibold text-dark">
+                    <i class="bi bi-person-circle text-success fs-5 me-2"></i>
+                    <span>
+                        Welcome, <span th:text="${fullName}"></span>
+                    </span>
+                </span>
             </li>
         </ul>
     </nav>

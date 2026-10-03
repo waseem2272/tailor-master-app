@@ -46,6 +46,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.outstandingDueAmount IS NOT NULL AND o.outstandingDueAmount > 0 AND o.user = :user")
     Long countPendingPayments(@Param("user") User user);
 
+    @Query("""
+       SELECT COALESCE(SUM(o.outstandingDueAmount), 0)
+       FROM Order o
+       WHERE o.outstandingDueAmount IS NOT NULL
+       AND o.outstandingDueAmount > 0
+       AND o.user = :user
+       """)
+    BigDecimal sumPendingPaymentsAmount(@Param("user") User user);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status IN ('PENDING') AND o.user = :user")
     Long countPendingOrders(@Param("user") User user);
 
@@ -67,7 +76,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findTop5ByUserOrderByCreatedAtDesc(User user);
 
     @Query("""
-    SELECT o.customer.fullName, o.customer.phoneNumber, COUNT(o), SUM(o.paidAmount)
+    SELECT o.customer.id, o.customer.fullName, o.customer.phoneNumber, COUNT(o), SUM(o.paidAmount)
     FROM Order o
     WHERE o.status IN('COMPLETED', 'DELIVERED') AND o.pickupStatus = 'PICKED_UP' AND o.paidAmount IS NOT NULL
         AND o.user = :currentUser
@@ -85,4 +94,18 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByIdAndUser(Long id, User currentUser);
 
     long countByUser(@Param("user") User user);
+
+    @Query("""
+       SELECT o
+       FROM Order o
+       WHERE o.user = :user
+       AND o.deliveryDate >= :currentDate
+       AND o.status NOT IN :excludedStatuses
+       ORDER BY o.deliveryDate ASC, o.id ASC
+       """)
+    List<Order> findUpcomingDeliveries(
+            @Param("user") User user,
+            @Param("currentDate") LocalDate currentDate,
+            @Param("excludedStatuses") List<OrderStatus> excludedStatuses,
+            Pageable pageable);
 }

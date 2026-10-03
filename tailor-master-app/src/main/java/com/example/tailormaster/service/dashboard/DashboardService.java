@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,21 @@ public class DashboardService {
         long count = orderService.getPendingPaymentsCount();
         logger.info("Total pending payments: {}", count);
         return count;
+    }
+
+    public Map<String, Object> getPendingPaymentsSummary() {
+        logger.debug("Fetching pending payments summary");
+
+        long count = orderService.getPendingPaymentsCount();
+        BigDecimal amount = orderService.getPendingPaymentsAmount();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("count", count);
+        response.put("amount", amount);
+
+        logger.info("Pending payments count: {}, amount: {}", count, amount);
+
+        return response;
     }
 
     public long getOrdersInProgress() {
@@ -98,5 +115,18 @@ public class DashboardService {
         List<Map<String, Object>> deliveries = orderService.getUpcomingDeliveries();
         logger.info("Upcoming deliveries fetched: {}", deliveries.size());
         return deliveries;
+    }
+
+    public List<Order> getUpcomingDeliveriess() {
+        logger.debug("Fetching upcoming deliveries");
+
+        List<Order> orders = orderService.getUpcomingDeliveries(
+                LocalDate.now(),
+                10
+        );
+
+        logger.info("Upcoming deliveries fetched: {}", orders.size());
+
+        return orders;
     }
 }

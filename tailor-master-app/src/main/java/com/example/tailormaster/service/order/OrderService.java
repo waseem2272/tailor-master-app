@@ -1449,6 +1449,10 @@ public class OrderService {
         }
     }
 
+    public BigDecimal getPendingPaymentsAmount() {
+        return orderRepository.sumPendingPaymentsAmount((authenticatedUserService.getCurrentUser()));
+    }
+
     public Long getOrdersInProgressCount() {
         try {
             long count = orderRepository.countOrdersInProgress(authenticatedUserService.getCurrentUser());
@@ -1505,10 +1509,11 @@ public class OrderService {
 
             List<Map<String, Object>> topCustomers = results.stream().map(obj -> {
                 Map<String, Object> map = new HashMap<>();
-                map.put("name", obj[0]);
-                map.put("phone", obj[1]);
-                map.put("totalOrders", obj[2]);
-                map.put("totalPaid", obj[3]);
+                map.put("id", new ThymeleafUtil().encryptId((Long) obj[0]));
+                map.put("name", obj[1]);
+                map.put("phone", obj[2]);
+                map.put("totalOrders", obj[3]);
+                map.put("totalPaid", obj[4]);
                 return map;
             }).collect(Collectors.toList());
             logger.debug("Fetched top {} customers.", topCustomers.size());
@@ -1564,5 +1569,20 @@ public class OrderService {
                 String.valueOf(fabricSource) +
                 "|" +
                 String.valueOf(inventoryItemId);
+    }
+
+    public List<Order> getUpcomingDeliveries(LocalDate currentDate, int limit) {
+
+        List<OrderStatus> excludedStatuses = Arrays.asList(
+                OrderStatus.CANCELLED,
+                OrderStatus.DELIVERED
+        );
+
+        return orderRepository.findUpcomingDeliveries(
+                authenticatedUserService.getCurrentUser(),
+                currentDate,
+                excludedStatuses,
+                PageRequest.of(0, limit)
+        );
     }
 }

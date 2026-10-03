@@ -423,6 +423,9 @@ public class CustomerController {
 
             model.addAttribute("measurement", measurement);
             model.addAttribute("customerMeasurements", customerMeasurements);
+            model.addAttribute("backToOrder", false);
+            model.addAttribute("backCustomerId",
+                    new ThymeleafUtil().encryptId(measurement.getCustomer().getId()));
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
             logger.info("Customer measurement print data loaded successfully, measurementId={}",
                     measurementId);

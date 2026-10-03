@@ -2,6 +2,7 @@ package com.example.tailormaster.controller.dashboard;
 
 import com.example.tailormaster.entity.Order;
 import com.example.tailormaster.service.dashboard.DashboardService;
+import com.example.tailormaster.util.ThymeleafUtil;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,10 +55,10 @@ public class DashboardController {
     }
 
     @GetMapping("/pending-payments")
-    public ResponseEntity<Long> getPendingPayments() {
+    public ResponseEntity<Map<String, Object>> getPendingPayments() {
         logger.info("Requested pending payments.");
         try {
-            Long pendingPayments = dashboardService.getTotalPendingPayments();
+            Map<String, Object> pendingPayments = dashboardService.getPendingPaymentsSummary();
             logger.info("Pending payments: {}", pendingPayments);
             return ResponseEntity.ok(pendingPayments);
         } catch (Exception e) {
@@ -139,11 +140,15 @@ public class DashboardController {
             List<Order> recentOrders = dashboardService.getRecentOrders();
             List<Map<String, Object>> response = recentOrders.stream().map(order -> {
                 Map<String, Object> map = new HashMap<>();
+                map.put("id", new ThymeleafUtil().encryptId(order.getId()));
                 map.put("orderId", order.getOrderId());
+                map.put("customerId", new ThymeleafUtil().encryptId(order.getCustomer().getId()));
                 map.put("customer", order.getCustomer().getFullName());
                 map.put("orderDate", order.getOrderDate());
                 map.put("status", order.getStatus().name());
                 map.put("totalAmount", order.getTotalProductAmount());
+                map.put("paidAmount", order.getPaidAmount());
+                map.put("dueAmount", order.getDuePayment());
                 return map;
             }).collect(Collectors.toList());
             logger.info("Recent orders fetched: {}", response.size());
@@ -174,6 +179,41 @@ public class DashboardController {
             List<Map<String, Object>> upcomingDeliveries = dashboardService.getUpcomingDeliveries();
             logger.info("Upcoming deliveries fetched: {}", upcomingDeliveries.size());
             return ResponseEntity.ok(upcomingDeliveries);
+        } catch (Exception e) {
+            logger.error("Error fetching upcoming deliveries: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/upcoming-deliveries")
+    public ResponseEntity<List<Map<String, Object>>> getUpcomingDeliveriess() {
+        logger.info("Requested upcoming deliveries.");
+
+        try {
+            List<Order> upcomingDeliveries = dashboardService.getUpcomingDeliveriess();
+
+            List<Map<String, Object>> response = upcomingDeliveries.stream()
+                    .map(order -> {
+                        Map<String, Object> map = new HashMap<>();
+
+                        map.put("id", new ThymeleafUtil().encryptId(order.getId()));
+                        map.put("orderId", order.getOrderId());
+                        map.put("customerId", new ThymeleafUtil().encryptId(order.getCustomer().getId()));
+                        map.put("customer", order.getCustomer().getFullName());
+                        map.put("deliveryDate", order.getDeliveryDate());
+                        map.put("status", order.getStatus().name());
+                        map.put("totalAmount", order.getTotalProductAmount());
+                        map.put("paidAmount", order.getPaidAmount());
+                        map.put("dueAmount", order.getDuePayment());
+
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+
+            logger.info("Upcoming deliveries fetched: {}", response.size());
+
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             logger.error("Error fetching upcoming deliveries: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

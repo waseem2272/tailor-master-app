@@ -554,7 +554,15 @@
                     Print
                 </button>
 
-                <a th:href="@{'/customers/details/' + ${thymeleafUtil.encryptId(measurement.customer.id)}}"
+                <a th:if="${backToOrder}"
+                   th:href="@{/orders/details/{id}(id=${backOrderId})}"
+                   class="btn btn-secondary">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    Back
+                </a>
+
+                <a th:unless="${backToOrder}"
+                   th:href="@{/customers/details/{id}(id=${backCustomerId})}"
                    class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle me-1"></i>
                     Back

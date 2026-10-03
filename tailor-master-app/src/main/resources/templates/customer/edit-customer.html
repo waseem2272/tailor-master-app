@@ -75,26 +75,19 @@
     <div class="main-content">
         <div class="container-fluid">
 
-            <!-- PAGE HEADER -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-person-vcard text-success me-2"></i>
+                Edit Customer
+            </h2>
 
-                <h2 class="page-title d-flex align-items-center mb-0">
-                    <i class="bi bi-person-vcard text-success me-2"></i>
-                    Edit Customer
-                </h2>
-
-                <a th:href="@{/customers}"
-                   class="btn btn-secondary btn-rounded shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i>
-                    Back
-                </a>
-
-            </div>
+            <p class="text-danger fw-bold">
+                Fields marked with * are required.
+            </p>
 
             <!-- CUSTOMER INFORMATION -->
-            <div class="card customer-card mb-4">
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4">
 
-                <div class="card-header d-flex align-items-center">
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-person-lines-fill me-2 fs-5"></i>
                     Customer Information
                 </div>
@@ -196,7 +189,7 @@
 
                         </div>
 
-                        <!-- INFO MESSAGE -->
+                        <!-- INFO -->
                         <div class="info-box mt-4">
                             <i class="bi bi-info-circle me-2 text-success"></i>
                             Customer measurements can be managed separately
@@ -211,20 +204,20 @@
                         </div>
 
                         <!-- ACTIONS -->
-                        <div class="d-flex justify-content-between mt-4">
-
-                            <a th:href="@{/customers}"
-                               class="btn btn-secondary btn-rounded shadow-sm">
-                                <i class="bi bi-x-circle me-1"></i>
-                                Cancel
-                            </a>
+                        <div class="text-center mt-4">
 
                             <button type="submit"
                                     id="updateCustomerButton"
-                                    class="btn btn-success btn-rounded shadow">
+                                    class="btn btn-success rounded-pill shadow-sm px-4">
                                 <i class="bi bi-check-circle me-1"></i>
                                 Update Customer
                             </button>
+
+                            <a th:href="@{/customers}"
+                               class="btn btn-secondary rounded-pill shadow-sm px-4">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Cancel
+                            </a>
 
                         </div>
 
