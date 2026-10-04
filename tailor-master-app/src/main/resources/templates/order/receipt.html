@@ -1,950 +1,692 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Receipt</title>
-
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
-
     <style>
         * {
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         body {
             margin: 0;
-            background: #f1f3f5;
+            background: #f3f5f7;
             font-family: Arial, Helvetica, sans-serif;
-            color: #212529;
+            color: #212529
         }
 
         .receipt-wrapper {
-            max-width: 760px;
-            margin: 25px auto;
-            padding: 0 10px;
+            max-width: 850px;
+            margin: 30px auto;
+            padding: 0 15px
         }
 
         .receipt-card {
-            background: #ffffff;
+            background: #fff;
             border: 1px solid #dee2e6;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+            overflow: hidden
         }
 
-        /* =========================
-           SHOP HEADER
-        ========================= */
-
-        .shop-header {
+        .receipt-header {
+            padding: 28px 30px 20px;
             text-align: center;
-            margin-bottom: 12px;
+            border-bottom: 1px solid #e9ecef
+        }
+
+        .shop-logo {
+            margin-bottom: 10px
         }
 
         .shop-logo img {
-            max-width: 120px;
+            max-width: 130px;
             max-height: 90px;
-            object-fit: contain;
+            object-fit: contain
+        }
+
+        .shop-name {
+            margin: 0;
+            font-size: 23px;
+            font-weight: 800;
+            color: #198754
         }
 
         .shop-address {
-            margin: 8px 0 3px;
+            margin: 6px 0 2px;
             font-size: 13px;
             font-weight: 600;
+            color: #495057
         }
 
         .shop-tagline {
-            margin: 0;
+            margin: 4px 0 0;
             font-size: 13px;
             font-weight: 600;
+            color: #6c757d
         }
 
-        .receipt-title {
-            margin: 12px 0 0;
-            padding: 7px 0;
-            border-top: 1px solid #dee2e6;
-            border-bottom: 1px solid #dee2e6;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        /* =========================
-           CUSTOMER / ORDER INFO
-        ========================= */
-
-        .info-section {
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-
-        .info-title {
+        .receipt-heading {
+            margin-top: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
             background: #198754;
-            color: #ffffff;
-            padding: 7px 10px;
-            border-radius: 6px;
+            color: #fff;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 700
+        }
+
+        .receipt-content {
+            padding: 25px 30px 30px
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 10px;
             font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-weight: 800;
+            color: #198754
+        }
+
+        .section-title i {
+            font-size: 15px
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 13px 15px;
+            margin-bottom: 24px
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 20px;
+            grid-template-columns:repeat(2, 1fr);
+            gap: 8px 25px
         }
 
         .info-item {
-            font-size: 13px;
-            padding: 3px 0;
+            font-size: 12px;
+            padding: 3px 0
         }
 
         .info-label {
+            color: #6c757d;
             font-weight: 600;
-            color: #555;
+            margin-right: 5px
         }
 
         .info-value {
-            font-weight: 700;
+            color: #212529;
+            font-weight: 700
         }
 
-        /* =========================
-           PRODUCTS
-        ========================= */
-
-        .products-section {
-            margin-top: 12px;
+        .receipt-marker {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-right: 5px;
+            background: #e9ecef;
+            color: #6c757d;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .3px
         }
 
-        .products-title {
-            background: #198754;
-            color: #ffffff;
-            padding: 7px 10px;
-            border-radius: 6px 6px 0 0;
-            font-size: 14px;
+        .item-marker {
+            display: inline-block;
+            padding: 2px 5px;
+            margin-left: 5px;
+            background: #e9ecef;
+            color: #6c757d;
+            border-radius: 4px;
+            font-size: 8px;
             font-weight: 700;
+            vertical-align: middle
+        }
+
+        .fabric-marker {
+            display: inline-block;
+            padding: 2px 5px;
+            margin-left: 4px;
+            background: #e9ecef;
+            color: #6c757d;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700
+        }
+
+        .items-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px
+        }
+
+        .items-count {
+            font-size: 11px;
+            color: #6c757d;
+            font-weight: 600
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 10px
         }
 
         .product-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: fixed
         }
 
         .product-table th {
             background: #e9f7ef;
-            border: 1px solid #ced4da;
-            padding: 7px 5px;
-            font-size: 12px;
-            font-weight: 700;
-            text-align: left;
+            color: #212529;
+            border-bottom: 1px solid #ced4da;
+            padding: 9px 7px;
+            font-size: 10px;
+            font-weight: 800;
+            text-align: left
         }
 
         .product-table td {
-            border: 1px solid #ced4da;
-            padding: 7px 5px;
-            font-size: 12px;
-            vertical-align: middle;
-            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            padding: 9px 7px;
+            font-size: 11px;
+            vertical-align: middle
         }
 
-        /* SIMPLE TABLE */
-
-        .simple-product-name {
-            width: 36%;
-            font-weight: 700;
+        .product-table tbody tr:last-child td {
+            border-bottom: none
         }
 
-        .simple-silai-type {
-            width: 22%;
-            text-align: center !important;
+        .product-name {
+            font-weight: 800
         }
 
-        .simple-quantity {
-            width: 12%;
-            text-align: center !important;
+        .center {
+            text-align: center !important
         }
 
-        .simple-silai-price {
-            width: 15%;
-            text-align: right !important;
+        .right {
+            text-align: right !important
         }
 
-        .simple-item-total {
-            width: 15%;
-            text-align: right !important;
-            font-weight: 700;
+        .total-cell {
+            font-weight: 800
         }
 
-        /* DETAILED FABRIC TABLE */
-
-        .fabric-product-name {
-            width: 18%;
-            font-weight: 700;
+        .simple-product {
+            width: 36%
         }
 
-        .fabric-silai-type {
-            width: 10%;
-            text-align: center !important;
+        .simple-silai {
+            width: 18%
         }
 
-        .fabric-quantity {
-            width: 6%;
-            text-align: center !important;
+        .simple-qty {
+            width: 11%
         }
 
-        .fabric-silai-price {
-            width: 11%;
-            text-align: right !important;
+        .simple-rate {
+            width: 17%
+        }
+
+        .simple-total {
+            width: 18%
+        }
+
+        .fabric-product {
+            width: 17%
+        }
+
+        .fabric-silai {
+            width: 9%
+        }
+
+        .fabric-qty-main {
+            width: 7%
+        }
+
+        .fabric-rate-main {
+            width: 10%
         }
 
         .fabric-name {
-            width: 17%;
+            width: 15%
         }
 
         .fabric-qty {
-            width: 9%;
-            text-align: center !important;
+            width: 9%
         }
 
-        .fabric-price {
-            width: 10%;
-            text-align: right !important;
+        .fabric-rate {
+            width: 10%
         }
 
         .fabric-amount {
-            width: 10%;
-            text-align: right !important;
+            width: 11%
         }
 
-        .fabric-item-total {
-            width: 9%;
-            text-align: right !important;
-            font-weight: 700;
+        .fabric-total {
+            width: 12%
         }
 
-        .fabric-name,
-        .fabric-qty,
-        .fabric-price,
-        .fabric-amount {
-            word-break: break-word;
+        .summary-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px
         }
 
-        /* NOTES */
-
-        .notes-row td {
-            background: #fafafa;
-            padding: 6px 8px;
-            font-size: 11px;
+        .summary-box {
+            width: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            overflow: hidden
         }
 
-        .notes-label {
-            font-weight: 700;
-            color: #198754;
-        }
-
-        .notes-value {
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        /* =========================
-           TOTALS
-        ========================= */
-
-        .totals-section {
-            margin-top: 15px;
-            margin-left: auto;
-            width: 280px;
-        }
-
-        .total-row {
+        .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            font-size: 13px;
-            border-bottom: 1px dotted #ced4da;
+            padding: 9px 13px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 12px
         }
 
-        .total-row:last-child {
-            border-bottom: none;
+        .summary-row:last-child {
+            border-bottom: none
         }
 
-        .total-label {
+        .summary-label {
             font-weight: 600;
+            color: #495057
         }
 
-        .total-value {
-            font-weight: 700;
+        .summary-value {
+            font-weight: 800
         }
 
         .due-row {
-            font-size: 15px;
-            color: #dc3545;
-            border-top: 2px solid #212529;
-            margin-top: 3px;
-            padding-top: 7px;
+            background: #fff5f5
         }
 
-        /* =========================
-           FOOTER
-        ========================= */
+        .due-row .summary-label, .due-row .summary-value {
+            color: #dc3545
+        }
 
         .receipt-footer {
-            text-align: center;
-            margin-top: 18px;
-            padding-top: 10px;
-            border-top: 1px solid #dee2e6;
-            font-size: 12px;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+            text-align: center
         }
 
         .receipt-footer p {
-            margin: 2px 0;
+            margin: 3px 0;
+            font-size: 11px;
+            color: #6c757d
         }
 
-        /* =========================
-           BUTTONS
-        ========================= */
+        .receipt-footer strong {
+            color: #198754
+        }
 
         .receipt-actions {
             text-align: center;
-            margin-top: 20px;
+            padding: 0 30px 25px
         }
 
-        /* =========================
-           PRINT
-        ========================= */
+        .receipt-actions .btn {
+            min-width: 110px;
+            border-radius: 7px;
+            font-size: 13px
+        }
 
         @media print {
-
             @page {
                 size: A4;
-                margin: 8mm;
+                margin: 8mm
             }
 
-            html,
-            body {
+            html, body {
                 width: 100%;
                 margin: 0 !important;
                 padding: 0 !important;
-                background: #ffffff !important;
-
-                /* IMPORTANT: Print colors */
+                background: #fff !important;
                 -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                print-color-adjust: exact !important
             }
 
             * {
                 -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                print-color-adjust: exact !important
             }
 
             .receipt-wrapper {
                 width: 100%;
                 max-width: none;
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 0 !important
             }
 
             .receipt-card {
                 width: 100%;
-                margin: 0 !important;
-                padding: 12px !important;
                 border: 1px solid #000 !important;
                 border-radius: 0 !important;
-                box-shadow: none !important;
+                box-shadow: none !important
             }
 
-            .no-print {
-                display: none !important;
-            }
-
-            .shop-header {
-                margin-bottom: 8px;
+            .receipt-header {
+                padding: 14px 15px 10px
             }
 
             .shop-logo img {
                 max-width: 90px;
-                max-height: 65px;
+                max-height: 60px
+            }
+
+            .shop-name {
+                font-size: 18px
             }
 
             .shop-address {
-                font-size: 11px;
-                margin: 4px 0 2px;
+                font-size: 10px;
+                margin: 3px 0
             }
 
             .shop-tagline {
+                font-size: 9px
+            }
+
+            .receipt-heading {
+                margin-top: 9px;
+                padding: 5px 13px;
+                font-size: 11px
+            }
+
+            .receipt-content {
+                padding: 12px 15px 15px
+            }
+
+            .section-title {
                 font-size: 10px;
+                margin-bottom: 5px
             }
 
-            .receipt-title {
-                margin-top: 7px;
-                padding: 5px 0;
-                font-size: 15px;
-            }
-
-            .info-section {
-                margin-top: 8px;
-                margin-bottom: 8px;
-            }
-
-            .info-title {
-                padding: 5px 8px;
-                font-size: 11px;
-                margin-bottom: 5px;
+            .info-card {
+                padding: 7px 9px;
+                margin-bottom: 12px
             }
 
             .info-grid {
-                gap: 2px 15px;
+                gap: 3px 15px
             }
 
             .info-item {
-                font-size: 10px;
-                padding: 2px 0;
+                font-size: 9px;
+                padding: 1px 0
             }
 
-            .products-section {
-                margin-top: 8px;
+            .items-header {
+                margin-bottom: 5px
             }
 
-            .products-title {
-                padding: 5px 8px;
-                font-size: 11px;
+            .items-count {
+                font-size: 8px
             }
 
-            .product-table {
-                width: 100%;
-                border-collapse: collapse;
+            .table-wrapper {
+                border-radius: 0
             }
 
             .product-table th {
-                padding: 5px 3px;
-                font-size: 9px;
-
-                /* Keep header background in print */
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                padding: 5px 4px;
+                font-size: 7.5px
             }
 
             .product-table td {
-                padding: 5px 3px;
-                font-size: 9px;
+                padding: 5px 4px;
+                font-size: 8px
             }
 
-            .notes-row td {
-                padding: 4px 6px;
-                font-size: 8px;
+            .summary-wrapper {
+                margin-top: 10px
             }
 
-            .totals-section {
-                margin-top: 8px;
-                width: 230px;
+            .summary-box {
+                width: 230px
             }
 
-            .total-row {
-                padding: 3px 0;
-                font-size: 10px;
-            }
-
-            .due-row {
-                font-size: 11px;
-                padding-top: 4px;
+            .summary-row {
+                padding: 5px 8px;
+                font-size: 8.5px
             }
 
             .receipt-footer {
-                margin-top: 8px;
-                padding-top: 5px;
-                font-size: 9px;
+                margin-top: 12px;
+                padding-top: 7px
             }
 
-            .product-row,
-            .notes-row {
+            .receipt-footer p {
+                font-size: 7.5px
+            }
+
+            .no-print {
+                display: none !important
+            }
+
+            .product-row {
                 break-inside: avoid;
-                page-break-inside: avoid;
+                page-break-inside: avoid
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .receipt-wrapper {
+                margin: 10px auto;
+                padding: 0 7px
+            }
+
+            .receipt-header {
+                padding: 20px 15px 15px
+            }
+
+            .receipt-content {
+                padding: 18px 15px 20px
+            }
+
+            .info-grid {
+                grid-template-columns:1fr;
+                gap: 4px
+            }
+
+            .summary-wrapper {
+                justify-content: stretch
+            }
+
+            .summary-box {
+                width: 100%
+            }
+
+            .receipt-actions {
+                padding: 0 15px 20px
+            }
+
+            .receipt-actions .btn {
+                min-width: 100px
             }
         }
     </style>
 </head>
-
 <body>
-
 <div class="receipt-wrapper">
     <div class="receipt-card">
-
-        <!-- =========================
-             SHOP HEADER
-        ========================= -->
-
-        <div class="shop-header">
-
-            <div class="shop-logo"
-                 th:if="${user.logo != null}">
-
-                <img th:src="@{'/users/logo/' + ${user.username}}"
-                     alt="Shop Logo">
-
+        <div class="receipt-header">
+            <div class="shop-logo" th:if="${user.logo != null}">
+                <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo">
             </div>
-
-            <p class="shop-address">
-                <i class="bi bi-geo-alt-fill"></i>
-                <span th:text="${user.shopAddress}">
-                    Shop Address
-                </span>
+            <h1 class="shop-name" th:text="${user.shopName}">Shop Name</h1>
+            <p class="shop-address"><i class="bi bi-geo-alt-fill me-1"></i><span th:text="${user.shopAddress}">Shop Address</span>
             </p>
-
-            <p class="shop-tagline">
-                ہمارے پاس مناسب قیمت پر بہترین کوالٹی کا کپڑا دستیاب ہےـ
-            </p>
-
-            <div class="receipt-title">
-                <i class="bi bi-receipt-cutoff me-1"></i>
-                Order Receipt
-            </div>
-
+            <p class="shop-tagline">ہمارے پاس مناسب قیمت پر بہترین کوالٹی کا کپڑا دستیاب ہےـ</p>
+            <div class="receipt-heading"><i class="bi bi-receipt-cutoff"></i><span>Order Receipt</span></div>
         </div>
 
-        <!-- =========================
-             CUSTOMER / ORDER INFORMATION
-        ========================= -->
-
-        <div class="info-section">
-
-            <div class="info-title">
-                <i class="bi bi-person-fill me-1"></i>
-                Customer & Order Information
+        <div class="receipt-content">
+            <div class="section-title"><i class="bi bi-person-circle"></i><span>Customer & Order Information</span></div>
+            <div class="info-card">
+                <div class="info-grid">
+                    <div class="info-item"><span class="receipt-marker">CUSTOMER</span><span class="info-label">Name:</span><span class="info-value" th:text="${order.customer.fullName}"></span></div>
+                    <div class="info-item"><span class="receipt-marker">ORDER</span><span class="info-label">Order ID:</span><span class="info-value" th:text="${order.orderId}"></span></div>
+                    <div class="info-item"><span class="info-label">Book. No:</span><span class="info-value" th:text="${order.customer.bookNumber}"></span></div>
+                    <div class="info-item"><span class="info-label">Phone:</span><span class="info-value" th:text="${order.customer.phoneNumber}"></span></div>
+                    <div class="info-item"><span class="info-label">Order Date:</span><span class="info-value" th:text="${#temporals.format(order.orderDate,'dd-MM-yyyy')}"></span></div>
+                    <div class="info-item"><span class="info-label">Delivery Date:</span><span class="info-value" th:text="${#temporals.format(order.deliveryDate,'dd-MM-yyyy')}"></span></div>
+                </div>
             </div>
 
-            <div class="info-grid">
-
-                <div class="info-item">
-                    <span class="info-label">S. No:</span>
-                    <span class="info-value"
-                          th:text="${order.customer.id}">
-                    </span>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Order ID:</span>
-                    <span class="info-value"
-                          th:text="${order.orderId}">
-                    </span>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Customer:</span>
-                    <span class="info-value"
-                          th:text="${order.customer.fullName}">
-                    </span>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Phone:</span>
-                    <span class="info-value"
-                          th:text="${order.customer.phoneNumber}">
-                    </span>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Order Date:</span>
-                    <span class="info-value"
-                          th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy')}">
-                    </span>
-                </div>
-
-                <div class="info-item">
-                    <span class="info-label">Delivery Date:</span>
-                    <span class="info-value"
-                          th:text="${#temporals.format(order.deliveryDate, 'dd-MM-yyyy')}">
-                    </span>
-                </div>
-
+            <div class="items-header">
+                <div class="section-title mb-0"><i class="bi bi-bag-check-fill"></i><span>Order Items</span></div>
+                <span class="items-count" th:text="${#lists.size(order.orderProducts) + ' item(s)'}"></span>
             </div>
 
-        </div>
-
-        <!-- =========================
-             PRODUCTS
-        ========================= -->
-
-        <div class="products-section">
-
-            <div class="products-title">
-                <i class="bi bi-bag-fill me-1"></i>
-                Order Items
-            </div>
-
-            <!-- =====================================================
-                 SIMPLE TABLE
-                 Show when order has NO shop fabric
-            ====================================================== -->
-
-            <table class="product-table"
-                   th:if="${!#lists.isEmpty(order.orderProducts)
-                           and !#lists.contains(order.orderProducts.![fabricSource?.name()], 'SHOP')}">
-
-                <thead>
-
-                <tr>
-
-                    <th class="simple-product-name">
-                        Product
-                    </th>
-
-                    <th class="simple-silai-type">
-                        Silai
-                    </th>
-
-                    <th class="simple-quantity">
-                        Qty
-                    </th>
-
-                    <th class="simple-silai-price">
-                        Silai Amount
-                    </th>
-
-                    <th class="simple-item-total">
-                        Total
-                    </th>
-
-                </tr>
-
-                </thead>
-
-                <tbody>
-
-                <th:block th:each="item : ${order.orderProducts}">
-
-                    <tr class="product-row">
-
-                        <td class="simple-product-name"
-                            th:text="${item.product.name}">
-                        </td>
-
-                        <td class="simple-silai-type"
-                            th:text="${item.silaiType}">
-                        </td>
-
-                        <td class="simple-quantity"
-                            th:text="${item.quantity}">
-                        </td>
-
-                        <td class="simple-silai-price format-amount"
-                            th:text="${item.silaiAmount}">
-                        </td>
-
-                        <td class="simple-item-total">
-
-                            <span class="format-amount"
-                                  th:text="${item.subtotal}">
-                            </span>
-
-                        </td>
-
+            <div class="table-wrapper"
+                 th:if="${!#lists.isEmpty(order.orderProducts) and !#lists.contains(order.orderProducts.![fabricSource?.name()],'SHOP')}">
+                <table class="product-table">
+                    <thead>
+                    <tr>
+                        <th class="simple-product">Product</th>
+                        <th class="simple-silai center">Silai</th>
+                        <th class="simple-qty center">Qty</th>
+                        <th class="simple-rate right">Rate</th>
+                        <th class="simple-rate right">Alteration</th>
+                        <th class="simple-total right">Total</th>
                     </tr>
-
-                    <tr class="notes-row"
-                        th:if="${item.additionalNotes != null
-                        and !#strings.isEmpty(item.additionalNotes)}">
-
-                        <td colspan="5">
-
-                            <span class="notes-label">
-                                <i class="bi bi-chat-left-text me-1"></i>
-                                Additional Notes:
-                            </span>
-
-                            <span class="notes-value"
-                                  th:text="${item.additionalNotes}">
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                </th:block>
-
-                </tbody>
-
-            </table>
-
-            <!-- =====================================================
-                 DETAILED TABLE
-                 Show when order contains SHOP FABRIC
-            ====================================================== -->
-
-            <table class="product-table"
-                   th:if="${!#lists.isEmpty(order.orderProducts)
-                           and #lists.contains(order.orderProducts.![fabricSource?.name()], 'SHOP')}">
-
-                <thead>
-
-                <tr>
-
-                    <th class="fabric-product-name">
-                        Product
-                    </th>
-
-                    <th class="fabric-silai-type">
-                        Silai
-                    </th>
-
-                    <th class="fabric-quantity">
-                        Qty
-                    </th>
-
-                    <th class="fabric-silai-price">
-                        Silai Amount
-                    </th>
-
-                    <th class="fabric-name">
-                        Fabric
-                    </th>
-
-                    <th class="fabric-qty">
-                        Fabric Qty
-                    </th>
-
-                    <th class="fabric-price">
-                        Fabric Rate
-                    </th>
-
-                    <th class="fabric-amount">
-                        Fabric Amount
-                    </th>
-
-                    <th class="fabric-item-total">
-                        Total
-                    </th>
-
-                </tr>
-
-                </thead>
-
-                <tbody>
-
-                <th:block th:each="item : ${order.orderProducts}">
-
-                    <tr class="product-row">
-
-                        <td class="fabric-product-name"
-                            th:text="${item.product.name}">
-                        </td>
-
-                        <td class="fabric-silai-type"
-                            th:text="${item.silaiType}">
-                        </td>
-
-                        <td class="fabric-quantity"
-                            th:text="${item.quantity}">
-                        </td>
-
-                        <td class="fabric-silai-price format-amount"
-                            th:text="${item.silaiAmount}">
-                        </td>
-
-                        <!-- FABRIC NAME -->
-
-                        <td class="fabric-name">
-
-                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
-                                  th:text="${item.inventoryItem != null
-                                      ? item.inventoryItem.name
-                                      : '-'}">
-                            </span>
-
-                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="text-muted">
-                                Customer Fabric
-                            </span>
-
-                        </td>
-
-                        <!-- FABRIC QUANTITY -->
-
-                        <td class="fabric-qty">
-
-                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
-                                  th:text="${item.fabricQuantity != null && item.inventoryItem != null
-                                      ? item.fabricQuantity.stripTrailingZeros().toPlainString()
-                                        + ' ' + item.inventoryItem.unit.name()
-                                      : '-'}">
-                            </span>
-
-                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="text-muted">
-                                -
-                            </span>
-
-                        </td>
-
-                        <!-- FABRIC RATE -->
-
-                        <td class="fabric-price">
-
-                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="format-amount"
-                                  th:text="${item.fabricUnitPrice}">
-                            </span>
-
-                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="text-muted">
-                                -
-                            </span>
-
-                        </td>
-
-                        <!-- FABRIC AMOUNT -->
-
-                        <td class="fabric-amount">
-
-                            <span th:if="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="format-amount"
-                                  th:text="${item.fabricAmount}">
-                            </span>
-
-                            <span th:unless="${item.fabricSource?.name() == 'SHOP'}"
-                                  class="text-muted">
-                                -
-                            </span>
-
-                        </td>
-
-                        <!-- TOTAL -->
-
-                        <td class="fabric-item-total">
-
-                            <span class="format-amount"
-                                  th:text="${item.subtotal}">
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                    <!-- ADDITIONAL NOTES -->
-
-                    <tr class="notes-row"
-                        th:if="${item.additionalNotes != null
-                        and !#strings.isEmpty(item.additionalNotes)}">
-
-                        <td colspan="9">
-
-                            <span class="notes-label">
-                                <i class="bi bi-chat-left-text me-1"></i>
-                                Additional Notes:
-                            </span>
-
-                            <span class="notes-value"
-                                  th:text="${item.additionalNotes}">
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                </th:block>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <!-- =========================
-             TOTALS
-        ========================= -->
-
-        <div class="totals-section">
-
-            <div class="total-row">
-
-                <span class="total-label">
-                    Total Amount:
-                </span>
-
-                <span class="total-value format-amount"
-                      th:text="${order.totalProductAmount}">
-                </span>
-
+                    </thead>
+                    <tbody>
+                    <th:block th:each="item : ${order.orderProducts}">
+                        <th:block
+                                th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
+                            <tr class="product-row">
+                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker">INVENTORY</span></td>
+                                <td class="center">-</td>
+                                <td class="center" th:text="${item.quantity}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.alterationFee, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                        </th:block>
+                        <th:block
+                                th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
+                            <tr class="product-row">
+                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker">TAILORING</span></td>
+                                <td class="center" th:text="${item.silaiType}"></td>
+                                <td class="center" th:text="${item.quantity}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.silaiAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="center">-</td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="total-row">
-
-                <span class="total-label">
-                    Advance Payment:
-                </span>
-
-                <span class="total-value format-amount"
-                      th:text="${order.advancePayment}">
-                </span>
-
+            <div class="table-wrapper"
+                 th:if="${!#lists.isEmpty(order.orderProducts) and #lists.contains(order.orderProducts.![fabricSource?.name()],'SHOP')}">
+                <table class="product-table">
+                    <thead>
+                    <tr>
+                        <th class="fabric-product">Product</th>
+                        <th class="fabric-silai center">Silai</th>
+                        <th class="fabric-qty-main center">Qty</th>
+                        <th class="fabric-rate-main right">Rate</th>
+                        <th class="fabric-name">Fabric</th>
+                        <th class="fabric-qty center">Fabric Qty</th>
+                        <th class="fabric-rate right">Fabric Rate</th>
+                        <th class="fabric-amount right">Fabric Amount</th>
+                        <th class="fabric-total right">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="item : ${order.orderProducts}">
+                        <th:block
+                                th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
+                            <tr class="product-row">
+                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker">INVENTORY</span></td>
+                                <td class="center">-</td>
+                                <td class="center" th:text="${item.quantity}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td>-</td>
+                                <td class="center">-</td>
+                                <td class="right">-</td>
+                                <td class="right">-</td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>                            </tr>
+                        </th:block>
+                        <th:block
+                                th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
+                            <tr class="product-row">
+                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker">TAILORING</span></td>
+                                <td class="center" th:text="${item.silaiType}"></td>
+                                <td class="center" th:text="${item.quantity}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.silaiAmount,1, 'COMMA', 2, 'POINT')}"></td>
+                                <td>
+                                    <span th:if="${item.inventoryItem != null}" th:text="${item.inventoryItem.name}"></span>
+                                    <span th:if="${item.inventoryItem == null}">-</span>
+                                    <span class="fabric-marker" th:if="${item.inventoryItem != null}">SHOP FABRIC</span>
+                                </td>
+                                <td class="center"
+                                    th:text="${item.fabricQuantity != null ? item.fabricQuantity : '-'}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.fabricUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.fabricAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>                            </tr>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="total-row due-row">
-
-                <span class="total-label">
-                    Due Payment:
-                </span>
-
-                <span class="total-value format-amount"
-                      th:text="${order.duePayment}">
-                </span>
-
+            <div class="summary-wrapper">
+                <div class="summary-box">
+                    <div class="summary-row"><span class="summary-label">Total Amount</span><span class="summary-value" th:text="${#numbers.formatDecimal(order.totalProductAmount, 1, 'COMMA', 2, 'POINT')}"></span>
+                    </div>
+                    <div class="summary-row"><span class="summary-label">Advance Payment</span><span class="summary-value" th:text="${#numbers.formatDecimal(order.advancePayment, 1, 'COMMA', 2, 'POINT')}"></span>
+                    </div>
+                    <div class="summary-row due-row"><span class="summary-label">Due Payment</span><span
+                            class="summary-value" th:text="${#numbers.formatDecimal(order.duePayment, 1, 'COMMA', 2, 'POINT')}"></span></div>
+                </div>
             </div>
 
+            <div class="receipt-footer">
+                <p><strong>Thanks for your order!</strong></p>
+                <p>ہماری دکان پر آنے کا شکریہ</p>
+            </div>
         </div>
-
-        <!-- =========================
-             FOOTER
-        ========================= -->
-
-        <div class="receipt-footer">
-
-            <p>
-                <strong>Thanks for your order!</strong>
-            </p>
-
-            <p>
-                ہماری دکان پر آنے کا شکریہ
-            </p>
-
-        </div>
-
-        <!-- =========================
-             ACTION BUTTONS
-        ========================= -->
 
         <div class="receipt-actions no-print">
-
-            <button type="button"
-                    class="btn btn-success me-2"
-                    onclick="window.print()">
-
-                <i class="bi bi-printer me-1"></i>
-                Print
-
+            <button type="button" class="btn btn-success me-2" onclick="window.print()"><i
+                    class="bi bi-printer me-1"></i>Print
             </button>
-
-            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
-               class="btn btn-secondary">
-
-                <i class="bi bi-arrow-left-circle me-1"></i>
-                Back
-
-            </a>
-
+            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary"><i
+                    class="bi bi-arrow-left-circle me-1"></i>Back</a>
         </div>
-
     </div>
 </div>
-
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/common.js}"></script>
-
 </body>
-
 </html>

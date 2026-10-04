@@ -66,63 +66,6 @@ public class InventoryController {
         }
     }
 
-//    @GetMapping
-//    public String inventoryList(Model model) {
-//        try {
-//            log.info("Loading inventory item list");
-//
-//            List<InventoryItem> inventoryItems =
-//                    inventoryItemService.getAllActive();
-//
-//            model.addAttribute(
-//                    "inventoryItems",
-//                    inventoryItems
-//            );
-//
-//            Map<Long, BigDecimal> reservedStockMap =
-//                    inventoryItemService.getReservedStockMap(inventoryItems);
-//
-//            model.addAttribute(
-//                    "reservedStockMap",
-//                    reservedStockMap
-//            );
-//
-//            Map<Long, BigDecimal> availableStock = inventoryItemService.getAvailableStock(inventoryItems, reservedStockMap);
-//            model.addAttribute("availableStock", availableStock);
-//
-//            Map<Long, InventoryStockBatch> currentBatchMap =
-//                    inventoryItemService.getCurrentBatchMap(inventoryItems);
-//
-//            Map<Long, List<InventoryStockBatch>> stockBatches =
-//                    inventoryItemService.getStockBatchesByItems(inventoryItems);
-//
-//            model.addAttribute("stockBatches", stockBatches);
-//
-//            model.addAttribute("currentBatchMap", currentBatchMap);
-//
-//            log.info(
-//                    "Inventory item list loaded successfully. Total items: {}",
-//                    inventoryItems.size()
-//            );
-//            model.addAttribute("activePage", "inventory");
-//            return "inventory/list";
-//
-//        } catch (Exception e) {
-//
-//            log.error(
-//                    "Error while loading inventory item list",
-//                    e
-//            );
-//
-//            model.addAttribute(
-//                    "errorMessage",
-//                    "Unable to load inventory items."
-//            );
-//
-//            return "inventory/list";
-//        }
-//    }
-
     @GetMapping("/datatable")
     public ResponseEntity<Map<String, Object>> getInventoryDatatable(
             @RequestParam("draw") int draw,

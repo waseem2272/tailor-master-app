@@ -9,50 +9,8 @@
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 
     <style>
-        .order-summary-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            padding: 9px 0;
-            border-bottom: 1px solid #eeeeee;
-        }
-
-        .order-summary-label {
-            color: #6c757d;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .order-summary-value {
-            color: #212529;
-            font-size: 14px;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        .payment-summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eeeeee;
-            font-size: 15px;
-        }
-
-        .payment-summary-row:last-child {
-            border-bottom: none;
-        }
-
         .payment-summary-row strong {
             font-size: 16px;
-        }
-
-        .due-row {
-            font-size: 17px;
-            border-top: 2px solid #eeeeee;
-            margin-top: 5px;
-            padding-top: 13px;
         }
     </style>
 </head>
@@ -69,6 +27,14 @@
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi bi-plus-circle-fill me-2"></i> Create Order
                 </h2>
+
+                <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                    <ul class="mb-0">
+                        <li th:each="error : ${#fields.errors('*')}"
+                            th:text="${error}">
+                        </li>
+                    </ul>
+                </div>
 
                 <!-- Customer Information Card -->
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
@@ -426,7 +392,7 @@
                                     <th>Fabric Amount</th>
                                     <th>Silai Amount</th>
                                     <th>Unit Price</th>
-                                    <th>Quantity</th>
+                                    <th>Item Qty</th>
                                     <th>Subtotal</th>
                                     <th>Additional Notes</th>
                                     <th>Alteration</th>

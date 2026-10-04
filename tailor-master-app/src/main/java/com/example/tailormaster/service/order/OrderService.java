@@ -106,11 +106,13 @@ public class OrderService {
 
                 orderProductRepository.save(orderProduct);
 
-                orderInventoryService.consumeInventoryItem(
-                        savedOrder,
-                        orderProduct,
-                        currentUser
-                );
+                if (!orderProduct.isAlterationRequired()) {
+                    orderInventoryService.consumeInventoryItem(
+                            savedOrder,
+                            orderProduct,
+                            currentUser
+                    );
+                }
 
                 finalTotal = finalTotal.add(subtotal);
 
@@ -185,6 +187,8 @@ public class OrderService {
         BigDecimal due = finalTotal.subtract(advance);
 
         savedOrder.setTotalProductAmount(finalTotal);
+        // Advance paid at order creation is the paid amount
+        savedOrder.setPaidAmount(advance);
         savedOrder.setDuePayment(due);
 
         savedOrder = orderRepository.save(savedOrder);
@@ -263,7 +267,17 @@ public class OrderService {
                 logger.info("Completing order. orderId={}", existingOrder.getOrderId());
             } /* * PENDING -> CANCELLED * * Shop fabric was only reserved at order creation, * so release the reservation. */
             if (oldStatus == OrderStatus.PENDING && newStatus == OrderStatus.CANCELLED) {
-                logger.info("Releasing shop fabric reservations for cancelled order {}", existingOrder.getOrderId());
+                logger.info(
+                        "Releasing inventory reservations for cancelled order {}",
+                        existingOrder.getOrderId()
+                );
+
+                for (OrderProduct orderProduct : existingOrder.getOrderProducts()) {
+                    if (orderProduct.getStatus() == OrderProductStatus.PENDING_FOR_ALTERATION) {
+                        orderInventoryService.releaseOrderProductReservation(orderProduct);
+                    }
+                }
+
                 orderInventoryService.reverseShopFabric(existingOrder);
             }
             existingOrder.setStatus(newStatus);
@@ -370,11 +384,16 @@ public class OrderService {
                     orderProduct.setStatus(newStatus);
 
                 } else if (oldStatus == OrderProductStatus.PENDING_FOR_ALTERATION &&
-                        newStatus == OrderProductStatus.ALTERATION_IN_PROGRESS) {
+                    newStatus == OrderProductStatus.ALTERATION_IN_PROGRESS) {
 
-                    orderProduct.setStatus(newStatus);
+                orderInventoryService.consumeInventoryItem(
+                        order,
+                        orderProduct,
+                        currentUser
+                );
 
-                } else if (oldStatus == OrderProductStatus.ALTERATION_IN_PROGRESS &&
+                orderProduct.setStatus(newStatus);
+            } else if (oldStatus == OrderProductStatus.ALTERATION_IN_PROGRESS &&
                         newStatus == OrderProductStatus.COMPLETED) {
 
                     orderProduct.setStatus(newStatus);

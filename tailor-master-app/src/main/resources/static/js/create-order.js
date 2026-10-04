@@ -403,12 +403,13 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                 parseFloat(alterationFeeInput.value);
 
             if (!alterationFee || alterationFee <= 0) {
-                alterationFeeError.textContent =
-                    "Please enter a valid alteration fee.";
-
-                alterationFeeError.style.display = "block";
-                alterationFeeInput.focus();
-                return;
+                // alterationFeeError.textContent =
+                //     "Please enter a valid alteration fee.";
+                //
+                // alterationFeeError.style.display = "block";
+                // alterationFeeInput.focus();
+                // return;
+                alterationFee = 0;
             }
 
             alterationFeeError.textContent = "";
@@ -935,7 +936,9 @@ function renderTable() {
 
         const unitPriceText = isInventory
             ? (item.inventoryUnitPrice || 0).toFixed(2)
-            : "-";
+            : item.fabricSource === "SHOP"
+                ? (item.fabricSalePrice || 0).toFixed(2)
+                : "-";
 
         const subtotalText = item.amount.toFixed(2);
 
@@ -1170,7 +1173,9 @@ document.getElementById("createOrderButton")
                 <td>${item.fabricSource === "SHOP"
                     ? (item.fabricAmount || 0).toFixed(2)
                     : "-"}</td>
-                <td>${(item.silaiAmount || 0).toFixed(2)}</td>
+                <td>${item.fabricSource === "SHOP"
+                    ? (item.fabricSalePrice || 0).toFixed(2)
+                    : (item.silaiAmount || 0).toFixed(2)}</td>
                 <td>${item.qty}</td>
                 <td>${(item.amount || 0).toFixed(2)}</td>
                 <td>-</td>

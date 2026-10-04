@@ -486,12 +486,12 @@ public class OrderController {
                             ? orderProductDto.getAlterationFee()
                             : BigDecimal.ZERO;
 
-                    if (alterationRequired &&
-                            alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new IllegalArgumentException(
-                                "Alteration fee must be greater than zero when alteration is required."
-                        );
-                    }
+//                    if (alterationRequired &&
+//                            alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
+//                        throw new IllegalArgumentException(
+//                                "Alteration fee must be greater than zero when alteration is required."
+//                        );
+//                    }
 
                     if (!alterationRequired) {
                         alterationFee = BigDecimal.ZERO;
@@ -679,24 +679,43 @@ public class OrderController {
                     result.rejectValue("orderProducts[" + i + "].inventoryItemId", "error.orderProducts[" + i + "].inventoryItemId", "Selected inventory item is inactive.");
                     continue;
                 }
-                BigDecimal stock = inventoryItem.getQuantity() != null ? inventoryItem.getQuantity() : BigDecimal.ZERO;
+                BigDecimal stock = inventoryItem.getQuantity() != null
+                        ? inventoryItem.getQuantity()
+                        : BigDecimal.ZERO;
+
                 BigDecimal requestedQuantity = BigDecimal.valueOf(product.getQuantity());
-                BigDecimal reservedQuantity = orderProductService.getReservedQuantity(inventoryItem.getId(), FabricSource.SHOP, OrderStatus.PENDING);
-                BigDecimal availableStock = stock.subtract(reservedQuantity);
+
+                BigDecimal reservedQuantity =
+                        orderInventoryService.getReservedQuantity(
+                                inventoryItem.getId()
+                        );
+
+                BigDecimal availableStock =
+                        stock.subtract(reservedQuantity).max(BigDecimal.ZERO);
+
+                logger.info(
+                        "Inventory stock validation: inventoryItemId={}, stock={}, requestedQuantity={}, reservedQuantity={}, availableStock={}",
+                        inventoryItem.getId(),
+                        stock,
+                        requestedQuantity,
+                        reservedQuantity,
+                        availableStock
+                );
+
                 if (requestedQuantity.compareTo(availableStock) > 0) {
                     result.rejectValue("orderProducts[" + i + "].quantity", "error.orderProducts[" + i + "].quantity", "Insufficient inventory stock. Available: " + availableStock.max(BigDecimal.ZERO).stripTrailingZeros().toPlainString());
                     continue;
                 }
                 boolean alterationRequired = product.isAlterationRequired();
                 BigDecimal alterationFee = product.getAlterationFee() != null ? product.getAlterationFee() : BigDecimal.ZERO;
-                if (alterationRequired) {
-                    if (alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
-                        result.rejectValue("orderProducts[" + i + "].alterationFee", "error.orderProducts[" + i + "].alterationFee", "Alteration fee must be greater than zero when alteration is required.");
-                        continue;
-                    }
-                } else {
-                    alterationFee = BigDecimal.ZERO;
-                }
+//                if (alterationRequired) {
+//                    if (alterationFee.compareTo(BigDecimal.ZERO) <= 0) {
+//                        result.rejectValue("orderProducts[" + i + "].alterationFee", "error.orderProducts[" + i + "].alterationFee", "Alteration fee must be greater than zero when alteration is required.");
+//                        continue;
+//                    }
+//                } else {
+//                    alterationFee = BigDecimal.ZERO;
+//                }
                 BigDecimal inventoryAmount;
                 try {
                     OrderInventoryPreviewDto preview = orderInventoryService.previewInventoryAmount(inventoryItem.getId(), requestedQuantity);
@@ -1123,6 +1142,7 @@ public class OrderController {
         try {
             orderService.updateOrderStatus(dto);
 
+            assert dto != null;
             logger.info(
                     "Order status updated successfully for ID: {}",
                     dto.getOrderId()
