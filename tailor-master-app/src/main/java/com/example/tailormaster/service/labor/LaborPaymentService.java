@@ -25,44 +25,43 @@ public class LaborPaymentService {
         return laborPaymentRepository.findByLaborId(laborId);
     }
 
-    //    public BigDecimal getTotalPaidByLaborId(Long laborId) {
-//        return laborPaymentRepository.sumByLaborId(laborId).orElse(BigDecimal.ZERO);
-//    }
+    public BigDecimal getTotalWorkByLaborId(Long laborId) {
+        return laborPaymentRepository.sumWorkByLaborId(laborId);
+    }
 
-    public BigDecimal getTotalRegularPaidByLaborId(Long laborId) {
-        return laborPaymentRepository.sumRegularByLaborId(laborId).orElse(BigDecimal.ZERO);
+    public BigDecimal getTotalSalaryByLaborId(Long laborId) {
+        return laborPaymentRepository.sumSalaryByLaborId(laborId);
+    }
+
+    public BigDecimal getTotalAdvanceByLaborId(Long laborId) {
+        return laborPaymentRepository.sumAdvanceByLaborId(laborId);
     }
 
     public BigDecimal getTotalPaidByLaborId(Long laborId) {
-        return laborPaymentRepository.sumPaidByLaborId(laborId).orElse(BigDecimal.ZERO);
+        return laborPaymentRepository.sumTotalPaidByLaborId(laborId);
     }
 
-    public BigDecimal getTotalAdvancePaidByLaborId(Long laborId) {
-        return laborPaymentRepository.sumAdvanceByLaborId(laborId).orElse(BigDecimal.ZERO);
-    }
-
-    public BigDecimal getTotalBorrowPaidByLaborId(Long laborId) {
-        return laborPaymentRepository.sumBorrowByLaborId(laborId).orElse(BigDecimal.ZERO);
+    public BigDecimal getLaborBalance(Long laborId) {
+        return laborPaymentRepository.findLaborBalance(laborId);
     }
 
     public LaborPayment savePayment(BigDecimal amount, LaborPayment payment) {
         try {
-            switch (payment.getPaymentType()) {
-                case REGULAR:
-                case PAID:
-                    payment.setWorkAmount(amount);
-                    payment.setDeductions(BigDecimal.ZERO);
-                    break;
-                case ADVANCE:
-                case BORROW:
-                    payment.setDeductions(amount);
-                    payment.setWorkAmount(BigDecimal.ZERO);
-                    break;
+            if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("Payment amount must be greater than zero.");
             }
+
+            if (payment.getPaymentType() == null) {
+                throw new IllegalArgumentException("Payment type is required.");
+            }
+
+            payment.setAmount(amount);
+
             return laborPaymentRepository.save(payment);
+
         } catch (Exception e) {
             logger.error("Error saving labor payment: {}", e.getMessage(), e);
-            throw new RuntimeException("Error saving labor payment:", e);
+            throw new RuntimeException("Error saving labor payment.", e);
         }
     }
 
@@ -70,26 +69,15 @@ public class LaborPaymentService {
         List<LaborPayment> allPayments = laborPaymentRepository.findAll();
         Map<Long, BigDecimal> balanceMap = new HashMap<>();
 
-        for (LaborPayment lp : allPayments) {
-            Long laborId = lp.getLabor().getId();
+        for (LaborPayment payment : allPayments) {
+            Long laborId = payment.getLabor().getId();
 
-            BigDecimal regularPaid = getTotalRegularPaidByLaborId(laborId);
+            BigDecimal balance = getLaborBalance(laborId);
 
-            BigDecimal totalPaid = getTotalPaidByLaborId(laborId);
-            BigDecimal remainingBalance = regularPaid.subtract(totalPaid);
-
-//            BigDecimal work = lp.getWorkAmount() != null ? lp.getWorkAmount() : BigDecimal.ZERO;
-//            BigDecimal ded = lp.getDeductions() != null ? lp.getDeductions() : BigDecimal.ZERO;
-//            BigDecimal paid = lp.getWorkAmount() != null ? lp.getWorkAmount() : BigDecimal.ZERO;
-//            BigDecimal net = paid.add(ded).subtract(work);
-            balanceMap.put(laborId, remainingBalance);
+            balanceMap.put(laborId, balance);
         }
 
         return balanceMap;
-    }
-
-    public BigDecimal getLaborBalance(Long laborId) {
-        return this.laborPaymentRepository.findLaborBalance(laborId);
     }
 
     public Optional<LaborPayment> getLaborPayment(Long laborPaymentId) {

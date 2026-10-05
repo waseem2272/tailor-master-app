@@ -30,41 +30,90 @@
                         <i class="bi bi-info-circle me-2"></i> Labor Information
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row g-3">
+
                             <!-- Name -->
-                            <div class="col-md-6 mb-3">
-                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                <input type="text" id="name" name="name" th:field="*{name}" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" class="form-control" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Invalid Name.</div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">
+                                    <i class="bi bi-person me-1"></i> Name
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       id="name"
+                                       th:field="*{name}"
+                                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                                       class="form-control"
+                                       placeholder="Enter labor name"
+                                       required>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('name')}"
+                                     th:errors="*{name}">
+                                    Invalid Name.
+                                </div>
                             </div>
 
                             <!-- Contact -->
-                            <div class="col-md-6 mb-3">
-                                <label for="contact" class="form-label">Contact <span class="text-danger">*</span></label>
-                                <input type="text" id="contact" name="contact" th:field="*{contact}" pattern="^03[0-9]{9}$" th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'" class="form-control" placeholder="e.g., 03001234567" required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('contact')}" th:errors="*{contact}">Invalid contact.</div>
+                            <div class="col-md-6">
+                                <label for="contact" class="form-label">
+                                    <i class="bi bi-telephone me-1"></i> Contact
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       id="contact"
+                                       th:field="*{contact}"
+                                       pattern="^03[0-9]{9}$"
+                                       th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'"
+                                       class="form-control"
+                                       placeholder="e.g., 03001234567"
+                                       required>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('contact')}"
+                                     th:errors="*{contact}">
+                                    Invalid contact.
+                                </div>
                             </div>
 
                             <!-- Skills -->
-                            <div class="col-md-6 mb-3">
-                                <label for="skills" class="form-label">Skills</label>
-                                <input type="text" id="skills" name="skills" th:field="*{skills}" class="form-control">
+                            <div class="col-md-6">
+                                <label for="skills" class="form-label">
+                                    <i class="bi bi-tools me-1"></i> Skills
+                                </label>
+                                <input type="text"
+                                       id="skills"
+                                       th:field="*{skills}"
+                                       class="form-control"
+                                       placeholder="e.g., Shalwar Kameez, Pant, Coat">
                             </div>
 
                             <!-- Join Date -->
-                            <div class="col-md-6 mb-3">
-                                <label for="joinDate" class="form-label">Join Date</label>
-                                <input type="date" id="joinDate" name="joinDate" th:value="${#temporals.format(labor.joinDate, 'yyyy-MM-dd')}"
+                            <!-- Join Date -->
+                            <div class="col-md-6">
+                                <label for="joinDate" class="form-label">
+                                    <i class="bi bi-calendar-check me-1"></i> Join Date
+                                </label>
+                                <input type="date"
+                                       id="joinDate"
+                                       name="joinDate"
+                                       th:value="${labor.joinDate != null ? #temporals.format(labor.joinDate, 'yyyy-MM-dd') : ''}"
                                        class="form-control">
                             </div>
 
                             <!-- Status -->
-                            <div class="col-md-6 mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select id="status" name="status" th:field="*{status}" class="form-select">
-                                    <option th:each="s : ${labor.status?.values()}" th:value="${s}" th:text="${s}">Active</option>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">
+                                    <i class="bi bi-toggle-on me-1"></i> Status
+                                </label>
+                                <select id="status"
+                                        th:field="*{status}"
+                                        class="form-select">
+                                    <option th:each="s : ${labor.status?.values()}"
+                                            th:value="${s}"
+                                            th:text="${s}">
+                                        Active
+                                    </option>
                                 </select>
                             </div>
+
                         </div>
                     </div>
                 </div>

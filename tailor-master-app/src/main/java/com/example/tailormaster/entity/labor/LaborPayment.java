@@ -3,6 +3,7 @@ package com.example.tailormaster.entity.labor;
 import com.example.tailormaster.entity.BaseEntity;
 import com.example.tailormaster.enums.LaborPaymentType;
 import com.example.tailormaster.enums.PaymentType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,8 +18,9 @@ import java.time.LocalDate;
 @ToString
 public class LaborPayment extends BaseEntity {
 
+    @JsonIgnore
     @ManyToOne(optional = false)
-    @JoinColumn(name = "labor_id")
+    @JoinColumn(name = "labor_id", nullable = false)
     private Labor labor;
 
     @Column(nullable = false)
@@ -28,8 +30,8 @@ public class LaborPayment extends BaseEntity {
     @Column(nullable = false)
     private LaborPaymentType paymentType;
 
-    private BigDecimal workAmount;
-    private BigDecimal deductions;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal amount;
 
     private String remarks;
 }
