@@ -23,7 +23,7 @@ public class InventoryColorService {
     }
 
     public List<InventoryColor> getAllColors(User user) {
-        return inventoryColorRepository.findByUserOrderByNameAsc(user);
+        return inventoryColorRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     public Optional<InventoryColor> findById(User user, Long id) {

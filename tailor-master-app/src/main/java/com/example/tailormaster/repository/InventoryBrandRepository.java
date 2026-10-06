@@ -17,7 +17,7 @@ public interface InventoryBrandRepository extends JpaRepository<InventoryBrand, 
 
     List<InventoryBrand> findByUserAndActiveTrueOrderByNameAsc(User user);
 
-    List<InventoryBrand> findByUserOrderByNameAsc(User user);
+    List<InventoryBrand> findByUserOrderByCreatedAtDesc(User user);
 
     Optional<InventoryBrand> findByUserAndId(User user, Long id);
 }

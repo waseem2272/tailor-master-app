@@ -30,5 +30,5 @@ public interface InventoryDesignRepository extends JpaRepository<InventoryDesign
             Long id
     );
 
-    List<InventoryDesign> findByUserOrderByNameAsc(User user);
+    List<InventoryDesign> findByUserOrderByCreatedAtDesc(User user);
 }

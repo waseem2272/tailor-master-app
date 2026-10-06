@@ -126,6 +126,6 @@ public class InventoryDesignService {
     }
 
     public List<InventoryDesign> getAllDesigns(User user) {
-        return inventoryDesignRepository.findByUserOrderByNameAsc(user);
+        return inventoryDesignRepository.findByUserOrderByCreatedAtDesc(user);
     }
 }

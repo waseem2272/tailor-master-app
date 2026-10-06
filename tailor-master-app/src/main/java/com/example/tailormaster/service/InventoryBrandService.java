@@ -24,7 +24,7 @@ public class InventoryBrandService {
                 throw new IllegalArgumentException("User is required");
             }
 
-            return inventoryBrandRepository.findByUserOrderByNameAsc(user);
+            return inventoryBrandRepository.findByUserOrderByCreatedAtDesc(user);
 
         } catch (IllegalArgumentException e) {
             log.warn("Invalid request while fetching brands. User ID: {}, Message: {}",

@@ -30,5 +30,5 @@ public interface InventoryColorRepository extends JpaRepository<InventoryColor, 
             Long id
     );
 
-    List<InventoryColor> findByUserOrderByNameAsc(User user);
+    List<InventoryColor> findByUserOrderByCreatedAtDesc(User user);
 }

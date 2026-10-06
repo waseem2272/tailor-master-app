@@ -17,7 +17,7 @@ public interface InventoryCategoryRepository extends JpaRepository<InventoryCate
     List<InventoryCategory> findByUserAndItemTypeAndActiveTrueOrderByNameAsc(
             User user, ItemType itemType);
 
-    List<InventoryCategory> findByUserOrderByNameAsc(User user);
+    List<InventoryCategory> findByUserOrderByCreatedAtDesc(User user);
 
     boolean existsByUserAndNameIgnoreCaseAndItemType(
             User user, String name, ItemType itemType);

@@ -25,7 +25,7 @@ public class InventoryCategoryService {
                 throw new IllegalArgumentException("User is required");
             }
 
-            return inventoryCategoryRepository.findByUserOrderByNameAsc(user);
+            return inventoryCategoryRepository.findByUserOrderByCreatedAtDesc(user);
         } catch (IllegalArgumentException e) {
             log.warn("Invalid request while fetching categories. User ID: {}, Message: {}",
                     user != null ? user.getId() : null, e.getMessage());
