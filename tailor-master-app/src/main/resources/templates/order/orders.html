@@ -597,14 +597,19 @@
                 } else {
                     typeBadge = ` <span class="badge bg-primary"> <i class="bi bi-scissors me-1"></i>Tailoring </span> `;
                 }
-                let details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity}</strong> </span> `;
+                let details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity} ${op.unit}</strong> </span> `;
+                if (op.fabricSource === 'SHOP') {
+                    details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity}</strong> </span> `;
+                }
+
                 if (type === 'TAILORING') {
                     const silaiType = op.silaiType || '-';
                     const silaiAmount = parseFloat(op.silaiAmount || op.amount) || 0;
                     details += ` <span class="me-3"> <i class="bi bi-scissors me-1"></i> Silai: <strong>${escapeHtml(silaiType)}</strong> </span> <span> Silai Amount: <strong>${formatAmount(silaiAmount)}</strong> </span> `;
                     if (op.fabricSource === 'SHOP') {
                         const fabricQuantity = parseFloat(op.fabricQuantity) || 0;
-                        details += ` <div class="mt-1"> <i class="bi bi-layers me-1"></i> Shop Fabric ${op.inventoryItemName ? `: <strong>${escapeHtml(op.inventoryItemName)}</strong>` : ''} ${fabricQuantity > 0 ? ` | Qty: <strong>${fabricQuantity}</strong>` : ''} </div> `;
+                        const unitPrice = parseFloat(op.fabricUnitPrice);
+                        details += ` <div class="mt-1"> <i class="bi bi-layers me-1"></i> Shop Fabric ${op.inventoryItemName ? `: <strong>${escapeHtml(op.inventoryItemName)}</strong>` : ''} ${fabricQuantity > 0 ? ` | Qty: <strong>${fabricQuantity}  ${op.unit}</strong>` : ''} ${unitPrice > 0 ? ` | Unit Price: <strong>${formatAmount(unitPrice)}</strong>` : ''}</div> `;
                     } else if (op.fabricSource === 'CUSTOMER') {
                         details += ` <div class="mt-1"> <i class="bi bi-person me-1"></i> Customer Fabric </div> `;
                     }

@@ -1244,7 +1244,13 @@ public class OrderService {
             Map<String, Object> opMap = new HashMap<>();
             OrderProductType type = op.getOrderProductType();
             opMap.put("orderProductType", type != null ? type.name() : null);
+            String unit = "";
+            if (op.getInventoryItem() != null) {
+                unit = op.getInventoryItem().getUnit().name();
+            }
+
             opMap.put("quantity", op.getQuantity());
+            opMap.put("unit", unit);
             opMap.put("subtotal", op.getSubtotal());
             if (type == OrderProductType.INVENTORY) {
                 String productName = op.getInventoryItem() != null ? op.getInventoryItem().getName() : "Unknown Inventory Item";
