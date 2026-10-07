@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Backup History</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+
+    <div class="main-content container-fluid">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-cloud-arrow-up-fill me-2"></i>
+                Backup History
+            </h2>
+
+            <a th:href="@{/backup/settings}"
+               class="btn btn-success rounded-pill shadow-sm">
+                <i class="bi bi-gear me-1"></i>
+                Backup Settings
+            </a>
+
+        </div>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}"
+             class="row justify-content-center">
+
+            <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3"
+                 role="alert">
+
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${errorMessage}"
+             class="row justify-content-center">
+
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
+                 role="alert">
+
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm border-success border-bottom border-3">
+
+            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                <i class="bi bi-clock-history me-2"></i>
+                Backup History
+            </div>
+
+            <div class="card-body">
+
+                <table id="backupHistoryTable"
+                       class="table table-bordered table-hover table-striped">
+
+                    <thead class="table-success text-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Date / Time</th>
+                        <th>File Name</th>
+                        <th>File Size</th>
+                        <th>Local Backup</th>
+                        <th>Google Drive</th>
+                        <th>Status</th>
+                        <th>Error Message</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="backup, iterStat : ${history}">
+
+                        <td th:text="${iterStat.index + 1}"></td>
+
+                        <td th:text="${backup.startedAt != null
+                                ? #temporals.format(backup.startedAt, 'yyyy-MM-dd hh:mm a')
+                                : '-'}">
+                        </td>
+
+                        <td th:text="${backup.backupFileName != null
+                                ? backup.backupFileName
+                                : '-'}">
+                        </td>
+
+                        <td>
+    <span th:if="${backup.fileSize == null}">
+        -
+    </span>
+
+                            <span th:if="${backup.fileSize != null and backup.fileSize < 1024}"
+                                  th:text="${backup.fileSize + ' B'}">
+    </span>
+
+                            <span th:if="${backup.fileSize != null and backup.fileSize >= 1024 and backup.fileSize < 1048576}"
+                                  th:text="${#numbers.formatDecimal(backup.fileSize / 1024.0, 1, 2) + ' KB'}">
+    </span>
+
+                            <span th:if="${backup.fileSize != null and backup.fileSize >= 1048576}"
+                                  th:text="${#numbers.formatDecimal(backup.fileSize / 1048576.0, 1, 2) + ' MB'}">
+    </span>
+                        </td>
+
+                        <td>
+
+                            <span th:if="${backup.localBackupStatus != null
+                                    and backup.localBackupStatus.name() == 'SUCCESS'}"
+                                  class="badge bg-success">
+                                Success
+                            </span>
+
+                            <span th:if="${backup.localBackupStatus != null
+                                    and backup.localBackupStatus.name() == 'FAILED'}"
+                                  class="badge bg-danger">
+                                Failed
+                            </span>
+
+                            <span th:if="${backup.localBackupStatus == null
+                                    or backup.localBackupStatus.name() == 'NOT_ATTEMPTED'}"
+                                  class="badge bg-secondary">
+                                Not Attempted
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span th:if="${backup.googleDriveStatus != null
+                                    and backup.googleDriveStatus.name() == 'SUCCESS'}"
+                                  class="badge bg-success">
+                                Success
+                            </span>
+
+                            <span th:if="${backup.googleDriveStatus != null
+                                    and backup.googleDriveStatus.name() == 'FAILED'}"
+                                  class="badge bg-danger">
+                                Failed
+                            </span>
+
+                            <span th:if="${backup.googleDriveStatus == null
+                                    or backup.googleDriveStatus.name() == 'NOT_ATTEMPTED'}"
+                                  class="badge bg-secondary">
+                                Not Attempted
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span th:if="${backup.status != null
+                                    and backup.status.name() == 'SUCCESS'}"
+                                  class="badge bg-success">
+                                Success
+                            </span>
+
+                            <span th:if="${backup.status != null
+                                    and backup.status.name() == 'FAILED'}"
+                                  class="badge bg-danger">
+                                Failed
+                            </span>
+
+                            <span th:if="${backup.status == null
+                                    or backup.status.name() == 'NOT_ATTEMPTED'}"
+                                  class="badge bg-secondary">
+                                Not Attempted
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span th:if="${backup.errorMessage != null
+                                    and !backup.errorMessage.isBlank()}"
+                                  th:text="${backup.errorMessage}">
+                            </span>
+
+                            <span th:if="${backup.errorMessage == null
+                                    or backup.errorMessage.isBlank()}">
+                                -
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div th:if="${history == null or history.isEmpty()}"
+                     class="text-center text-muted py-3">
+                    No backup history found.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<!--
+<div th:replace="~{fragments/footer :: footer}"></div>
+-->
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<script th:inline="javascript">
+    var contextPath = [[@{/}]];
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#backupHistoryTable').DataTable();
+    });
+</script>
+
+</body>
+</html>

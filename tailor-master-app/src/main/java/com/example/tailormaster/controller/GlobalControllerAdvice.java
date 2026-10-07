@@ -65,6 +65,10 @@ public class GlobalControllerAdvice {
         } else if (uri.contains("/inventory/designs")) {
 
             model.addAttribute("activePage", "designs");
+        } else if (uri.contains("/backup/settings")) {
+            model.addAttribute("activePage", "settings");
+        } else if (uri.contains("/backup/history")) {
+            model.addAttribute("activePage", "history");
         }
 
 

@@ -82,6 +82,28 @@
             <i class="bi bi-person-circle me-2"></i>My Profile
         </a>
 
+        <a id="backup-toggle" href="#backup-submenu" data-bs-toggle="collapse" role="button"
+           th:aria-expanded="${activePage != null and activePage.startsWith('backup')}"
+           aria-controls="backup-submenu" sec:authorize="hasRole('ROLE_ADMIN')">
+            <i class="bi bi-cloud-arrow-up me-2"></i>Backup
+            <i id="backup-toggle-arrow" class="backup-arrow bi bi-chevron-down float-end"></i>
+        </a>
+
+        <div id="backup-submenu" class="collapse"
+             th:classappend="${activePage != null and activePage.startsWith('backup')} ? ' show'"
+             sec:authorize="hasRole('ROLE_ADMIN')">
+
+            <a th:href="@{/backup/settings}"
+               th:classappend="${activePage == 'backup/settings'} ? ' active'">
+                <i class="bi bi-gear me-2"></i>Backup Settings
+            </a>
+
+            <a th:href="@{/backup/history}"
+               th:classappend="${activePage == 'backup/history'} ? ' active'">
+                <i class="bi bi-clock-history me-2"></i>Backup History
+            </a>
+        </div>
+
         <a th:href="@{/logout}">
             <i class="bi bi-box-arrow-right me-2"></i>Logout
         </a>

@@ -22,23 +22,17 @@ import java.util.Set;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-//    @NotBlank(message = "Username is required")
     private String username;
 
-//    @NotBlank(message = "Password is required")
     @ToString.Exclude
     private String password;
 
     @NotBlank(message = "Full name is required")
     private String fullName;
 
-//    private String fathersName;
-
     @NotBlank(message = "Phone Number 1 is required")
-//    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 1 must be 11 digits and start with 03")
     private String phone1;
 
-//    @Pattern(regexp = "^03[0-9]{9}$", message = "Phone Number 2 must be 11 digits and start with 03")
     private String phone2;
 
     @NotBlank(message = "Shop Name is required")
@@ -64,13 +58,14 @@ public class User extends BaseEntity {
 
     private boolean enabled;
 
+    private boolean inventoryEnabled = true;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-//    @NotEmpty(message = "At least one role must be selected.") // Validation annotation
     @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
@@ -95,4 +90,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<Labor> labors;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private UserBackupSettings backupSettings;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<BackupHistory> backupHistories;
 }

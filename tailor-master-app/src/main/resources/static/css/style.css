@@ -100,6 +100,37 @@
     transform: rotate(180deg);
 }
 
+/* =========================
+   Backup Submenu
+   ========================= */
+
+.sidebar #backup-toggle {
+    position: relative;
+}
+
+.sidebar #backup-toggle-arrow {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.sidebar #backup-submenu {
+    padding-left: 20px !important;
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.sidebar #backup-submenu a {
+    padding: 8px 20px 8px 20px !important;
+    font-size: 14px;
+}
+
+.sidebar #backup-submenu a i {
+    font-size: 14px;
+}
+
+#backup-toggle[aria-expanded="true"] .backup-arrow {
+    transform: rotate(180deg);
+}
+
 
 /* =========================
    Main Content

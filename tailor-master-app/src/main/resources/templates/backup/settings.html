@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Backup Settings</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content">
+        <div class="container-fluid">
+
+            <h2 class="page-title d-flex align-items-center mb-4">
+                <i class="bi bi-database-fill-gear text-success me-2"></i>
+                Database Backup
+            </h2>
+
+            <div th:if="${successMessage}" class="row justify-content-center">
+                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3"
+                     role="alert">
+
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+
+                    <button type="button"
+                            class="btn-close bg-light"
+                            data-bs-dismiss="alert"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div th:if="${errorMessage}" class="row justify-content-center">
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
+                     role="alert">
+
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+
+                    <button type="button"
+                            class="btn-close bg-light"
+                            data-bs-dismiss="alert"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4">
+
+                <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                    <i class="bi bi-shield-check me-2 fs-5"></i>
+                    Backup Settings
+                </div>
+
+                <div class="card-body">
+
+                    <form th:action="@{/backup/settings}"
+                          th:object="${settings}"
+                          method="post"
+                          id="backupSettingsForm">
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:field="*{automaticBackupEnabled}"
+                                           id="automaticBackupEnabled">
+
+                                    <label class="form-check-label fw-semibold"
+                                           for="automaticBackupEnabled">
+                                        Automatic Backup
+                                    </label>
+                                </div>
+
+                                <div class="form-text">
+                                    Automatically create a backup every day at the selected time.
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label for="backupTime" class="form-label fw-semibold">
+                                    <i class="bi bi-clock field-icon"></i>
+                                    Backup Time
+                                </label>
+
+                                <input type="time"
+                                       th:field="*{backupTime}"
+                                       id="backupTime"
+                                       class="form-control">
+
+                                <div class="form-text">
+                                    The automatic backup will run at this time every day.
+                                </div>
+
+                            </div>
+
+                            <div class="col-12">
+                                <hr>
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:field="*{localBackupEnabled}"
+                                           id="localBackupEnabled">
+
+                                    <label class="form-check-label fw-semibold"
+                                           for="localBackupEnabled">
+                                        Local Backup
+                                    </label>
+                                </div>
+
+                                <div class="form-text">
+                                    Save a backup copy on this computer.
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label for="localBackupPath" class="form-label fw-semibold">
+                                    <i class="bi bi-folder2-open field-icon"></i>
+                                    Local Backup Location
+                                </label>
+
+                                <input type="text"
+                                       th:field="*{localBackupPath}"
+                                       id="localBackupPath"
+                                       class="form-control"
+                                       placeholder="D:\TailorMasterBackups">
+
+                                <div class="form-text">
+                                    Select the folder where local backups will be stored.
+                                </div>
+
+                            </div>
+
+                            <div class="col-12">
+                                <hr>
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           th:field="*{googleDriveEnabled}"
+                                           id="googleDriveEnabled">
+
+                                    <label class="form-check-label fw-semibold"
+                                           for="googleDriveEnabled">
+                                        Google Drive Backup
+                                    </label>
+                                </div>
+
+                                <div class="form-text">
+                                    Upload a backup copy to your Google Drive.
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-google field-icon"></i>
+                                    Google Drive Status
+                                </label>
+
+                                <div class="mt-2">
+                                    <span th:if="${settings.googleDriveConnected}"
+                                          class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Connected
+                                    </span>
+
+                                    <span th:unless="${settings.googleDriveConnected}"
+                                          class="badge bg-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        Not Connected
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <div class="alert alert-light border mb-0">
+                                    <i class="bi bi-info-circle text-success me-2"></i>
+                                    Google Drive connection will be configured separately.
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label for="retentionDays" class="form-label fw-semibold">
+                                    <i class="bi bi-calendar-range field-icon"></i>
+                                    Keep Backups For
+                                </label>
+
+                                <div class="input-group">
+                                    <input type="number"
+                                           th:field="*{retentionDays}"
+                                           id="retentionDays"
+                                           class="form-control"
+                                           min="1"
+                                           placeholder="30">
+                                    <span class="input-group-text">Days</span>
+                                </div>
+
+                                <div class="form-text">
+                                    Older backups will be removed automatically.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <button type="submit"
+                                    class="btn btn-success rounded-pill shadow-sm px-4">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Save Settings
+                            </button>
+
+                            <button type="submit"
+                                    class="btn btn-success"
+                                    th:formaction="@{/backup/now}">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                Backup Now
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/dashboard-notifications.js}"></script>
+
+</body>
+</html>
