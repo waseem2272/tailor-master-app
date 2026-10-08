@@ -27,6 +27,7 @@ public class BackupServiceImpl implements BackupService {
     private final BackupHistoryRepository backupHistoryRepository;
     private final DataSource dataSource;
     private final Environment environment;
+    private final GoogleDriveService googleDriveService;
 
     @Override
     public BackupHistory createLocalBackup(User user) {
@@ -47,7 +48,6 @@ public class BackupServiceImpl implements BackupService {
                 backupHistoryRepository.save(history);
 
                 log.info("Local backup is disabled for user: {}", user.getUsername());
-                backupHistoryRepository.save(history);
                 return history;
             }
 
@@ -160,9 +160,42 @@ public class BackupServiceImpl implements BackupService {
             history.setBackupFileName(fileName);
             history.setFileSize(fileSize);
             history.setLocalBackupStatus(BackupStatus.SUCCESS);
-            history.setStatus(BackupStatus.SUCCESS);
-            history.setCompletedAt(LocalDateTime.now());
 
+            if (settings.isGoogleDriveEnabled()
+                    && settings.isGoogleDriveConnected()) {
+
+                try {
+                    googleDriveService.uploadBackup(user, backupFile.toFile());
+
+                    history.setGoogleDriveStatus(BackupStatus.SUCCESS);
+                    history.setStatus(BackupStatus.SUCCESS);
+
+                    log.info(
+                            "Google Drive backup completed successfully for user: {}",
+                            user.getUsername()
+                    );
+
+                } catch (Exception e) {
+                    log.error(
+                            "Google Drive backup failed for user: {}",
+                            user.getUsername(),
+                            e
+                    );
+
+                    history.setGoogleDriveStatus(BackupStatus.FAILED);
+                    history.setStatus(BackupStatus.PARTIAL_SUCCESS);
+                    history.setErrorMessage(
+                            "Local backup succeeded, but Google Drive upload failed: "
+                                    + e.getMessage()
+                    );
+                }
+
+            } else {
+                history.setGoogleDriveStatus(BackupStatus.NOT_ATTEMPTED);
+                history.setStatus(BackupStatus.SUCCESS);
+            }
+
+            history.setCompletedAt(LocalDateTime.now());
             backupHistoryRepository.save(history);
 
             log.info(

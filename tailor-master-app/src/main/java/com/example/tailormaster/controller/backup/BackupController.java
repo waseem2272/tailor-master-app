@@ -6,16 +6,14 @@ import com.example.tailormaster.entity.UserBackupSettings;
 import com.example.tailormaster.enums.BackupStatus;
 import com.example.tailormaster.repository.backup.BackupHistoryRepository;
 import com.example.tailormaster.service.backup.BackupService;
+import com.example.tailormaster.service.backup.GoogleDriveService;
 import com.example.tailormaster.service.backup.UserBackupSettingsService;
 import com.example.tailormaster.util.AuthenticatedUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -30,6 +28,7 @@ public class BackupController {
     private final AuthenticatedUserService authenticatedUserService;
     private final BackupService backupService;
     private final BackupHistoryRepository backupHistoryRepository;
+    private final GoogleDriveService googleDriveService;
 
     @GetMapping("/settings")
     public String settings(Model model) {
@@ -81,6 +80,11 @@ public class BackupController {
                         "successMessage",
                         "Database backup completed successfully."
                 );
+            } else if (history.getStatus() == BackupStatus.PARTIAL_SUCCESS) {
+                redirectAttributes.addFlashAttribute(
+                        "warningMessage",
+                        "Local backup completed successfully, but Google Drive backup failed."
+                );
             } else {
                 redirectAttributes.addFlashAttribute(
                         "errorMessage",
@@ -111,5 +115,62 @@ public class BackupController {
             log.error("Error loading backup history", e);
             return "redirect:/backup/settings";
         }
+    }
+
+    @GetMapping("/google/connect")
+    public String connectGoogleDrive() {
+        try {
+            User user = authenticatedUserService.getCurrentUser();
+            String authorizationUrl = googleDriveService.getAuthorizationUrl(user);
+            return "redirect:" + authorizationUrl;
+        } catch (Exception e) {
+            log.error("Error connecting Google Drive", e);
+            return "redirect:/backup/settings";
+        }
+    }
+
+    @GetMapping("/google/callback")
+    public String googleCallback(@RequestParam("code") String code,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            User user = authenticatedUserService.getCurrentUser();
+
+            googleDriveService.handleCallback(user, code);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Google Drive connected successfully."
+            );
+        } catch (Exception e) {
+            log.error("Error handling Google Drive callback", e);
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Unable to connect Google Drive."
+            );
+        }
+
+        return "redirect:/backup/settings";
+    }
+
+    @PostMapping("/google/disconnect")
+    public String disconnectGoogleDrive(RedirectAttributes redirectAttributes) {
+        try {
+            User user = authenticatedUserService.getCurrentUser();
+
+            googleDriveService.disconnect(user);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Google Drive disconnected successfully."
+            );
+        } catch (Exception e) {
+            log.error("Error disconnecting Google Drive", e);
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Unable to disconnect Google Drive."
+            );
+        }
+
+        return "redirect:/backup/settings";
     }
 }

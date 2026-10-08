@@ -34,7 +34,6 @@
 
         </div>
 
-        <!-- Success Message -->
         <div th:if="${successMessage}"
              class="row justify-content-center">
 
@@ -56,7 +55,6 @@
 
         </div>
 
-        <!-- Error Message -->
         <div th:if="${errorMessage}"
              class="row justify-content-center">
 
@@ -120,21 +118,21 @@
                         </td>
 
                         <td>
-    <span th:if="${backup.fileSize == null}">
-        -
-    </span>
+                            <span th:if="${backup.fileSize == null}">
+                                -
+                            </span>
 
                             <span th:if="${backup.fileSize != null and backup.fileSize < 1024}"
                                   th:text="${backup.fileSize + ' B'}">
-    </span>
+                            </span>
 
                             <span th:if="${backup.fileSize != null and backup.fileSize >= 1024 and backup.fileSize < 1048576}"
                                   th:text="${#numbers.formatDecimal(backup.fileSize / 1024.0, 1, 2) + ' KB'}">
-    </span>
+                            </span>
 
                             <span th:if="${backup.fileSize != null and backup.fileSize >= 1048576}"
                                   th:text="${#numbers.formatDecimal(backup.fileSize / 1048576.0, 1, 2) + ' MB'}">
-    </span>
+                            </span>
                         </td>
 
                         <td>
@@ -187,6 +185,12 @@
                                     and backup.status.name() == 'SUCCESS'}"
                                   class="badge bg-success">
                                 Success
+                            </span>
+
+                            <span th:if="${backup.status != null
+                                    and backup.status.name() == 'PARTIAL_SUCCESS'}"
+                                  class="badge bg-warning text-dark">
+                                Partial Success
                             </span>
 
                             <span th:if="${backup.status != null
