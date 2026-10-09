@@ -5,4 +5,5 @@ import com.example.tailormaster.entity.User;
 
 public interface BackupService {
     BackupHistory createLocalBackup(User user);
+    void cleanupOldLocalBackups(User user);
 }

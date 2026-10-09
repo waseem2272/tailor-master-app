@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -220,6 +222,74 @@ public class BackupServiceImpl implements BackupService {
 
             backupHistoryRepository.save(history);
             return history;
+        }
+    }
+
+    @Override
+    public void cleanupOldLocalBackups(User user) {
+        try {
+            UserBackupSettings settings = userBackupSettingsService.getByUser(user);
+
+            if (settings == null || !settings.isLocalBackupEnabled()) {
+                return;
+            }
+
+            if (settings.getRetentionDays() == null || settings.getRetentionDays() <= 0) {
+                log.warn("Invalid backup retention days for user: {}", user.getUsername());
+                return;
+            }
+
+            if (settings.getLocalBackupPath() == null
+                    || settings.getLocalBackupPath().isBlank()) {
+                log.warn("Local backup location is not configured for user: {}", user.getUsername());
+                return;
+            }
+
+            LocalDateTime cutoff = LocalDate.now()
+                    .minusDays(settings.getRetentionDays() - 1L)
+                    .atStartOfDay();
+
+            log.info("Backup cleanup user: {}, retentionDays: {}, cutoff: {}",
+                    user.getUsername(), settings.getRetentionDays(), cutoff);
+
+            List<BackupHistory> oldBackups =
+                    backupHistoryRepository
+                            .findByUserAndStartedAtBeforeAndBackupFileNameIsNotNull(user, cutoff);
+
+            log.info("Expired backup history records found: {}", oldBackups.size());
+
+            Path backupDirectory = Paths.get(settings.getLocalBackupPath())
+                    .toAbsolutePath()
+                    .normalize();
+
+            log.info("Configured backup directory: {}", backupDirectory);
+
+            for (BackupHistory backup : oldBackups) {
+                try {
+                    Path backupFile = backupDirectory.resolve(backup.getBackupFileName())
+                            .normalize();
+
+                    log.info("Checking expired backup file: {}, exists: {}",
+                            backupFile, Files.exists(backupFile));
+
+                    if (!backupFile.getParent().equals(backupDirectory)) {
+                        log.warn("Skipping backup file outside configured directory: {}", backupFile);
+                        continue;
+                    }
+
+                    if (Files.isRegularFile(backupFile)) {
+                        Files.delete(backupFile);
+                        log.info("Deleted expired local backup for user: {}, file: {}",
+                                user.getUsername(), backupFile);
+                    }
+                } catch (Exception e) {
+                    log.error("Error deleting expired local backup for user: {}, file: {}",
+                            user.getUsername(), backup.getBackupFileName(), e);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error cleaning up old local backups for user: {}",
+                    user != null ? user.getUsername() : "unknown", e);
         }
     }
 }
