@@ -1,7 +1,8 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Orders</title>
+    <title th:text="#{orders.title}">Orders</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
@@ -64,8 +65,10 @@
     <div class="main-content">
         <div class="container-fluid">
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-bag-check-fill me-2"></i> Orders
+                <i class="bi bi-bag-check-fill me-2"></i>
+                <span th:text="#{orders.title}">Orders</span>
             </h2>
+
             <!-- Success Message Alert -->
             <div th:if="${successMessage}" class="row justify-content-center">
                 <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
@@ -74,16 +77,18 @@
                         <span th:text="${successMessage}"></span>
                         <a th:if="${orderId}" th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(orderId)}}"
                            class="btn btn-light btn-sm ms-2">
-                            <i class="bi bi-eye"></i> View Details
+                            <i class="bi bi-eye"></i>
+                            <span th:text="#{orders.action.viewDetails}">View Details</span>
                         </a>
                         <a th:if="${orderId}"
                            th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(orderId)})}"
                            class="btn btn-light btn-sm ms-2">
-                            <i class="bi bi-receipt"></i> Generate Order Receipt
+                            <i class="bi bi-receipt"></i>
+                            <span th:text="#{orders.action.generateReceipt}">Generate Order Receipt</span>
                         </a>
                     </div>
                     <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
+                            th:attr="aria-label=#{orders.alert.close}"></button>
                 </div>
             </div>
 
@@ -95,7 +100,7 @@
                         <span th:text="${errorMessage}"></span>
                     </div>
                     <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
+                            th:attr="aria-label=#{orders.alert.close}"></button>
                 </div>
             </div>
 
@@ -103,11 +108,13 @@
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 animate__animated animate__fadeIn rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-search me-2"></i> Filter Orders
+                        <i class="bi bi-search me-2"></i>
+                        <span th:text="#{orders.filter.title}">Filter Orders</span>
                     </div>
-                    <button class="btn btn-light btn-sm rounded-pill shadow-sm" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#filterSection">
-                        <i class="bi bi-funnel"></i> Toggle Filters
+                    <button class="btn btn-light btn-sm rounded-pill shadow-sm" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#filterSection">
+                        <i class="bi bi-funnel"></i>
+                        <span th:text="#{orders.filter.toggle}">Toggle Filters</span>
                         <span id="filterCountBadge" class="badge bg-danger ms-2 d-none">0</span>
                     </button>
                 </div>
@@ -115,46 +122,54 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-2">
-                                <label for="dateRange" class="form-label fw-semibold">Quick Date Range</label>
+                                <label for="dateRange" class="form-label fw-semibold"
+                                       th:text="#{orders.filter.quickDateRange}">Quick Date Range</label>
                                 <select id="dateRange" class="form-select rounded-pill">
-                                    <option value="">Select range</option>
-                                    <option value="last7days">Last 7 days</option>
-                                    <option value="thismonth">This month</option>
+                                    <option value="" th:text="#{orders.filter.selectRange}">Select range</option>
+                                    <option value="last7days" th:text="#{orders.filter.last7Days}">Last 7 days</option>
+                                    <option value="thismonth" th:text="#{orders.filter.thisMonth}">This month</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label for="startDate" class="form-label fw-semibold">Start Date</label>
+                                <label for="startDate" class="form-label fw-semibold"
+                                       th:text="#{orders.filter.startDate}">Start Date</label>
                                 <input type="date" id="startDate" class="form-control rounded-pill">
                             </div>
                             <div class="col-md-2">
-                                <label for="endDate" class="form-label fw-semibold">End Date</label>
+                                <label for="endDate" class="form-label fw-semibold"
+                                       th:text="#{orders.filter.endDate}">End Date</label>
                                 <input type="date" id="endDate" class="form-control rounded-pill">
                             </div>
                             <div class="col-md-2">
-                                <label for="paymentStatus" class="form-label fw-semibold">Payment Status</label>
+                                <label for="paymentStatus" class="form-label fw-semibold"
+                                       th:text="#{orders.filter.paymentStatus}">Payment Status</label>
                                 <select id="paymentStatus" name="orderStatus" class="form-select rounded-pill">
-                                    <option value="" selected>All</option>
-                                    <option th:value="paid">Paid</option>
-                                    <option th:value="unpaid">Unpaid</option>
-                                    <option th:value="partial_paid">Partial Paid</option>
+                                    <option value="" selected th:text="#{orders.filter.all}">All</option>
+                                    <option th:value="paid" th:text="#{orders.filter.paid}">Paid</option>
+                                    <option th:value="unpaid" th:text="#{orders.filter.unpaid}">Unpaid</option>
+                                    <option th:value="partial_paid" th:text="#{orders.filter.partialPaid}">Partial Paid</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
-                                <label for="orderStatus" class="form-label fw-semibold">Order Status</label>
+                                <label for="orderStatus" class="form-label fw-semibold"
+                                       th:text="#{orders.filter.orderStatus}">Order Status</label>
                                 <select id="orderStatus" name="orderStatus" class="form-select rounded-pill">
-                                    <option value="" selected>All</option>
+                                    <option value="" selected th:text="#{orders.filter.all}">All</option>
                                     <option th:each="status : ${orderStatusList}"
                                             th:value="${status}"
-                                            th:text="${status}"></option>
+                                            th:text="${#messages.msg('orders.status.' + status.name())}">
+                                    </option>
                                 </select>
                             </div>
 
                             <div class="col-md-2 d-flex align-items-end gap-2">
                                 <button id="applyFilters" class="btn btn-success shadow rounded-pill w-100">
-                                    <i class="bi bi-check-circle"></i> Filter
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="#{orders.filter.apply}">Filter</span>
                                 </button>
                                 <button id="clearFilters" class="btn btn-secondary shadow rounded-pill w-100">
-                                    <i class="bi bi-x-circle"></i> Clear
+                                    <i class="bi bi-x-circle"></i>
+                                    <span th:text="#{orders.filter.clear}">Clear</span>
                                 </button>
                             </div>
                         </div>
@@ -164,21 +179,22 @@
 
             <div class="card shadow-sm border-success border-bottom border-3 mt-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-list-check me-2"></i> Orders List
+                    <i class="bi bi-list-check me-2"></i>
+                    <span th:text="#{orders.list.title}">Orders List</span>
                 </div>
                 <div class="card-body">
                     <table id="ordersTable" class="table table-bordered table-hover table-striped">
                         <thead class="table-success text-dark">
                         <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Order Date</th>
-                            <th>Delivery Date</th>
-                            <th>Order Type</th>
-                            <th>Status</th>
-                            <th>Cabinet No</th>
-                            <th>Payment Status</th>
-                            <th>Actions</th>
+                            <th th:text="#{orders.table.orderId}">Order ID</th>
+                            <th th:text="#{orders.table.customer}">Customer</th>
+                            <th th:text="#{orders.table.orderDate}">Order Date</th>
+                            <th th:text="#{orders.table.deliveryDate}">Delivery Date</th>
+                            <th th:text="#{orders.table.orderType}">Order Type</th>
+                            <th th:text="#{orders.table.status}">Status</th>
+                            <th th:text="#{orders.table.cabinetNo}">Cabinet No</th>
+                            <th th:text="#{orders.table.paymentStatus}">Payment Status</th>
+                            <th th:text="#{orders.table.actions}">Actions</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -193,46 +209,73 @@
 <div class="modal fade" id="pickupModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 shadow">
-            <div class="modal-header bg-success text-white rounded-top-4"><h5 class="modal-title fw-bold"
-                                                                              id="pickupModalLabel"><i
-                    class="bi bi-check2-circle me-2"></i> Mark Order as Picked Up </h5>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title fw-bold" id="pickupModalLabel">
+                    <i class="bi bi-check2-circle me-2"></i>
+                    <span th:text="#{orders.pickup.title}">Mark Order as Picked Up</span>
+                </h5>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="modal"
+                        th:attr="aria-label=#{orders.alert.close}"></button>
             </div>
             <div class="modal-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong><i class="bi bi-tag me-2"></i>Order ID:</strong> <span
-                            id="modalOrderId" class="ms-2"></span></li>
-                    <li class="list-group-item"><strong><i class="bi bi-person-fill me-2"></i>Customer Name:</strong>
-                        <span id="modalCustomerName" class="ms-2"></span></li>
-                    <li class="list-group-item"><strong><i class="bi bi-cash-stack me-2"></i>Total Amount:</strong>
-                        <span id="modalTotalAmount" class="ms-2"></span></li>
-                    <li class="list-group-item"><strong><i class="bi bi-cash-coin me-2"></i>Advance Payment:</strong>
-                        <span id="modalAdvancePayment" class="ms-2"></span></li>
-                    <li class="list-group-item"><strong><i class="bi bi-cash me-2"></i>Due Amount:</strong> <span
-                            id="modalDueAmount" class="ms-2 text-danger fw-bold"></span></li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-tag me-2"></i><span th:text="#{orders.pickup.orderId}">Order ID:</span></strong>
+                        <span id="modalOrderId" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-person-fill me-2"></i><span th:text="#{orders.pickup.customerName}">Customer Name:</span></strong>
+                        <span id="modalCustomerName" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-cash-stack me-2"></i><span th:text="#{orders.pickup.totalAmount}">Total Amount:</span></strong>
+                        <span id="modalTotalAmount" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-cash-coin me-2"></i><span th:text="#{orders.pickup.advancePayment}">Advance Payment:</span></strong>
+                        <span id="modalAdvancePayment" class="ms-2"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-cash me-2"></i><span th:text="#{orders.pickup.dueAmount}">Due Amount:</span></strong>
+                        <span id="modalDueAmount" class="ms-2 text-danger fw-bold"></span>
+                    </li>
                 </ul>
                 <div id="modalProductDetails" class="mt-4">
-                    <div class="d-flex align-items-center justify-content-between mb-2"><h6 class="fw-bold mb-0"><i
-                            class="bi bi-box-seam me-2 text-success"></i>Products in Order </h6> <span
-                            id="modalProductCount" class="badge bg-light text-dark border"></span></div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h6 class="fw-bold mb-0">
+                            <i class="bi bi-box-seam me-2 text-success"></i>
+                            <span th:text="#{orders.pickup.products}">Products in Order</span>
+                        </h6>
+                        <span id="modalProductCount" class="badge bg-light text-dark border"></span>
+                    </div>
                     <div id="productList"></div>
                 </div>
-                <div class="mt-4 p-3 bg-light rounded border"><label for="amountReceived" class="form-label fw-bold"> <i
-                        class="bi bi-cash-coin me-1 text-success"></i> Amount Received at Pickup: </label> <input
-                        type="number" min="0" step="0.01" id="amountReceived" class="form-control fw-bold"
-                        placeholder="Enter amount received"> <small class="text-muted ms-1">You can adjust if partial
-                    payment is made.</small></div>
+                <div class="mt-4 p-3 bg-light rounded border">
+                    <label for="amountReceived" class="form-label fw-bold">
+                        <i class="bi bi-cash-coin me-1 text-success"></i>
+                        <span th:text="#{orders.pickup.amountReceived}">Amount Received at Pickup:</span>
+                    </label>
+                    <input type="number" min="0" step="0.01" id="amountReceived"
+                           class="form-control fw-bold"
+                           th:placeholder="#{orders.pickup.amountPlaceholder}">
+                    <small class="text-muted ms-1" th:text="#{orders.pickup.partialPaymentHelp}">
+                        You can adjust if partial payment is made.
+                    </small>
+                </div>
                 <div id="amountReceivedError" class="text-danger mt-1"></div>
-                <div class="alert alert-warning mt-3" role="alert"><i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    پک اپ کرنے سے پہلے، کسٹمر سے بقایا رقم ضرور وصول کر لیں۔
+                <div class="alert alert-warning mt-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="#{orders.pickup.dueWarning}">Before pickup, please collect the outstanding amount from the customer.</span>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                        class="bi bi-x-circle me-1"></i> Cancel
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{orders.pickup.cancel}">Cancel</span>
                 </button>
-                <button type="button" id="confirmPickupBtn" class="btn btn-success"><i
-                        class="bi bi-check-circle me-1"></i> Confirm Pickup
+                <button type="button" id="confirmPickupBtn" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="#{orders.pickup.confirm}">Confirm Pickup</span>
                 </button>
             </div>
         </div>
@@ -248,8 +291,50 @@
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/sweetalert2.all.min.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
+
+    const orderMessages = {
+        mixed: /*[[#{orders.type.mixed}]]*/ 'Mixed',
+        inventory: /*[[#{orders.type.inventory}]]*/ 'Inventory',
+        tailoring: /*[[#{orders.type.tailoring}]]*/ 'Tailoring',
+        na: /*[[#{orders.type.na}]]*/ 'N/A',
+        partiallyPaid: /*[[#{orders.payment.partiallyPaid}]]*/ 'Partially Paid',
+        paid: /*[[#{orders.payment.paid}]]*/ 'Paid',
+        unpaid: /*[[#{orders.payment.unpaid}]]*/ 'Unpaid',
+        details: /*[[#{orders.action.details}]]*/ 'Details',
+        pickup: /*[[#{orders.action.pickup}]]*/ 'Pick Up',
+        pending: /*[[#{orders.status.PENDING}]]*/ 'Pending',
+        inProgress: /*[[#{orders.status.IN_PROGRESS}]]*/ 'In Progress',
+        completed: /*[[#{orders.status.COMPLETED}]]*/ 'Completed',
+        delivered: /*[[#{orders.status.DELIVERED}]]*/ 'Delivered',
+        cancelled: /*[[#{orders.status.CANCELLED}]]*/ 'Cancelled',
+        noProducts: /*[[#{orders.pickup.noProducts}]]*/ 'No products found.',
+        qty: /*[[#{orders.pickup.qty}]]*/ 'Qty',
+        silai: /*[[#{orders.pickup.silai}]]*/ 'Stitching Type',
+        silaiAmount: /*[[#{orders.pickup.silaiAmount}]]*/ 'Stitching Amount',
+        shopFabric: /*[[#{orders.pickup.shopFabric}]]*/ 'Shop Fabric',
+        customerFabric: /*[[#{orders.pickup.customerFabric}]]*/ 'Customer Fabric',
+        unitPrice: /*[[#{orders.pickup.unitPrice}]]*/ 'Unit Price',
+        inventoryAmount: /*[[#{orders.pickup.inventoryAmount}]]*/ 'Inventory Amount',
+        alteration: /*[[#{orders.pickup.alteration}]]*/ 'Alteration',
+        required: /*[[#{orders.pickup.required}]]*/ 'Required',
+        notRequired: /*[[#{orders.pickup.notRequired}]]*/ 'Not Required',
+        alterationFee: /*[[#{orders.pickup.alterationFee}]]*/ 'Fee',
+        productStatus: /*[[#{orders.pickup.productStatus}]]*/ 'Status',
+        instantDelivered: /*[[#{orders.pickup.instantDelivered}]]*/ 'Instant Delivered',
+        pendingForAlteration: /*[[#{orders.pickup.pendingForAlteration}]]*/ 'Pending for Alteration',
+        alterationInProgress: /*[[#{orders.pickup.alterationInProgress}]]*/ 'Alteration in Progress',
+        amountNegative: /*[[#{orders.pickup.amountNegative}]]*/ 'Amount received cannot be negative.',
+        amountGreaterThanDue: /*[[#{orders.pickup.amountGreaterThanDue}]]*/ 'Amount received cannot be greater than due.',
+        genericError: /*[[#{orders.pickup.genericError}]]*/ 'Something went wrong!',
+        pickupSuccess: /*[[#{orders.pickup.success}]]*/ 'Order marked as picked up!',
+        pickupErrorTitle: /*[[#{orders.pickup.errorTitle}]]*/ 'Error updating order',
+        processing: /*[[#{orders.pickup.processing}]]*/ 'Processing...',
+        confirmPickup: /*[[#{orders.pickup.confirm}]]*/ 'Confirm Pickup',
+        items: /*[[#{orders.pickup.products}]]*/ 'Items'
+    };
 </script>
 
 <script>
@@ -304,7 +389,7 @@
                     "searchable": false,
                     "render": function (data, type, row) {
                         if (!row.orderProducts || row.orderProducts.length === 0) {
-                            return `<span class="badge bg-secondary">N/A</span>`;
+                            return `<span class="badge bg-secondary">${orderMessages.na}</span>`;
                         }
 
                         let hasTailoring = row.orderProducts.some(
@@ -316,18 +401,18 @@
                         );
 
                         if (hasTailoring && hasInventory) {
-                            return `<span class="badge bg-info text-dark">Mixed</span>`;
+                            return `<span class="badge bg-info text-dark">${orderMessages.mixed}</span>`;
                         }
 
                         if (hasInventory) {
-                            return `<span class="badge bg-warning text-dark">Inventory</span>`;
+                            return `<span class="badge bg-warning text-dark">${orderMessages.inventory}</span>`;
                         }
 
                         if (hasTailoring) {
-                            return `<span class="badge bg-primary">Tailoring</span>`;
+                            return `<span class="badge bg-primary">${orderMessages.tailoring}</span>`;
                         }
 
-                        return `<span class="badge bg-secondary">N/A</span>`;
+                        return `<span class="badge bg-secondary">${orderMessages.na}</span>`;
                     }
                 },
                 {
@@ -341,7 +426,15 @@
                             "CANCELLED": "badge bg-danger"
                         }[data] || "";
 
-                        return `<span class="${badgeClass}">${data}</span>`;
+                        let statusLabels = {
+                            "PENDING": orderMessages.pending,
+                            "IN_PROGRESS": orderMessages.inProgress,
+                            "COMPLETED": orderMessages.completed,
+                            "DELIVERED": orderMessages.delivered,
+                            "CANCELLED": orderMessages.cancelled
+                        };
+
+                        return `<span class="${badgeClass}">${statusLabels[data] || data}</span>`;
                     }
                 },
                 {"data": "cabinetNo"},
@@ -357,7 +450,7 @@
                         let outstandingDueAmount = data.outstandingDueAmount;
 
                         let badgeClass = "secondary";
-                        let paymentStatus = `<span class="badge bg-secondary">N/A</span>`;
+                        let paymentStatus = `<span class="badge bg-secondary">${orderMessages.na}</span>`;
 
                         if ((orderStatus === "COMPLETED" || orderStatus === "DELIVERED") &&
                             pickedUpStatus === "PICKED_UP") {
@@ -366,17 +459,17 @@
                                 totalProductAmount !== outstandingDueAmount) {
 
                                 badgeClass = "warning text-dark";
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Partially Paid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">${orderMessages.partiallyPaid}</span>`;
 
                             } else if (totalProductAmount === outstandingDueAmount) {
 
                                 badgeClass = "danger";
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Unpaid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">${orderMessages.unpaid}</span>`;
 
                             } else {
 
                                 badgeClass = "success";
-                                paymentStatus = `<span class="badge bg-${badgeClass}">Paid</span>`;
+                                paymentStatus = `<span class="badge bg-${badgeClass}">${orderMessages.paid}</span>`;
                             }
                         }
 
@@ -399,18 +492,18 @@
                               data-total-amount="${row.totalProductAmount}"
                               data-advance-payment="${row.advancePayment}"
                               data-due="${row.duePayment}"
-                                data-customer-name="${row.customerName}"
+                              data-customer-name="${row.customerName}"
                               data-delivery-date="${row.deliveryDate}"
                               data-bs-toggle="modal"
                               data-bs-target="#pickupModal">
-                              <i class="bi bi-check2-circle"></i> Pick Up
+                              <i class="bi bi-check2-circle"></i> ${orderMessages.pickup}
                            </button>`
                             : "";
 
                         return `
                         <div class="d-flex flex-wrap gap-2">
                             <a href="${contextPath}orders/details/${encryptedId}" class="btn btn-info btn-sm">
-                                <i class="bi bi-eye"></i> Details
+                                <i class="bi bi-eye"></i> ${orderMessages.details}
                             </a>
                             ${pickupButton}
                         </div>
@@ -526,12 +619,12 @@
                 return orderProduct.inventoryItemName ||
                     orderProduct.itemName ||
                     orderProduct.productName ||
-                    'Inventory Item';
+                    orderMessages.inventory;
             }
 
             return orderProduct.productName ||
                 orderProduct.product ||
-                'Tailoring Product';
+                orderMessages.tailoring;
         }
 
         function getProductStatus(orderProduct) {
@@ -544,27 +637,27 @@
                 PENDING: {
                     className: 'bg-secondary',
                     icon: 'bi-hourglass-split',
-                    text: 'Pending'
+                    text: orderMessages.pending
                 },
                 IN_PROGRESS: {
                     className: 'bg-primary',
                     icon: 'bi-arrow-repeat',
-                    text: 'In Progress'
+                    text: orderMessages.inProgress
                 },
                 COMPLETED: {
                     className: 'badge-completed',
                     icon: 'bi-check2-circle',
-                    text: 'Completed'
+                    text: orderMessages.completed
                 },
                 DELIVERED: {
                     className: 'bg-success',
                     icon: 'bi-box-seam',
-                    text: 'Delivered'
+                    text: orderMessages.delivered
                 },
                 CANCELLED: {
                     className: 'bg-danger',
                     icon: 'bi-x-circle',
-                    text: 'Cancelled'
+                    text: orderMessages.cancelled
                 }
             };
 
@@ -581,11 +674,11 @@
             const productList = $('#productList');
             productList.empty();
             if (!orderProducts || orderProducts.length === 0) {
-                $('#modalProductCount').text('0 Items');
-                productList.html(` <div class="alert alert-light border text-muted mb-0"> <i class="bi bi-info-circle me-2"></i> No products found. </div> `);
+                $('#modalProductCount').text('0 ' + orderMessages.items);
+                productList.html(` <div class="alert alert-light border text-muted mb-0"> <i class="bi bi-info-circle me-2"></i> ${orderMessages.noProducts} </div> `);
                 return;
             }
-            $('#modalProductCount').text(orderProducts.length + (orderProducts.length === 1 ? ' Item' : ' Items'));
+            $('#modalProductCount').text(orderProducts.length + ' ' + orderMessages.items);
             orderProducts.forEach(function (op, index) {
                 const type = getProductType(op);
                 const name = getProductName(op);
@@ -593,44 +686,44 @@
                 const subtotal = parseFloat(op.subtotal) || 0;
                 let typeBadge = '';
                 if (type === 'INVENTORY') {
-                    typeBadge = ` <span class="badge bg-warning text-dark"> <i class="bi bi-box-seam me-1"></i>Inventory </span> `;
+                    typeBadge = ` <span class="badge bg-warning text-dark"> <i class="bi bi-box-seam me-1"></i>${orderMessages.inventory} </span> `;
                 } else {
-                    typeBadge = ` <span class="badge bg-primary"> <i class="bi bi-scissors me-1"></i>Tailoring </span> `;
+                    typeBadge = ` <span class="badge bg-primary"> <i class="bi bi-scissors me-1"></i>${orderMessages.tailoring} </span> `;
                 }
-                let details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity} ${op.unit}</strong> </span> `;
+                let details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> ${orderMessages.qty}: <strong>${quantity} ${op.unit}</strong> </span> `;
                 if (op.fabricSource === 'SHOP') {
-                    details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> Qty: <strong>${quantity}</strong> </span> `;
+                    details = ` <span class="me-3"> <i class="bi bi-123 me-1"></i> ${orderMessages.qty}: <strong>${quantity}</strong> </span> `;
                 }
 
                 if (type === 'TAILORING') {
                     const silaiType = op.silaiType || '-';
                     const silaiAmount = parseFloat(op.silaiAmount || op.amount) || 0;
-                    details += ` <span class="me-3"> <i class="bi bi-scissors me-1"></i> Silai: <strong>${escapeHtml(silaiType)}</strong> </span> <span> Silai Amount: <strong>${formatAmount(silaiAmount)}</strong> </span> `;
+                    details += ` <span class="me-3"> <i class="bi bi-scissors me-1"></i> ${orderMessages.silai}: <strong>${escapeHtml(silaiType)}</strong> </span> <span> ${orderMessages.silaiAmount}: <strong>${formatAmount(silaiAmount)}</strong> </span> `;
                     if (op.fabricSource === 'SHOP') {
                         const fabricQuantity = parseFloat(op.fabricQuantity) || 0;
                         const unitPrice = parseFloat(op.fabricUnitPrice);
-                        details += ` <div class="mt-1"> <i class="bi bi-layers me-1"></i> Shop Fabric ${op.inventoryItemName ? `: <strong>${escapeHtml(op.inventoryItemName)}</strong>` : ''} ${fabricQuantity > 0 ? ` | Qty: <strong>${fabricQuantity}  ${op.unit}</strong>` : ''} ${unitPrice > 0 ? ` | Unit Price: <strong>${formatAmount(unitPrice)}</strong>` : ''}</div> `;
+                        details += ` <div class="mt-1"> <i class="bi bi-layers me-1"></i> ${orderMessages.shopFabric} ${op.inventoryItemName ? `: <strong>${escapeHtml(op.inventoryItemName)}</strong>` : ''} ${fabricQuantity > 0 ? ` | ${orderMessages.qty}: <strong>${fabricQuantity}  ${op.unit}</strong>` : ''} ${unitPrice > 0 ? ` | ${orderMessages.unitPrice}: <strong>${formatAmount(unitPrice)}</strong>` : ''}</div> `;
                     } else if (op.fabricSource === 'CUSTOMER') {
-                        details += ` <div class="mt-1"> <i class="bi bi-person me-1"></i> Customer Fabric </div> `;
+                        details += ` <div class="mt-1"> <i class="bi bi-person me-1"></i> ${orderMessages.customerFabric} </div> `;
                     }
                 } else {
                     const unitPrice = parseFloat(op.inventoryUnitPrice || op.unitPrice || op.salePrice) || 0;
                     const alterationRequired = op.alterationRequired === true;
                     const alterationFee = parseFloat(op.alterationFee) || 0;
                     const productStatus = op.status || op.orderProductStatus || '-';
-                    details += ` <span> <i class="bi bi-tag me-1"></i> Unit Price: <strong>${formatAmount(unitPrice)}</strong> </span> `;
+                    details += ` <span> <i class="bi bi-tag me-1"></i> ${orderMessages.unitPrice}: <strong>${formatAmount(unitPrice)}</strong> </span> `;
                     if (op.inventoryAmount !== undefined && op.inventoryAmount !== null) {
-                        details += ` <div class="mt-1"> <i class="bi bi-cash-stack me-1"></i> Inventory Amount: <strong>${formatAmount(op.inventoryAmount)}</strong> </div> `;
+                        details += ` <div class="mt-1"> <i class="bi bi-cash-stack me-1"></i> ${orderMessages.inventoryAmount}: <strong>${formatAmount(op.inventoryAmount)}</strong> </div> `;
                     }
-                    details += ` <div class="mt-1"> <i class="bi bi-wrench-adjustable me-1"></i> Alteration: <strong>${alterationRequired ? 'Required' : 'Not Required'}</strong> ${alterationRequired ? ` | Fee: <strong>${formatAmount(alterationFee)}</strong>` : ''} </div> `;
+                    details += ` <div class="mt-1"> <i class="bi bi-wrench-adjustable me-1"></i> ${orderMessages.alteration}: <strong>${alterationRequired ? orderMessages.required : orderMessages.notRequired}</strong> ${alterationRequired ? ` | ${orderMessages.alterationFee}: <strong>${formatAmount(alterationFee)}</strong>` : ''} </div> `;
                     if (productStatus !== '-') {
                         const statusLabels = {
-                            INSTANT_DELIVERED: 'Instant Delivered',
-                            PENDING_FOR_ALTERATION: 'Pending for Alteration',
-                            ALTERATION_IN_PROGRESS: 'Alteration in Progress',
-                            COMPLETED: 'Completed'
+                            INSTANT_DELIVERED: orderMessages.instantDelivered,
+                            PENDING_FOR_ALTERATION: orderMessages.pendingForAlteration,
+                            ALTERATION_IN_PROGRESS: orderMessages.alterationInProgress,
+                            COMPLETED: orderMessages.completed
                         };
-                        details += ` <div class="mt-1"> <i class="bi bi-info-circle me-1"></i> Status: <strong>${escapeHtml(statusLabels[productStatus] || productStatus)}</strong> </div> `;
+                        details += ` <div class="mt-1"> <i class="bi bi-info-circle me-1"></i> ${orderMessages.productStatus}: <strong>${escapeHtml(statusLabels[productStatus] || productStatus)}</strong> </div> `;
                     }
                 }
                 productList.append(` <div class="pickup-product-card shadow-sm"> <div class="d-flex justify-content-between align-items-start gap-3"> <div class="flex-grow-1"> <div class="d-flex flex-wrap align-items-center gap-2 mb-1"> <span class="text-muted small">#${index + 1}</span> <span class="pickup-product-title"> ${escapeHtml(name)} </span> ${typeBadge} </div> <div class="pickup-product-meta"> ${details} </div> </div> <div class="pickup-product-amount"> ${formatAmount(subtotal)} </div> </div> </div> `);
@@ -652,16 +745,16 @@
         $('#amountReceivedError').text('');
 
         if (amountReceived < 0) {
-            $('#amountReceivedError').text('Amount received cannot be negative.');
+            $('#amountReceivedError').text(orderMessages.amountNegative);
             return false;
         }
 
         if (amountReceived > dueAmount) {
-            $('#amountReceivedError').text('Amount received cannot be greater than due.');
+            $('#amountReceivedError').text(orderMessages.amountGreaterThanDue);
             return false;
         }
         confirmPickupBtn.disabled = true;
-        confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+        confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + orderMessages.processing;
         $.ajax({
             url: contextPath + "orders/pickup",
             method: "POST",
@@ -674,28 +767,27 @@
                 $('#pickupModal').modal('hide');
                 Swal.fire({
                     icon: 'success',
-                    title: 'Order marked as picked up!',
+                    title: orderMessages.pickupSuccess,
                     showConfirmButton: false,
                     timer: 3500
                 });
                 confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
+                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>' + orderMessages.confirmPickup;
                 $('#ordersTable').DataTable().ajax.reload(null, false);
             },
             error: function (xhr) {
-                let errorMessage = "Something went wrong!";
+                let errorMessage = orderMessages.genericError;
                 if (xhr.responseJSON) {
                     errorMessage = xhr.responseJSON.error || xhr.responseJSON.message || errorMessage;
                 } else if (xhr.responseText) {
                     errorMessage = xhr.responseText;
                 }
-                Swal.fire({icon: 'error', title: 'Error updating order', text: errorMessage});
+                Swal.fire({icon: 'error', title: orderMessages.pickupErrorTitle, text: errorMessage});
                 confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Confirm Pickup';
+                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>' + orderMessages.confirmPickup;
             }
         });
     });
-
 </script>
 
 </body>

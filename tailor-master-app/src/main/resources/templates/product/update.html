@@ -1,48 +1,40 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-    <title>Update Product</title>
+    <title th:text="#{product.update.title}">Update Product</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
-    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
-
 <body>
-
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
-
     <div class="main-content">
-
         <div class="container-fluid">
-
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-box-seam-fill me-2"></i>
-                Update Product
+                <span th:text="#{product.update.title}">Update Product</span>
             </h2>
 
             <div th:if="${errorMessage}"
                  class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
                  role="alert">
-
                 <div class="d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                     <span th:text="${errorMessage}"></span>
                 </div>
-
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="alert"
-                        aria-label="Close">
+                        th:attr="aria-label=#{button.close}">
                 </button>
-
             </div>
 
-            <p class="text-danger fw-bold">
+            <p class="text-danger fw-bold" th:text="#{product.update.requiredFields}">
                 Fields marked with * are required.
             </p>
 
@@ -50,7 +42,9 @@
                   th:action="@{/products/update}"
                   th:object="${product}"
                   method="post"
-                  onsubmit="return validateForm()">
+                  th:attr="data-name-required=#{product.update.nameRequired},
+                           data-single-required=#{product.update.singleStitchingRequired},
+                           data-double-required=#{product.update.doubleStitchingRequired}">
 
                 <input type="hidden"
                        name="encryptedProductId"
@@ -58,110 +52,75 @@
                        th:value="${thymeleafUtil.encryptId(product.id)}"/>
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
-
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-info-circle me-2"></i>
-                        Product Information
+                        <span th:text="#{product.update.information}">Product Information</span>
                     </div>
 
                     <div class="card-body">
-
                         <div class="row">
-
                             <div class="col-md-6 mb-3">
-
                                 <label for="name" class="form-label">
-                                    Product Name
+                                    <span th:text="#{product.update.name}">Product Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
-
                                 <input type="text"
                                        id="name"
                                        th:field="*{name}"
                                        class="form-control"
                                        required>
-
-                                <div id="nameError"
-                                     class="text-danger error-message">
-                                </div>
-
+                                <div id="nameError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-
                                 <label for="singleSilai" class="form-label">
-                                    Single Silai Rate
+                                    <span th:text="#{product.update.singleStitching}">Single Silai Rate</span>
                                     <span class="text-danger">*</span>
                                 </label>
-
                                 <input type="number"
                                        id="singleSilai"
                                        th:field="*{singleSilai}"
                                        class="form-control"
                                        step="0.01"
                                        required>
-
-                                <div id="singleSilaiError"
-                                     class="text-danger error-message">
-                                </div>
-
+                                <div id="singleSilaiError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
-
                                 <label for="doubleSilai" class="form-label">
-                                    Double Silai Rate
+                                    <span th:text="#{product.update.doubleStitching}">Double Silai Rate</span>
                                     <span class="text-danger">*</span>
                                 </label>
-
                                 <input type="number"
                                        id="doubleSilai"
                                        th:field="*{doubleSilai}"
                                        class="form-control"
                                        step="0.01"
                                        required>
-
-                                <div id="doubleSilaiError"
-                                     class="text-danger error-message">
-                                </div>
-
+                                <div id="doubleSilaiError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="text-center">
-
                                 <button type="button"
                                         class="btn btn-success shadow rounded-pill px-4"
                                         id="openModal">
-
-                                    <i class="bi bi-check-circle"></i>
-                                    Update
-
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    <span th:text="#{button.update}">Update</span>
                                 </button>
 
                                 <a th:href="@{/products}"
                                    class="btn btn-secondary shadow rounded-pill px-4">
-
                                     <i class="bi bi-x-circle me-1"></i>
-                                    Cancel
-
+                                    <span th:text="#{button.cancel}">Cancel</span>
                                 </a>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 
 <!-- Confirmation Modal -->
 <div class="modal fade"
@@ -169,57 +128,43 @@
      tabindex="-1"
      aria-labelledby="confirmModalLabel"
      aria-hidden="true">
-
     <div class="modal-dialog modal-dialog-centered">
-
         <div class="modal-content rounded-4 shadow">
-
             <div class="modal-header bg-success text-white rounded-top-4">
-
-                <h5 class="modal-title" id="confirmModalLabel">
+                <h5 class="modal-title"
+                    id="confirmModalLabel"
+                    th:text="#{product.update.confirmation}">
                     Confirm Update
                 </h5>
-
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="modal"
-                        aria-label="Close">
+                        th:attr="aria-label=#{button.close}">
                 </button>
-
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" th:text="#{product.update.confirmMessage}">
                 Are you sure you want to update this product?
             </div>
 
             <div class="modal-footer">
-
                 <button type="button"
                         class="btn btn-secondary"
                         data-bs-dismiss="modal">
-
-                    <i class="bi bi-x-circle"></i>
-                    Cancel
-
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{button.cancel}">Cancel</span>
                 </button>
 
                 <button type="button"
                         class="btn btn-success"
                         id="confirmSubmit">
-
-                    <i class="bi bi-check-circle"></i>
-                    Yes, Update
-
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="#{product.update.yesUpdate}">Yes, Update</span>
                 </button>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
-
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
@@ -237,104 +182,70 @@
 </script>
 
 <script>
-
     document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("updateProductForm");
+        const openModal = document.getElementById("openModal");
+        const confirmSubmit = document.getElementById("confirmSubmit");
 
-        document.getElementById("openModal")
-            .addEventListener("click", function (event) {
+        if (!form || !openModal || !confirmSubmit) {
+            return;
+        }
 
-                event.preventDefault();
+        const name = document.getElementById("name");
+        const singleSilai = document.getElementById("singleSilai");
+        const doubleSilai = document.getElementById("doubleSilai");
 
-                if (validateForm()) {
-
-                    new bootstrap.Modal(
-                        document.getElementById('confirmModal')
-                    ).show();
-
-                }
+        function clearErrors() {
+            form.querySelectorAll(".error-message").forEach(function (el) {
+                el.textContent = "";
             });
+        }
 
+        function showError(input, message) {
+            const errorDiv = input.parentNode.querySelector(".error-message");
+            if (errorDiv) {
+                errorDiv.textContent = message;
+            }
+        }
 
-        document.getElementById("confirmSubmit")
-            .addEventListener("click", function () {
+        function validateForm() {
+            let isValid = true;
+            clearErrors();
 
-                document.getElementById("updateProductForm").submit();
+            if (name.value.trim() === "") {
+                showError(name, form.dataset.nameRequired);
+                isValid = false;
+            }
 
-            });
+            if (singleSilai.value.trim() === "" ||
+                !Number.isFinite(Number(singleSilai.value)) ||
+                Number(singleSilai.value) <= 0) {
+                showError(singleSilai, form.dataset.singleRequired);
+                isValid = false;
+            }
 
+            if (doubleSilai.value.trim() === "" ||
+                !Number.isFinite(Number(doubleSilai.value)) ||
+                Number(doubleSilai.value) <= 0) {
+                showError(doubleSilai, form.dataset.doubleRequired);
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        openModal.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            if (validateForm()) {
+                new bootstrap.Modal(document.getElementById("confirmModal")).show();
+            }
+        });
+
+        confirmSubmit.addEventListener("click", function () {
+            form.submit();
+        });
     });
-
-
-    function validateForm() {
-
-        let isValid = true;
-
-        document.querySelectorAll(".error-message")
-            .forEach(el => el.textContent = "");
-
-        const name =
-            document.getElementById("name");
-
-        const singleSilai =
-            document.getElementById("singleSilai");
-
-        const doubleSilai =
-            document.getElementById("doubleSilai");
-
-
-        if (name.value.trim() === "") {
-
-            showError(
-                name,
-                "Product name is required."
-            );
-
-            isValid = false;
-        }
-
-
-        if (singleSilai.value.trim() === ""
-            || parseFloat(singleSilai.value) <= 0) {
-
-            showError(
-                singleSilai,
-                "Single Silai rate must be greater than 0."
-            );
-
-            isValid = false;
-        }
-
-
-        if (doubleSilai.value.trim() === ""
-            || parseFloat(doubleSilai.value) <= 0) {
-
-            showError(
-                doubleSilai,
-                "Double Silai rate must be greater than 0."
-            );
-
-            isValid = false;
-        }
-
-
-        return isValid;
-    }
-
-
-    function showError(input, message) {
-
-        const errorDiv =
-            document.createElement("div");
-
-        errorDiv.className =
-            "text-danger small error-message mt-1";
-
-        errorDiv.textContent = message;
-
-        input.parentNode.appendChild(errorDiv);
-    }
-
 </script>
-
 </body>
 </html>

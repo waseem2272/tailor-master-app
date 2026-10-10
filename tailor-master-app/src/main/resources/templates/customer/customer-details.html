@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Details | Tailor Master</title>
+    <title th:text="#{customer.details.title}">Customer Details | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
@@ -21,26 +22,38 @@
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
-        <div class="container-fluid"> <!-- Page Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4"><h2 class="page-title mb-0"><i
-                    class="bi bi-person-vcard text-success me-2"></i> Customer Details </h2>
-                <div class="d-flex gap-2"><a
-                        th:href="@{'/customers/' + ${thymeleafUtil.encryptId(customer.id)} + '/edit'}"
-                        class="btn btn-success shadow rounded-pill px-4"> <i class="bi bi-pencil-square me-1"></i> Edit
-                    Customer </a> <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4"> <i
-                        class="bi bi-arrow-left me-1"></i> Back </a></div>
+        <div class="container-fluid">
+
+            <!-- PAGE HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="page-title mb-0">
+                    <i class="bi bi-person-vcard text-success me-2"></i>
+                    <span th:text="#{customer.details.title}">Customer Details</span>
+                </h2>
+                <div class="d-flex gap-2">
+                    <a th:href="@{'/customers/' + ${thymeleafUtil.encryptId(customer.id)} + '/edit'}"
+                       class="btn btn-success shadow rounded-pill px-4">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        <span th:text="#{customer.details.editCustomer}">Edit Customer</span>
+                    </a>
+                    <a th:href="@{/customers}" class="btn btn-secondary shadow rounded-pill px-4">
+                        <i class="bi bi-arrow-left me-1"></i>
+                        <span th:text="#{button.back}">Back</span>
+                    </a>
+                </div>
             </div>
 
-            <!-- Bootstrap Notification Alert -->
             <div id="jsAlertContainer" class="mb-3"></div>
 
-            <!-- Customer Information -->
+            <!-- CUSTOMER INFORMATION -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-person-lines-fill me-2"></i> Customer
-                        Information
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-lines-fill me-2"></i>
+                        <span th:text="#{customer.create.information}">Customer Information</span>
                     </div>
                 </div>
                 <div class="card-body">
@@ -48,326 +61,218 @@
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-book me-1"></i> Book Number
+                                    <i class="bi bi-book me-1"></i>
+                                    <span th:text="#{customer.create.bookNumber}">Book Number</span>
                                 </div>
                                 <div class="fw-semibold"
-                                     th:text="${customer.bookNumber != null and !customer.bookNumber.isBlank() ? customer.bookNumber : '-'}">
-                                    -
-                                </div>
+                                     th:text="${customer.bookNumber != null and !customer.bookNumber.isBlank() ? customer.bookNumber : '-'}">-</div>
                             </div>
                         </div>
-
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-person me-1"></i> Customer Name
+                                    <i class="bi bi-person me-1"></i>
+                                    <span th:text="#{customer.details.customerName}">Customer Name</span>
                                 </div>
-                                <div class="fw-semibold" th:text="${customer.fullName}">
-                                    Customer Name
-                                </div>
+                                <div class="fw-semibold" th:text="${customer.fullName}">Customer Name</div>
                             </div>
                         </div>
-
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-telephone me-1"></i> Phone Number
+                                    <i class="bi bi-telephone me-1"></i>
+                                    <span th:text="#{customer.create.phoneNumber}">Phone Number</span>
                                 </div>
-                                <div class="fw-semibold" th:text="${customer.phoneNumber}">
-                                    Phone Number
-                                </div>
+                                <div class="fw-semibold" th:text="${customer.phoneNumber}">Phone Number</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Measurements -->
+            <!-- MEASUREMENTS -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-
                     <div class="d-flex align-items-center">
                         <i class="bi bi-rulers me-2"></i>
-                        Measurements
+                        <span th:text="#{customer.details.measurements}">Measurements</span>
                     </div>
-
                     <button type="button"
                             class="btn btn-light btn-sm rounded-pill px-3"
                             data-bs-toggle="modal"
                             data-bs-target="#addMeasurementModal">
                         <i class="bi bi-plus-circle me-1"></i>
-                        Add Measurement
+                        <span th:text="#{customer.details.addMeasurement}">Add Measurement</span>
                     </button>
-
                 </div>
 
                 <div class="card-body">
-
                     <div class="table-responsive">
-                        <table id="measurementsTable"
-                               class="table table-bordered table-hover table-striped">
-
+                        <table id="measurementsTable" class="table table-bordered table-hover table-striped">
                             <thead class="table-success text-dark">
                             <tr>
-                                <th>Product</th>
-                                <th>Created Date</th>
-                                <th>Last Updated</th>
-                                <th class="text-center">Action</th>
+                                <th th:text="#{customer.details.product}">Product</th>
+                                <th th:text="#{customer.details.createdDate}">Created Date</th>
+                                <th th:text="#{customer.details.lastUpdated}">Last Updated</th>
+                                <th class="text-center" th:text="#{customer.details.action}">Action</th>
                             </tr>
                             </thead>
-
                             <tbody>
-
                             <tr th:each="measurement : ${customerProductMeasurements}">
-
+                                <td class="fw-semibold" th:text="${measurement.product.name}">Product Name</td>
                                 <td class="fw-semibold"
-                                    th:text="${measurement.product.name}">
-                                    Product Name
-                                </td>
-
+                                    th:text="${#temporals.format(measurement.createdAt, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></td>
                                 <td class="fw-semibold"
-                                    th:text="${#temporals.format(measurement.createdAt, 'dd-MMM-yyyy')}">
-                                </td>
-
-                                <td class="fw-semibold"
-                                    th:text="${#temporals.format(measurement.updatedAt, 'dd-MMM-yyyy')}">
-                                </td>
-
+                                    th:text="${#temporals.format(measurement.updatedAt, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></td>
                                 <td class="text-center">
-
                                     <button type="button"
                                             class="btn btn-warning btn-sm rounded-pill shadow-sm edit-measurement-btn"
                                             th:attr="data-measurement-id=${measurement.id}">
                                         <i class="bi bi-pencil-square me-1"></i>
-                                        Edit
+                                        <span th:text="#{button.edit}">Edit</span>
                                     </button>
-
                                     <a th:href="@{'/customers/measurements/' + ${measurement.id} + '/print'}"
                                        class="btn btn-sm btn-secondary rounded-pill shadow-sm">
                                         <i class="bi bi-printer me-1"></i>
-                                        Download
+                                        <span th:text="#{customer.details.download}">Download</span>
                                     </a>
-
                                 </td>
-
                             </tr>
-
                             </tbody>
-
                         </table>
                     </div>
-
                 </div>
-
             </div>
 
         </div>
     </div>
 </div>
 
-<!-- Add Measurement Modal -->
-<div class="modal fade"
-     id="addMeasurementModal"
-     tabindex="-1"
-     aria-labelledby="addMeasurementModalLabel"
-     aria-hidden="true">
-
+<!-- ADD MEASUREMENT MODAL -->
+<div class="modal fade" id="addMeasurementModal" tabindex="-1"
+     aria-labelledby="addMeasurementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 shadow">
-
             <div class="modal-header bg-success text-white rounded-top-4">
                 <div>
-                    <h5 class="modal-title fw-semibold mb-1"
-                        id="addMeasurementModalLabel">
+                    <h5 class="modal-title fw-semibold mb-1" id="addMeasurementModalLabel">
                         <i class="bi bi-rulers me-2"></i>
-                        Add Measurement
+                        <span th:text="#{customer.details.addMeasurement}">Add Measurement</span>
                     </h5>
-                    <small class="text-white">
+                    <small class="text-white" th:text="#{customer.details.selectProductHelp}">
                         Select a product and enter its measurements
                     </small>
                 </div>
-
-                <button type="button"
-                        class="btn-close bg-light"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light"
+                        data-bs-dismiss="modal" th:attr="aria-label=#{button.close}"></button>
             </div>
 
             <div class="modal-body">
-
                 <div class="mb-4 p-3 border rounded-3 bg-light">
-
-                    <label for="measurementProduct"
-                           class="form-label fw-semibold">
+                    <label for="measurementProduct" class="form-label fw-semibold">
                         <i class="bi bi-box-seam me-1 text-success"></i>
-                        Product
+                        <span th:text="#{customer.details.product}">Product</span>
                     </label>
-
-                    <select id="measurementProduct"
-                            class="form-select">
-                        <option value="">Select Product</option>
-
+                    <select id="measurementProduct" class="form-select">
+                        <option value="" th:text="#{customer.details.selectProduct}">Select Product</option>
                         <option th:each="product : ${products}"
-                                th:value="${product.id}"
-                                th:text="${product.name}">
-                        </option>
+                                th:value="${product.id}" th:text="${product.name}"></option>
                     </select>
 
                     <script th:inline="javascript">
                         const existingMeasurementProductIds = /*[[${customerProductMeasurements.![product.id]}]]*/ [];
                     </script>
 
-                    <div class="form-text">
+                    <div class="form-text" th:text="#{customer.details.loadFieldsHelp}">
                         Select the product to load its measurement fields.
                     </div>
-
                 </div>
 
-                <div id="measurementFieldsContainer"
-                     class="row g-3">
-                </div>
+                <div id="measurementFieldsContainer" class="row g-3"></div>
 
-                <div id="measurementNotesContainer"
-                     class="mt-4"
-                     style="display: none;">
-
-                    <label for="measurementNotes"
-                           class="form-label fw-semibold">
-                        Additional Notes / Instructions
-                    </label>
-
-                    <textarea id="measurementNotes"
-                              class="form-control"
-                              rows="3"
-                              placeholder="Enter any additional notes or instructions for this measurement..."></textarea>
-
-                    <div class="form-text">
+                <div id="measurementNotesContainer" class="mt-4" style="display: none;">
+                    <label for="measurementNotes" class="form-label fw-semibold"
+                           th:text="#{customer.details.additionalNotes}">Additional Notes / Instructions</label>
+                    <textarea id="measurementNotes" class="form-control" rows="3"
+                              th:placeholder="#{customer.details.notesPlaceholder}"></textarea>
+                    <div class="form-text" th:text="#{customer.details.notesHelp}">
                         Add any special instructions or notes for this customer's measurement.
                     </div>
                 </div>
-
             </div>
 
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>
-                    Cancel
+                    <span th:text="#{button.cancel}">Cancel</span>
                 </button>
-
-                <button type="button"
-                        id="saveMeasurementBtn"
-                        class="btn btn-success">
+                <button type="button" id="saveMeasurementBtn" class="btn btn-success">
                     <i class="bi bi-check-circle me-1"></i>
-                    Save Measurement
+                    <span th:text="#{customer.details.saveMeasurement}">Save Measurement</span>
                 </button>
-
             </div>
-
         </div>
     </div>
 </div>
 
-<div class="modal fade"
-     id="editMeasurementModal"
-     tabindex="-1"
-     aria-labelledby="editMeasurementModalLabel"
-     aria-hidden="true">
-
+<!-- EDIT MEASUREMENT MODAL -->
+<div class="modal fade" id="editMeasurementModal" tabindex="-1"
+     aria-labelledby="editMeasurementModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 shadow">
-
             <div class="modal-header bg-success text-white rounded-top-4">
                 <div>
-                    <h5 class="modal-title fw-semibold mb-1"
-                        id="editMeasurementModalLabel">
+                    <h5 class="modal-title fw-semibold mb-1" id="editMeasurementModalLabel">
                         <i class="bi bi-pencil-square me-2"></i>
-                        Edit Measurement
+                        <span th:text="#{customer.details.editMeasurement}">Edit Measurement</span>
                     </h5>
-                    <small class="text-white">
+                    <small class="text-white" th:text="#{customer.details.updateMeasurementsHelp}">
                         Update the customer's measurements
                     </small>
                 </div>
-
-                <button type="button"
-                        class="btn-close bg-light"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light"
+                        data-bs-dismiss="modal" th:attr="aria-label=#{button.close}"></button>
             </div>
 
             <div class="modal-body">
-
                 <div class="mb-4 p-3 border rounded-3 bg-light">
-
-                    <label for="editMeasurementProduct"
-                           class="form-label fw-semibold">
+                    <label for="editMeasurementProduct" class="form-label fw-semibold">
                         <i class="bi bi-box-seam me-1 text-success"></i>
-                        Product
+                        <span th:text="#{customer.details.product}">Product</span>
                     </label>
-
-                    <select id="editMeasurementProduct"
-                            class="form-select"
-                            disabled>
-                        <option value="">Select Product</option>
-
+                    <select id="editMeasurementProduct" class="form-select" disabled>
+                        <option value="" th:text="#{customer.details.selectProduct}">Select Product</option>
                         <option th:each="product : ${products}"
-                                th:value="${product.id}"
-                                th:text="${product.name}">
-                        </option>
+                                th:value="${product.id}" th:text="${product.name}"></option>
                     </select>
-
-                    <div class="form-text">
+                    <div class="form-text" th:text="#{customer.details.productCannotChange}">
                         Product cannot be changed while editing a measurement.
                     </div>
-
                 </div>
 
-                <div id="editMeasurementFieldsContainer"
-                     class="row g-3">
-                </div>
+                <div id="editMeasurementFieldsContainer" class="row g-3"></div>
 
-                <div id="editMeasurementNotesContainer"
-                     class="mt-4">
-
-                    <label for="editMeasurementNotes"
-                           class="form-label fw-semibold">
-                        Additional Notes / Instructions
-                    </label>
-
-                    <textarea id="editMeasurementNotes"
-                              class="form-control"
-                              rows="3"
-                              placeholder="Enter any additional notes or instructions for this measurement..."></textarea>
-
-                    <div class="form-text">
+                <div id="editMeasurementNotesContainer" class="mt-4">
+                    <label for="editMeasurementNotes" class="form-label fw-semibold"
+                           th:text="#{customer.details.additionalNotes}">Additional Notes / Instructions</label>
+                    <textarea id="editMeasurementNotes" class="form-control" rows="3"
+                              th:placeholder="#{customer.details.notesPlaceholder}"></textarea>
+                    <div class="form-text" th:text="#{customer.details.updateNotesHelp}">
                         Update any special instructions or notes for this customer's measurement.
                     </div>
-
                 </div>
-
             </div>
 
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>
-                    Cancel
+                    <span th:text="#{button.cancel}">Cancel</span>
                 </button>
-
-                <button type="button"
-                        id="updateMeasurementBtn"
-                        class="btn btn-success">
+                <button type="button" id="updateMeasurementBtn" class="btn btn-success">
                     <i class="bi bi-check-circle me-1"></i>
-                    Update Measurement
+                    <span th:text="#{customer.details.updateMeasurement}">Update Measurement</span>
                 </button>
-
             </div>
-
         </div>
     </div>
 </div>
@@ -378,26 +283,38 @@
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
     var customerId = [[${customer.id}]];
     const csrfToken = $("meta[name='_csrf']").attr("content");
     const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+    const customerDetailsMessages = {
+        emptyTable: [[#{customer.details.emptyTable}]],
+    selectProductError: [[#{customer.details.selectProductError}]],
+    noFields: [[#{customer.details.noFields}]],
+    loadFieldsError: [[#{customer.details.loadFieldsError}]],
+    saveError: [[#{customer.details.saveError}]],
+    saveSuccess: [[#{customer.details.saveSuccess}]],
+    updateError: [[#{customer.details.updateError}]],
+    updateSuccess: [[#{customer.details.updateSuccess}]],
+    loadMeasurementError: [[#{customer.details.loadMeasurementError}]],
+    enterValue: [[#{customer.details.enterValue}]],
+    selectValue: [[#{customer.details.selectValue}]]
+    };
 </script>
+
 <script th:inline="javascript">
-
     $(document).ready(function () {
-
         $('#measurementsTable').DataTable({
             language: {
-                emptyTable: "No measurements found for this customer."
+                emptyTable: customerDetailsMessages.emptyTable
             }
         });
-
     });
 
     function showAlert(message, type = "success") {
-
         const alertContainer = document.getElementById("jsAlertContainer");
 
         const icon = type === "success"
@@ -406,66 +323,58 @@
                 ? "bi-exclamation-triangle-fill"
                 : "bi-info-circle-fill";
 
-        alertContainer.innerHTML = `
-        <div class="alert alert-${type} alert-dismissible fade show shadow-sm rounded-3"
-             role="alert">
+        const alert = document.createElement("div");
+        alert.className = `alert alert-${type} alert-dismissible fade show shadow-sm rounded-3`;
+        alert.setAttribute("role", "alert");
 
-            <div class="d-flex align-items-center">
-                <i class="bi ${icon} me-2 fs-4"></i>
-                <span>${message}</span>
-            </div>
+        const content = document.createElement("div");
+        content.className = "d-flex align-items-center";
 
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close">
-            </button>
+        const iconElement = document.createElement("i");
+        iconElement.className = `bi ${icon} me-2 fs-4`;
 
-        </div>
-    `;
+        const messageElement = document.createElement("span");
+        messageElement.textContent = message;
 
-        // Automatically hide after 4 seconds
+        content.appendChild(iconElement);
+        content.appendChild(messageElement);
+
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "btn-close";
+        closeButton.setAttribute("data-bs-dismiss", "alert");
+        closeButton.setAttribute("aria-label", [[#{button.close}]]);
+
+        alert.appendChild(content);
+        alert.appendChild(closeButton);
+        alertContainer.replaceChildren(alert);
+
         setTimeout(() => {
-
-            const alertElement =
-                alertContainer.querySelector(".alert");
-
-            if (alertElement) {
-
-                const alertInstance =
-                    bootstrap.Alert.getOrCreateInstance(alertElement);
-
-                alertInstance.close();
+            if (alert.isConnected) {
+                bootstrap.Alert.getOrCreateInstance(alert).close();
             }
-
         }, 4000);
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-
         const measurementModal = document.getElementById("addMeasurementModal");
         const productSelect = document.getElementById("measurementProduct");
         const fieldsContainer = document.getElementById("measurementFieldsContainer");
         const notesContainer = document.getElementById("measurementNotesContainer");
 
         existingMeasurementProductIds.forEach(productId => {
-            const option = productSelect.querySelector(
-                `option[value="${productId}"]`
-            );
-
+            const option = productSelect.querySelector(`option[value="${productId}"]`);
             if (option) {
                 option.remove();
             }
         });
 
         productSelect.addEventListener("change", function () {
-
             const productId = this.value;
             fieldsContainer.innerHTML = "";
             notesContainer.style.display = "none";
 
             if (!productId) {
-                showAlert("Please select a product.", "danger");
                 return;
             }
 
@@ -479,63 +388,45 @@
                     return response.json();
                 })
                 .then(fields => {
-
                     if (fields.length === 0) {
                         fieldsContainer.innerHTML = `
                             <div class="col-12">
                                 <div class="alert alert-info mb-0">
-                                    No measurement fields found for this product.
+                                    ${customerDetailsMessages.noFields}
                                 </div>
-                            </div>
-                        `;
+                            </div>`;
                         return;
                     }
 
                     fields.forEach(field => {
-
                         const col = document.createElement("div");
                         col.className = "col-md-6";
 
                         let fieldHtml = `
-                            <label class="form-label fw-semibold">
-                                ${field.fieldName}
-                            </label>
-                        `;
+                            <label class="form-label fw-semibold">${field.fieldName}</label>`;
 
                         if (field.fieldType === "TEXT") {
-
                             fieldHtml += `
-                                <input type="text"
-                                       class="form-control"
+                                <input type="text" class="form-control"
                                        data-field-id="${field.id}"
-                                       placeholder="Enter ${field.fieldName}">
-                            `;
-
+                                       placeholder="${customerDetailsMessages.enterValue} ${field.fieldName}">`;
                         } else if (field.fieldType === "DROPDOWN") {
-
                             fieldHtml += `
-                                <select class="form-select"
-                                        data-field-id="${field.id}">
-                                    <option value="">
-                                        Select ${field.fieldName}
-                                    </option>
-                            `;
+                                <select class="form-select" data-field-id="${field.id}">
+                                    <option value="">${customerDetailsMessages.selectValue} ${field.fieldName}</option>`;
 
                             if (field.options) {
                                 field.options.split(",").forEach(option => {
-
                                     const value = option.trim();
-
                                     if (value) {
-                                        fieldHtml += `
-                                            <option value="${value}">
-                                                ${value}
-                                            </option>
-                                        `;
+                                        const optionElement = document.createElement("option");
+                                        optionElement.value = value;
+                                        optionElement.textContent = value;
+                                        col.appendChild(document.createElement("span"));
+                                        fieldHtml += `<option value="${value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}">${value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</option>`;
                                     }
                                 });
                             }
-
                             fieldHtml += `</select>`;
                         }
 
@@ -544,59 +435,45 @@
                     });
                 })
                 .catch(error => {
-
                     console.error("Error loading measurement fields:", error);
-
                     fieldsContainer.innerHTML = `
                         <div class="col-12">
                             <div class="alert alert-danger mb-0">
-                                Failed to load measurement fields.
+                                ${customerDetailsMessages.loadFieldsError}
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
         });
 
         measurementModal.addEventListener("hidden.bs.modal", function () {
             productSelect.value = "";
             fieldsContainer.innerHTML = "";
+            document.getElementById("measurementNotes").value = "";
+            notesContainer.style.display = "none";
         });
 
         document.getElementById("saveMeasurementBtn").addEventListener("click", function () {
-
             const productId = productSelect.value;
 
             if (!productId) {
-                showAlert("Please select a product.", "danger");
+                showAlert(customerDetailsMessages.selectProductError, "danger");
                 return;
             }
 
-            const measurementFields =
-                fieldsContainer.querySelectorAll("[data-field-id]");
+            const measurementFields = fieldsContainer.querySelectorAll("[data-field-id]");
 
             if (measurementFields.length === 0) {
-                showAlert("No measurement fields found for this product.", "danger");
+                showAlert(customerDetailsMessages.noFields, "danger");
                 return;
             }
 
             const measurements = {};
-
             measurementFields.forEach(field => {
-                const fieldId = field.getAttribute("data-field-id");
-                measurements[fieldId] = field.value;
+                measurements[field.getAttribute("data-field-id")] = field.value;
             });
 
             const notes = document.getElementById("measurementNotes").value.trim();
-
-            const requestData = {
-                notes: notes,
-                measurements: measurements
-            };
-
-            console.log("Product ID:", productId);
-            console.log("Notes:", notes);
-            console.log("Measurements:", measurements);
-            console.log("Request Data:", requestData);
+            const requestData = {notes: notes, measurements: measurements};
 
             fetch(`${contextPath}customers/${customerId}/measurements?productId=${productId}`, {
                 method: "POST",
@@ -610,49 +487,25 @@
                     if (!response.ok) {
                         throw new Error("Failed to save measurement");
                     }
-
                     return response.json();
                 })
                 .then(result => {
-
                     if (result.success) {
-
-                        bootstrap.Modal
-                            .getInstance(measurementModal)
-                            .hide();
-
-                        showAlert(
-                            result.message || "Measurements saved successfully.",
-                            "success"
-                        );
-
-                        setTimeout(() => {
-                            location.reload();
-                        }, 4000);
-
+                        bootstrap.Modal.getInstance(measurementModal).hide();
+                        showAlert(result.message || customerDetailsMessages.saveSuccess, "success");
+                        setTimeout(() => location.reload(), 4000);
                     } else {
-
-                        showAlert(
-                            result.message || "Failed to save measurement.",
-                            "danger"
-                        );
+                        showAlert(result.message || customerDetailsMessages.saveError, "danger");
                     }
                 })
                 .catch(error => {
-
                     console.error("Error saving measurement:", error);
-
-                    showAlert(
-                        "Failed to save measurement. Please try again.",
-                        "danger"
-                    );
+                    showAlert(customerDetailsMessages.saveError, "danger");
                 });
         });
 
-        $(document).on('click', '.edit-measurement-btn', function () {
-            const measurementId = $(this).data('measurement-id');
-
-            console.log("Edit Customer Product Measurement ID:", measurementId);
+        $(document).on("click", ".edit-measurement-btn", function () {
+            const measurementId = $(this).data("measurement-id");
 
             fetch(`${contextPath}customers/measurements/${measurementId}`)
                 .then(response => {
@@ -662,172 +515,122 @@
                     return response.json();
                 })
                 .then(result => {
-                    console.log("Edit Measurement Response:", result);
-
                     if (!result.success) {
-                        showAlert(
-                            result.message || "Failed to load measurement.",
-                            "danger"
-                        );
+                        showAlert(result.message || customerDetailsMessages.loadMeasurementError, "danger");
                         return;
                     }
 
                     const measurement = result.measurement;
-                    document.getElementById('updateMeasurementBtn').dataset.measurementId = measurement.id;
+                    document.getElementById("updateMeasurementBtn").dataset.measurementId = measurement.id;
 
-                    $('#editMeasurementProduct').val(measurement.productId);
-                    $('#editMeasurementNotes').val(measurement.notes || '');
+                    $("#editMeasurementProduct").val(measurement.productId);
+                    $("#editMeasurementNotes").val(measurement.notes || "");
 
-                    const fieldsContainer = document.getElementById('editMeasurementFieldsContainer');
-                    fieldsContainer.innerHTML = '';
+                    const editFieldsContainer = document.getElementById("editMeasurementFieldsContainer");
+                    editFieldsContainer.innerHTML = "";
 
                     measurement.measurements.forEach(field => {
-                        const col = document.createElement('div');
-                        col.className = 'col-md-6';
+                        const col = document.createElement("div");
+                        col.className = "col-md-6";
 
-                        let fieldHtml = `
-        <label class="form-label fw-semibold">
-            ${field.fieldName}
-    </label>
-        `;
+                        const label = document.createElement("label");
+                        label.className = "form-label fw-semibold";
+                        label.textContent = field.fieldName;
+                        col.appendChild(label);
 
-                        if (field.fieldType === 'TEXT') {
-                            fieldHtml += `
-        <input type="text"
-        class="form-control edit-measurement-field"
-        data-field-id="${field.fieldId}"
-        value="${field.value || ''}"
-        placeholder="Enter ${field.fieldName}">
-            `;
-                        } else if (field.fieldType === 'DROPDOWN') {
-                            fieldHtml += `
-            <select class="form-select edit-measurement-field"
-        data-field-id="${field.fieldId}">
-            <option value="">Select ${field.fieldName}</option>
-        `;
+                        let input;
+                        if (field.fieldType === "TEXT") {
+                            input = document.createElement("input");
+                            input.type = "text";
+                            input.className = "form-control edit-measurement-field";
+                            input.value = field.value || "";
+                            input.placeholder = `${customerDetailsMessages.enterValue} ${field.fieldName}`;
+                        } else if (field.fieldType === "DROPDOWN") {
+                            input = document.createElement("select");
+                            input.className = "form-select edit-measurement-field";
+
+                            const placeholder = document.createElement("option");
+                            placeholder.value = "";
+                            placeholder.textContent = `${customerDetailsMessages.selectValue} ${field.fieldName}`;
+                            input.appendChild(placeholder);
 
                             if (field.options) {
-                                field.options.split(',').forEach(option => {
+                                field.options.split(",").forEach(option => {
                                     const value = option.trim();
-
                                     if (value) {
-                                        fieldHtml += `
-        <option value="${value}" ${value === field.value ? 'selected' : ''}>
-        ${value}
-    </option>
-        `;
+                                        const optionElement = document.createElement("option");
+                                        optionElement.value = value;
+                                        optionElement.textContent = value;
+                                        optionElement.selected = value === field.value;
+                                        input.appendChild(optionElement);
                                     }
                                 });
                             }
-
-                            fieldHtml += `</select>`;
                         }
 
-                        col.innerHTML = fieldHtml;
-                        fieldsContainer.appendChild(col);
+                        if (input) {
+                            input.dataset.fieldId = field.fieldId;
+                            col.appendChild(input);
+                            editFieldsContainer.appendChild(col);
+                        }
                     });
 
-                    const editModal = new bootstrap.Modal(
-                        document.getElementById('editMeasurementModal')
-                    );
-
-                    editModal.show();
+                    new bootstrap.Modal(document.getElementById("editMeasurementModal")).show();
                 })
                 .catch(error => {
-
                     console.error("Error loading edit measurement:", error);
-
-                    showAlert(
-                        "Failed to load measurement.",
-                        "danger"
-                    );
+                    showAlert(customerDetailsMessages.loadMeasurementError, "danger");
                 });
         });
 
-        document.getElementById('updateMeasurementBtn').addEventListener('click', function () {
-
+        document.getElementById("updateMeasurementBtn").addEventListener("click", function () {
             const measurementId = this.dataset.measurementId;
-            const notes = document.getElementById('editMeasurementNotes').value.trim();
+            const notes = document.getElementById("editMeasurementNotes").value.trim();
             const measurements = {};
 
-            document.querySelectorAll('#editMeasurementFieldsContainer .edit-measurement-field')
+            document.querySelectorAll("#editMeasurementFieldsContainer .edit-measurement-field")
                 .forEach(field => {
                     measurements[field.dataset.fieldId] = field.value;
                 });
 
-            const requestData = {
-                notes: notes,
-                measurements: measurements
-            };
-
-            console.log("Measurement ID:", measurementId);
-            console.log("Notes:", notes);
-            console.log("Measurements:", measurements);
-            console.log("Request Data:", requestData);
+            const requestData = {notes: notes, measurements: measurements};
 
             fetch(`${contextPath}customers/measurements/${measurementId}`, {
-                method: 'PUT',
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     [csrfHeader]: csrfToken
                 },
                 body: JSON.stringify(requestData)
             })
                 .then(response => {
-
                     if (!response.ok) {
                         throw new Error("Failed to update measurement");
                     }
-
                     return response.json();
                 })
                 .then(result => {
-
-                    console.log("Update Measurement Response:", result);
-
                     if (!result.success) {
-
-                        showAlert(
-                            result.message || "Failed to update measurement.",
-                            "danger"
-                        );
-
+                        showAlert(result.message || customerDetailsMessages.updateError, "danger");
                         return;
                     }
 
-                    // Close edit modal
                     const editModal = bootstrap.Modal.getInstance(
-                        document.getElementById('editMeasurementModal')
+                        document.getElementById("editMeasurementModal")
                     );
-
                     if (editModal) {
                         editModal.hide();
                     }
 
-                    // Show success message
-                    showAlert(
-                        result.message || "Measurement updated successfully.",
-                        "success"
-                    );
-
-                    // Reload after alert is visible
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 4000);
+                    showAlert(result.message || customerDetailsMessages.updateSuccess, "success");
+                    setTimeout(() => window.location.reload(), 4000);
                 })
                 .catch(error => {
-
                     console.error("Error updating measurement:", error);
-
-                    showAlert(
-                        "Failed to update measurement. Please try again.",
-                        "danger"
-                    );
+                    showAlert(customerDetailsMessages.updateError, "danger");
                 });
         });
-
     });
 </script>
-
 </body>
 </html>

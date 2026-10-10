@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Products</title>
+    <title th:text="#{products.title}">Products</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -16,28 +17,25 @@
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
-
     <div class="main-content container-fluid">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
 
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-box-seam-fill me-2"></i>
-                Products
+                <span th:text="#{products.title}">Products</span>
             </h2>
 
             <a th:href="@{/products/create}"
                class="btn btn-success rounded-pill shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i>
-                Create New Product
+                <span th:text="#{products.createNew}">Create New Product</span>
             </a>
 
         </div>
 
         <!-- Success Message -->
-        <div th:if="${successMessage}"
-             class="row justify-content-center">
-
+        <div th:if="${successMessage}" class="row justify-content-center">
             <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3"
                  role="alert">
 
@@ -49,17 +47,14 @@
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="alert"
-                        aria-label="Close">
+                        th:attr="aria-label=#{products.close}">
                 </button>
 
             </div>
-
         </div>
 
         <!-- Error Message -->
-        <div th:if="${errorMessage}"
-             class="row justify-content-center">
-
+        <div th:if="${errorMessage}" class="row justify-content-center">
             <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
                  role="alert">
 
@@ -71,18 +66,17 @@
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="alert"
-                        aria-label="Close">
+                        th:attr="aria-label=#{products.close}">
                 </button>
 
             </div>
-
         </div>
 
         <div class="card shadow-sm border-success border-bottom border-3">
 
             <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                 <i class="bi bi-box-seam me-2"></i>
-                Product List
+                <span th:text="#{products.list}">Product List</span>
             </div>
 
             <div class="card-body">
@@ -93,16 +87,15 @@
                     <thead class="table-success text-dark">
                     <tr>
                         <th>#</th>
-                        <th>Product Name</th>
-                        <th>Single Stitching</th>
-                        <th>Double Stitching</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
+                        <th th:text="#{products.name}">Product Name</th>
+                        <th th:text="#{products.singleStitching}">Single Stitching</th>
+                        <th th:text="#{products.doubleStitching}">Double Stitching</th>
+                        <th th:text="#{products.createdDate}">Created Date</th>
+                        <th th:text="#{products.actions}">Actions</th>
                     </tr>
                     </thead>
 
                     <tbody>
-
                     <tr th:each="product, iterStat : ${products}">
 
                         <td th:text="${iterStat.index + 1}"></td>
@@ -117,43 +110,33 @@
                             th:text="${product.doubleSilai}">
                         </td>
 
-                        <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}">
-                        </td>
+                        <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}"></td>
 
                         <td>
-
                             <a th:href="@{'/products/update/' + ${thymeleafUtil.encryptId(product.id)}}"
                                class="btn btn-warning btn-sm rounded-pill shadow-sm"
-                               title="Edit Product">
-
+                               th:title="#{products.editProduct}">
                                 <i class="bi bi-pencil-square me-1"></i>
-                                Edit
-
+                                <span th:text="#{button.edit}">Edit</span>
                             </a>
 
                             <a th:href="@{'/products/' + ${thymeleafUtil.encryptId(product.id)} + '/measurements'}"
                                class="btn btn-info btn-sm rounded-pill shadow-sm"
-                               title="Manage Measurements">
-
+                               th:title="#{products.manageMeasurements}">
                                 <i class="bi bi-rulers me-1"></i>
-                                Manage Measurements
-
+                                <span th:text="#{products.manageMeasurements}">Manage Measurements</span>
                             </a>
-
                         </td>
 
                     </tr>
-
                     </tbody>
 
                 </table>
 
             </div>
-
         </div>
 
     </div>
-
 </div>
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
@@ -168,7 +151,6 @@
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
-
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>

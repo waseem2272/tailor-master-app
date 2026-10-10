@@ -1,9 +1,9 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Edit Customer</title>
-
+    <title th:text="#{customer.edit.title}">Edit Customer</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -77,19 +77,19 @@
 
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-person-vcard text-success me-2"></i>
-                Edit Customer
+                <span th:text="#{customer.edit.title}">Edit Customer</span>
             </h2>
 
-            <p class="text-danger fw-bold">
+            <p class="text-danger fw-bold"
+               th:text="#{customer.edit.requiredFields}">
                 Fields marked with * are required.
             </p>
 
-            <!-- CUSTOMER INFORMATION -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4">
 
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-person-lines-fill me-2 fs-5"></i>
-                    Customer Information
+                    <span th:text="#{customer.edit.information}">Customer Information</span>
                 </div>
 
                 <div class="card-body">
@@ -102,24 +102,24 @@
 
                         <div class="row g-4">
 
-                            <!-- FULL NAME -->
                             <div class="col-md-6">
 
                                 <label for="fullName"
                                        class="form-label fw-semibold required">
                                     <i class="bi bi-person field-icon"></i>
-                                    Full Name
+                                    <span th:text="#{customer.edit.fullName}">Full Name</span>
                                 </label>
 
                                 <input type="text"
                                        th:field="*{fullName}"
                                        id="fullName"
                                        class="form-control"
-                                       placeholder="Enter customer full name"
+                                       th:placeholder="#{customer.edit.fullNamePlaceholder}"
                                        autocomplete="name"
                                        required>
 
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback"
+                                     th:text="#{customer.edit.fullNameRequired}">
                                     Full name is required.
                                 </div>
 
@@ -130,23 +130,22 @@
 
                             </div>
 
-                            <!-- BOOK NUMBER -->
                             <div class="col-md-6">
 
-                                <label for="bookNumber"
-                                       class="form-label fw-semibold">
+                                <label for="bookNumber" class="form-label fw-semibold">
                                     <i class="bi bi-journal-text field-icon"></i>
-                                    Book Number
+                                    <span th:text="#{customer.edit.bookNumber}">Book Number</span>
                                 </label>
 
                                 <input type="text"
                                        th:field="*{bookNumber}"
                                        id="bookNumber"
                                        class="form-control"
-                                       placeholder="Enter book number"
+                                       th:placeholder="#{customer.edit.bookNumberPlaceholder}"
                                        autocomplete="off">
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{customer.edit.bookNumberHelp}">
                                     Optional customer reference number.
                                 </div>
 
@@ -157,13 +156,12 @@
 
                             </div>
 
-                            <!-- PHONE NUMBER -->
                             <div class="col-md-6">
 
                                 <label for="phoneNumber"
                                        class="form-label fw-semibold required">
                                     <i class="bi bi-telephone field-icon"></i>
-                                    Phone Number
+                                    <span th:text="#{customer.edit.phoneNumber}">Phone Number</span>
                                 </label>
 
                                 <input type="tel"
@@ -175,9 +173,9 @@
                                        pattern="^03\d{9}$"
                                        required>
 
-                                <div class="invalid-feedback">
-                                    Enter a valid Pakistani phone number
-                                    (e.g. 03001234567).
+                                <div class="invalid-feedback"
+                                     th:text="#{customer.edit.phoneInvalid}">
+                                    Enter a valid Pakistani phone number (e.g. 03001234567).
                                 </div>
 
                                 <div th:if="${#fields.hasErrors('phoneNumber')}"
@@ -189,34 +187,34 @@
 
                         </div>
 
-                        <!-- INFO -->
                         <div class="info-box mt-4">
                             <i class="bi bi-info-circle me-2 text-success"></i>
-                            Customer measurements can be managed separately
-                            from the <strong>Customer Details</strong> page.
+                            <span th:text="#{customer.edit.measurementsInfo}">
+                                Customer measurements can be managed separately from the
+                            </span>
+                            <strong th:text="#{customer.edit.customerDetails}">Customer Details</strong>
+                            <span th:text="#{customer.details.pageSuffix}">page.</span>
                         </div>
 
-                        <!-- ERROR MESSAGE -->
                         <div th:if="${errorMessage}"
                              class="alert alert-danger mt-4 mb-0">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <span th:text="${errorMessage}"></span>
                         </div>
 
-                        <!-- ACTIONS -->
                         <div class="text-center mt-4">
 
                             <button type="submit"
                                     id="updateCustomerButton"
                                     class="btn btn-success rounded-pill shadow-sm px-4">
                                 <i class="bi bi-check-circle me-1"></i>
-                                Update Customer
+                                <span th:text="#{button.update}">Customer</span>
                             </button>
 
                             <a th:href="@{/customers}"
                                class="btn btn-secondary rounded-pill shadow-sm px-4">
                                 <i class="bi bi-x-circle me-1"></i>
-                                Cancel
+                                <span th:text="#{button.cancel}">Cancel</span>
                             </a>
 
                         </div>
@@ -275,7 +273,6 @@
         }
 
         form.addEventListener("submit", function (event) {
-
             const nameValid = validateName();
             const phoneValid = validatePhone();
 

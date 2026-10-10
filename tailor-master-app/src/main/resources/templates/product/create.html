@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Product</title>
+    <title th:text="#{product.create.title}">Create Product</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
@@ -24,10 +24,11 @@
 
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi bi-box-seam-fill me-2"></i>
-                    Create New Product
+                    <span th:text="#{product.create.title}">Create New Product</span>
                 </h2>
 
-                <p class="text-danger fw-bold">
+                <p class="text-danger fw-bold"
+                   th:text="#{product.create.requiredFields}">
                     Fields marked with * are required.
                 </p>
 
@@ -35,16 +36,15 @@
 
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                         <i class="bi bi-info-circle me-2"></i>
-                        Product Information
+                        <span th:text="#{product.create.information}">Product Information</span>
                     </div>
 
                     <div class="card-body">
-
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">
-                                    Product Name
+                                    <span th:text="#{product.create.name}">Product Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
 
@@ -54,14 +54,12 @@
                                        class="form-control"
                                        required>
 
-                                <div id="nameError"
-                                     class="text-danger error-message">
-                                </div>
+                                <div id="nameError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="singleSilai" class="form-label">
-                                    Single Stitching
+                                    <span th:text="#{product.create.singleStitching}">Single Stitching</span>
                                     <span class="text-danger">*</span>
                                 </label>
 
@@ -72,14 +70,12 @@
                                        step="0.01"
                                        required>
 
-                                <div id="singleSilaiError"
-                                     class="text-danger error-message">
-                                </div>
+                                <div id="singleSilaiError" class="text-danger error-message"></div>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <label for="doubleSilai" class="form-label">
-                                    Double Stitching
+                                    <span th:text="#{product.create.doubleStitching}">Double Stitching</span>
                                     <span class="text-danger">*</span>
                                 </label>
 
@@ -90,31 +86,27 @@
                                        step="0.01"
                                        required>
 
-                                <div id="doubleSilaiError"
-                                     class="text-danger error-message">
-                                </div>
+                                <div id="doubleSilaiError" class="text-danger error-message"></div>
                             </div>
 
-                            <!-- Buttons -->
                             <div class="text-center mt-3">
 
                                 <button type="button"
                                         class="btn btn-success rounded-pill shadow-sm px-4"
                                         id="openModal">
                                     <i class="bi bi-check-circle me-1"></i>
-                                    Save
+                                    <span th:text="#{button.save}">Save</span>
                                 </button>
 
                                 <a th:href="@{/products}"
                                    class="btn btn-secondary rounded-pill shadow-sm px-4">
                                     <i class="bi bi-x-circle me-1"></i>
-                                    Cancel
+                                    <span th:text="#{button.cancel}">Cancel</span>
                                 </a>
 
                             </div>
 
                         </div>
-
                     </div>
                 </div>
             </form>
@@ -131,42 +123,39 @@
      aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered">
-
         <div class="modal-content rounded-4 shadow">
 
             <div class="modal-header bg-success text-white rounded-top-4">
-
-                <h5 class="modal-title" id="confirmModalLabel">
+                <h5 class="modal-title" id="confirmModalLabel"
+                    th:text="#{product.create.confirmation}">
                     Product Confirmation
                 </h5>
 
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="modal"
-                        aria-label="Close">
+                        th:attr="aria-label=#{product.create.close}">
                 </button>
-
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body"
+                 th:text="#{product.create.confirmSaveMessage}">
                 Are you sure you want to save this product?
             </div>
 
             <div class="modal-footer">
-
                 <button type="button"
                         class="btn btn-secondary rounded-pill"
                         data-bs-dismiss="modal">
-                    Cancel
+                    <span th:text="#{button.cancel}">Cancel</span>
                 </button>
 
                 <button type="button"
                         class="btn btn-success rounded-pill"
                         id="confirmSubmit">
                     <i class="bi bi-check-circle"></i>
-                    Yes, Save
+                    <span th:text="#{product.create.yesSave}">Yes, Save</span>
                 </button>
-
             </div>
 
         </div>
@@ -204,7 +193,6 @@
         }
 
         function validateName() {
-
             if (!name.value.trim()) {
                 name.classList.add("is-invalid");
                 return false;
@@ -215,7 +203,6 @@
         }
 
         function validateSingleSilai() {
-
             const value = parseFloat(singleSilai.value);
 
             if (singleSilai.value.trim() === "" || value <= 0) {
@@ -228,7 +215,6 @@
         }
 
         function validateDoubleSilai() {
-
             const value = parseFloat(doubleSilai.value);
 
             if (doubleSilai.value.trim() === "" || value <= 0) {
@@ -241,26 +227,21 @@
         }
 
         function validateForm() {
-
             const nameValid = validateName();
             const singleSilaiValid = validateSingleSilai();
             const doubleSilaiValid = validateDoubleSilai();
 
-            return nameValid &&
-                singleSilaiValid &&
-                doubleSilaiValid;
+            return nameValid && singleSilaiValid && doubleSilaiValid;
         }
 
         openModal.addEventListener("click", function () {
-
             if (!validateForm()) {
                 return;
             }
 
-            const confirmModal =
-                new bootstrap.Modal(
-                    document.getElementById("confirmModal")
-                );
+            const confirmModal = new bootstrap.Modal(
+                document.getElementById("confirmModal")
+            );
 
             confirmModal.show();
         });
@@ -276,7 +257,6 @@
         });
 
         singleSilai.addEventListener("input", function () {
-
             const value = parseFloat(singleSilai.value);
 
             if (singleSilai.value.trim() !== "" && value > 0) {
@@ -285,7 +265,6 @@
         });
 
         doubleSilai.addEventListener("input", function () {
-
             const value = parseFloat(doubleSilai.value);
 
             if (doubleSilai.value.trim() !== "" && value > 0) {

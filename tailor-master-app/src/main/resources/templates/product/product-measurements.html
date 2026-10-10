@@ -1,13 +1,13 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Product Measurement</title>
+    <title th:text="#{product.measurement.details}">Product Measurement</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
-
 <body>
 
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -19,145 +19,101 @@
 
             <h2 class="page-title d-flex align-items-center mb-4 flex-wrap">
                 <i class="bi bi-box-seam-fill me-2"></i>
-                <span th:utext="${product.name} + ' Measurement'"></span>
+                <span th:text="${product.name} + ' ' + #{product.measurement.titleSuffix}"></span>
             </h2>
 
-            <!-- Success Alert -->
             <div th:if="${successMessage}" class="row justify-content-center">
-                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3"
-                     role="alert">
-
+                <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-check-circle-fill me-2 fs-4"></i>
                         <span th:text="${successMessage}"></span>
                     </div>
-
                     <button type="button"
                             class="btn-close bg-light"
                             data-bs-dismiss="alert"
-                            aria-label="Close">
+                            th:attr="aria-label=#{button.close}">
                     </button>
-
                 </div>
             </div>
 
-            <!-- Error Alert -->
             <div th:if="${errorMessage}" class="row justify-content-center">
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3"
-                     role="alert">
-
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3" role="alert">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                         <span th:text="${errorMessage}"></span>
                     </div>
-
                     <button type="button"
                             class="btn-close bg-light"
                             data-bs-dismiss="alert"
-                            aria-label="Close">
+                            th:attr="aria-label=#{button.close}">
                     </button>
-
                 </div>
             </div>
 
             <div class="card border-success border-bottom border-3 shadow-sm mt-4">
-
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-clock-history me-2"></i>
-                    Measurement Details
+                    <span th:text="#{product.measurement.details}">Measurement Details</span>
                 </div>
 
                 <div class="card-body">
 
-                    <!-- CASE 1: No measurements -->
+                    <!-- No measurements -->
                     <div th:if="${#lists.isEmpty(fields)} and !${editMode}">
-
-                        <p class="text-muted">
+                        <p class="text-muted" th:text="#{product.measurement.noneFound}">
                             No measurements were found for this product.
                         </p>
 
                         <a th:href="@{'/products/' + ${thymeleafUtil.encryptId(product.id)} + '/measurements?edit=true'}"
                            class="btn btn-success rounded-pill shadow-sm">
-
-                            <i class="bi bi-plus-circle"></i>
-                            Create Measurement
-
+                            <i class="bi bi-plus-circle me-1"></i>
+                            <span th:text="#{product.measurement.create}">Create Measurement</span>
                         </a>
-
                     </div>
 
-                    <!-- CASE 2: Show measurements in view mode -->
+                    <!-- View measurements -->
                     <div th:if="!${#lists.isEmpty(fields)} and !${editMode}">
-
                         <div class="table-responsive">
-
                             <table class="table table-bordered table-striped">
-
                                 <thead class="table-success">
-
                                 <tr>
-                                    <th>Measurement Name</th>
-                                    <th>Measurement Type</th>
-                                    <th>Action</th>
+                                    <th th:text="#{product.measurement.name}">Measurement Name</th>
+                                    <th th:text="#{product.measurement.type}">Measurement Type</th>
+                                    <th th:text="#{product.measurement.action}">Action</th>
                                 </tr>
-
                                 </thead>
-
                                 <tbody>
-
                                 <tr th:each="field : ${fields}">
-
                                     <td th:text="${field.fieldName}"></td>
-
                                     <td th:text="${field.fieldType}"></td>
-
                                     <td>
-
                                         <span th:if="${field.fieldType == 'DROPDOWN'}"
                                               th:each="opt : ${field.options}">
-
-                                            <span class="badge bg-secondary me-1"
-                                                  th:text="${opt}">
-                                            </span>
-
+                                            <span class="badge bg-secondary me-1" th:text="${opt}"></span>
                                         </span>
-
                                     </td>
-
                                 </tr>
-
                                 </tbody>
-
                             </table>
-
                         </div>
 
-                        <!-- Edit / Cancel buttons -->
                         <div class="text-center">
-
                             <a th:href="@{'/products/' + ${thymeleafUtil.encryptId(product.id)} + '/measurements?edit=true'}"
                                class="btn btn-warning shadow rounded-pill px-4">
-
                                 <i class="bi bi-pencil me-1"></i>
-                                Edit
-
+                                <span th:text="#{product.measurement.edit}">Edit</span>
                             </a>
 
                             <a th:href="@{/products}"
                                class="btn btn-secondary shadow rounded-pill px-4">
-
                                 <i class="bi bi-x-circle me-1"></i>
-                                Cancel
-
+                                <span th:text="#{button.cancel}">Cancel</span>
                             </a>
-
                         </div>
-
                     </div>
 
-                    <!-- CASE 3: Edit/Create mode -->
+                    <!-- Create/Edit measurements -->
                     <div th:if="${editMode}">
-
                         <form id="measurementForm"
                               th:action="@{'/products/' + ${thymeleafUtil.encryptId(product.id)} + '/measurements'}"
                               method="post"
@@ -165,223 +121,144 @@
                               novalidate>
 
                             <div class="table-responsive">
-
                                 <table class="table table-bordered table-hover table-striped">
-
                                     <thead class="table-success text-dark">
-
                                     <tr>
-                                        <th>Measurement Name</th>
-                                        <th>Measurement Type</th>
-                                        <th>Options (if Dropdown)</th>
-                                        <th>Action</th>
+                                        <th th:text="#{product.measurement.name}">Measurement Name</th>
+                                        <th th:text="#{product.measurement.type}">Measurement Type</th>
+                                        <th th:text="#{product.measurement.options}">Options (if Dropdown)</th>
+                                        <th th:text="#{product.measurement.action}">Action</th>
                                     </tr>
-
                                     </thead>
 
                                     <tbody id="measurementFieldsBody">
-
-                                    <!-- Render existing fields -->
                                     <tr th:each="field, iterStat : ${fields}">
-
                                         <td>
-
-                                            <!-- Hidden field for ID -->
                                             <input type="hidden"
                                                    th:name="|fields[${iterStat.index}].id|"
-                                                   th:value="${field.id}" />
+                                                   th:value="${field.id}"/>
 
                                             <input type="text"
                                                    class="form-control field-name"
                                                    th:value="${field.fieldName}"
                                                    th:name="|fields[${iterStat.index}].fieldName|"
-                                                   placeholder="Enter measurement"
+                                                   th:attr="placeholder=#{product.measurement.enterMeasurement}"
                                                    required>
-
                                         </td>
 
                                         <td>
-
                                             <select class="form-select field-type"
                                                     th:name="|fields[${iterStat.index}].fieldType|"
                                                     required>
-
                                                 <option value="TEXT"
-                                                        th:selected="${field.fieldType == 'TEXT'}">
-                                                    Text
-                                                </option>
-
+                                                        th:selected="${field.fieldType == 'TEXT'}"
+                                                        th:text="#{product.measurement.text}">Text</option>
                                                 <option value="DROPDOWN"
-                                                        th:selected="${field.fieldType == 'DROPDOWN'}">
-                                                    Dropdown
-                                                </option>
-
+                                                        th:selected="${field.fieldType == 'DROPDOWN'}"
+                                                        th:text="#{product.measurement.dropdown}">Dropdown</option>
                                             </select>
-
                                         </td>
 
                                         <td class="options-cell">
-
                                             <div th:if="${field.fieldType == 'DROPDOWN'}">
-
                                                 <div class="dropdown-options-container">
-
                                                     <div th:each="opt, optStat : ${field.options}"
                                                          class="input-group mb-2">
-
                                                         <input type="text"
                                                                class="form-control dropdown-input"
                                                                th:value="${opt}"
                                                                th:name="|fields[${iterStat.index}].options[${optStat.index}]|"
-                                                               placeholder="Enter option"
+                                                               th:attr="placeholder=#{product.measurement.enterOption}"
                                                                required>
 
                                                         <button type="button"
-                                                                class="btn btn-outline-danger remove-option">
-
+                                                                class="btn btn-outline-danger remove-option"
+                                                                th:attr="aria-label=#{product.measurement.remove}">
                                                             <i class="bi bi-trash"></i>
-
                                                         </button>
-
                                                     </div>
-
                                                 </div>
 
-                                                <button type="button"
-                                                        class="btn btn-sm btn-success add-option">
-
-                                                    <i class="bi bi-plus-circle"></i>
-                                                    Add New Option
-
+                                                <button type="button" class="btn btn-sm btn-success add-option">
+                                                    <i class="bi bi-plus-circle me-1"></i>
+                                                    <span th:text="#{product.measurement.addOption}">Add New Option</span>
                                                 </button>
-
                                             </div>
-
                                         </td>
 
                                         <td class="text-center">
-
-                                            <button type="button"
-                                                    class="btn btn-danger btn-sm remove-row">
-
-                                                <i class="bi bi-trash"></i>
-                                                Remove
-
+                                            <button type="button" class="btn btn-danger btn-sm remove-row">
+                                                <i class="bi bi-trash me-1"></i>
+                                                <span th:text="#{product.measurement.remove}">Remove</span>
                                             </button>
-
                                         </td>
-
                                     </tr>
-
                                     </tbody>
-
                                 </table>
-
                             </div>
 
                             <div class="p-3">
-
-                                <button type="button"
-                                        id="addRowBtn"
-                                        class="btn btn-secondary btn-sm mb-3">
-
-                                    <i class="bi bi-plus-circle"></i>
-                                    Add New Measurement
-
+                                <button type="button" id="addRowBtn" class="btn btn-secondary btn-sm mb-3">
+                                    <i class="bi bi-plus-circle me-1"></i>
+                                    <span th:text="#{product.measurement.addNew}">Add New Measurement</span>
                                 </button>
 
                                 <div class="text-center">
-
-                                    <button type="button"
-                                            id="saveBtn"
+                                    <button type="button" id="saveBtn"
                                             class="btn btn-success shadow rounded-pill px-4">
-
-                                    <i class="bi bi-check-circle"></i>
-                                        Save
-
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        <span th:text="#{button.save}">Save</span>
                                     </button>
 
                                     <a th:href="@{/products}"
                                        class="btn btn-secondary shadow rounded-pill px-4">
-
                                         <i class="bi bi-x-circle me-1"></i>
-                                        Cancel
-
+                                        <span th:text="#{button.cancel}">Cancel</span>
                                     </a>
-
                                 </div>
-
                             </div>
-
                         </form>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>
 
-
 <!-- Confirmation Modal -->
-<div class="modal fade"
-     id="confirmModal"
-     tabindex="-1"
-     aria-labelledby="confirmModalLabel"
-     aria-hidden="true">
-
+<div class="modal fade" id="confirmModal" tabindex="-1"
+     aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-
         <div class="modal-content rounded-4 shadow">
-
             <div class="modal-header bg-success text-white rounded-top-4">
-
-                <h5 class="modal-title" id="confirmModalLabel">
+                <h5 class="modal-title" id="confirmModalLabel"
+                    th:text="#{product.measurement.confirmation}">
                     Confirm Save Measurement
                 </h5>
-
-                <button type="button"
-                        class="btn-close bg-light"
+                <button type="button" class="btn-close bg-light"
                         data-bs-dismiss="modal"
-                        aria-label="Close">
+                        th:attr="aria-label=#{button.close}">
                 </button>
-
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" th:text="#{product.measurement.confirmMessage}">
                 Are you sure you want to save this measurement?
             </div>
 
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-
-                    <i class="bi bi-x-circle"></i>
-                    Cancel
-
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{button.cancel}">Cancel</span>
                 </button>
 
-                <button type="button"
-                        class="btn btn-success rounded-pill"
-                        id="confirmSubmit">
-
-                    <i class="bi bi-check-circle"></i>
-                    Yes, Save
-
+                <button type="button" class="btn btn-success rounded-pill" id="confirmSubmit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="#{product.measurement.yesSave}">Yes, Save</span>
                 </button>
-
             </div>
-
         </div>
-
     </div>
 </div>
-
 
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
@@ -392,237 +269,153 @@
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
+
+    const measurementLabels = {
+        enterMeasurement: [[#{product.measurement.enterMeasurement}]],
+    text: [[#{product.measurement.text}]],
+    dropdown: [[#{product.measurement.dropdown}]],
+    enterOption: [[#{product.measurement.enterOption}]],
+    addOption: [[#{product.measurement.addOption}]],
+    remove: [[#{product.measurement.remove}]]
+    };
 </script>
 
 <script>
-
     document.addEventListener("DOMContentLoaded", function () {
-
         const form = document.getElementById("measurementForm");
         const saveBtn = document.getElementById("saveBtn");
         const confirmBtn = document.getElementById("confirmSubmit");
+        const modalElement = document.getElementById("confirmModal");
+        const confirmModal = modalElement ? new bootstrap.Modal(modalElement) : null;
 
-        const confirmModal =
-            new bootstrap.Modal(document.getElementById("confirmModal"));
-
-        // Save click → validate form first
-        saveBtn.addEventListener("click", function () {
-
-            if (form.checkValidity()) {
-
-                // Form is valid → open confirmation modal
-                confirmModal.show();
-
-            } else {
-
-                // Form is invalid → show validation styles
-                form.classList.add("was-validated");
-            }
-        });
-
-        // Confirm in modal → actually submit
-        confirmBtn.addEventListener("click", function () {
-            form.submit();
-        });
-    });
-
-
-    function reindexFields() {
-
-        document.querySelectorAll('#measurementFieldsBody tr')
-            .forEach((row, index) => {
-
-                row.querySelector('.field-name').name =
-                    `fields[${index}].fieldName`;
-
-                row.querySelector('.field-type').name =
-                    `fields[${index}].fieldType`;
-
-                const optionInputs =
-                    row.querySelectorAll('.dropdown-input');
-
-                optionInputs.forEach((input, optIndex) => {
-
-                    input.name =
-                        `fields[${index}].options[${optIndex}]`;
-
-                });
-
+        if (form && saveBtn && confirmBtn && confirmModal) {
+            saveBtn.addEventListener("click", function () {
+                if (form.checkValidity()) {
+                    confirmModal.show();
+                } else {
+                    form.classList.add("was-validated");
+                }
             });
-    }
 
-
-    // Add New Measurement
-    document.getElementById('addRowBtn')
-        .addEventListener('click', function () {
-
-            const tbody =
-                document.getElementById('measurementFieldsBody');
-
-            const row =
-                document.createElement('tr');
-
-            row.innerHTML = `
-                <td>
-                    <input type="text"
-                           class="form-control field-name"
-                           placeholder="Enter measurement"
-                           required>
-                </td>
-
-                <td>
-                    <select class="form-select field-type" required>
-
-                        <option value="TEXT">
-                            Text
-                        </option>
-
-                        <option value="DROPDOWN">
-                            Dropdown
-                        </option>
-
-                    </select>
-                </td>
-
-                <td class="options-cell"></td>
-
-                <td class="text-center">
-
-                    <button type="button"
-                            class="btn btn-danger btn-sm remove-row">
-
-                        <i class="bi bi-trash"></i>
-                        Remove
-
-                    </button>
-
-                </td>
-            `;
-
-            tbody.appendChild(row);
-
-            reindexFields();
-        });
-
-
-    // Remove Row
-    document.addEventListener('click', function (e) {
-
-        if (e.target.closest('.remove-row')) {
-
-            e.target.closest('tr').remove();
-
-            reindexFields();
+            confirmBtn.addEventListener("click", function () {
+                form.submit();
+            });
         }
-    });
 
+        const addRowBtn = document.getElementById("addRowBtn");
+        if (addRowBtn) {
+            addRowBtn.addEventListener("click", function () {
+                const tbody = document.getElementById("measurementFieldsBody");
+                if (!tbody) return;
 
-    // Handle Dropdown Type Change
-    document.addEventListener('change', function (e) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>
+                        <input type="text" class="form-control field-name"
+                               placeholder="${measurementLabels.enterMeasurement}" required>
+                    </td>
+                    <td>
+                        <select class="form-select field-type" required>
+                            <option value="TEXT">${measurementLabels.text}</option>
+                            <option value="DROPDOWN">${measurementLabels.dropdown}</option>
+                        </select>
+                    </td>
+                    <td class="options-cell"></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-danger btn-sm remove-row">
+                            <i class="bi bi-trash me-1"></i>${measurementLabels.remove}
+                        </button>
+                    </td>`;
 
-        if (e.target.classList.contains('field-type')) {
-
-            const row =
-                e.target.closest('tr');
-
-            const optionsCell =
-                row.querySelector('.options-cell');
-
-            if (e.target.value === 'DROPDOWN') {
-
-                optionsCell.innerHTML = `
-                    <div class="dropdown-options-container"></div>
-
-                    <button type="button"
-                            class="btn btn-sm btn-success add-option">
-
-                        <i class="bi bi-plus-circle"></i>
-                        Add New Option
-
-                    </button>
-                `;
-
-                const container =
-                    optionsCell.querySelector(
-                        ".dropdown-options-container"
-                    );
-
-                // Add first option by default
-                addDropdownOption(container);
-
-            } else {
-
-                optionsCell.innerHTML = "";
-            }
-
-            reindexFields();
-        }
-    });
-
-
-    // Add Dropdown Option
-    function addDropdownOption(container) {
-
-        const optionRow =
-            document.createElement("div");
-
-        optionRow.classList.add(
-            "input-group",
-            "mb-2"
-        );
-
-        optionRow.innerHTML = `
-            <input type="text"
-                   class="form-control dropdown-input"
-                   placeholder="Enter option"
-                   required>
-
-            <button type="button"
-                    class="btn btn-outline-danger remove-option">
-
-                <i class="bi bi-trash"></i>
-
-            </button>
-        `;
-
-        optionRow
-            .querySelector(".remove-option")
-            .addEventListener("click", () => {
-
-                optionRow.remove();
-
+                tbody.appendChild(row);
                 reindexFields();
             });
+        }
+    });
 
+    function reindexFields() {
+        document.querySelectorAll("#measurementFieldsBody tr").forEach(function (row, index) {
+            const nameInput = row.querySelector(".field-name");
+            const typeInput = row.querySelector(".field-type");
+
+            if (nameInput) nameInput.name = `fields[${index}].fieldName`;
+            if (typeInput) typeInput.name = `fields[${index}].fieldType`;
+
+            row.querySelectorAll(".dropdown-input").forEach(function (input, optIndex) {
+                input.name = `fields[${index}].options[${optIndex}]`;
+            });
+        });
+    }
+
+    function addDropdownOption(container) {
+        if (!container) return;
+
+        const optionRow = document.createElement("div");
+        optionRow.classList.add("input-group", "mb-2");
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "form-control dropdown-input";
+        input.placeholder = measurementLabels.enterOption;
+        input.required = true;
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "btn btn-outline-danger remove-option";
+        removeButton.setAttribute("aria-label", measurementLabels.remove);
+        removeButton.innerHTML = '<i class="bi bi-trash"></i>';
+
+        optionRow.appendChild(input);
+        optionRow.appendChild(removeButton);
         container.appendChild(optionRow);
 
         reindexFields();
     }
 
-
-    // Attach "Add Option" handler for existing rows
-    // Use event delegation for Add Option
     document.addEventListener("click", function (e) {
-
-        if (e.target.closest(".add-option")) {
-
-            const container =
-                e.target.closest("td")
-                    .querySelector(
-                        ".dropdown-options-container"
-                    );
-
-            addDropdownOption(container);
+        const removeRowButton = e.target.closest(".remove-row");
+        if (removeRowButton) {
+            removeRowButton.closest("tr").remove();
+            reindexFields();
+            return;
         }
 
-        if (e.target.closest(".remove-option")) {
-
-            e.target.closest(".input-group").remove();
-
+        const removeOptionButton = e.target.closest(".remove-option");
+        if (removeOptionButton) {
+            removeOptionButton.closest(".input-group").remove();
             reindexFields();
+            return;
+        }
+
+        const addOptionButton = e.target.closest(".add-option");
+        if (addOptionButton) {
+            const cell = addOptionButton.closest(".options-cell");
+            const container = cell ? cell.querySelector(".dropdown-options-container") : null;
+            addDropdownOption(container);
         }
     });
 
+    document.addEventListener("change", function (e) {
+        if (!e.target.classList.contains("field-type")) return;
+
+        const row = e.target.closest("tr");
+        const optionsCell = row.querySelector(".options-cell");
+        if (!optionsCell) return;
+
+        if (e.target.value === "DROPDOWN") {
+            optionsCell.innerHTML = `
+                <div class="dropdown-options-container"></div>
+                <button type="button" class="btn btn-sm btn-success add-option">
+                    <i class="bi bi-plus-circle me-1"></i>${measurementLabels.addOption}
+                </button>`;
+
+            addDropdownOption(optionsCell.querySelector(".dropdown-options-container"));
+        } else {
+            optionsCell.innerHTML = "";
+        }
+
+        reindexFields();
+    });
 </script>
 
 </body>

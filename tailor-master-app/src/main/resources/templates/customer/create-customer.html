@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Create Customer</title>
+    <title th:text="#{customer.create.title}">Create Customer</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
@@ -77,10 +78,11 @@
 
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-person-plus-fill text-success me-2"></i>
-                Create Customer
+                <span th:text="#{customer.create.title}">Create Customer</span>
             </h2>
 
-            <p class="text-danger fw-bold">
+            <p class="text-danger fw-bold"
+               th:text="#{customer.create.required}">
                 Fields marked with * are required.
             </p>
 
@@ -89,7 +91,7 @@
 
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-person-lines-fill me-2 fs-5"></i>
-                    Customer Information
+                    <span th:text="#{customer.create.information}">Customer Information</span>
                 </div>
 
                 <div class="card-body">
@@ -108,18 +110,19 @@
                                 <label for="fullName"
                                        class="form-label fw-semibold required">
                                     <i class="bi bi-person field-icon"></i>
-                                    Full Name
+                                    <span th:text="#{customer.create.fullName}">Full Name</span>
                                 </label>
 
                                 <input type="text"
                                        th:field="*{fullName}"
                                        id="fullName"
                                        class="form-control"
-                                       placeholder="Enter customer full name"
+                                       th:placeholder="#{customer.create.fullName.placeholder}"
                                        autocomplete="name"
                                        required>
 
-                                <div class="invalid-feedback">
+                                <div class="invalid-feedback"
+                                     th:text="#{customer.create.fullName.required}">
                                     Full name is required.
                                 </div>
 
@@ -133,20 +136,20 @@
                             <!-- BOOK NUMBER -->
                             <div class="col-md-6">
 
-                                <label for="bookNumber"
-                                       class="form-label fw-semibold">
+                                <label for="bookNumber" class="form-label fw-semibold">
                                     <i class="bi bi-journal-text field-icon"></i>
-                                    Book Number
+                                    <span th:text="#{customer.create.bookNumber}">Book Number</span>
                                 </label>
 
                                 <input type="text"
                                        th:field="*{bookNumber}"
                                        id="bookNumber"
                                        class="form-control"
-                                       placeholder="Enter book number"
+                                       th:placeholder="#{customer.create.bookNumber.placeholder}"
                                        autocomplete="off">
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{customer.create.bookNumber.help}">
                                     Optional customer reference number.
                                 </div>
 
@@ -163,21 +166,21 @@
                                 <label for="phoneNumber"
                                        class="form-label fw-semibold required">
                                     <i class="bi bi-telephone field-icon"></i>
-                                    Phone Number
+                                    <span th:text="#{customer.create.phoneNumber}">Phone Number</span>
                                 </label>
 
                                 <input type="tel"
                                        th:field="*{phoneNumber}"
                                        id="phoneNumber"
                                        class="form-control"
-                                       placeholder="03001234567"
+                                       th:placeholder="#{customer.create.phoneNumber.placeholder}"
                                        autocomplete="tel"
                                        pattern="^03\d{9}$"
                                        required>
 
-                                <div class="invalid-feedback">
-                                    Enter a valid Pakistani phone number
-                                    (e.g. 03001234567).
+                                <div class="invalid-feedback"
+                                     th:text="#{customer.create.phoneNumber.invalid}">
+                                    Enter a valid Pakistani phone number (e.g. 03001234567).
                                 </div>
 
                                 <div th:if="${#fields.hasErrors('phoneNumber')}"
@@ -192,8 +195,9 @@
                         <!-- INFO -->
                         <div class="info-box mt-4">
                             <i class="bi bi-info-circle me-2 text-success"></i>
-                            Customer measurements can be added later from the
-                            <strong>Customer Details</strong> page.
+                            <span th:text="#{customer.create.measurements.info}">
+                                Customer measurements can be added later from the Customer Details page.
+                            </span>
                         </div>
 
                         <!-- ERROR MESSAGE -->
@@ -203,19 +207,20 @@
                             <span th:text="${errorMessage}"></span>
                         </div>
 
+                        <!-- ACTION BUTTONS -->
                         <div class="text-center mt-4">
 
                             <button type="button"
                                     id="openModal"
                                     class="btn btn-success rounded-pill shadow-sm px-4">
                                 <i class="bi bi-check-circle me-1"></i>
-                                Save
+                                <span th:text="#{customer.create.save}">Save</span>
                             </button>
 
                             <a th:href="@{/customers}"
                                class="btn btn-secondary rounded-pill shadow-sm px-4">
                                 <i class="bi bi-x-circle me-1"></i>
-                                Cancel
+                                <span th:text="#{customer.create.cancel}">Cancel</span>
                             </a>
 
                         </div>
@@ -228,7 +233,7 @@
     </div>
 </div>
 
-<!-- Confirmation Modal -->
+<!-- CONFIRMATION MODAL -->
 <div class="modal fade"
      id="confirmModal"
      tabindex="-1"
@@ -241,19 +246,21 @@
 
             <div class="modal-header bg-success text-white rounded-top-4">
 
-                <h5 class="modal-title" id="confirmModalLabel">
+                <h5 class="modal-title" id="confirmModalLabel"
+                    th:text="#{customer.create.confirm.title}">
                     Customer Confirmation
                 </h5>
 
                 <button type="button"
                         class="btn-close bg-light"
                         data-bs-dismiss="modal"
-                        aria-label="Close">
+                        th:attr="aria-label=#{customer.create.close}">
                 </button>
 
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body"
+                 th:text="#{customer.create.confirm.message}">
                 Are you sure you want to save this customer?
             </div>
 
@@ -263,14 +270,14 @@
                         class="btn btn-secondary rounded-pill"
                         data-bs-dismiss="modal">
                     <i class="bi bi-x-circle me-1"></i>
-                    Cancel
+                    <span th:text="#{customer.create.cancel}">Cancel</span>
                 </button>
 
                 <button type="button"
                         class="btn btn-success rounded-pill"
                         id="confirmSubmit">
                     <i class="bi bi-check-circle me-1"></i>
-                    Yes, Save
+                    <span th:text="#{customer.create.confirm.yesSave}">Yes, Save</span>
                 </button>
 
             </div>
