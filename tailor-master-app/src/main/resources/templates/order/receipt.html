@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Receipt</title>
+    <title th:text="#{receipt.title}">Order Receipt</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
@@ -543,25 +543,55 @@
             <p class="shop-address"><i class="bi bi-geo-alt-fill me-1"></i><span th:text="${user.shopAddress}">Shop Address</span>
             </p>
             <p class="shop-tagline">ہمارے پاس مناسب قیمت پر بہترین کوالٹی کا کپڑا دستیاب ہےـ</p>
-            <div class="receipt-heading"><i class="bi bi-receipt-cutoff"></i><span>Order Receipt</span></div>
+            <div class="receipt-heading">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span th:text="#{receipt.title}">Order Receipt</span>
+            </div>
         </div>
 
         <div class="receipt-content">
-            <div class="section-title"><i class="bi bi-person-circle"></i><span>Customer & Order Information</span></div>
+            <div class="section-title">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="#{receipt.customerOrderInfo}">Customer & Order Information</span>
+            </div>
             <div class="info-card">
                 <div class="info-grid">
-                    <div class="info-item"><span class="receipt-marker">CUSTOMER</span><span class="info-label">Name:</span><span class="info-value" th:text="${order.customer.fullName}"></span></div>
-                    <div class="info-item"><span class="receipt-marker">ORDER</span><span class="info-label">Order ID:</span><span class="info-value" th:text="${order.orderId}"></span></div>
-                    <div class="info-item"><span class="info-label">Book. No:</span><span class="info-value" th:text="${order.customer.bookNumber}"></span></div>
-                    <div class="info-item"><span class="info-label">Phone:</span><span class="info-value" th:text="${order.customer.phoneNumber}"></span></div>
-                    <div class="info-item"><span class="info-label">Order Date:</span><span class="info-value" th:text="${#temporals.format(order.orderDate,'dd-MM-yyyy')}"></span></div>
-                    <div class="info-item"><span class="info-label">Delivery Date:</span><span class="info-value" th:text="${#temporals.format(order.deliveryDate,'dd-MM-yyyy')}"></span></div>
+                    <div class="info-item">
+                        <span class="receipt-marker" th:text="#{receipt.customer}">CUSTOMER</span>
+                        <span class="info-label" th:text="#{receipt.name}">Name:</span>
+                        <span class="info-value" th:text="${order.customer.fullName}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="receipt-marker" th:text="#{receipt.order}">ORDER</span>
+                        <span class="info-label" th:text="#{orders.pickup.orderId}">Order ID:</span>
+                        <span class="info-value" th:text="${order.orderId}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" th:text="#{receipt.bookNumber}">Book. No:</span>
+                        <span class="info-value" th:text="${order.customer.bookNumber}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" th:text="#{receipt.phone}">Phone:</span>
+                        <span class="info-value" th:text="${order.customer.phoneNumber}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" th:text="#{orders.table.orderDate}">Order Date:</span>
+                        <span class="info-value" th:text="${#temporals.format(order.orderDate,'dd-MM-yyyy')}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label" th:text="#{orders.table.deliveryDate}">Delivery Date:</span>
+                        <span class="info-value" th:text="${#temporals.format(order.deliveryDate,'dd-MM-yyyy')}"></span>
+                    </div>
                 </div>
             </div>
 
             <div class="items-header">
-                <div class="section-title mb-0"><i class="bi bi-bag-check-fill"></i><span>Order Items</span></div>
-                <span class="items-count" th:text="${#lists.size(order.orderProducts) + ' item(s)'}"></span>
+                <div class="section-title mb-0">
+                    <i class="bi bi-bag-check-fill"></i>
+                    <span th:text="#{receipt.orderItems}">Order Items</span>
+                </div>
+                <span class="items-count"
+                      th:text="${#lists.size(order.orderProducts) + ' ' + (#lists.size(order.orderProducts) == 1 ? #messages.msg('orders.item') : #messages.msg('orders.items'))}"></span>
             </div>
 
             <div class="table-wrapper"
@@ -569,12 +599,12 @@
                 <table class="product-table">
                     <thead>
                     <tr>
-                        <th class="simple-product">Product</th>
-                        <th class="simple-silai center">Silai</th>
-                        <th class="simple-qty center">Qty</th>
-                        <th class="simple-rate right">Rate</th>
-                        <th class="simple-rate right">Alteration</th>
-                        <th class="simple-total right">Total</th>
+                        <th class="simple-product" th:text="#{receipt.product}">Product</th>
+                        <th class="simple-silai center" th:text="#{orders.create.silai}">Silai</th>
+                        <th class="simple-qty center" th:text="#{orders.create.qty}">Qty</th>
+                        <th class="simple-rate right" th:text="#{receipt.rate}">Rate</th>
+                        <th class="simple-rate right" th:text="#{orders.create.alteration}">Alteration</th>
+                        <th class="simple-total right" th:text="#{receipt.total}">Total</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -611,15 +641,15 @@
                 <table class="product-table">
                     <thead>
                     <tr>
-                        <th class="fabric-product">Product</th>
-                        <th class="fabric-silai center">Silai</th>
-                        <th class="fabric-qty-main center">Qty</th>
-                        <th class="fabric-rate-main right">Rate</th>
-                        <th class="fabric-name">Fabric</th>
-                        <th class="fabric-qty center">Fabric Qty</th>
-                        <th class="fabric-rate right">Fabric Rate</th>
-                        <th class="fabric-amount right">Fabric Amount</th>
-                        <th class="fabric-total right">Total</th>
+                        <th class="fabric-product" th:text="#{receipt.product}">Product</th>
+                        <th class="fabric-silai center" th:text="#{orders.create.silai}">Silai</th>
+                        <th class="fabric-qty-main center" th:text="#{orders.create.qty}">Qty</th>
+                        <th class="fabric-rate-main right" th:text="#{receipt.rate}">Rate</th>
+                        <th class="fabric-name" th:text="#{receipt.fabric}">Fabric</th>
+                        <th class="fabric-qty center" th:text="#{receipt.fabricQty}">Fabric Qty</th>
+                        <th class="fabric-rate right" th:text="#{receipt.fabricRate}">Fabric Rate</th>
+                        <th class="fabric-amount right" th:text="#{receipt.fabricAmount}">Fabric Amount</th>
+                        <th class="fabric-total right" th:text="#{receipt.total}">Total</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -627,7 +657,7 @@
                         <th:block
                                 th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker">INVENTORY</span></td>
+                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker" th:text="#{orders.create.inventory}">INVENTORY</span></td>
                                 <td class="center">-</td>
                                 <td class="center" th:text="${item.quantity}"></td>
                                 <td class="right" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
@@ -640,14 +670,14 @@
                         <th:block
                                 th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker">TAILORING</span></td>
+                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker" th:text="#{orders.create.tailoring}">TAILORING</span></td>
                                 <td class="center" th:text="${item.silaiType}"></td>
                                 <td class="center" th:text="${item.quantity}"></td>
                                 <td class="right" th:text="${#numbers.formatDecimal(item.silaiAmount,1, 'COMMA', 2, 'POINT')}"></td>
                                 <td>
                                     <span th:if="${item.inventoryItem != null}" th:text="${item.inventoryItem.name}"></span>
                                     <span th:if="${item.inventoryItem == null}">-</span>
-                                    <span class="fabric-marker" th:if="${item.inventoryItem != null}">SHOP FABRIC</span>
+                                    <span class="fabric-marker" th:if="${item.inventoryItem != null}" th:text="#{receipt.shopFabric}">SHOP FABRIC</span>
                                 </td>
                                 <td class="center"
                                     th:text="${item.fabricQuantity != null ? item.fabricQuantity : '-'}"></td>
@@ -662,27 +692,34 @@
 
             <div class="summary-wrapper">
                 <div class="summary-box">
-                    <div class="summary-row"><span class="summary-label">Total Amount</span><span class="summary-value" th:text="${#numbers.formatDecimal(order.totalProductAmount, 1, 'COMMA', 2, 'POINT')}"></span>
+                    <div class="summary-row">
+                        <span class="summary-label" th:text="#{orders.create.totalAmount}">Total Amount</span>
+                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.totalProductAmount, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
-                    <div class="summary-row"><span class="summary-label">Advance Payment</span><span class="summary-value" th:text="${#numbers.formatDecimal(order.advancePayment, 1, 'COMMA', 2, 'POINT')}"></span>
+                    <div class="summary-row">
+                        <span class="summary-label" th:text="#{orders.create.advancePayment}">Advance Payment</span>
+                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.advancePayment, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
-                    <div class="summary-row due-row"><span class="summary-label">Due Payment</span><span
-                            class="summary-value" th:text="${#numbers.formatDecimal(order.duePayment, 1, 'COMMA', 2, 'POINT')}"></span></div>
+                    <div class="summary-row due-row">
+                        <span class="summary-label" th:text="#{receipt.duePayment}">Due Payment</span>
+                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.duePayment, 1, 'COMMA', 2, 'POINT')}"></span>
+                    </div>
                 </div>
             </div>
 
             <div class="receipt-footer">
-                <p><strong>Thanks for your order!</strong></p>
+                <p><strong th:text="#{receipt.thanks}">Thanks for your order!</strong></p>
                 <p>ہماری دکان پر آنے کا شکریہ</p>
             </div>
         </div>
 
         <div class="receipt-actions no-print">
-            <button type="button" class="btn btn-success me-2" onclick="window.print()"><i
-                    class="bi bi-printer me-1"></i>Print
+            <button type="button" class="btn btn-success me-2" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i><span th:text="#{receipt.print}">Print</span>
             </button>
-            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary"><i
-                    class="bi bi-arrow-left-circle me-1"></i>Back</a>
+            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle me-1"></i><span th:text="#{receipt.back}">Back</span>
+            </a>
         </div>
     </div>
 </div>

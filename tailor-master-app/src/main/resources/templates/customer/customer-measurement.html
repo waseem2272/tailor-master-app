@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Customer Measurement</title>
+    <title th:text="#{customer.measurement.title}">Customer Measurement</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -413,8 +413,8 @@
             <div class="measurement-card">
 
                 <div class="measurement-header">
-                    <h3>Customer Measurement</h3>
-                    <p>Tailoring Measurement Record</p>
+                    <h3 th:text="#{customer.measurement.title}">Customer Measurement</h3>
+                    <p th:text="#{customer.measurement.subtitle}">Tailoring Measurement Record</p>
 
                     <div class="header-icon">
                         <i class="bi bi-rulers"></i>
@@ -433,7 +433,7 @@
                         <div class="info-box">
                             <div class="info-label">
                                 <i class="bi bi-box-seam-fill me-1"></i>
-                                Product
+                                <span th:text="#{customer.measurement.product}">Product</span>
                             </div>
                             <div class="product-value"
                                  th:text="${measurement.product.name}">
@@ -466,8 +466,7 @@
                         <div class="info-box">
                             <div class="info-label">
                                 <i class="bi bi-calendar3 me-1"></i>
-                               Measurement Date
-                            </div>
+                                <span th:text="#{customer.measurement.date}">Measurement Date</span></div>
                             <div class="info-value"
                                  th:text="${#temporals.format(measurement.createdAt, 'dd-MM-yyyy')}">
                                 01-01-2026
@@ -483,14 +482,14 @@
 
                         <div class="measurements-title">
                             <i class="bi bi-rulers"></i>
-                            <span>Measurements</span>
+                            <span th:text="#{customer.measurement.measurements}">Measurements</span>
                         </div>
 
                         <span class="measurement-count"
                               th:if="${customerMeasurements != null}"
-                              th:text="${customerMeasurements.size() + ' Fields'}">
-                            0 Fields
-                        </span>
+                              th:text="${customerMeasurements.size() + ' ' + #messages.msg('customer.measurement.fields')}">
+    0 Fields
+</span>
 
                     </div>
 
@@ -520,13 +519,13 @@
                     <div th:if="${customerMeasurements == null or customerMeasurements.isEmpty()}"
                          class="empty-measurement">
                         <i class="bi bi-exclamation-circle"></i>
-                        <div>No measurements found.</div>
+                        <div th:text="#{customer.measurement.empty}">No measurements found.</div>
                     </div>
 
                     <div class="notes"
                          th:if="${measurement.notes != null and !#strings.isEmpty(measurement.notes)}">
 
-                        <div class="notes-label">Additional Notes</div>
+                        <div class="notes-label" th:text="#{customer.measurement.additionalNotes}">Additional Notes</div>
 
                         <div class="notes-value"
                              th:text="${measurement.notes}">
@@ -538,7 +537,7 @@
                 </div>
 
                 <div class="measurement-footer">
-                    <div class="small text-muted">
+                    <div class="small text-muted" th:text="#{customer.measurement.footer}">
                         Customer measurement record
                     </div>
                 </div>
@@ -551,21 +550,21 @@
                         class="btn btn-success me-2"
                         onclick="window.print()">
                     <i class="bi bi-printer me-1"></i>
-                    Print
+                    <span th:text="#{customer.measurement.print}">Print</span>
                 </button>
 
                 <a th:if="${backToOrder}"
                    th:href="@{/orders/details/{id}(id=${backOrderId})}"
                    class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle me-1"></i>
-                    Back
+                    <span th:text="#{customer.measurement.back}">Back</span>
                 </a>
 
                 <a th:unless="${backToOrder}"
                    th:href="@{/customers/details/{id}(id=${backCustomerId})}"
                    class="btn btn-secondary">
                     <i class="bi bi-arrow-left-circle me-1"></i>
-                    Back
+                    <span th:text="#{customer.measurement.back}">Back</span>
                 </a>
 
             </div>

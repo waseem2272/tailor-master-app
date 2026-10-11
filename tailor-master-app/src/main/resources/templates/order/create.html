@@ -802,43 +802,56 @@
     var productSilaiData = /*[[${productDtos}]]*/ [];
 </script>
 
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
     var productSilaiData = /*[[${productDtos}]]*/ [];
 
     var orderMessages = {
-        physicalStock: /*[[#{orders.stock.physical}]]*/ 'Physical Stock',
-        reservedStock: /*[[#{orders.stock.reserved}]]*/ 'Reserved Stock',
-        currentOrder: /*[[#{orders.stock.currentOrder}]]*/ 'Current Order',
-        availableStock: /*[[#{orders.stock.available}]]*/ 'Available Stock',
-        fabricQtyExceedsStock: /*[[#{orders.error.fabricQtyExceedsStock}]]*/ 'Fabric quantity cannot be greater than available stock',
-        qtyExceedsStock: /*[[#{orders.error.qtyExceedsStock}]]*/ 'Quantity cannot be greater than available stock',
-        silaiTypePlaceholder: /*[[#{orders.silai.placeholder}]]*/ '-- Silai Type --',
-        singleSilai: /*[[#{orders.silai.single}]]*/ 'Single Silai',
-        doubleSilai: /*[[#{orders.silai.double}]]*/ 'Double Silai',
-        selectInventoryItem: /*[[#{orders.error.selectInventoryItem}]]*/ 'Please select an inventory item.',
-        validInventoryQty: /*[[#{orders.error.validInventoryQty}]]*/ 'Please enter a valid inventory quantity.',
-        inventoryPriceError: /*[[#{orders.error.inventoryPrice}]]*/ 'Inventory price cannot be calculated for the selected Item. Please check available stock.',
-        enterFabricQty: /*[[#{orders.error.enterFabricQty}]]*/ 'Please enter fabric quantity.',
-        productNotFound: /*[[#{orders.error.productNotFound}]]*/ 'Product information not found.',
-        selectShopFabric: /*[[#{orders.error.selectShopFabric}]]*/ 'Please select shop fabric.',
-        shopFabricPriceError: /*[[#{orders.error.shopFabricPrice}]]*/ 'Shop fabric price cannot be calculated for the selected fabric. Please check available stock.',
-        selectProductSilaiQty: /*[[#{orders.error.selectProductSilaiQty}]]*/ 'Please select product, silai type and quantity.',
-        addProduct: /*[[#{orders.error.addProduct}]]*/ 'Please add at least one product.',
-        selectDates: /*[[#{orders.error.selectDates}]]*/ 'Please select order and delivery date.',
-        advanceNegative: /*[[#{orders.error.advanceNegative}]]*/ 'Advance payment cannot be negative.',
-        advanceGreaterThanTotal: /*[[#{orders.error.advanceGreaterThanTotal}]]*/ 'Advance payment cannot be greater than total product amount.',
-        shopFabric: /*[[#{orders.fabric.shop}]]*/ 'Shop Fabric',
-        customerFabric: /*[[#{orders.fabric.customer}]]*/ 'Customer Fabric',
-        inventory: /*[[#{orders.type.inventory}]]*/ 'Inventory',
-        tailoring: /*[[#{orders.type.tailoring}]]*/ 'Tailoring',
-        yes: /*[[#{common.yes}]]*/ 'Yes',
-        alterationYesPrefix: /*[[#{orders.alteration.yesPrefix}]]*/ 'Yes - Rs. '
-        no: /*[[#{common.no}]]*/ 'No'
+        physicalStock: /*[[#{orders.create.physicalStock}]]*/ 'Physical Stock',
+        reservedStock: /*[[#{orders.create.reservedStock}]]*/ 'Reserved Stock',
+        currentOrder: /*[[#{orders.create.currentOrder}]]*/ 'Current Order',
+        availableStock: /*[[#{orders.create.availableStock}]]*/ 'Available Stock',
+        available: /*[[#{orders.create.available}]]*/ 'Available',
+
+        fabricQtyExceedsStock: /*[[#{orders.create.fabricQuantityExceedsStock}]]*/ 'Fabric quantity cannot be greater than available stock',
+        qtyExceedsStock: /*[[#{orders.create.quantityExceedsStock}]]*/ 'Quantity cannot be greater than available stock',
+
+        silaiTypePlaceholder: /*[[#{orders.create.silaiTypePlaceholder}]]*/ '-- Silai Type --',
+        singleSilai: /*[[#{orders.create.singleSilai}]]*/ 'Single Silai',
+        doubleSilai: /*[[#{orders.create.doubleSilai}]]*/ 'Double Silai',
+
+        selectInventoryItem: /*[[#{orders.create.selectInventoryItemError}]]*/ 'Please select an inventory item.',
+        validInventoryQty: /*[[#{orders.create.validInventoryQuantity}]]*/ 'Please enter a valid inventory quantity.',
+        inventoryPriceError: /*[[#{orders.create.inventoryPriceError}]]*/ 'Inventory price cannot be calculated for the selected item. Please check available stock.',
+        inventoryPreviewError: /*[[#{orders.create.inventoryPriceError}]]*/ 'Inventory price cannot be calculated.',
+        enterFabricQty: /*[[#{orders.create.enterFabricQuantity}]]*/ 'Please enter fabric quantity.',
+        productNotFound: /*[[#{orders.create.productNotFound}]]*/ 'Product information not found.',
+        selectShopFabric: /*[[#{orders.create.selectShopFabricError}]]*/ 'Please select shop fabric.',
+        selectFabric: /*[[#{orders.create.selectShopFabricError}]]*/ 'Please select shop fabric.',
+        shopFabricPriceError: /*[[#{orders.create.fabricPriceError}]]*/ 'Shop fabric price cannot be calculated for the selected fabric. Please check available stock.',
+        selectProductSilaiQty: /*[[#{orders.create.selectProductSilaiQuantity}]]*/ 'Please select product, silai type and quantity.',
+        addProduct: /*[[#{orders.create.addProductFirst}]]*/ 'Please add at least one product.',
+        selectDates: /*[[#{orders.create.selectDates}]]*/ 'Please select order and delivery date.',
+        advanceNegative: /*[[#{orders.create.negativeAdvance}]]*/ 'Advance payment cannot be negative.',
+        advanceGreaterThanTotal: /*[[#{orders.create.advanceExceedsTotal}]]*/ 'Advance payment cannot be greater than total product amount.',
+
+        shopFabric: /*[[#{orders.create.shopFabric}]]*/ 'Shop Fabric',
+        customerFabric: /*[[#{orders.create.customerFabric}]]*/ 'Customer Fabric',
+        inventory: /*[[#{orders.create.inventory}]]*/ 'Inventory',
+        tailoring: /*[[#{orders.create.tailoring}]]*/ 'Tailoring',
+
+        yes: /*[[#{orders.create.yes}]]*/ 'Yes',
+        no: /*[[#{orders.create.no}]]*/ 'No',
+        alterationYesPrefix: /*[[#{orders.alteration.yesPrefix}]]*/ 'Yes - Rs.',
+
+        rupees: /*[[#{orders.create.rupees}]]*/ 'Rs.',
+        meterShort: /*[[#{orders.create.meterShort}]]*/ 'M',
+        quantityUnit: /*[[#{orders.create.quantityMetersOrPieces}]]*/ 'Quantity in meters or pieces',
+        actionDelete: /*[[#{orders.create.action}]]*/ 'Action'
+
     };
 </script>
-
-<script th:src="@{/js/create-order.js}"></script>
 
 <script th:src="@{/js/create-order.js}"></script>
 

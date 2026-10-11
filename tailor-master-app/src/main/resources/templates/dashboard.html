@@ -156,7 +156,7 @@
                                         Revenue This Month
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                         id="revenueThisMonth">0</div>
+                                         id="revenueThisMonth">PKR 0</div>
                                     <div class="small text-muted mt-2"
                                          th:text="#{dashboard.currentMonthRevenue}">
                                         Current month revenue
@@ -405,7 +405,7 @@
         fetch(contextPath + "dashboard/revenue-this-month")
             .then(response => response.json())
             .then(data => {
-                document.getElementById("revenueThisMonth").innerText = formatAmount(data);
+                document.getElementById("revenueThisMonth").innerText = " PKR " + formatAmount(data);
             })
             .catch(error => console.error("Error loading revenue this month:", error));
 

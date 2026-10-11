@@ -1,153 +1,160 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Order Details</title>
+<head>
+    <title th:text="#{orders.details.title}">Order Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <style> .badge-completed {
-        background-color: #6f42c1 !important;
-    }
+    <style>
+        .badge-completed {
+            background-color: #6f42c1 !important;
+        }
 
-    .order-product-status {
-        min-width: 180px;
-        width: auto;
-    }
+        .order-product-status {
+            min-width: 180px;
+            width: auto;
+        }
 
-    .order-info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-        padding: 9px 0;
-        border-bottom: 1px solid #eeeeee;
-    }
-
-    .order-info-row:last-child {
-        border-bottom: none;
-    }
-
-    .order-info-label {
-        color: #6c757d;
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .order-info-value {
-        color: #212529;
-        font-size: 14px;
-        font-weight: 600;
-        text-align: right;
-    }
-
-    .product-name {
-        font-weight: 600;
-        color: #212529;
-    }
-
-    .product-type {
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .product-sub-info {
-        font-size: 12px;
-        color: #6c757d;
-        margin-top: 3px;
-    }
-
-    .amount-cell {
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .notes-cell {
-        min-width: 150px;
-        max-width: 250px;
-        white-space: normal;
-    }
-
-    .table > :not(caption) > * > * {
-        padding: 12px 10px;
-    }
-
-    .table thead th {
-        font-size: 13px;
-        font-weight: 600;
-        white-space: nowrap;
-        vertical-align: middle;
-    }
-
-    .table tbody td {
-        font-size: 14px;
-    }
-
-    .order-actions .btn {
-        min-width: 150px;
-    }
-
-    @media (max-width: 768px) {
         .order-info-row {
-            align-items: flex-start;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 9px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .order-info-row:last-child {
+            border-bottom: none;
+        }
+
+        .order-info-label {
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .order-info-value {
+            color: #212529;
+            font-size: 14px;
+            font-weight: 600;
             text-align: right;
         }
 
-        .order-actions .btn {
-            width: 100%;
+        .product-name {
+            font-weight: 600;
+            color: #212529;
         }
-    } </style>
+
+        .product-type {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-sub-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+
+        .amount-cell {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .notes-cell {
+            min-width: 150px;
+            max-width: 250px;
+            white-space: normal;
+        }
+
+        .table > :not(caption) > * > * {
+            padding: 12px 10px;
+        }
+
+        .table thead th {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .table tbody td {
+            font-size: 14px;
+        }
+
+        .order-actions .btn {
+            min-width: 150px;
+        }
+
+        @media (max-width: 768px) {
+            .order-info-row {
+                align-items: flex-start;
+            }
+
+            .order-info-value {
+                text-align: right;
+            }
+
+            .order-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
-        <div class="container-fluid"> <!-- Page Title -->
+        <div class="container-fluid">
+
+            <!-- Page Title -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
                 <h2 class="page-title d-flex align-items-center mb-0">
                     <i class="bi bi-file-earmark-text-fill me-2"></i>
-                    Order Details
+                    <span th:text="#{orders.details.title}">Order Details</span>
                 </h2>
 
                 <div th:with="
-        hasInventory=${order.orderProducts.?[orderProductType?.name() == 'INVENTORY'].size() > 0},
-        hasTailoring=${order.orderProducts.?[orderProductType?.name() != 'INVENTORY'].size() > 0}
-    ">
+                    hasInventory=${order.orderProducts.?[orderProductType?.name() == 'INVENTORY'].size() > 0},
+                    hasTailoring=${order.orderProducts.?[orderProductType?.name() != 'INVENTORY'].size() > 0}">
 
-                    <!-- Mixed Order -->
                     <span th:if="${hasInventory and hasTailoring}"
                           class="badge bg-warning text-dark px-3 py-2 fs-6">
-            <i class="bi bi-layers-fill me-1"></i>
-            Mixed Order
-        </span>
+                        <i class="bi bi-layers-fill me-1"></i>
+                        <span th:text="#{orders.type.mixed}">Mixed Order</span>
+                    </span>
 
-                    <!-- Inventory Order -->
                     <span th:if="${hasInventory and !hasTailoring}"
                           class="badge bg-primary px-3 py-2 fs-6">
-            <i class="bi bi-box-seam me-1"></i>
-            Inventory Order
-        </span>
+                        <i class="bi bi-box-seam me-1"></i>
+                        <span th:text="#{orders.type.inventory}">Inventory Order</span>
+                    </span>
 
-                    <!-- Tailoring Order -->
                     <span th:if="${hasTailoring and !hasInventory}"
                           class="badge bg-success px-3 py-2 fs-6">
-            <i class="bi bi-scissors me-1"></i>
-            Tailoring Order
-        </span>
-
+                        <i class="bi bi-scissors me-1"></i>
+                        <span th:text="#{orders.type.tailoring}">Tailoring Order</span>
+                    </span>
                 </div>
-            </div> <!-- Customer + Order Information -->
-            <div class="row g-4 mb-4"> <!-- Customer Information -->
+            </div>
+
+            <!-- Customer + Order Information -->
+            <div class="row g-4 mb-4">
+
+                <!-- Customer Information -->
                 <div class="col-lg-4">
                     <div class="card shadow-sm border-success border-bottom border-3 h-100">
-                        <div class="card-header bg-success text-white fw-bold rounded-top-4"><i
-                                class="bi bi-person-circle me-2"></i> Customer Information
+                        <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span th:text="#{orders.create.customerInformation}">Customer Information</span>
                         </div>
+
                         <div class="card-body">
                             <div class="row g-3">
 
@@ -156,7 +163,7 @@
                                     <div class="border rounded-3 p-3 bg-light">
                                         <div class="text-muted small mb-1">
                                             <i class="bi bi-book me-1"></i>
-                                            Book Number
+                                            <span th:text="#{orders.create.bookNumber}">Book Number</span>
                                         </div>
                                         <div class="fw-semibold"
                                              th:text="${order.customer.bookNumber != null and !order.customer.bookNumber.isBlank() ? order.customer.bookNumber : '-'}">
@@ -170,7 +177,7 @@
                                     <div class="border rounded-3 p-3 bg-light">
                                         <div class="text-muted small mb-1">
                                             <i class="bi bi-person me-1"></i>
-                                            Customer Name
+                                            <span th:text="#{orders.create.customerName}">Customer Name</span>
                                         </div>
                                         <div class="fw-semibold">
                                             <a th:href="@{/customers/details/{id}(id=${thymeleafUtil.encryptId(order.customer.id)})}"
@@ -186,7 +193,7 @@
                                     <div class="border rounded-3 p-3 bg-light">
                                         <div class="text-muted small mb-1">
                                             <i class="bi bi-telephone me-1"></i>
-                                            Phone Number
+                                            <span th:text="#{orders.create.phoneNumber}">Phone Number</span>
                                         </div>
                                         <div class="fw-semibold"
                                              th:text="${order.customer.phoneNumber}">
@@ -198,117 +205,199 @@
                             </div>
                         </div>
                     </div>
-                </div> <!-- Order Information -->
+                </div>
+
+                <!-- Order Information -->
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-success border-bottom border-3 h-100">
-                        <div class="card-header bg-success text-white fw-bold rounded-top-4"><i
-                                class="bi bi-card-list me-2"></i> Order Information
+                        <div class="card-header bg-success text-white fw-bold rounded-top-4">
+                            <i class="bi bi-card-list me-2"></i>
+                            <span th:text="#{orders.details.orderInformation}">Order Information</span>
                         </div>
-                        <div class="card-body"><input type="hidden" id="orderId" th:value="${order.id}"/>
-                            <div class="row"> <!-- General Information -->
+
+                        <div class="card-body">
+                            <input type="hidden" id="orderId" th:value="${order.id}"/>
+
+                            <div class="row">
+
+                                <!-- General Information -->
                                 <div class="col-md-6">
-                                    <div class="order-info-row"><span class="order-info-label">Order ID</span> <span
-                                            class="order-info-value" th:text="${order.orderId}"> </span></div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.table.orderId}">Order ID</span>
+                                        </span>
+                                        <span class="order-info-value"
+                                              th:text="${order.orderId}"></span>
+                                    </div>
 
                                     <div class="order-info-row"
                                          th:with="
-        hasInventory=${order.orderProducts.?[orderProductType?.name() == 'INVENTORY'].size() > 0},
-        hasTailoring=${order.orderProducts.?[orderProductType?.name() != 'INVENTORY'].size() > 0}
-     ">
+                                            hasInventory=${order.orderProducts.?[orderProductType?.name() == 'INVENTORY'].size() > 0},
+                                            hasTailoring=${order.orderProducts.?[orderProductType?.name() != 'INVENTORY'].size() > 0}">
 
-                                        <span class="order-info-label">Order Type</span>
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.table.orderType}">Order Type</span>
+                                        </span>
 
                                         <span class="order-info-value">
 
-        <span th:if="${hasInventory and hasTailoring}"
-              class="badge bg-warning text-dark">
-            <i class="bi bi-layers-fill me-1"></i>
-            Mixed Order
-        </span>
+                                            <span th:if="${hasInventory and hasTailoring}"
+                                                  class="badge bg-warning text-dark">
+                                                <i class="bi bi-layers-fill me-1"></i>
+                                                <span th:text="#{orders.type.mixed}">Mixed Order</span>
+                                            </span>
 
-        <span th:if="${hasInventory and !hasTailoring}"
-              class="badge bg-primary">
-            <i class="bi bi-box-seam me-1"></i>
-            Inventory Order
-        </span>
+                                            <span th:if="${hasInventory and !hasTailoring}"
+                                                  class="badge bg-primary">
+                                                <i class="bi bi-box-seam me-1"></i>
+                                                <span th:text="#{orders.type.inventory}">Inventory Order</span>
+                                            </span>
 
-        <span th:if="${hasTailoring and !hasInventory}"
-              class="badge bg-success">
-            <i class="bi bi-scissors me-1"></i>
-            Tailoring Order
-        </span>
+                                            <span th:if="${hasTailoring and !hasInventory}"
+                                                  class="badge bg-success">
+                                                <i class="bi bi-scissors me-1"></i>
+                                                <span th:text="#{orders.type.tailoring}">Tailoring Order</span>
+                                            </span>
 
-    </span>
+                                        </span>
                                     </div>
 
-                                    <div class="order-info-row"><span class="order-info-label">Order Date</span> <span
-                                            class="order-info-value"
-                                            th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy')}"> </span>
-                                    </div>
-                                    <div class="order-info-row"><span class="order-info-label">Delivery Date</span>
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.table.orderDate}">Order Date</span>
+                                        </span>
                                         <span class="order-info-value"
-                                              th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy')}"> </span>
+                                              th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
                                     </div>
-                                    <div class="order-info-row"><span class="order-info-label">Pickup Status</span>
-                                        <span class="order-info-value" th:text="${order.pickupStatus}"> </span></div>
-                                    <div class="order-info-row"><span class="order-info-label">Pickup Date</span> <span
-                                            class="order-info-value"> <span th:if="${order.pickupDate != null}"
-                                                                            th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy')}"> </span> <span
-                                            th:unless="${order.pickupDate != null}"
-                                            class="text-muted"> - </span> </span></div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.table.deliveryDate}">Delivery Date</span>
+                                        </span>
+                                        <span class="order-info-value"
+                                              th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.details.pickupStatus}">Pickup Status</span>
+                                        </span>
+                                        <span class="order-info-value"
+                                              th:text="${order.pickupStatus}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.details.pickupDate}">Pickup Date</span>
+                                        </span>
+                                        <span class="order-info-value">
+                                            <span th:if="${order.pickupDate != null}"
+                                                  th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
+                                            <span th:unless="${order.pickupDate != null}"
+                                                  class="text-muted">-</span>
+                                        </span>
+                                    </div>
+
                                     <div class="order-info-row"
                                          th:if="${order.status?.name() == 'COMPLETED' or order.status?.name() == 'CANCELLED' or order.status?.name() == 'DELIVERED'}">
-                                        <span class="order-info-label">Order Status</span> <span
-                                            th:classappend="${order.status?.name() == 'COMPLETED' ? 'badge badge-completed' : (order.status?.name() == 'DELIVERED' ? 'badge bg-success' : 'badge bg-danger')}"
-                                            th:text="${order.status}"> </span></div>
-                                </div> <!-- Payment Information -->
-                                <div class="col-md-6">
-                                    <div class="order-info-row"><span class="order-info-label">Total Amount</span> <span
-                                            class="order-info-value format-amount"
-                                            th:text="${order.totalProductAmount}"> </span></div>
-                                    <div class="order-info-row"><span class="order-info-label">Advance Payment</span>
-                                        <span class="order-info-value format-amount"
-                                              th:text="${order.advancePayment}"> </span></div>
-                                    <div class="order-info-row"><span class="order-info-label">Due Amount</span> <span
-                                            class="order-info-value format-amount"
-                                            th:text="${order.duePayment}"> </span></div>
-                                    <div class="order-info-row"><span class="order-info-label">Paid Amount</span> <span
-                                            class="order-info-value format-amount"
-                                            th:text="${order.paidAmount}"> </span></div>
-                                    <div class="order-info-row"><span class="order-info-label">Outstanding Due</span>
-                                        <span class="order-info-value text-danger format-amount"
-                                              th:text="${order.outstandingDueAmount}"> </span></div>
-                                    <div class="order-info-row"
-                                         th:if="${(order.status?.name() == 'COMPLETED' or order.status?.name() == 'DELIVERED') and order.pickupStatus?.name() == 'PICKED_UP'}">
-                                        <span class="order-info-label">Payment Status</span> <span
-                                            th:classappend="${ order.paidAmount == order.totalProductAmount ? 'badge bg-success' : (order.totalProductAmount == order.outstandingDueAmount ? 'badge bg-danger' : 'badge bg-warning text-dark') }"
-                                            th:text="${ order.paidAmount == order.totalProductAmount ? 'Paid' : (order.totalProductAmount == order.outstandingDueAmount ? 'Unpaid' : 'Partially Paid') }"> </span>
+
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.create.orderStatus}">Order Status</span>
+                                        </span>
+
+                                        <span th:classappend="${order.status?.name() == 'COMPLETED' ? 'badge badge-completed' : (order.status?.name() == 'DELIVERED' ? 'badge bg-success' : 'badge bg-danger')}"
+                                              th:text="${#messages.msg('orders.status.' + order.status.name())}">
+                                        </span>
                                     </div>
                                 </div>
-                            </div> <!-- Status Update -->
+
+                                <!-- Payment Information -->
+                                <div class="col-md-6">
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.create.totalAmount}">Total Amount</span>
+                                        </span>
+                                        <span class="order-info-value format-amount"
+                                              th:text="${order.totalProductAmount}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.create.advancePayment}">Advance Payment</span>
+                                        </span>
+                                        <span class="order-info-value format-amount"
+                                              th:text="${order.advancePayment}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.pickup.dueAmount}">Due Amount</span>
+                                        </span>
+                                        <span class="order-info-value format-amount"
+                                              th:text="${order.duePayment}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.details.paidAmount}">Paid Amount</span>
+                                        </span>
+                                        <span class="order-info-value format-amount"
+                                              th:text="${order.paidAmount}"></span>
+                                    </div>
+
+                                    <div class="order-info-row">
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.details.outstandingDue}">Outstanding Due</span>
+                                        </span>
+                                        <span class="order-info-value text-danger format-amount"
+                                              th:text="${order.outstandingDueAmount}"></span>
+                                    </div>
+
+                                    <div class="order-info-row"
+                                         th:if="${(order.status?.name() == 'COMPLETED' or order.status?.name() == 'DELIVERED') and order.pickupStatus?.name() == 'PICKED_UP'}">
+
+                                        <span class="order-info-label">
+                                            <span th:text="#{orders.table.paymentStatus}">Payment Status</span>
+                                        </span>
+
+                                        <span th:classappend="${order.paidAmount == order.totalProductAmount ? 'badge bg-success' : (order.totalProductAmount == order.outstandingDueAmount ? 'badge bg-danger' : 'badge bg-warning text-dark')}"
+                                              th:text="${#messages.msg(order.paidAmount == order.totalProductAmount ? 'orders.payment.paid' : (order.totalProductAmount == order.outstandingDueAmount ? 'orders.payment.unpaid' : 'orders.payment.partiallyPaid'))}">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Update -->
                             <div class="row mt-4"
                                  th:if="${order.status?.name() != 'COMPLETED' and
-             order.status?.name() != 'CANCELLED' and
-             order.status?.name() != 'DELIVERED'}">
+                                         order.status?.name() != 'CANCELLED' and
+                                         order.status?.name() != 'DELIVERED'}">
 
                                 <div class="col-12">
                                     <div class="d-flex flex-wrap align-items-center gap-2">
 
                                         <label for="orderStatus" class="fw-bold mb-0">
-                                            Order Status
+                                            <span th:text="#{orders.create.orderStatus}">Order Status</span>
                                         </label>
 
                                         <select id="orderStatus" name="status" class="form-select w-auto">
 
                                             <th:block th:if="${order.status?.name() == 'PENDING'}">
-                                                <option value="PENDING" selected>PENDING</option>
-                                                <option value="IN_PROGRESS">IN_PROGRESS</option>
-                                                <option value="CANCELLED">CANCELLED</option>
+                                                <option value="PENDING" selected
+                                                        th:text="${#messages.msg('orders.status.PENDING')}">PENDING</option>
+                                                <option value="IN_PROGRESS"
+                                                        th:text="${#messages.msg('orders.status.IN_PROGRESS')}">IN_PROGRESS</option>
+                                                <option value="CANCELLED"
+                                                        th:text="${#messages.msg('orders.status.CANCELLED')}">CANCELLED</option>
                                             </th:block>
 
                                             <th:block th:if="${order.status?.name() == 'IN_PROGRESS'}">
-                                                <option value="IN_PROGRESS" selected>IN_PROGRESS</option>
-                                                <option value="COMPLETED">COMPLETED</option>
+                                                <option value="IN_PROGRESS" selected
+                                                        th:text="${#messages.msg('orders.status.IN_PROGRESS')}">IN_PROGRESS</option>
+                                                <option value="COMPLETED"
+                                                        th:text="${#messages.msg('orders.status.COMPLETED')}">COMPLETED</option>
                                             </th:block>
 
                                         </select>
@@ -317,56 +406,59 @@
                                                id="cabinetNo"
                                                name="cabinetNo"
                                                class="form-control w-auto d-none"
-                                               placeholder="Cabinet No"
+                                               th:placeholder="#{orders.table.cabinetNo}"
                                                th:value="${order.cabinetNo != null ? order.cabinetNo : ''}"/>
 
                                         <button type="button"
                                                 id="updateOrderStatusBtn"
                                                 class="btn btn-success shadow-sm rounded-pill px-4">
                                             <i class="bi bi-check-circle me-1"></i>
-                                            Update
+                                            <span th:text="#{orders.details.update}">Update</span>
                                         </button>
 
                                     </div>
                                 </div>
                             </div>
+
                             <div id="orderStatusMessage"></div>
                         </div>
                     </div>
                 </div>
-            </div> <!-- Product Details -->
+            </div>
+
+            <!-- Product Details -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
                     <i class="bi bi-box-seam me-2"></i>
-                    Order Product Details
+                    <span th:text="#{orders.details.productDetails}">Order Product Details</span>
                 </div>
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover align-middle mb-0">
                             <thead class="table-success text-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Product / Item</th>
-                                <th>Type</th>
-                                <th>Status</th>
+                                <th><span th:text="#{orders.details.productItem}">Product / Item</span></th>
+                                <th><span th:text="#{orders.create.type}">Type</span></th>
+                                <th><span th:text="#{orders.table.status}">Status</span></th>
                                 <th>Silai</th>
-                                <th>Silai Amount</th>
-                                <th>Unit Price</th>
-                                <th>Qty</th>
-                                <th>Fabric / Source</th>
-                                <th>Fabric Qty</th>
-                                <th>Fabric Amount</th>
-                                <th>Alteration Charges</th>
-                                <th>Subtotal</th>
-                                <th>Additional Notes</th>
-                                <th>Actions</th>
+                                <th><span th:text="#{orders.create.silaiAmount}">Silai Amount</span></th>
+                                <th><span th:text="#{orders.create.unitPrice}">Unit Price</span></th>
+                                <th><span th:text="#{orders.create.qty}">Qty</span></th>
+                                <th><span th:text="#{orders.details.fabricSource}">Fabric / Source</span></th>
+                                <th><span th:text="#{orders.create.fabricQty}">Fabric Qty</span></th>
+                                <th><span th:text="#{orders.create.fabricAmount}">Fabric Amount</span></th>
+                                <th><span th:text="#{orders.details.alterationCharges}">Alteration Charges</span></th>
+                                <th><span th:text="#{orders.create.subtotal}">Subtotal</span></th>
+                                <th><span th:text="#{orders.create.additionalNotes}">Additional Notes</span></th>
+                                <th><span th:text="#{orders.table.actions}">Actions</span></th>
                             </tr>
                             </thead>
 
                             <tbody>
                             <tr th:each="item, i : ${order.orderProducts}">
 
-                                <!-- # -->
                                 <td class="text-center" th:text="${i.count}"></td>
 
                                 <!-- Product / Item -->
@@ -380,25 +472,20 @@
                                         <div class="product-sub-info"
                                              th:if="${item.inventoryItem != null}">
 
-            <span th:if="${item.inventoryItem.brand != null}"
-                  th:text="${item.inventoryItem.brand.name}">
-            </span>
+                                            <span th:if="${item.inventoryItem.brand != null}"
+                                                  th:text="${item.inventoryItem.brand.name}"></span>
 
                                             <span th:if="${item.inventoryItem.category != null}"
-                                                  th:text="' | ' + ${item.inventoryItem.category.name}">
-            </span>
+                                                  th:text="' | ' + ${item.inventoryItem.category.name}"></span>
 
                                             <span th:if="${item.inventoryItem.color != null}"
-                                                  th:text="' | ' + ${item.inventoryItem.color.name}">
-            </span>
+                                                  th:text="' | ' + ${item.inventoryItem.color.name}"></span>
 
                                             <span th:if="${item.inventoryItem.design != null}"
-                                                  th:text="' | ' + ${item.inventoryItem.design.name}">
-            </span>
+                                                  th:text="' | ' + ${item.inventoryItem.design.name}"></span>
 
                                             <span th:if="${item.inventoryItem.size != null and !#strings.isEmpty(item.inventoryItem.size)}"
-                                                  th:text="' | Size: ' + ${item.inventoryItem.size}">
-            </span>
+                                                  th:text="' | ' + #{orders.details.size} + ': ' + ${item.inventoryItem.size}"></span>
                                         </div>
                                     </div>
 
@@ -412,17 +499,17 @@
 
                                 <!-- Type -->
                                 <td class="text-center">
-                        <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                              class="badge bg-primary product-type">
-                            <i class="bi bi-box-seam me-1"></i>
-                            Inventory
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
+                                          class="badge bg-primary product-type">
+                                        <i class="bi bi-box-seam me-1"></i>
+                                        <span th:text="#{orders.create.inventory}">Inventory</span>
+                                    </span>
 
                                     <span th:unless="${item.orderProductType?.name() == 'INVENTORY'}"
                                           class="badge bg-success product-type">
-                            <i class="bi bi-scissors me-1"></i>
-                            Tailoring
-                        </span>
+                                        <i class="bi bi-scissors me-1"></i>
+                                        <span th:text="#{orders.create.tailoring}">Tailoring</span>
+                                    </span>
                                 </td>
 
                                 <!-- Status -->
@@ -436,63 +523,52 @@
                                         <th:block th:if="${item.orderProductType?.name() == 'TAILORING'}">
 
                                             <option value="PENDING"
-                                                    th:selected="${item.status?.name() == 'PENDING'}">
-                                                Pending
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'PENDING'}"
+                                                    th:text="${#messages.msg('orders.status.PENDING')}">Pending</option>
 
                                             <option value="IN_PROGRESS"
-                                                    th:selected="${item.status?.name() == 'IN_PROGRESS'}">
-                                                In Progress
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'IN_PROGRESS'}"
+                                                    th:text="${#messages.msg('orders.status.IN_PROGRESS')}">In Progress</option>
 
                                             <option value="COMPLETED"
-                                                    th:selected="${item.status?.name() == 'COMPLETED'}">
-                                                Completed
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'COMPLETED'}"
+                                                    th:text="${#messages.msg('orders.status.COMPLETED')}">Completed</option>
 
                                             <option value="CANCELLED"
                                                     th:if="${item.status?.name() == 'PENDING' || item.status?.name() == 'CANCELLED'}"
-                                                    th:selected="${item.status?.name() == 'CANCELLED'}">
-                                                Cancelled
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'CANCELLED'}"
+                                                    th:text="${#messages.msg('orders.status.CANCELLED')}">Cancelled</option>
 
                                         </th:block>
 
                                         <!-- INVENTORY WITH ALTERATION -->
-                                        <th:block
-                                                th:if="${item.orderProductType?.name() == 'INVENTORY' && item.alterationRequired}">
+                                        <th:block th:if="${item.orderProductType?.name() == 'INVENTORY' && item.alterationRequired}">
 
                                             <option value="PENDING_FOR_ALTERATION"
-                                                    th:selected="${item.status?.name() == 'PENDING_FOR_ALTERATION'}">
-                                                Pending for Alteration
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'PENDING_FOR_ALTERATION'}"
+                                                    th:text="${#messages.msg('orders.details.status.PENDING_FOR_ALTERATION')}">Pending for Alteration</option>
 
                                             <option value="ALTERATION_IN_PROGRESS"
-                                                    th:selected="${item.status?.name() == 'ALTERATION_IN_PROGRESS'}">
-                                                Alteration in Progress
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'ALTERATION_IN_PROGRESS'}"
+                                                    th:text="${#messages.msg('orders.details.status.ALTERATION_IN_PROGRESS')}">Alteration in Progress</option>
 
                                             <option value="COMPLETED"
-                                                    th:selected="${item.status?.name() == 'COMPLETED'}">
-                                                Completed
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'COMPLETED'}"
+                                                    th:text="${#messages.msg('orders.status.COMPLETED')}">Completed</option>
 
                                             <option value="CANCELLED"
                                                     th:if="${item.status?.name() == 'PENDING_FOR_ALTERATION' || item.status?.name() == 'CANCELLED'}"
-                                                    th:selected="${item.status?.name() == 'CANCELLED'}">
-                                                Cancelled
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'CANCELLED'}"
+                                                    th:text="${#messages.msg('orders.status.CANCELLED')}">Cancelled</option>
 
                                         </th:block>
 
                                         <!-- INVENTORY WITHOUT ALTERATION -->
-                                        <th:block
-                                                th:if="${item.orderProductType?.name() == 'INVENTORY' && !item.alterationRequired}">
+                                        <th:block th:if="${item.orderProductType?.name() == 'INVENTORY' && !item.alterationRequired}">
 
                                             <option value="INSTANT_DELIVERED"
-                                                    th:selected="${item.status?.name() == 'INSTANT_DELIVERED'}">
-                                                Instant Delivered
-                                            </option>
+                                                    th:selected="${item.status?.name() == 'INSTANT_DELIVERED'}"
+                                                    th:text="${#messages.msg('orders.details.status.INSTANT_DELIVERED')}">Instant Delivered</option>
 
                                         </th:block>
 
@@ -501,147 +577,115 @@
 
                                 <!-- Silai -->
                                 <td>
-                        <span th:if="${item.orderProductType?.name() != 'INVENTORY'}"
-                              th:text="${item.silaiType != null ? item.silaiType : '-'}">
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() != 'INVENTORY'}"
+                                          th:text="${item.silaiType != null ? item.silaiType : '-'}"></span>
 
                                     <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                          class="text-muted">-</span>
                                 </td>
 
                                 <!-- Silai Amount -->
                                 <td class="amount-cell">
-                        <span th:if="${item.orderProductType?.name() != 'INVENTORY'}"
-                              class="format-amount"
-                              th:text="${item.silaiAmount != null ? item.silaiAmount : 0}">
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() != 'INVENTORY'}"
+                                          class="format-amount"
+                                          th:text="${item.silaiAmount != null ? item.silaiAmount : 0}"></span>
 
                                     <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                          class="text-muted">-</span>
                                 </td>
 
                                 <!-- Unit Price -->
                                 <td class="amount-cell">
-                        <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                              class="format-amount"
-                              th:text="${item.inventoryUnitPrice != null ? item.inventoryUnitPrice : 0}">
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
+                                          class="format-amount"
+                                          th:text="${item.inventoryUnitPrice != null ? item.inventoryUnitPrice : 0}"></span>
 
                                     <span th:if="${item.orderProductType?.name() != 'INVENTORY'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                          class="text-muted">-</span>
                                 </td>
 
                                 <!-- Quantity -->
                                 <td class="text-center">
-                        <span class="fw-semibold"
-                              th:text="${item.quantity}">
-                        </span>
+                                    <span class="fw-semibold" th:text="${item.quantity}"></span>
                                 </td>
 
                                 <!-- Fabric / Source -->
                                 <td>
-                                    <!-- Inventory -->
                                     <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                          class="text-muted">-</span>
 
                                     <!-- Shop Fabric -->
                                     <div th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() == 'SHOP'}">
-                            <span class="fw-semibold"
-                                  th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}">
-                            </span>
+                                                and item.fabricSource?.name() == 'SHOP'}">
+                                        <span class="fw-semibold"
+                                              th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span>
+
                                         <div class="product-sub-info">
-                                            Shop Fabric
+                                            <span th:text="#{orders.create.shopFabric}">Shop Fabric</span>
                                         </div>
                                     </div>
 
                                     <!-- Customer Fabric -->
                                     <div th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() != 'SHOP'}">
-                                        <span>Customer Fabric</span>
+                                                and item.fabricSource?.name() != 'SHOP'}">
+                                        <span th:text="#{orders.create.customerFabric}">Customer Fabric</span>
                                     </div>
                                 </td>
 
                                 <!-- Fabric Quantity -->
                                 <td>
-                        <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                              class="text-muted">
-                            -
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
+                                          class="text-muted">-</span>
 
                                     <span th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() == 'SHOP'
-                                and item.fabricQuantity != null}">
-                            <span th:text="${item.fabricQuantity.stripTrailingZeros().toPlainString()}">
-                            </span>
+                                                  and item.fabricSource?.name() == 'SHOP'
+                                                  and item.fabricQuantity != null}">
+                                        <span th:text="${item.fabricQuantity.stripTrailingZeros().toPlainString()}"></span>
 
-                            <span th:if="${item.inventoryItem != null
-                                    and item.inventoryItem.unit != null}"
-                                  th:text="' ' + ${item.inventoryItem.unit.name()}">
-                            </span>
-                        </span>
+                                        <span th:if="${item.inventoryItem != null and item.inventoryItem.unit != null}"
+                                              th:text="' ' + ${item.inventoryItem.unit.name()}"></span>
+                                    </span>
 
                                     <span th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() != 'SHOP'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                                  and item.fabricSource?.name() != 'SHOP'}"
+                                          class="text-muted">-</span>
                                 </td>
 
                                 <!-- Fabric Amount -->
                                 <td class="amount-cell">
-                        <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                              class="text-muted">
-                            -
-                        </span>
+                                    <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
+                                          class="text-muted">-</span>
 
                                     <span th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() == 'SHOP'
-                                and item.fabricAmount != null}"
+                                                  and item.fabricSource?.name() == 'SHOP'
+                                                  and item.fabricAmount != null}"
                                           class="format-amount"
-                                          th:text="${item.fabricAmount}">
-                        </span>
+                                          th:text="${item.fabricAmount}"></span>
 
                                     <span th:if="${item.orderProductType?.name() != 'INVENTORY'
-                                and item.fabricSource?.name() != 'SHOP'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                                  and item.fabricSource?.name() != 'SHOP'}"
+                                          class="text-muted">-</span>
                                 </td>
+
                                 <!-- Alteration Charges -->
                                 <td class="amount-cell">
-                        <span class="format-amount"
-                              th:text="${item.alterationFee != null ? item.alterationFee : 0}">
-                        </span>
+                                    <span class="format-amount"
+                                          th:text="${item.alterationFee != null ? item.alterationFee : 0}"></span>
                                 </td>
 
                                 <!-- Subtotal -->
                                 <td class="amount-cell">
-                        <span class="format-amount"
-                              th:text="${item.subtotal != null ? item.subtotal : 0}">
-                        </span>
+                                    <span class="format-amount"
+                                          th:text="${item.subtotal != null ? item.subtotal : 0}"></span>
                                 </td>
 
                                 <!-- Notes -->
                                 <td class="notes-cell">
-                        <span th:if="${item.additionalNotes != null
-                                and !#strings.isEmpty(item.additionalNotes)}"
-                              th:text="${item.additionalNotes}">
-                        </span>
+                                    <span th:if="${item.additionalNotes != null and !#strings.isEmpty(item.additionalNotes)}"
+                                          th:text="${item.additionalNotes}"></span>
 
-                                    <span th:unless="${item.additionalNotes != null
-                                and !#strings.isEmpty(item.additionalNotes)}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                    <span th:unless="${item.additionalNotes != null and !#strings.isEmpty(item.additionalNotes)}"
+                                          class="text-muted">-</span>
                                 </td>
 
                                 <!-- Actions -->
@@ -650,167 +694,206 @@
                                        th:href="@{/receipts/generate-measurement/{id}(id=${thymeleafUtil.encryptId(item.id)})}"
                                        class="btn btn-success btn-sm text-nowrap">
                                         <i class="bi bi-rulers me-1"></i>
-                                        Generate Measurement
+                                        <span th:text="#{orders.details.generateMeasurement}">Generate Measurement</span>
                                     </a>
 
                                     <span th:if="${item.orderProductType?.name() == 'INVENTORY'}"
-                                          class="text-muted">
-                            -
-                        </span>
+                                          class="text-muted">-</span>
                                 </td>
 
                             </tr>
                             </tbody>
                         </table>
+
                         <div id="orderProductStatusMessage"></div>
                     </div>
                 </div>
-            </div> <!-- Order Actions -->
+            </div>
+
+            <!-- Order Actions -->
             <div class="d-flex justify-content-center flex-wrap gap-2 order-actions mt-4 mb-4">
-                <a
-                        th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
-                        class="btn btn-success shadow-sm"> <i class="bi bi-receipt me-1"></i> Generate Order Receipt
-                </a> <a
-                    th:href="@{/orders}" class="btn btn-secondary shadow-sm"> <i
-                    class="bi bi-arrow-left-circle me-1"></i> Back to Orders </a></div>
+                <a th:href="@{/receipts/generate-order-receipt/{id}(id=${thymeleafUtil.encryptId(order.id)})}"
+                   class="btn btn-success shadow-sm">
+                    <i class="bi bi-receipt me-1"></i>
+                    <span th:text="#{orders.action.generateReceipt}">Generate Order Receipt</span>
+                </a>
+
+                <a th:href="@{/orders}" class="btn btn-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle me-1"></i>
+                    <span th:text="#{orders.details.backToOrders}">Back to Orders</span>
+                </a>
+            </div>
+
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
     var csrfToken = $("meta[name='_csrf']").attr("content");
     var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+    var orderStatusUpdateSuccess = [[#{orders.details.statusUpdateSuccess}]];
+    var orderStatusUpdateError = [[#{orders.details.statusUpdateError}]];
+    var productStatusUpdateSuccess = [[#{orders.details.productStatusUpdateSuccess}]];
+    var productStatusUpdateError = [[#{orders.details.productStatusUpdateError}]];
 </script>
-<script> function toggleCabinetField() {
-    let selectedStatus = $("#orderStatus").val();
-    if (selectedStatus === "COMPLETED") {
-        $("#cabinetNo").removeClass("d-none");
-    } else {
-        $("#cabinetNo").addClass("d-none");
-    }
-}
 
-function updateOrderStatus() {
-    let orderId = $("#orderId").val();
-    let status = $("#orderStatus").val();
-    let cabinetNo = $("#cabinetNo").val();
-    $.ajax({
-        url: contextPath + "orders/update-order-status",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({orderId: orderId, status: status, cabinetNo: status === "COMPLETED" ? cabinetNo : null}),
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader(csrfHeader, csrfToken);
-        },
-        success: function () {
-            showAlert("success", "Order status updated successfully!");
-            setTimeout(() => {
-                location.reload();
-            }, 5000);
-        },
-        error: function () {
-            showAlert("danger", "Error updating order status. Please try again.");
+<script>
+    function toggleCabinetField() {
+        let selectedStatus = $("#orderStatus").val();
+
+        if (selectedStatus === "COMPLETED") {
+            $("#cabinetNo").removeClass("d-none");
+        } else {
+            $("#cabinetNo").addClass("d-none");
         }
-    });
-}
+    }
 
-function showAlert(type, message) {
-    let icon = type === "success" ? `<i class="bi bi-check-circle-fill me-2"></i>` : `<i class="bi bi-x-circle-fill me-2"></i>`;
-    let alertHtml = ` <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert"> ${icon}${message} <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"> </button> </div> `;
-    $("#orderStatusMessage").html(alertHtml);
-    if (type === "success") {
+    function updateOrderStatus() {
+        let orderId = $("#orderId").val();
+        let status = $("#orderStatus").val();
+        let cabinetNo = $("#cabinetNo").val();
+
+        $.ajax({
+            url: contextPath + "orders/update-order-status",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                orderId: orderId,
+                status: status,
+                cabinetNo: status === "COMPLETED" ? cabinetNo : null
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrfHeader, csrfToken);
+            },
+            success: function () {
+                showAlert("success", orderStatusUpdateSuccess);
+
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            },
+            error: function () {
+                showAlert("danger", orderStatusUpdateError);
+            }
+        });
+    }
+
+    function showAlert(type, message) {
+        let icon = type === "success"
+            ? `<i class="bi bi-check-circle-fill me-2"></i>`
+            : `<i class="bi bi-x-circle-fill me-2"></i>`;
+
+        let alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
+                ${icon}${message}
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
+        `;
+
+        $("#orderStatusMessage").html(alertHtml);
+
+        if (type === "success") {
+            setTimeout(() => {
+                $(".alert").fadeOut(500, function () {
+                    $(this).remove();
+                });
+            }, 4000);
+        }
+    }
+
+    $(function () {
+        toggleCabinetField();
+        $("#orderStatus").change(toggleCabinetField);
+        $("#updateOrderStatusBtn").click(updateOrderStatus);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".order-product-status").forEach(function (select) {
+            select.addEventListener("change", function () {
+                const orderProductId = this.dataset.orderProductId;
+                const newStatus = this.value;
+                const previousStatus = this.dataset.currentStatus;
+
+                if (!orderProductId || !newStatus) {
+                    return;
+                }
+
+                const csrfToken = $("meta[name='_csrf']").attr("content");
+                const csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+                this.disabled = true;
+
+                fetch(contextPath + "orders/update-order-product-status", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify({
+                        orderProductId: Number(orderProductId),
+                        status: newStatus
+                    })
+                })
+                    .then(async response => {
+                        const message = await response.text();
+
+                        if (!response.ok) {
+                            throw new Error(message || productStatusUpdateError);
+                        }
+
+                        return message;
+                    })
+                    .then(message => {
+                        this.dataset.currentStatus = newStatus;
+                        this.disabled = false;
+                        showProductStatusAlert("success", message || productStatusUpdateSuccess);
+                    })
+                    .catch(error => {
+                        console.error("Product status update failed:", error);
+                        this.value = previousStatus;
+                        this.disabled = false;
+                        showProductStatusAlert("danger", error.message || productStatusUpdateError);
+                    });
+            });
+        });
+    });
+
+    function showProductStatusAlert(type, message) {
+        let icon = type === "success"
+            ? `<i class="bi bi-check-circle-fill me-2"></i>`
+            : `<i class="bi bi-x-circle-fill me-2"></i>`;
+
+        let alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
+                ${icon}${message}
+                <button type="button"
+                        class="btn-close bg-light"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
+        `;
+
+        $("#orderProductStatusMessage").html(alertHtml);
+
         setTimeout(() => {
-            $(".alert").fadeOut(500, function () {
+            $("#orderProductStatusMessage .alert").fadeOut(500, function () {
                 $(this).remove();
             });
         }, 4000);
     }
-}
-
-$(function () {
-    toggleCabinetField();
-    $("#orderStatus").change(toggleCabinetField);
-    $("#updateOrderStatusBtn").click(updateOrderStatus);
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".order-product-status").forEach(function (select) {
-        select.addEventListener("change", function () {
-            const orderProductId = this.dataset.orderProductId;
-            const newStatus = this.value;
-            const previousStatus = this.dataset.currentStatus;
-
-            if (!orderProductId || !newStatus) {
-                return;
-            }
-
-            const csrfToken = $("meta[name='_csrf']").attr("content");
-            const csrfHeader = $("meta[name='_csrf_header']").attr("content");
-
-            this.disabled = true;
-
-            fetch(contextPath + "orders/update-order-product-status", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    [csrfHeader]: csrfToken
-                },
-                body: JSON.stringify({
-                    orderProductId: Number(orderProductId),
-                    status: newStatus
-                })
-            })
-                .then(async response => {
-                    const message = await response.text();
-
-                    if (!response.ok) {
-                        throw new Error(message || "Failed to update product status.");
-                    }
-
-                    return message;
-                })
-                .then(message => {
-                    this.dataset.currentStatus = newStatus;
-                    this.disabled = false;
-                    showProductStatusAlert("success", message || "Product status updated successfully!");
-                })
-                .catch(error => {
-                    console.error("Product status update failed:", error);
-                    this.value = previousStatus;
-                    this.disabled = false;
-                    showProductStatusAlert("danger", error.message || "Failed to update product status.");
-                });
-        });
-    });
-});
-
-function showProductStatusAlert(type, message) {
-    let icon = type === "success"
-        ? `<i class="bi bi-check-circle-fill me-2"></i>`
-        : `<i class="bi bi-x-circle-fill me-2"></i>`;
-
-    let alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm" role="alert">
-            ${icon}${message}
-            <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
-
-    $("#orderProductStatusMessage").html(alertHtml);
-
-    setTimeout(() => {
-        $("#orderProductStatusMessage .alert").fadeOut(500, function () {
-            $(this).remove();
-        });
-    }, 4000);
-}
-
 </script>
 </body>
 </html>

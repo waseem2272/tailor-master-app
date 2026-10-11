@@ -110,22 +110,22 @@ function setupFabricControls() {
 
 
         fabricStockInfo.innerHTML =
-            "Physical Stock: " +
+            orderMessages.physicalStock +
             physicalStock.toFixed(2) + " " + unit +
 
             " &nbsp; | &nbsp; " +
 
-            "Reserved Stock: " +
+            orderMessages.reservedStock +
             reservedStock.toFixed(2) + " " + unit +
 
             " &nbsp; | &nbsp; " +
 
-            "Current Order: " +
+            orderMessages.currentOrder +
             currentOrderQuantity.toFixed(2) + " " + unit +
 
             " &nbsp; | &nbsp; " +
 
-            "Available Stock: " +
+            orderMessages.availableStock +
             availableStock.toFixed(2) + " " + unit;
 
 
@@ -184,7 +184,7 @@ function setupFabricControls() {
         if (quantity > availableStock) {
 
             fabricStockError.innerText =
-                "Fabric quantity cannot be greater than available stock (" +
+                orderMessages.fabricQtyExceedsStock +
                 availableStock.toFixed(2) +
                 ").";
 
@@ -315,7 +315,9 @@ document.getElementById("productSelect").addEventListener("change", function () 
     const silaiSelect = document.getElementById("silaiSelect");
 
     silaiSelect.innerHTML =
-        '<option value="" disabled selected>-- Silai Type --</option>';
+        '<option value="" disabled selected>' +
+        orderMessages.silaiTypePlaceholder +
+        '</option>';
 
     const product =
         productSilaiData.find(p => p.id == selectedId);
@@ -323,14 +325,14 @@ document.getElementById("productSelect").addEventListener("change", function () 
     if (product) {
         const opt1 = document.createElement("option");
         opt1.value = "single";
-        opt1.text = "Single Silai - " +
+        opt1.text = orderMessages.singleSilai + ' - ' +
             formatAmount(product.singleSilai);
 
         silaiSelect.appendChild(opt1);
 
         const opt2 = document.createElement("option");
         opt2.value = "double";
-        opt2.text = "Double Silai - " +
+        opt2.text = orderMessages.doubleSilai + ' - ' +
             formatAmount(product.doubleSilai);
 
         silaiSelect.appendChild(opt2);
@@ -381,7 +383,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
     if (orderProductType === "INVENTORY") {
         if (!inventoryItemOrderSelect.value) {
-            showAddProductAlert("Please select an inventory item.");
+            showAddProductAlert(orderMessages.selectInventoryItem);
             return;
         }
 
@@ -419,7 +421,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         }
 
         if (!qty || qty <= 0) {
-            showAddProductAlert("Please enter a valid inventory quantity.");
+            showAddProductAlert(orderMessages.validInventoryQty);
             return;
         }
 
@@ -451,8 +453,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
         if (qty > availableStock) {
             document.getElementById("inventoryStockError").textContent =
-                "Quantity cannot be greater than available stock. " +
-                "Available: " +
+                orderMessages.qtyExceedsStock + " Available: " +
                 availableStock.toFixed(2) +
                 " " +
                 (selectedOption.dataset.unit || "");
@@ -502,7 +503,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                         document.getElementById("inventoryStockError");
 
                     inventoryStockError.textContent =
-                        data.message || "Inventory price cannot be calculated for the selected Item. Please check available stock.";
+                        data.message || orderMessages.inventoryPriceError;
 
                     inventoryStockError.style.display = "block";
                     return;
@@ -575,7 +576,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                     document.getElementById("inventoryStockError");
 
                 inventoryStockError.textContent =
-                    "Inventory price cannot be calculated for the selected Item. Please check available stock.";
+                    orderMessages.inventoryPriceError;
 
                 inventoryStockError.style.display = "block";
             });
@@ -590,7 +591,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         !qty ||
         qty < 1) {
         showAddProductAlert(
-            "Please select product, silai type and quantity."
+            orderMessages.selectProductSilaiQty
         );
         return;
     }
@@ -605,7 +606,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
     if (selectedFabricSource === "SHOP") {
         if (!inventoryItemSelect.value) {
-            showAddProductAlert("Please select shop fabric.");
+            showAddProductAlert(orderMessages.selectShopFabric);
             return;
         }
 
@@ -613,7 +614,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
             parseFloat(fabricQuantityInput.value);
 
         if (!fabricQuantity || fabricQuantity <= 0) {
-            showAddProductAlert("Please enter fabric quantity.");
+            showAddProductAlert(orderMessages.enterFabricQty);
             return;
         }
 
@@ -697,7 +698,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
                         document.getElementById("fabricStockError");
 
                     fabricStockError.textContent =
-                        data.message || "Shop fabric price cannot be calculated for the selected fabric. Please check available stock.";
+                        data.message || orderMessages.shopFabricPriceError;
 
                     fabricStockError.style.display = "block";
                     return;
@@ -718,7 +719,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
                 if (!product) {
                     showAddProductAlert(
-                        "Product information not found."
+                        orderMessages.productNotFound
                     );
                     return;
                 }
@@ -783,7 +784,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
                 silaiSelect.innerHTML =
                     '<option value="" disabled selected>' +
-                    '-- Silai Type --' +
+                    orderMessages.silaiTypePlaceholder +
                     '</option>';
 
                 quantityInput.value = "";
@@ -879,7 +880,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
     silaiSelect.innerHTML =
         '<option value="" disabled selected>' +
-        '-- Silai Type --' +
+        orderMessages.silaiTypePlaceholder +
         '</option>';
 
     quantityInput.value = "";
@@ -978,8 +979,8 @@ function renderTable() {
                 <td>
     ${isInventory
             ? item.alterationRequired
-                ? "Yes - Rs. " + item.alterationFee.toFixed(2)
-                : "No"
+                ? orderMessages.alterationYesPrefix + item.alterationFee.toFixed(2)
+                : orderMessages.no
             : "-"}
 </td>
 
@@ -1030,7 +1031,7 @@ function updateOrderDetails() {
 
     if (advancePayment < 0) {
         advanceError.innerText =
-            "Advance payment cannot be negative.";
+            orderMessages.advanceGreaterThanTotal;
 
         advanceError.style.display = "block";
         dueInput.value = totalAmount.toFixed(2);
@@ -1039,7 +1040,7 @@ function updateOrderDetails() {
 
     if (advancePayment > totalAmount) {
         advanceError.innerText =
-            "Advance payment cannot be greater than total product amount.";
+            orderMessages.advanceGreaterThanTotal;
 
         advanceError.style.display = "block";
         dueInput.value = "0.00";
@@ -1070,7 +1071,7 @@ document.getElementById("createOrderButton")
     .addEventListener("click", function () {
 
         if (orderItems.length === 0) {
-            showAddProductAlert("Please add at least one product.");
+            showAddProductAlert(orderMessages.addProduct);
             return;
         }
 
@@ -1081,7 +1082,7 @@ document.getElementById("createOrderButton")
             document.getElementById("deliveryDate").value;
 
         if (!orderDate || !deliveryDate) {
-            showAddProductAlert("Please select order and delivery date.");
+            showAddProductAlert(orderMessages.selectDates);
             return;
         }
 
@@ -1096,13 +1097,13 @@ document.getElementById("createOrderButton")
             ) || 0;
 
         if (advancePayment < 0) {
-            alert("Advance payment cannot be negative.");
+            alert(orderMessages.advanceNegative);
             return;
         }
 
         if (advancePayment > totalAmount) {
             alert(
-                "Advance payment cannot be greater than total product amount."
+                orderMessages.advanceGreaterThanTotal
             );
             return;
         }
@@ -1137,7 +1138,7 @@ document.getElementById("createOrderButton")
                 row.innerHTML = `
                 <td>${item.inventoryItemName || "-"}</td>
                 <td>
-                    <span class="badge bg-success">Inventory</span>
+                    <span class="badge bg-success">${orderMessages.inventory}</span>
                 </td>
                 <td>-</td>
                 <td>-</td>
@@ -1149,8 +1150,8 @@ document.getElementById("createOrderButton")
                 <td>${(item.amount || 0).toFixed(2)}</td>
                 <td>
     ${item.alterationRequired
-                    ? "Yes - Rs. " + (item.alterationFee || 0).toFixed(2)
-                    : "No"}
+                    ? orderMessages.alterationYesPrefix + (item.alterationFee || 0).toFixed(2)
+                    : orderMessages.no}
 </td>
                 <td>${item.additionalNotes || "-"}</td>
             `;
@@ -1160,12 +1161,12 @@ document.getElementById("createOrderButton")
                 row.innerHTML = `
                 <td>${item.productName || "-"}</td>
                 <td>
-                    <span class="badge bg-primary">Tailoring</span>
+                    <span class="badge bg-primary">${orderMessages.tailoring}</span>
                 </td>
                 <td>${item.silai || "-"}</td>
                 <td>${item.fabricSource === "SHOP"
-                    ? "Shop Fabric"
-                    : "Customer Fabric"}</td>
+                    ? orderMessages.shopFabric
+                    : orderMessages.customerFabric}</td>
                 <td>${item.inventoryItemName || "-"}</td>
                 <td>${item.fabricSource === "SHOP"
                     ? (item.fabricQuantity || 0).toFixed(2) + " M"
