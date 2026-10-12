@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Labor Details</title>
+    <title th:text="#{labor.details.title}">Labor Details</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -17,15 +17,15 @@
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="page-title mb-0">
-                    <i class="bi bi-person-vcard text-success me-2"></i> Labor Details
+                    <i class="bi bi-person-vcard text-success me-2"></i> <span th:text="#{labor.details.title}">Labor Details</span>
                 </h2>
                 <div class="d-flex gap-2">
                     <a th:href="@{'/labors/edit/' + ${thymeleafUtil.encryptId(labor.id)}}"
                        class="btn btn-success shadow rounded-pill px-4">
-                        <i class="bi bi-pencil-square me-1"></i> Edit Labor
+                        <i class="bi bi-pencil-square me-1"></i> <span th:text="#{labor.edit.title}">Edit Labor</span>
                     </a>
                     <a th:href="@{/labors}" class="btn btn-secondary shadow rounded-pill px-4">
-                        <i class="bi bi-arrow-left me-1"></i> Back
+                        <i class="bi bi-arrow-left me-1"></i> <span th:text="#{receipt.back}">Back</span>
                     </a>
                 </div>
             </div>
@@ -58,14 +58,14 @@
             <!-- Labor Information -->
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-info-circle me-2"></i> Labor Information
+                    <i class="bi bi-info-circle me-2"></i> <span th:text="#{labor.create.information}">Labor Information</span>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-person me-1"></i> Labor Name
+                                    <i class="bi bi-person me-1"></i> <span th:text="#{labor.name}">Labor Name</span>
                                 </div>
                                 <div class="fw-semibold"
                                      th:text="${labor.name != null and !labor.name.isBlank() ? labor.name : '-'}">
@@ -77,7 +77,7 @@
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-telephone me-1"></i> Phone Number
+                                    <i class="bi bi-telephone me-1"></i> <span th:text="#{labor.contact}">Phone Number</span>
                                 </div>
                                 <div class="fw-semibold"
                                      th:text="${labor.contact != null and !labor.contact.isBlank() ? labor.contact : '-'}">
@@ -89,7 +89,7 @@
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-tools me-1"></i> Skills
+                                    <i class="bi bi-tools me-1"></i> <span th:text="#{labor.create.skills}">Skills</span>
                                 </div>
                                 <div class="fw-semibold"
                                      th:text="${labor.skills != null and !labor.skills.isBlank() ? labor.skills : '-'}">
@@ -101,10 +101,10 @@
                         <div class="col-md-4">
                             <div class="border rounded-3 p-3 bg-light h-100">
                                 <div class="text-muted small mb-1">
-                                    <i class="bi bi-calendar-check me-1"></i> Join Date
+                                    <i class="bi bi-calendar-check me-1"></i> <span th:text="#{labor.joinDate}">Join Date</span>
                                 </div>
                                 <div class="fw-semibold"
-                                     th:text="${labor.joinDate != null ? #temporals.format(labor.joinDate, 'dd-MMM-yyyy') : '-'}">
+                                     th:text="${labor.joinDate != null ? #temporals.format(labor.joinDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH) : '-'}">
                                     Join Date
                                 </div>
                             </div>
@@ -117,12 +117,12 @@
             <div class="card shadow-sm border-success border-bottom border-3 mb-4">
                 <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center rounded-top-4">
                     <span>
-                        <i class="bi bi-cash-coin me-2"></i> Payment Details
+                        <i class="bi bi-cash-coin me-2"></i> <span th:text="#{labor.details.paymentDetails}">Payment Details</span>
                     </span>
                     <button class="btn btn-light btn-sm"
                             th:attr="data-labor-id=${labor.id}"
                             onclick="openAddPaymentModal(this)">
-                        <i class="bi bi-plus-circle me-1"></i> Make Payment
+                        <i class="bi bi-plus-circle me-1"></i> <span th:text="#{labor.details.makePayment}">Make Payment</span>
                     </button>
                 </div>
 
@@ -133,7 +133,7 @@
                         <div class="col-md-6">
                             <div class="p-4 border rounded bg-success bg-opacity-10">
                                 <h5 class="text-success mb-2">
-                                    <i class="bi bi-cash-coin me-1"></i> Total Paid
+                                    <i class="bi bi-cash-coin me-1"></i> <span th:text="#{labor.details.totalPaid}">Total Paid</span>
                                 </h5>
                                 <h3 class="fw-bold text-success mb-0"
                                     th:text="${#numbers.formatDecimal(totalPaid, 1, 'COMMA', 2, 'POINT')}">
@@ -147,7 +147,7 @@
                         <div class="col-md-6 mb-2">
                             <div class="p-3 border rounded bg-primary bg-opacity-10">
                                 <h6 class="text-primary mb-1">
-                                    <i class="bi bi-wallet2 me-1"></i> Total Work
+                                    <i class="bi bi-wallet2 me-1"></i> <span th:text="#{labor.details.totalWork}">Total Work</span>
                                 </h6>
                                 <h5 class="fw-bold text-primary mb-0"
                                     th:text="${#numbers.formatDecimal(totalWork, 1, 'COMMA', 2, 'POINT')}">
@@ -158,7 +158,7 @@
                         <div class="col-md-6 mb-2">
                             <div class="p-3 border rounded bg-info bg-opacity-10">
                                 <h6 class="text-info mb-1">
-                                    <i class="bi bi-piggy-bank me-1"></i> Advance
+                                    <i class="bi bi-piggy-bank me-1"></i> <span th:text="#{labor.details.advance}">Advance</span>
                                 </h6>
                                 <h5 class="fw-bold text-info mb-0"
                                     th:text="${#numbers.formatDecimal(advancePaid, 1, 'COMMA', 2, 'POINT')}">
@@ -174,7 +174,7 @@
                                  th:classappend="${remainingBalance > 0} ? ' bg-success bg-opacity-10' : ' bg-danger bg-opacity-10'">
                                 <h5 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'"
                                     class="mb-2">
-                                    <i class="bi bi-calculator me-1"></i> Remaining Balance
+                                    <i class="bi bi-calculator me-1"></i> <span th:text="#{labor.details.remainingBalance}">Remaining Balance</span>
                                 </h5>
                                 <h3 th:classappend="${remainingBalance > 0} ? ' text-success' : ' text-danger'"
                                     class="fw-bold mb-0"
@@ -190,7 +190,7 @@
             <!-- Payment History -->
             <div class="card shadow-sm border-success border-bottom border-3">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                    <i class="bi bi-clock-history me-2"></i> Payment History
+                    <i class="bi bi-clock-history me-2"></i> <span th:text="#{labor.details.paymentHistory}">Payment History</span>
                 </div>
 
                 <div class="card-body">
@@ -198,11 +198,11 @@
                         <thead class="table-success text-dark">
                         <tr>
                             <th>#</th>
-                            <th>Payment Type</th>
-                            <th>Payment Date</th>
-                            <th>Amount</th>
-                            <th>Remarks</th>
-                            <th>Actions</th>
+                            <th th:text="#{labor.details.paymentType}">Payment Type</th>
+                            <th th:text="#{labor.details.paymentDate}">Payment Date</th>
+                            <th th:text="#{labor.details.amount}">Amount</th>
+                            <th th:text="#{labor.details.remarks}">Remarks</th>
+                            <th th:text="#{labor.actions}">Actions</th>
                         </tr>
                         </thead>
 
@@ -212,27 +212,27 @@
 
                             <td th:text="${payment.paymentType.name()}"></td>
 
-                            <td th:text="${#temporals.format(payment.paymentDate, 'dd-MMM-yyyy')}"></td>
+                            <td th:text="${#temporals.format(payment.paymentDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></td>
 
                             <td class="format-amount"
                                 th:text="${payment.amount}">
                             </td>
 
-                            <td th:text="${payment.remarks} ?: '—'"></td>
+                            <td th:text="${payment.remarks} ?: 'â€”'"></td>
 
                             <td>
                                 <a href="javascript:void(0);"
                                    class="btn btn-warning btn-sm"
                                    th:attr="data-id=${payment.id}"
                                    onclick="editPayment(this)">
-                                    <i class="bi bi-pencil-square"></i> Edit
+                                    <i class="bi bi-pencil-square"></i> <span th:text="#{labor.edit}">Edit</span>
                                 </a>
 
                                 <a href="javascript:void(0);"
                                    class="btn btn-danger btn-sm ms-1"
                                    th:attr="data-id=${payment.id}"
                                    onclick="deletePayment(this)">
-                                    <i class="bi bi-trash"></i> Delete
+                                    <i class="bi bi-trash"></i> <span th:text="#{labor.details.delete}">Delete</span>
                                 </a>
                             </td>
                         </tr>
@@ -272,7 +272,7 @@
 
                 <div class="modal-header bg-success text-white rounded-top-4">
                     <h5 class="modal-title" id="makePaymentModalLabel">
-                        Make Payment
+                        <span th:text="#{labor.details.makePayment}">Make Payment</span>
                     </h5>
 
                     <button type="button"
@@ -284,12 +284,12 @@
 
                 <div class="modal-body">
                     <p class="text-danger fw-bold">
-                        Fields marked as * are required
+                        <span th:text="#{labor.create.requiredFields}">Fields marked as * are required</span>
                     </p>
 
                     <div class="mb-3">
                         <label for="paymentType" class="form-label">
-                            Payment Type <span class="text-danger">*</span>
+                            <span th:text="#{labor.details.paymentType}">Payment Type</span> <span class="text-danger">*</span>
                         </label>
 
                         <select id="paymentType"
@@ -297,7 +297,7 @@
                                 class="form-select rounded-pill"
                                 required>
 
-                            <option value="" disabled selected>Select</option>
+                            <option value="" disabled selected th:text="#{labor.details.select}">Select</option>
 
                             <option th:each="type : ${paymentTypes}"
                                     th:value="${type}"
@@ -306,13 +306,13 @@
                         </select>
 
                         <div class="invalid-feedback">
-                            Please select a payment type.
+                            <span th:text="#{labor.details.selectPaymentType}">Please select a payment type.</span>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="amount" class="form-label">
-                            Amount <span class="text-danger">*</span>
+                            <span th:text="#{labor.details.amount}">Amount</span> <span class="text-danger">*</span>
                         </label>
 
                         <input type="number"
@@ -324,13 +324,13 @@
                                required>
 
                         <div class="invalid-feedback">
-                            Please enter a valid amount greater than 0.
+                            <span th:text="#{labor.details.validAmount}">Please enter a valid amount greater than 0.</span>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="remarks" class="form-label">
-                            Remarks
+                            <span th:text="#{labor.details.remarks}">Remarks</span>
                         </label>
 
                         <textarea class="form-control"
@@ -344,13 +344,13 @@
                     <button type="submit"
                             class="btn btn-success"
                             id="submitBtn">
-                        <i class="bi bi-check-circle"></i> Confirm Payment
+                        <i class="bi bi-check-circle"></i> <span th:text="#{pendingPayments.confirmPayment}">Confirm Payment</span>
                     </button>
 
                     <button type="button"
                             class="btn btn-secondary"
                             data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Cancel
+                        <i class="bi bi-x-circle"></i> <span th:text="#{button.cancel}">Cancel</span>
                     </button>
                 </div>
 
@@ -367,7 +367,7 @@
             <div class="modal-header bg-danger text-white rounded-top-4">
                 <h5 class="modal-title" id="deletePaymentModalLabel">
                     <i class="bi bi-exclamation-triangle me-2"></i>
-                    Delete Payment
+                    <span th:text="#{labor.details.deletePayment}">Delete Payment</span>
                 </h5>
                 <button type="button"
                         class="btn-close bg-light"
@@ -378,9 +378,9 @@
 
             <div class="modal-body text-center py-4">
                 <i class="bi bi-trash3 text-danger fs-1 mb-3"></i>
-                <h5>Are you sure?</h5>
+                <h5 th:text="#{labor.details.areYouSure}">Are you sure?</h5>
                 <p class="text-muted mb-0">
-                    This payment will be permanently deleted.
+                    <span th:text="#{labor.details.paymentDeleteWarning}">This payment will be permanently deleted.</span>
                 </p>
             </div>
 
@@ -388,14 +388,14 @@
                 <button type="button"
                         class="btn btn-secondary"
                         data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
+                    <i class="bi bi-x-circle me-1"></i> <span th:text="#{button.cancel}">Cancel</span>
                 </button>
 
                 <button type="button"
                         class="btn btn-danger"
                         id="confirmDeletePaymentBtn"
                         onclick="confirmDeletePayment()">
-                    <i class="bi bi-trash me-1"></i> Delete
+                    <i class="bi bi-trash me-1"></i> <span th:text="#{labor.details.delete}">Delete</span>
                 </button>
             </div>
         </div>
@@ -415,6 +415,22 @@
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
+</script>
+
+<script th:inline="javascript">
+    const laborDetailsMessages = {
+        makePayment: /*[[#{labor.details.makePayment}]]*/ 'Make Payment',
+        editPayment: /*[[#{labor.details.editPayment}]]*/ 'Edit Payment',
+        fetchPaymentError: /*[[#{labor.details.fetchPaymentError}]]*/ 'Failed to fetch payment details',
+        loadPaymentError: /*[[#{labor.details.loadPaymentError}]]*/ 'Could not load payment information. Please try again.',
+        deleteConfirm: /*[[#{labor.details.deleteConfirm}]]*/ 'Are you sure you want to delete this payment?',
+        deleteError: /*[[#{labor.details.deleteError}]]*/ 'Failed to delete payment. Please try again.',
+        invalidPayment: /*[[#{labor.details.invalidPayment}]]*/ 'Invalid payment selected.',
+        deleting: /*[[#{labor.details.deleting}]]*/ 'Deleting...',
+        deleteFailed: /*[[#{labor.details.deleteFailed}]]*/ 'Failed to delete payment.',
+        delete: /*[[#{labor.details.delete}]]*/ 'Delete',
+        processing: /*[[#{pendingPayments.processing}]]*/ 'Processing...'
+    };
 </script>
 
 <script>
@@ -438,7 +454,7 @@
                     event.stopPropagation();
                 } else {
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Processing...';
+                    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + laborDetailsMessages.processing;
                 }
 
                 form.classList.add('was-validated');
@@ -454,7 +470,7 @@
         document.getElementById('amount').value = '';
         document.getElementById('remarks').value = '';
 
-        document.getElementById('makePaymentModalLabel').innerText = 'Make Payment';
+        document.getElementById('makePaymentModalLabel').innerText = laborDetailsMessages.makePayment;
 
         const form = document.getElementById('laborPaymentForm');
         form.action = contextPath + 'labors/payments';
@@ -471,7 +487,7 @@
         fetch(contextPath + `labors/payments/get/${paymentId}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to fetch payment details');
+                    throw new Error(laborDetailsMessages.fetchPaymentError);
                 }
                 return response.json();
             })
@@ -481,7 +497,7 @@
                 document.getElementById('amount').value = payment.amount;
                 document.getElementById('remarks').value = payment.remarks || '';
 
-                document.getElementById('makePaymentModalLabel').innerText = 'Edit Payment';
+                document.getElementById('makePaymentModalLabel').innerText = laborDetailsMessages.editPayment;
 
                 const form = document.getElementById('laborPaymentForm');
                 form.action = contextPath + 'labors/payments/update';
@@ -491,14 +507,14 @@
             })
             .catch(error => {
                 console.error('Error loading payment details:', error);
-                showBootstrapAlert('Could not load payment information. Please try again.', 'danger');
+                showBootstrapAlert(laborDetailsMessages.loadPaymentError, 'danger');
             });
     }
 
     function deletePayment(button) {
         const paymentId = button.getAttribute('data-id');
 
-        if (confirm('Are you sure you want to delete this payment?')) {
+        if (confirm(laborDetailsMessages.deleteConfirm)) {
             fetch(contextPath + `labors/payments/delete/${paymentId}`, {
                 method: 'DELETE',
                 headers: {
@@ -509,12 +525,12 @@
                     if (response.ok) {
                         location.reload();
                     } else {
-                        showBootstrapAlert('Failed to delete payment. Please try again.', 'danger');
+                        showBootstrapAlert(laborDetailsMessages.deleteError, 'danger');
                     }
                 })
                 .catch(error => {
                     console.error('Error deleting payment:', error);
-                    showBootstrapAlert('Failed to delete payment. Please try again.', 'danger');
+                    showBootstrapAlert(laborDetailsMessages.deleteError, 'danger');
                 });
         }
     }
@@ -564,13 +580,13 @@
 
     function confirmDeletePayment() {
         if (!paymentIdToDelete) {
-            showBootstrapAlert('Invalid payment selected.', 'danger');
+            showBootstrapAlert(laborDetailsMessages.invalidPayment, 'danger');
             return;
         }
 
         const deleteButton = document.getElementById('confirmDeletePaymentBtn');
         deleteButton.disabled = true;
-        deleteButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Deleting...';
+        deleteButton.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + laborDetailsMessages.deleting;
 
         fetch(contextPath + `labors/payments/delete/${paymentIdToDelete}`, {
             method: 'DELETE',
@@ -584,13 +600,13 @@
                     return;
                 }
 
-                throw new Error('Failed to delete payment.');
+                throw new Error(laborDetailsMessages.deleteFailed);
             })
             .catch(error => {
                 console.error('Error deleting payment:', error);
 
                 deleteButton.disabled = false;
-                deleteButton.innerHTML = '<i class="bi bi-trash me-1"></i> Delete';
+                deleteButton.innerHTML = '<i class="bi bi-trash me-1"></i> ' + laborDetailsMessages.delete;
 
                 const modalElement = document.getElementById('deletePaymentModal');
                 const modal = bootstrap.Modal.getInstance(modalElement);
@@ -600,7 +616,7 @@
                 }
 
                 showBootstrapAlert(
-                    'Failed to delete payment. Please try again.',
+                    laborDetailsMessages.deleteError,
                     'danger'
                 );
             });

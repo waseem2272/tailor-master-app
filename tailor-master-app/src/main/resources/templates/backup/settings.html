@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Backup Settings</title>
+    <title th:text="#{backup.settings.title}">Backup Settings</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -20,7 +20,7 @@
 
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-database-fill-gear text-success me-2"></i>
-                Database Backup
+                <span th:text="#{backup.settings.databaseBackup}">Database Backup</span>
             </h2>
 
             <div th:if="${successMessage}" class="row justify-content-center">
@@ -35,7 +35,7 @@
                     <button type="button"
                             class="btn-close bg-light"
                             data-bs-dismiss="alert"
-                            aria-label="Close">
+                            th:attr="aria-label=#{backup.history.close}">
                     </button>
 
                 </div>
@@ -53,7 +53,7 @@
                     <button type="button"
                             class="btn-close"
                             data-bs-dismiss="alert"
-                            aria-label="Close">
+                            th:attr="aria-label=#{backup.history.close}">
                     </button>
 
                 </div>
@@ -71,7 +71,7 @@
                     <button type="button"
                             class="btn-close bg-light"
                             data-bs-dismiss="alert"
-                            aria-label="Close">
+                            th:attr="aria-label=#{backup.history.close}">
                     </button>
 
                 </div>
@@ -81,7 +81,7 @@
 
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
                     <i class="bi bi-shield-check me-2 fs-5"></i>
-                    Backup Settings
+                    <span th:text="#{backup.settings.title}">Backup Settings</span>
                 </div>
 
                 <div class="card-body">
@@ -102,12 +102,14 @@
                                            id="automaticBackupEnabled">
 
                                     <label class="form-check-label fw-semibold"
-                                           for="automaticBackupEnabled">
+                                           for="automaticBackupEnabled"
+                                           th:text="#{backup.settings.automaticBackup}">
                                         Automatic Backup
                                     </label>
                                 </div>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.automaticBackupHelp}">
                                     Automatically create a backup every day at the selected time.
                                 </div>
 
@@ -117,15 +119,17 @@
 
                                 <label for="backupTime" class="form-label fw-semibold">
                                     <i class="bi bi-clock field-icon"></i>
-                                    Backup Time
+                                    <span th:text="#{backup.settings.backupTime}">Backup Time</span>
                                 </label>
 
                                 <input type="time"
-                                       th:field="*{backupTime}"
+                                       name="backupTime"
+                                       th:value="${settings.backupTime != null ? settings.backupTime.toString() : ''}"
                                        id="backupTime"
                                        class="form-control">
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.backupTimeHelp}">
                                     The automatic backup will run at this time every day.
                                 </div>
 
@@ -144,12 +148,14 @@
                                            id="localBackupEnabled">
 
                                     <label class="form-check-label fw-semibold"
-                                           for="localBackupEnabled">
+                                           for="localBackupEnabled"
+                                           th:text="#{backup.settings.localBackup}">
                                         Local Backup
                                     </label>
                                 </div>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.localBackupHelp}">
                                     Save a backup copy on this computer.
                                 </div>
 
@@ -159,16 +165,18 @@
 
                                 <label for="localBackupPath" class="form-label fw-semibold">
                                     <i class="bi bi-folder2-open field-icon"></i>
-                                    Local Backup Location
+                                    <span th:text="#{backup.settings.localBackupLocation}">Local Backup Location</span>
                                 </label>
 
                                 <input type="text"
                                        th:field="*{localBackupPath}"
                                        id="localBackupPath"
                                        class="form-control"
-                                       placeholder="D:\TailorMasterBackups">
+                                       placeholder="D:\TailorMasterBackups"
+                                       th:attr="aria-label=#{backup.settings.localBackupLocation}">
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.localBackupLocationHelp}">
                                     Select the folder where local backups will be stored.
                                 </div>
 
@@ -187,12 +195,14 @@
                                            id="googleDriveEnabled">
 
                                     <label class="form-check-label fw-semibold"
-                                           for="googleDriveEnabled">
+                                           for="googleDriveEnabled"
+                                           th:text="#{backup.settings.googleDriveBackup}">
                                         Google Drive Backup
                                     </label>
                                 </div>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.googleDriveBackupHelp}">
                                     Upload a backup copy to your Google Drive.
                                 </div>
 
@@ -202,7 +212,7 @@
 
                                 <label class="form-label fw-semibold">
                                     <i class="bi bi-google field-icon"></i>
-                                    Google Drive Status
+                                    <span th:text="#{backup.settings.googleDriveStatus}">Google Drive Status</span>
                                 </label>
 
                                 <div class="mt-2">
@@ -210,20 +220,20 @@
                                     <span th:if="${settings.googleDriveConnected}"
                                           class="badge bg-success">
                                         <i class="bi bi-check-circle me-1"></i>
-                                        Connected
+                                        <span th:text="#{backup.settings.connected}">Connected</span>
                                     </span>
 
                                     <span th:unless="${settings.googleDriveConnected}"
                                           class="badge bg-secondary">
                                         <i class="bi bi-x-circle me-1"></i>
-                                        Not Connected
+                                        <span th:text="#{backup.settings.notConnected}">Not Connected</span>
                                     </span>
 
                                     <a th:unless="${settings.googleDriveConnected}"
                                        th:href="@{/backup/google/connect}"
                                        class="btn btn-success btn-sm ms-2">
                                         <i class="bi bi-google me-1"></i>
-                                        Connect Google Drive
+                                        <span th:text="#{backup.settings.connectGoogleDrive}">Connect Google Drive</span>
                                     </a>
 
                                 </div>
@@ -234,7 +244,7 @@
 
                                 <label for="retentionDays" class="form-label fw-semibold">
                                     <i class="bi bi-calendar-range field-icon"></i>
-                                    Keep Backups For
+                                    <span th:text="#{backup.settings.keepBackupsFor}">Keep Backups For</span>
                                 </label>
 
                                 <div class="input-group">
@@ -245,12 +255,14 @@
                                            min="1"
                                            placeholder="30">
 
-                                    <span class="input-group-text">
+                                    <span class="input-group-text"
+                                          th:text="#{backup.settings.days}">
                                         Days
                                     </span>
                                 </div>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{backup.settings.retentionHelp}">
                                     Older backups will be removed automatically.
                                 </div>
 
@@ -263,14 +275,14 @@
                             <button type="submit"
                                     class="btn btn-success rounded-pill shadow-sm px-4">
                                 <i class="bi bi-check-circle me-1"></i>
-                                Save Settings
+                                <span th:text="#{backup.settings.saveSettings}">Save Settings</span>
                             </button>
 
                             <button type="submit"
                                     class="btn btn-success rounded-pill shadow-sm px-4"
                                     th:formaction="@{/backup/now}">
                                 <i class="bi bi-cloud-arrow-up"></i>
-                                Backup Now
+                                <span th:text="#{backup.settings.backupNow}">Backup Now</span>
                             </button>
 
                         </div>
@@ -287,7 +299,7 @@
                             <button type="submit"
                                     class="btn btn-danger rounded-pill shadow-sm px-4">
                                 <i class="bi bi-x-circle me-1"></i>
-                                Disconnect Google Drive
+                                <span th:text="#{backup.settings.disconnectGoogleDrive}">Disconnect Google Drive</span>
                             </button>
 
                         </form>

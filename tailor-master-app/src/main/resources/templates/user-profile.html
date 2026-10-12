@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Profile</title>
+    <title th:text="#{user.profile.title}">User Profile</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -15,7 +15,8 @@
         <div class="container-fluid">
 
             <h2 class="page-title d-flex align-items-center mb-4">
-                <i class="bi bi-person-fill me-2"></i> User Profile
+                <i class="bi bi-person-fill me-2"></i>
+                <span th:text="#{user.profile.title}">User Profile</span>
             </h2>
 
             <!-- Success Alert -->
@@ -24,7 +25,8 @@
                     <i class="bi bi-check-circle-fill me-2 fs-4"></i>
                     <span th:text="${success}"></span>
                 </div>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                        th:attr="aria-label=#{user.profile.close}"></button>
             </div>
 
             <!-- Error Alert -->
@@ -33,72 +35,82 @@
                     <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
                     <span th:text="${error}"></span>
                 </div>
-                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close bg-light" data-bs-dismiss="alert"
+                        th:attr="aria-label=#{user.profile.close}"></button>
             </div>
 
             <div class="card border-success border-bottom border-3 shadow-sm animate__animated animate__fadeIn rounded-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
-                    <i class="bi bi-person-circle me-2"></i> User Information
+                    <i class="bi bi-person-circle me-2"></i>
+                    <span th:text="#{user.profile.information}">User Information</span>
                 </div>
                 <div class="card-body">
                     <table class="table table-striped table-hover">
                         <tr>
-                            <th>Logo:</th>
+                            <th th:text="#{user.profile.logo}">Logo:</th>
                             <td>
                                 <div th:if="${user.logo != null}">
-                                    <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" style="max-height: 120px; max-width: 120px;">
+                                    <img th:src="@{'/users/logo/' + ${user.username}}"
+                                         th:alt="#{user.profile.shopLogo}"
+                                         style="max-height: 120px; max-width: 120px;">
                                 </div>
-
                                 <div th:if="${user.logo == null}">
-                                    <span>No logo uploaded</span>
+                                    <span th:text="#{user.profile.noLogo}">No logo uploaded</span>
                                 </div>
                             </td>
                         </tr>
-
                         <tr>
-                            <th>Full Name:</th>
+                            <th th:text="#{user.profile.fullName}">Full Name:</th>
                             <td th:text="${user.fullName}"></td>
                         </tr>
-                        <!--<tr>
+                        <!--
+                        <tr>
                             <th>Father's Name:</th>
                             <td th:text="${user.fathersName}"></td>
-                        </tr>-->
+                        </tr>
+                        -->
                         <tr>
-                            <th>Phone Number 1:</th>
+                            <th th:text="#{user.profile.phone1}">Phone Number 1:</th>
                             <td th:text="${user.phone1}"></td>
                         </tr>
                         <tr>
-                            <th>Phone Number 2:</th>
+                            <th th:text="#{user.profile.phone2}">Phone Number 2:</th>
                             <td th:text="${user.phone2}"></td>
                         </tr>
-                        <!--<tr>
+                        <!--
+                        <tr>
                             <th>Date of Birth:</th>
                             <td th:text="${user.dateOfBirth}"></td>
-                        </tr>-->
+                        </tr>
+                        -->
                         <tr>
-                            <th>Shop Name:</th>
+                            <th th:text="#{user.profile.shopName}">Shop Name:</th>
                             <td th:text="${user.shopName}"></td>
                         </tr>
                         <tr>
-                            <th>Proprietor Name:</th>
+                            <th th:text="#{user.profile.proprietorName}">Proprietor Name:</th>
                             <td th:text="${user.proprietorName}"></td>
                         </tr>
                         <tr>
-                            <th>Shop Address:</th>
+                            <th th:text="#{user.profile.shopAddress}">Shop Address:</th>
                             <td th:text="${user.shopAddress}"></td>
                         </tr>
-                        <!--<tr>
+                        <!--
+                        <tr>
                             <th>Short Code:</th>
                             <td th:text="${user.shortCode}"></td>
-                        </tr>-->
+                        </tr>
+                        -->
                     </table>
 
                     <div class="d-flex justify-content-center mt-4 gap-2">
                         <a th:href="@{/users/profile/edit}" class="btn btn-success shadow rounded-pill px-4">
-                            <i class="bi bi-pencil-square"></i> Edit Profile
+                            <i class="bi bi-pencil-square"></i>
+                            <span th:text="#{user.profile.edit}">Edit Profile</span>
                         </a>
                         <a th:href="@{/dashboard}" class="btn btn-secondary shadow rounded-pill px-4">
-                            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+                            <i class="bi bi-arrow-left-circle"></i>
+                            <span th:text="#{user.profile.backToDashboard}">Back to Dashboard</span>
                         </a>
                     </div>
                 </div>

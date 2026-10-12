@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Edit Labor</title>
+    <title th:text="#{labor.edit.title}">Edit Labor</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -21,13 +21,17 @@
                        th:value="${thymeleafUtil.encryptId(labor.id)}">
 
                 <h2 class="page-title d-flex align-items-center mb-4">
-                    <i class="bi bi-pencil-square me-2"></i> Edit Labor
+                    <i class="bi bi-pencil-square me-2"></i>
+                    <span th:text="#{labor.edit.title}">Edit Labor</span>
                 </h2>
-                <p class="text-danger fw-bold">Fields marked as * are required</p>
+                <p class="text-danger fw-bold" th:text="#{labor.create.requiredFields}">
+                    Fields marked as * are required
+                </p>
 
                 <div class="card border-success border-bottom border-3 shadow-sm mb-4">
                     <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
-                        <i class="bi bi-info-circle me-2"></i> Labor Information
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span th:text="#{labor.create.information}">Labor Information</span>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
@@ -35,7 +39,8 @@
                             <!-- Name -->
                             <div class="col-md-6">
                                 <label for="name" class="form-label">
-                                    <i class="bi bi-person me-1"></i> Name
+                                    <i class="bi bi-person me-1"></i>
+                                    <span th:text="#{labor.name}">Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
@@ -44,18 +49,19 @@
                                        th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
                                        class="form-control"
                                        placeholder="Enter labor name"
+                                       th:placeholder="#{labor.create.namePlaceholder}"
                                        required>
                                 <div class="invalid-feedback"
                                      th:if="${#fields.hasErrors('name')}"
                                      th:errors="*{name}">
-                                    Invalid Name.
+                                    <span th:text="#{labor.create.invalidName}">Invalid Name.</span>
                                 </div>
                             </div>
 
                             <!-- Contact -->
                             <div class="col-md-6">
                                 <label for="contact" class="form-label">
-                                    <i class="bi bi-telephone me-1"></i> Contact
+                                    <i class="bi bi-telephone me-1"></i> <span th:text="#{labor.contact}">Contact</span>
                                     <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
@@ -65,31 +71,33 @@
                                        th:classappend="${#fields.hasErrors('contact')} ? 'is-invalid'"
                                        class="form-control"
                                        placeholder="e.g., 03001234567"
+                                       th:placeholder="#{labor.create.contactPlaceholder}"
                                        required>
                                 <div class="invalid-feedback"
                                      th:if="${#fields.hasErrors('contact')}"
                                      th:errors="*{contact}">
-                                    Invalid contact.
+                                    <span th:text="#{labor.create.invalidContact}">Invalid contact.</span>
                                 </div>
                             </div>
 
                             <!-- Skills -->
                             <div class="col-md-6">
                                 <label for="skills" class="form-label">
-                                    <i class="bi bi-tools me-1"></i> Skills
+                                    <i class="bi bi-tools me-1"></i> <span th:text="#{labor.create.skills}">Skills</span>
                                 </label>
                                 <input type="text"
                                        id="skills"
                                        th:field="*{skills}"
                                        class="form-control"
-                                       placeholder="e.g., Shalwar Kameez, Pant, Coat">
+                                       placeholder="e.g., Shalwar Kameez, Pant, Coat"
+                                       th:placeholder="#{labor.create.skillsPlaceholder}">
                             </div>
 
                             <!-- Join Date -->
                             <!-- Join Date -->
                             <div class="col-md-6">
                                 <label for="joinDate" class="form-label">
-                                    <i class="bi bi-calendar-check me-1"></i> Join Date
+                                    <i class="bi bi-calendar-check me-1"></i> <span th:text="#{labor.joinDate}">Join Date</span>
                                 </label>
                                 <input type="date"
                                        id="joinDate"
@@ -101,7 +109,7 @@
                             <!-- Status -->
                             <div class="col-md-6">
                                 <label for="status" class="form-label">
-                                    <i class="bi bi-toggle-on me-1"></i> Status
+                                    <i class="bi bi-toggle-on me-1"></i> <span th:text="#{labor.create.status}">Status</span>
                                 </label>
                                 <select id="status"
                                         th:field="*{status}"
@@ -119,8 +127,14 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="button" class="btn btn-success" id="openConfirmationModal"><i class="bi bi-check-circle me-1"></i> Update</button>
-                    <a th:href="@{/labors}" class="btn btn-secondary"><i class="bi bi-x-circle me-1"></i> Cancel</a>
+                    <button type="button" class="btn btn-success" id="openConfirmationModal">
+                        <i class="bi bi-check-circle me-1"></i>
+                        <span th:text="#{labor.edit.update}">Update</span>
+                    </button>
+                    <a th:href="@{/labors}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i>
+                        <span th:text="#{button.cancel}">Cancel</span>
+                    </a>
                 </div>
             </form>
 
@@ -129,15 +143,23 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content rounded-4 shadow">
                         <div class="modal-header bg-success text-white rounded-top-4">
-                            <h5 class="modal-title" id="confirmationModalLabel">Confirm Update</h5>
+                            <h5 class="modal-title" id="confirmationModalLabel" th:text="#{labor.edit.confirmTitle}">
+                                Confirm Update
+                            </h5>
                             <button type="button" class="btn-close bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" th:text="#{labor.edit.confirmMessage}">
                             Are you sure you want to update this Labor with the provided details?
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancel</button>
-                            <button type="button" class="btn btn-success" id="confirmSubmit"><i class="bi bi-check-circle me-1"></i>Yes, Update</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span th:text="#{button.cancel}">Cancel</span>
+                            </button>
+                            <button type="button" class="btn btn-success" id="confirmSubmit">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="#{labor.edit.yesUpdate}">Yes, Update</span>
+                            </button>
                         </div>
                     </div>
                 </div>
