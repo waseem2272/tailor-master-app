@@ -8,358 +8,24 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
+
     <style>
-        * {
-            box-sizing: border-box
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
             background: #f3f5f7;
             font-family: Arial, Helvetica, sans-serif;
-            color: #212529
-        }
-
-        .receipt-wrapper {
-            max-width: 850px;
-            margin: 30px auto;
-            padding: 0 15px
-        }
-
-        .receipt-card {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            border-radius: 14px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
-            overflow: hidden
-        }
-
-        .receipt-header {
-            padding: 28px 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid #e9ecef
-        }
-
-        .shop-logo {
-            margin-bottom: 10px
-        }
-
-        .shop-logo img {
-            max-width: 130px;
-            max-height: 90px;
-            object-fit: contain
-        }
-
-        .shop-name {
-            margin: 0;
-            font-size: 23px;
-            font-weight: 800;
-            color: #198754
-        }
-
-        .shop-address {
-            margin: 6px 0 2px;
             font-size: 13px;
-            font-weight: 600;
-            color: #495057
-        }
-
-        .shop-tagline {
-            margin: 4px 0 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: #6c757d
-        }
-
-        .receipt-heading {
-            margin-top: 18px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            background: #198754;
-            color: #fff;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 700
-        }
-
-        .receipt-content {
-            padding: 25px 30px 30px
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            margin-bottom: 10px;
-            font-size: 14px;
-            font-weight: 800;
-            color: #198754
-        }
-
-        .section-title i {
-            font-size: 15px
-        }
-
-        .info-card {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 13px 15px;
-            margin-bottom: 24px
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns:repeat(2, 1fr);
-            gap: 8px 25px
-        }
-
-        .info-item {
-            font-size: 12px;
-            padding: 3px 0
-        }
-
-        .info-label {
-            color: #6c757d;
-            font-weight: 600;
-            margin-right: 5px
-        }
-
-        .info-value {
             color: #212529;
-            font-weight: 700
-        }
-
-        .receipt-marker {
-            display: inline-block;
-            padding: 2px 6px;
-            margin-right: 5px;
-            background: #e9ecef;
-            color: #6c757d;
-            border-radius: 4px;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: .3px
-        }
-
-        .item-marker {
-            display: inline-block;
-            padding: 2px 5px;
-            margin-left: 5px;
-            background: #e9ecef;
-            color: #6c757d;
-            border-radius: 4px;
-            font-size: 8px;
-            font-weight: 700;
-            vertical-align: middle
-        }
-
-        .fabric-marker {
-            display: inline-block;
-            padding: 2px 5px;
-            margin-left: 4px;
-            background: #e9ecef;
-            color: #6c757d;
-            border-radius: 4px;
-            font-size: 8px;
-            font-weight: 700
-        }
-
-        .items-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px
-        }
-
-        .items-count {
-            font-size: 11px;
-            color: #6c757d;
-            font-weight: 600
-        }
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 10px
-        }
-
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed
-        }
-
-        .product-table th {
-            background: #e9f7ef;
-            color: #212529;
-            border-bottom: 1px solid #ced4da;
-            padding: 9px 7px;
-            font-size: 10px;
-            font-weight: 800;
-            text-align: left
-        }
-
-        .product-table td {
-            border-bottom: 1px solid #e9ecef;
-            padding: 9px 7px;
-            font-size: 11px;
-            vertical-align: middle
-        }
-
-        .product-table tbody tr:last-child td {
-            border-bottom: none
-        }
-
-        .product-name {
-            font-weight: 800
-        }
-
-        .center {
-            text-align: center !important
-        }
-
-        .right {
-            text-align: right !important
-        }
-
-        .total-cell {
-            font-weight: 800
-        }
-
-        .simple-product {
-            width: 36%
-        }
-
-        .simple-silai {
-            width: 18%
-        }
-
-        .simple-qty {
-            width: 11%
-        }
-
-        .simple-rate {
-            width: 17%
-        }
-
-        .simple-total {
-            width: 18%
-        }
-
-        .fabric-product {
-            width: 17%
-        }
-
-        .fabric-silai {
-            width: 9%
-        }
-
-        .fabric-qty-main {
-            width: 7%
-        }
-
-        .fabric-rate-main {
-            width: 10%
-        }
-
-        .fabric-name {
-            width: 15%
-        }
-
-        .fabric-qty {
-            width: 9%
-        }
-
-        .fabric-rate {
-            width: 10%
-        }
-
-        .fabric-amount {
-            width: 11%
-        }
-
-        .fabric-total {
-            width: 12%
-        }
-
-        .summary-wrapper {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px
-        }
-
-        .summary-box {
-            width: 300px;
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            overflow: hidden
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 9px 13px;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 12px
-        }
-
-        .summary-row:last-child {
-            border-bottom: none
-        }
-
-        .summary-label {
-            font-weight: 600;
-            color: #495057
-        }
-
-        .summary-value {
-            font-weight: 800
-        }
-
-        .due-row {
-            background: #fff5f5
-        }
-
-        .due-row .summary-label, .due-row .summary-value {
-            color: #dc3545
-        }
-
-        .receipt-footer {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px solid #e9ecef;
-            text-align: center
-        }
-
-        .receipt-footer p {
-            margin: 3px 0;
-            font-size: 11px;
-            color: #6c757d
-        }
-
-        .receipt-footer strong {
-            color: #198754
-        }
-
-        .receipt-actions {
-            text-align: center;
-            padding: 0 30px 25px
-        }
-
-        .receipt-actions .btn {
-            min-width: 110px;
-            border-radius: 7px;
-            font-size: 13px
         }
 
         @media print {
             @page {
                 size: A4;
-                margin: 8mm
+                margin: 5mm;
             }
 
             html, body {
@@ -367,268 +33,233 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 background: #fff !important;
+                font-family: Arial, Helvetica, sans-serif !important;
                 -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important
+                print-color-adjust: exact !important;
             }
 
-            * {
+            *, *::before, *::after {
                 -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important
+                print-color-adjust: exact !important;
             }
 
             .receipt-wrapper {
                 width: 100%;
-                max-width: none;
+                max-width: none !important;
                 margin: 0 !important;
-                padding: 0 !important
+                padding: 0 !important;
             }
 
             .receipt-card {
                 width: 100%;
                 border: 1px solid #000 !important;
                 border-radius: 0 !important;
-                box-shadow: none !important
+                box-shadow: none !important;
             }
 
             .receipt-header {
-                padding: 14px 15px 10px
-            }
-
-            .shop-logo img {
-                max-width: 90px;
-                max-height: 60px
-            }
-
-            .shop-name {
-                font-size: 18px
-            }
-
-            .shop-address {
-                font-size: 10px;
-                margin: 3px 0
-            }
-
-            .shop-tagline {
-                font-size: 9px
-            }
-
-            .receipt-heading {
-                margin-top: 9px;
-                padding: 5px 13px;
-                font-size: 11px
+                padding: 10px 15px 8px !important;
             }
 
             .receipt-content {
-                padding: 12px 15px 15px
+                padding: 10px 15px !important;
             }
 
-            .section-title {
-                font-size: 10px;
-                margin-bottom: 5px
+            /* Force cards to stay side-by-side in 1 row on print */
+            .info-cards-row {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                margin-bottom: 8px !important;
             }
 
-            .info-card {
-                padding: 7px 9px;
-                margin-bottom: 12px
+            .info-cards-row > .col-md-6 {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
             }
 
-            .info-grid {
-                gap: 3px 15px
+            .card-body {
+                padding: 6px 10px !important;
             }
 
-            .info-item {
-                font-size: 9px;
-                padding: 1px 0
+            .card-header {
+                padding: 4px 10px !important;
             }
 
-            .items-header {
-                margin-bottom: 5px
-            }
-
-            .items-count {
-                font-size: 8px
-            }
-
-            .table-wrapper {
-                border-radius: 0
-            }
-
-            .product-table th {
-                padding: 5px 4px;
-                font-size: 7.5px
-            }
-
-            .product-table td {
-                padding: 5px 4px;
-                font-size: 8px
+            .card-body .d-flex {
+                margin-bottom: 2px !important;
             }
 
             .summary-wrapper {
-                margin-top: 10px
-            }
-
-            .summary-box {
-                width: 230px
-            }
-
-            .summary-row {
-                padding: 5px 8px;
-                font-size: 8.5px
+                margin-top: 8px !important;
             }
 
             .receipt-footer {
-                margin-top: 12px;
-                padding-top: 7px
-            }
-
-            .receipt-footer p {
-                font-size: 7.5px
+                margin-top: 10px !important;
+                padding-top: 6px !important;
             }
 
             .no-print {
-                display: none !important
+                display: none !important;
             }
 
             .product-row {
                 break-inside: avoid;
-                page-break-inside: avoid
-            }
-        }
-
-        @media screen and (max-width: 600px) {
-            .receipt-wrapper {
-                margin: 10px auto;
-                padding: 0 7px
-            }
-
-            .receipt-header {
-                padding: 20px 15px 15px
-            }
-
-            .receipt-content {
-                padding: 18px 15px 20px
-            }
-
-            .info-grid {
-                grid-template-columns:1fr;
-                gap: 4px
-            }
-
-            .summary-wrapper {
-                justify-content: stretch
-            }
-
-            .summary-box {
-                width: 100%
-            }
-
-            .receipt-actions {
-                padding: 0 15px 20px
-            }
-
-            .receipt-actions .btn {
-                min-width: 100px
+                page-break-inside: avoid;
             }
         }
     </style>
 </head>
+
 <body>
-<div class="receipt-wrapper">
-    <div class="receipt-card">
-        <div class="receipt-header">
-            <div class="shop-logo" th:if="${user.logo != null}">
-                <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo">
+<div class="receipt-wrapper container my-4 px-3" style="max-width: 850px;">
+    <div class="receipt-card bg-white border border-secondary-subtle rounded-4 shadow-sm overflow-hidden">
+
+        <!-- Shop Header -->
+        <div class="receipt-header text-center border-bottom border-light px-4 pt-4 pb-3">
+            <div class="shop-logo mb-2" th:if="${user.logo != null}">
+                <img th:src="@{'/users/logo/' + ${user.username}}" alt="Shop Logo" style="max-width: 130px; max-height: 80px; object-fit: contain;">
             </div>
-            <h1 class="shop-name" th:text="${user.shopName}">Shop Name</h1>
-            <p class="shop-address"><i class="bi bi-geo-alt-fill me-1"></i><span th:text="${user.shopAddress}">Shop Address</span>
+
+            <h1 class="shop-name m-0 fs-3 fw-bolder text-success" th:text="${user.shopName}">Shop Name</h1>
+
+            <p class="shop-address my-1 fw-semibold text-secondary" style="font-size: 13px;">
+                <i class="bi bi-geo-alt-fill me-1"></i>
+                <span th:text="${user.shopAddress}">Shop Address</span>
             </p>
-            <p class="shop-tagline">ہمارے پاس مناسب قیمت پر بہترین کوالٹی کا کپڑا دستیاب ہےـ</p>
-            <div class="receipt-heading">
+
+            <p class="shop-address my-1 fw-semibold text-secondary" style="font-size: 13px;">
+                <i class="bi bi-telephone text-secondary me-2 fs-6"></i>
+                <span th:text="${user.phone1}">Phone</span>
+            </p>
+
+            <p class="shop-tagline m-0 fw-semibold text-muted" style="font-size: 13px;">ہمارے پاس مناسب قیمت پر بہترین کوالٹی کا کپڑا دستیاب ہےـ</p>
+
+            <div class="receipt-heading d-inline-flex align-items-center gap-2 mt-2 px-4 py-1 bg-success text-white rounded-pill fw-bold" style="font-size: 14px;">
                 <i class="bi bi-receipt-cutoff"></i>
                 <span th:text="#{receipt.title}">Order Receipt</span>
             </div>
         </div>
 
-        <div class="receipt-content">
-            <div class="section-title">
-                <i class="bi bi-person-circle"></i>
-                <span th:text="#{receipt.customerOrderInfo}">Customer & Order Information</span>
+        <div class="receipt-content p-4">
+
+            <!-- Section Title -->
+            <div class="section-title d-flex align-items-center gap-2 mb-2 fw-bolder text-success" style="font-size: 14px;">
+                <i class="bi bi-person-lines-fill fs-6"></i>
+                <span th:text="#{receipt.customerOrderInfo}">Customer &amp; Order Information</span>
             </div>
-            <div class="info-card">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="receipt-marker" th:text="#{receipt.customer}">CUSTOMER</span>
-                        <span class="info-label" th:text="#{receipt.name}">Name:</span>
-                        <span class="info-value" th:text="${order.customer.fullName}"></span>
+
+            <!-- Customer & Order Cards Grid -->
+            <div class="row g-2 mb-3 info-cards-row">
+                <!-- Customer Info Card -->
+                <div class="col-md-6 col-6">
+                    <div class="card h-100 border-0 bg-light rounded-3 shadow-sm">
+                        <div class="card-header bg-success-subtle border-0 py-2 px-3 d-flex align-items-center justify-content-between">
+                            <span class="badge bg-success text-uppercase" style="font-size: 10px;" th:text="#{receipt.customer}">CUSTOMER</span>
+                            <i class="bi bi-person-fill text-success fs-6"></i>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-person text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{receipt.name}">Name:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${order.customer.fullName}"></span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-book text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{receipt.bookNumber}">Book No:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${order.customer.bookNumber}"></span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-telephone text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{receipt.phone}">Phone:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${order.customer.phoneNumber}"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <span class="receipt-marker" th:text="#{receipt.order}">ORDER</span>
-                        <span class="info-label" th:text="#{orders.pickup.orderId}">Order ID:</span>
-                        <span class="info-value" th:text="${order.orderId}"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label" th:text="#{receipt.bookNumber}">Book. No:</span>
-                        <span class="info-value" th:text="${order.customer.bookNumber}"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label" th:text="#{receipt.phone}">Phone:</span>
-                        <span class="info-value" th:text="${order.customer.phoneNumber}"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label" th:text="#{orders.table.orderDate}">Order Date:</span>
-                        <span class="info-value" th:text="${#temporals.format(order.orderDate,'dd-MM-yyyy')}"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label" th:text="#{orders.table.deliveryDate}">Delivery Date:</span>
-                        <span class="info-value" th:text="${#temporals.format(order.deliveryDate,'dd-MM-yyyy')}"></span>
+                </div>
+
+                <!-- Order Info Card -->
+                <div class="col-md-6 col-6">
+                    <div class="card h-100 border-0 bg-light rounded-3 shadow-sm">
+                        <div class="card-header bg-primary-subtle border-0 py-2 px-3 d-flex align-items-center justify-content-between">
+                            <span class="badge bg-primary text-uppercase" style="font-size: 10px;" th:text="#{receipt.order}">ORDER</span>
+                            <i class="bi bi-bag-check-fill text-primary fs-6"></i>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-hash text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{orders.pickup.orderId}">Order ID:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${order.orderId}"></span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar-event text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{orders.table.orderDate}">Order Date:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${#temporals.format(order.orderDate,'dd-MM-yyyy')}"></span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar-check text-secondary me-2 fs-6"></i>
+                                <span class="text-secondary fw-semibold me-1" style="font-size: 12px;" th:text="#{orders.table.deliveryDate}">Delivery Date:</span>
+                                <span class="fw-bold text-dark ms-auto" style="font-size: 12px;" th:text="${#temporals.format(order.deliveryDate,'dd-MM-yyyy')}"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="items-header">
-                <div class="section-title mb-0">
-                    <i class="bi bi-bag-check-fill"></i>
+            <!-- Items Header -->
+            <div class="items-header d-flex align-items-center justify-content-between mb-2">
+                <div class="section-title mb-0 d-flex align-items-center gap-2 fw-bolder text-success" style="font-size: 14px;">
+                    <i class="bi bi-bag-check-fill fs-6"></i>
                     <span th:text="#{receipt.orderItems}">Order Items</span>
                 </div>
-                <span class="items-count"
+
+                <span class="items-count fw-semibold text-muted" style="font-size: 11px;"
                       th:text="${#lists.size(order.orderProducts) + ' ' + (#lists.size(order.orderProducts) == 1 ? #messages.msg('orders.item') : #messages.msg('orders.items'))}"></span>
             </div>
 
-            <div class="table-wrapper"
+            <!-- Table 1: Non-Shop Fabric -->
+            <div class="table-responsive border border-secondary-subtle rounded-3 mb-3 overflow-hidden"
                  th:if="${!#lists.isEmpty(order.orderProducts) and !#lists.contains(order.orderProducts.![fabricSource?.name()],'SHOP')}">
-                <table class="product-table">
-                    <thead>
+                <table class="table table-hover table-striped align-middle mb-0" style="table-layout: fixed; font-size: 11px;">
+                    <thead class="table-success text-dark">
                     <tr>
-                        <th class="simple-product" th:text="#{receipt.product}">Product</th>
-                        <th class="simple-silai center" th:text="#{orders.create.silai}">Silai</th>
-                        <th class="simple-qty center" th:text="#{orders.create.qty}">Qty</th>
-                        <th class="simple-rate right" th:text="#{receipt.rate}">Rate</th>
-                        <th class="simple-rate right" th:text="#{orders.create.alteration}">Alteration</th>
-                        <th class="simple-total right" th:text="#{receipt.total}">Total</th>
+                        <th class="py-2 px-2 text-start fw-bold" style="width: 36%;" th:text="#{receipt.product}">Product</th>
+                        <th class="py-2 px-2 text-center fw-bold" style="width: 18%;" th:text="#{orders.create.silai}">Silai</th>
+                        <th class="py-2 px-2 text-center fw-bold" style="width: 11%;" th:text="#{orders.create.qty}">Qty</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 17%;" th:text="#{receipt.rate}">Rate</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 17%;" th:text="#{orders.create.alteration}">Alteration</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 18%;" th:text="#{receipt.total}">Total</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     <th:block th:each="item : ${order.orderProducts}">
-                        <th:block
-                                th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
+                        <th:block th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker">INVENTORY</span></td>
-                                <td class="center">-</td>
-                                <td class="center" th:text="${item.quantity}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.alterationFee, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="fw-bold py-2 px-2">
+                                    <span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span>
+                                    <span class="badge bg-secondary bg-opacity-75 text-white fw-bold ms-1" style="font-size: 9px;">INVENTORY</span>
+                                </td>
+                                <td class="text-center py-2 px-2">-</td>
+                                <td class="text-center py-2 px-2" th:text="${item.quantity}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.alterationFee, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-end fw-bold py-2 px-2" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
                             </tr>
                         </th:block>
-                        <th:block
-                                th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
+
+                        <th:block th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker">TAILORING</span></td>
-                                <td class="center" th:text="${item.silaiType}"></td>
-                                <td class="center" th:text="${item.quantity}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.silaiAmount, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td class="center">-</td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="fw-bold py-2 px-2">
+                                    <span th:text="${item.product != null ? item.product.name : '-'}"></span>
+                                    <span class="badge bg-secondary bg-opacity-75 text-white fw-bold ms-1" style="font-size: 9px;">TAILORING</span>
+                                </td>
+                                <td class="text-center py-2 px-2" th:text="${item.silaiType}"></td>
+                                <td class="text-center py-2 px-2" th:text="${item.quantity}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.silaiAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-center py-2 px-2">-</td>
+                                <td class="text-end fw-bold py-2 px-2" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
                             </tr>
                         </th:block>
                     </th:block>
@@ -636,93 +267,123 @@
                 </table>
             </div>
 
-            <div class="table-wrapper"
+            <!-- Table 2: Shop Fabric -->
+            <div class="table-responsive border border-secondary-subtle rounded-3 mb-3 overflow-hidden"
                  th:if="${!#lists.isEmpty(order.orderProducts) and #lists.contains(order.orderProducts.![fabricSource?.name()],'SHOP')}">
-                <table class="product-table">
-                    <thead>
+                <table class="table table-hover table-striped align-middle mb-0" style="table-layout: fixed; font-size: 11px;">
+                    <thead class="table-success text-dark">
                     <tr>
-                        <th class="fabric-product" th:text="#{receipt.product}">Product</th>
-                        <th class="fabric-silai center" th:text="#{orders.create.silai}">Silai</th>
-                        <th class="fabric-qty-main center" th:text="#{orders.create.qty}">Qty</th>
-                        <th class="fabric-rate-main right" th:text="#{receipt.rate}">Rate</th>
-                        <th class="fabric-name" th:text="#{receipt.fabric}">Fabric</th>
-                        <th class="fabric-qty center" th:text="#{receipt.fabricQty}">Fabric Qty</th>
-                        <th class="fabric-rate right" th:text="#{receipt.fabricRate}">Fabric Rate</th>
-                        <th class="fabric-amount right" th:text="#{receipt.fabricAmount}">Fabric Amount</th>
-                        <th class="fabric-total right" th:text="#{receipt.total}">Total</th>
+                        <th class="py-2 px-2 text-start fw-bold" style="width: 17%;" th:text="#{receipt.product}">Product</th>
+                        <th class="py-2 px-2 text-center fw-bold" style="width: 9%;" th:text="#{orders.create.silai}">Silai</th>
+                        <th class="py-2 px-2 text-center fw-bold" style="width: 7%;" th:text="#{orders.create.qty}">Qty</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 10%;" th:text="#{receipt.rate}">Rate</th>
+                        <th class="py-2 px-2 text-start fw-bold" style="width: 15%;" th:text="#{receipt.fabric}">Fabric</th>
+                        <th class="py-2 px-2 text-center fw-bold" style="width: 9%;" th:text="#{receipt.fabricQty}">Fabric Qty</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 10%;" th:text="#{receipt.fabricRate}">Fabric Rate</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 11%;" th:text="#{receipt.fabricAmount}">Fabric Amount</th>
+                        <th class="py-2 px-2 text-end fw-bold" style="width: 12%;" th:text="#{receipt.total}">Total</th>
                     </tr>
                     </thead>
+
                     <tbody>
                     <th:block th:each="item : ${order.orderProducts}">
-                        <th:block
-                                th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
+                        <th:block th:if="${item.orderProductType != null and item.orderProductType.name() == 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span><span class="item-marker" th:text="#{orders.create.inventory}">INVENTORY</span></td>
-                                <td class="center">-</td>
-                                <td class="center" th:text="${item.quantity}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td>-</td>
-                                <td class="center">-</td>
-                                <td class="right">-</td>
-                                <td class="right">-</td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>                            </tr>
+                                <td class="fw-bold py-2 px-2">
+                                    <span th:text="${item.inventoryItem != null ? item.inventoryItem.name : '-'}"></span>
+                                    <span class="badge bg-secondary bg-opacity-75 text-white fw-bold ms-1" style="font-size: 8px;" th:text="#{orders.create.inventory}">INVENTORY</span>
+                                </td>
+                                <td class="text-center py-2 px-2">-</td>
+                                <td class="text-center py-2 px-2" th:text="${item.quantity}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.inventoryUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="py-2 px-2">-</td>
+                                <td class="text-center py-2 px-2">-</td>
+                                <td class="text-end py-2 px-2">-</td>
+                                <td class="text-end py-2 px-2">-</td>
+                                <td class="text-end fw-bold py-2 px-2" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
                         </th:block>
-                        <th:block
-                                th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
+
+                        <th:block th:if="${item.orderProductType == null or item.orderProductType.name() != 'INVENTORY'}">
                             <tr class="product-row">
-                                <td class="product-name"><span th:text="${item.product != null ? item.product.name : '-'}"></span><span class="item-marker" th:text="#{orders.create.tailoring}">TAILORING</span></td>
-                                <td class="center" th:text="${item.silaiType}"></td>
-                                <td class="center" th:text="${item.quantity}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.silaiAmount,1, 'COMMA', 2, 'POINT')}"></td>
-                                <td>
+                                <td class="fw-bold py-2 px-2">
+                                    <span th:text="${item.product != null ? item.product.name : '-'}"></span>
+                                    <span class="badge bg-secondary bg-opacity-75 text-white fw-bold ms-1" style="font-size: 8px;" th:text="#{orders.create.tailoring}">TAILORING</span>
+                                </td>
+                                <td class="text-center py-2 px-2" th:text="${item.silaiType}"></td>
+                                <td class="text-center py-2 px-2" th:text="${item.quantity}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.silaiAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="py-2 px-2">
                                     <span th:if="${item.inventoryItem != null}" th:text="${item.inventoryItem.name}"></span>
                                     <span th:if="${item.inventoryItem == null}">-</span>
-                                    <span class="fabric-marker" th:if="${item.inventoryItem != null}" th:text="#{receipt.shopFabric}">SHOP FABRIC</span>
+                                    <span class="badge bg-secondary bg-opacity-75 text-white fw-bold ms-1"
+                                          th:if="${item.inventoryItem != null}"
+                                          style="font-size: 8px;" th:text="#{receipt.shopFabric}">SHOP FABRIC</span>
                                 </td>
-                                <td class="center"
+                                <td class="text-center py-2 px-2"
                                     th:text="${item.fabricQuantity != null ? item.fabricQuantity : '-'}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.fabricUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.fabricAmount, 1, 'COMMA', 2, 'POINT')}"></td>
-                                <td class="right" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>                            </tr>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.fabricUnitPrice, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-end py-2 px-2" th:text="${#numbers.formatDecimal(item.fabricAmount, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-end fw-bold py-2 px-2" th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                            </tr>
                         </th:block>
                     </th:block>
                     </tbody>
                 </table>
             </div>
 
-            <div class="summary-wrapper">
-                <div class="summary-box">
-                    <div class="summary-row">
-                        <span class="summary-label" th:text="#{orders.create.totalAmount}">Total Amount</span>
-                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.totalProductAmount, 1, 'COMMA', 2, 'POINT')}"></span>
+            <!-- Modern Summary Box -->
+            <div class="summary-wrapper d-flex justify-content-end mt-3">
+                <div class="card border-0 bg-light rounded-3 shadow-sm p-2" style="width: 300px;">
+                    <div class="d-flex align-items-center justify-content-between p-2 mb-1 bg-white rounded border border-light-subtle">
+                        <span class="text-secondary fw-semibold d-flex align-items-center gap-1" style="font-size: 11px;">
+                            <i class="bi bi-calculator text-muted"></i>
+                            <span th:text="#{orders.create.totalAmount}">Total Amount</span>
+                        </span>
+                        <span class="fw-bold text-dark fs-6" th:text="${#numbers.formatDecimal(order.totalProductAmount, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
-                    <div class="summary-row">
-                        <span class="summary-label" th:text="#{orders.create.advancePayment}">Advance Payment</span>
-                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.advancePayment, 1, 'COMMA', 2, 'POINT')}"></span>
+
+                    <div class="d-flex align-items-center justify-content-between p-2 mb-1 bg-white rounded border border-light-subtle">
+                        <span class="text-secondary fw-semibold d-flex align-items-center gap-1" style="font-size: 11px;">
+                            <i class="bi bi-wallet2 text-success"></i>
+                            <span th:text="#{orders.create.advancePayment}">Advance Payment</span>
+                        </span>
+                        <span class="fw-bold text-success fs-6" th:text="${#numbers.formatDecimal(order.advancePayment, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
-                    <div class="summary-row due-row">
-                        <span class="summary-label" th:text="#{receipt.duePayment}">Due Payment</span>
-                        <span class="summary-value" th:text="${#numbers.formatDecimal(order.duePayment, 1, 'COMMA', 2, 'POINT')}"></span>
+
+                    <div class="d-flex align-items-center justify-content-between p-2 bg-danger-subtle border border-danger-subtle rounded">
+                        <span class="text-danger fw-bold d-flex align-items-center gap-1" style="font-size: 12px;">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span th:text="#{receipt.duePayment}">Due Payment</span>
+                        </span>
+                        <span class="fw-bolder text-danger fs-6" th:text="${#numbers.formatDecimal(order.duePayment, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                 </div>
             </div>
 
-            <div class="receipt-footer">
-                <p><strong th:text="#{receipt.thanks}">Thanks for your order!</strong></p>
-                <p>ہماری دکان پر آنے کا شکریہ</p>
+            <!-- Receipt Footer -->
+            <div class="receipt-footer mt-3 pt-2 border-top border-light-subtle text-center">
+                <p class="m-0 text-secondary" style="font-size: 11px;"><strong class="text-success" th:text="#{receipt.thanks}">Thanks for your order!</strong></p>
+                <p class="m-0 text-secondary" style="font-size: 11px;">ہماری دکان پر آنے کا شکریہ</p>
             </div>
         </div>
 
-        <div class="receipt-actions no-print">
-            <button type="button" class="btn btn-success me-2" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i><span th:text="#{receipt.print}">Print</span>
+        <!-- Receipt Actions (Hidden on Print) -->
+        <div class="receipt-actions no-print text-center px-4 pb-4">
+            <button type="button" class="btn btn-success me-2 rounded-2" style="min-width: 110px; font-size: 13px;" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i>
+                <span th:text="#{receipt.print}">Print</span>
             </button>
-            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left-circle me-1"></i><span th:text="#{receipt.back}">Back</span>
+
+            <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
+               class="btn btn-secondary rounded-2" style="min-width: 110px; font-size: 13px;">
+                <i class="bi bi-arrow-left-circle me-1"></i>
+                <span th:text="#{receipt.back}">Back</span>
             </a>
         </div>
     </div>
 </div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 </body>

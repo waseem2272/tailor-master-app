@@ -9,10 +9,9 @@ import com.example.tailormaster.service.labor.LaborPaymentService;
 import com.example.tailormaster.service.labor.LaborService;
 import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.util.AESUtil;
-import io.micrometer.common.util.StringUtils;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -25,15 +24,7 @@ public class Validation {
     private final OrderService orderService;
     private final LaborService laborService;
     private final LaborPaymentService laborPaymentService;
-
-    /**
-     * Helper method to validate individual measurement fields.
-     */
-    public static void validateField(String value, String fieldPath, String errorMessage, BindingResult result) {
-        if (StringUtils.isBlank(value)) {
-            result.rejectValue(fieldPath, "error.measurement", errorMessage);
-        }
-    }
+    private final MessageUtil messageUtil;
 
     public Long decryptAndValidateId(String encryptedId) {
         try {
@@ -51,13 +42,13 @@ public class Validation {
     public Long validateAndFetchCustomer(String encryptedCustomerId, RedirectAttributes redirectAttributes) {
         Long customerId = decryptAndValidateId(encryptedCustomerId);
         if (customerId == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Invalid customer ID.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.invalidId"));
             return null;
         }
 
         Customer customer = customerService.getCustomerById(customerId);
         if (customer == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.notFound"));
             return null;
         }
 
@@ -67,13 +58,13 @@ public class Validation {
     public Long validateAndFetchOrder(String encryptedOrderId, RedirectAttributes redirectAttributes) {
         Long orderId = decryptAndValidateId(encryptedOrderId);
         if (orderId == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Invalid order ID.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("order.error.invalidId"));
             return null;
         }
 
         Order order = orderService.findById(orderId);
         if (order == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("order.error.notFound"));
             return null;
         }
 

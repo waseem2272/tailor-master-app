@@ -3,98 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${brand.id == null ? 'Add Brand | Tailor Master' : 'Edit Brand | Tailor Master'}">Brand | Tailor
-        Master</title>
+
+    <title th:text="${brand.id == null ? #messages.msg('brands.addTitle') : #messages.msg('brands.editTitle')}">
+        Brand | Tailor Master
+    </title>
+
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}">
 </head>
 <body>
+
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
+
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <div><h2 class="page-title mb-1"><i class="bi bi-tags me-2"></i> <span
-                        th:text="${brand.id == null ? 'Add Brand' : 'Edit Brand'}">Add Brand</span></h2>
-                    <p class="text-muted mb-0"><span
-                            th:text="${brand.id == null ? 'Add a new brand to your inventory master data.' : 'Update the selected inventory brand.'}"> Add a new brand to your inventory master data. </span>
-                    </p></div>
-                <a th:href="@{/inventory/brands}" class="btn btn-success rounded-pill shadow-sm px-4"> <i
-                        class="bi bi-arrow-left me-1"></i> Back </a></div>
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm"
-                 role="alert"><i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                <div class="card-header bg-success text-white fw-bold py-3 rounded-top-4"><i
-                        class="bi bi-tags me-2"></i> <span
-                        th:text="${brand.id == null ? 'Brand Information' : 'Edit Brand Information'}"> Brand Information </span>
+                <div>
+                    <h2 class="page-title mb-1">
+                        <i class="bi bi-tags me-2"></i>
+                        <span th:text="${brand.id == null ? #messages.msg('brands.addTitle') : #messages.msg('brands.editTitle')}">
+                            Add Brand
+                        </span>
+                    </h2>
+
+                    <p class="text-muted mb-0">
+                        <span th:text="${brand.id == null ? #messages.msg('brands.addDescription') : #messages.msg('brands.editDescription')}">
+                            Add a new brand to your inventory master data.
+                        </span>
+                    </p>
                 </div>
+
+                <a th:href="@{/inventory/brands}"
+                   class="btn btn-success rounded-pill shadow-sm px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    <span th:text="#{brands.back}">Back</span>
+                </a>
+            </div>
+
+            <div th:if="${successMessage}"
+                 class="alert alert-success alert-dismissible fade show shadow-sm"
+                 role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}"
+                 class="alert alert-danger alert-dismissible fade show shadow-sm"
+                 role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+
+                <div class="card-header bg-success text-white fw-bold py-3 rounded-top-4">
+                    <i class="bi bi-tags me-2"></i>
+                    <span th:text="${brand.id == null ? #messages.msg('brands.information') : #messages.msg('brands.editInformation')}">
+                        Brand Information
+                    </span>
+                </div>
+
                 <div class="card-body p-4">
-                    <div class="alert alert-success d-flex align-items-start mb-4"><i
-                            class="bi bi-info-circle-fill me-2 mt-1"></i>
-                        <div><strong>Brand Master Data</strong>
-                            <div class="small mt-1"> Add brands that can be selected when creating or managing inventory
-                                items.
+
+                    <div class="alert alert-success d-flex align-items-start mb-4">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <strong th:text="#{brands.masterData}">Brand Master Data</strong>
+                            <div class="small mt-1" th:text="#{brands.formDescription}">
+                                Add brands that can be selected when creating or managing inventory items.
                             </div>
                         </div>
                     </div>
-                    <form th:action="@{/inventory/brands/save}" th:object="${brand}" method="post"
-                          class="needs-validation" novalidate><input type="hidden" th:field="*{id}">
+
+                    <form th:action="@{/inventory/brands/save}"
+                          th:object="${brand}"
+                          method="post"
+                          class="needs-validation"
+                          novalidate>
+
+                        <input type="hidden" th:field="*{id}">
+
                         <div class="row g-4">
-                            <div class="col-md-8"><label for="name" class="form-label fw-semibold"> Brand Name <span
-                                    class="text-danger">*</span> </label>
-                                <div class="input-group"><span class="input-group-text bg-success text-white"> <i
-                                        class="bi bi-tags"></i> </span> <input type="text"
-                                                                               class="form-control rounded-end-pill"
-                                                                               id="name" th:field="*{name}"
-                                                                               placeholder="e.g. Gul Ahmed, Khaadi, Nishat"
-                                                                               maxlength="100" required>
-                                    <div class="invalid-feedback"> Please enter a brand name.</div>
+                            <div class="col-md-8">
+                                <label for="name" class="form-label fw-semibold">
+                                    <span th:text="#{brands.name}">Brand Name</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-white">
+                                        <i class="bi bi-tags"></i>
+                                    </span>
+
+                                    <input type="text"
+                                           class="form-control rounded-end-pill"
+                                           id="name"
+                                           th:field="*{name}"
+                                           th:placeholder="#{brands.namePlaceholder}"
+                                           maxlength="100"
+                                           required>
+
+                                    <div class="invalid-feedback"
+                                         th:text="#{brands.nameRequired}">
+                                        Please enter a brand name.
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top"><a
-                                th:href="@{/inventory/brands}" class="btn btn-secondary rounded-pill shadow-sm px-4"> <i
-                                class="bi bi-x-circle me-1"></i> Cancel </a>
-                            <button type="submit" class="btn btn-success rounded-pill shadow-sm px-4"><i
-                                    class="bi bi-check-circle me-1"></i> <span
-                                    th:text="${brand.id == null ? 'Save Brand' : 'Update Brand'}"> Save Brand </span>
+
+                        <div class="d-flex justify-content-center gap-2 mt-4 pt-3 border-top">
+                            <a th:href="@{/inventory/brands}"
+                               class="btn btn-secondary rounded-pill shadow-sm px-4">
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span th:text="#{inventory.cancel}">Cancel</span>
+                            </a>
+
+                            <button type="submit"
+                                    class="btn btn-success rounded-pill shadow-sm px-4">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${brand.id == null ? #messages.msg('brands.save') : #messages.msg('brands.update')}">
+                                    Save Brand
+                                </span>
                             </button>
                         </div>
+
                     </form>
                 </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Save/Update Modal -->
+<div class="modal fade" id="confirmBrandModal" tabindex="-1"
+     aria-labelledby="confirmBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="confirmBrandModalLabel">
+                    <i class="bi bi-question-circle me-2"></i>
+                    <span th:text="${brand.id == null ? #messages.msg('brands.confirmSaveTitle') : #messages.msg('brands.confirmUpdateTitle')}">
+                        Confirm Brand
+                    </span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <span th:text="${brand.id == null ? #messages.msg('brands.confirmSaveMessage') : #messages.msg('brands.confirmUpdateMessage')}">
+                    Are you sure you want to save these brand details?
+                </span>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{inventory.cancel}">Cancel</span>
+                </button>
+
+                <button type="button" class="btn btn-success rounded-pill px-4"
+                        id="confirmBrandSubmit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="${brand.id == null ? #messages.msg('brands.confirmSave') : #messages.msg('brands.confirmUpdate')}">
+                        Confirm
+                    </span>
+                </button>
             </div>
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
+
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
-<script> document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector(".needs-validation");
-    if (form) {
-        form.addEventListener("submit", function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add("was-validated");
-        });
-    }
-}); </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector(".needs-validation");
+
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add("was-validated");
+            });
+        }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector(".needs-validation");
+        const confirmModalElement = document.getElementById("confirmBrandModal");
+        const confirmButton = document.getElementById("confirmBrandSubmit");
+
+        if (form && confirmModalElement && confirmButton) {
+            const confirmModal = new bootstrap.Modal(confirmModalElement);
+            let confirmed = false;
+
+            form.addEventListener("submit", function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    form.classList.add("was-validated");
+                    return;
+                }
+
+                if (!confirmed) {
+                    event.preventDefault();
+                    confirmModal.show();
+                }
+            });
+
+            confirmButton.addEventListener("click", function () {
+                confirmed = true;
+                confirmModal.hide();
+                form.requestSubmit();
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

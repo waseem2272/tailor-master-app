@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${category.id == null ? 'Add Category | Tailor Master' : 'Edit Category | Tailor Master'}">Category
-        | Tailor Master</title>
+    <title th:text="${category.id == null ? #messages.msg('categories.addTitle') + ' | Tailor Master' : #messages.msg('categories.editTitle') + ' | Tailor Master'}">Category | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
@@ -13,75 +12,128 @@
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
+
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <div><h2 class="page-title mb-1"><i class="bi bi-diagram-3 me-2"></i> <span
-                        th:text="${category.id == null ? 'Add Category' : 'Edit Category'}">Add Category</span></h2>
-                    <p class="text-muted mb-0"><span
-                            th:text="${category.id == null ? 'Add a new category to your inventory master data.' : 'Update the selected inventory category.'}"> Add a new category to your inventory master data. </span>
-                    </p></div>
-                <a th:href="@{/inventory/categories}" class="btn btn-success rounded-pill shadow-sm px-4"> <i
-                        class="bi bi-arrow-left me-1"></i> Back </a></div>
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm"
-                 role="alert"><i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
-                <div class="card-header bg-success text-white fw-bold py-3 rounded-top-4"><i
-                        class="bi bi-diagram-3 me-2"></i> <span
-                        th:text="${category.id == null ? 'Category Information' : 'Edit Category Information'}"> Category Information </span>
+                <div>
+                    <h2 class="page-title mb-1">
+                        <i class="bi bi-diagram-3 me-2"></i>
+                        <span th:text="${category.id == null ? #messages.msg('categories.addTitle') : #messages.msg('categories.editTitle')}">Add Category</span>
+                    </h2>
+                    <p class="text-muted mb-0">
+                        <span th:text="${category.id == null ? #messages.msg('categories.addDescription') : #messages.msg('categories.editDescription')}">Add a new category to your inventory master data.</span>
+                    </p>
                 </div>
+
+                <a th:href="@{/inventory/categories}" class="btn btn-success rounded-pill shadow-sm px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    <span th:text="#{brands.back}">Back</span>
+                </a>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+                <div class="card-header bg-success text-white fw-bold py-3 rounded-top-4">
+                    <i class="bi bi-diagram-3 me-2"></i>
+                    <span th:text="${category.id == null ? #messages.msg('categories.information') : #messages.msg('categories.editInformation')}">Category Information</span>
+                </div>
+
                 <div class="card-body p-4">
-                    <div class="alert alert-success d-flex align-items-start mb-4"><i
-                            class="bi bi-info-circle-fill me-2 mt-1"></i>
-                        <div><strong>Category Master Data</strong>
-                            <div class="small mt-1"> Add categories that can be selected when creating or managing
-                                inventory items.
+                    <div class="alert alert-success d-flex align-items-start mb-4">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <strong th:text="#{categories.masterData}">Category Master Data</strong>
+                            <div class="small mt-1" th:text="#{categories.formDescription}">
+                                Add categories that can be selected when creating or managing inventory items.
                             </div>
                         </div>
                     </div>
-                    <form th:action="@{/inventory/categories/save}" th:object="${category}" method="post"
-                          class="needs-validation" novalidate><input type="hidden" th:field="*{id}">
+
+                    <form id="categoryForm"
+                          th:action="@{/inventory/categories/save}"
+                          th:object="${category}"
+                          method="post"
+                          class="needs-validation"
+                          novalidate>
+
+                        <input type="hidden" th:field="*{id}">
+
                         <div class="row g-4">
-                            <div class="col-md-7"><label for="name" class="form-label fw-semibold"> Category Name <span
-                                    class="text-danger">*</span> </label>
-                                <div class="input-group"><span class="input-group-text bg-success text-white"> <i
-                                        class="bi bi-diagram-3"></i> </span> <input type="text"
-                                                                                    class="form-control rounded-end-pill"
-                                                                                    id="name" th:field="*{name}"
-                                                                                    placeholder="e.g. Cotton, Shalwar Kameez, Formal"
-                                                                                    maxlength="100" required>
-                                    <div class="invalid-feedback"> Please enter a category name.</div>
+                            <div class="col-md-7">
+                                <label for="name" class="form-label fw-semibold">
+                                    <span th:text="#{categories.name}">Category Name</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-white">
+                                        <i class="bi bi-diagram-3"></i>
+                                    </span>
+                                    <input type="text"
+                                           class="form-control rounded-end-pill"
+                                           id="name"
+                                           th:field="*{name}"
+                                           th:placeholder="#{categories.namePlaceholder}"
+                                           maxlength="100"
+                                           required>
+                                    <div class="invalid-feedback" th:text="#{categories.nameRequired}">
+                                        Please enter a category name.
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-5"><label for="itemType" class="form-label fw-semibold"> Item Type <span
-                                    class="text-danger">*</span> </label>
-                                <div class="input-group"><span class="input-group-text bg-success text-white"> <i
-                                        class="bi bi-box-seam"></i> </span> <select class="form-select rounded-end-pill"
-                                                                                    id="itemType" th:field="*{itemType}"
-                                                                                    required>
-                                    <option value="">Select Item Type</option>
-                                    <option th:each="itemType : ${itemTypes}" th:value="${itemType}"
-                                            th:text="${itemType}"> FABRIC
-                                    </option>
-                                </select>
-                                    <div class="invalid-feedback"> Please select an item type.</div>
+
+                            <div class="col-md-5">
+                                <label for="itemType" class="form-label fw-semibold">
+                                    <span th:text="#{categories.itemType}">Item Type</span>
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+                                    <span class="input-group-text bg-success text-white">
+                                        <i class="bi bi-box-seam"></i>
+                                    </span>
+                                    <select class="form-select rounded-end-pill"
+                                            id="itemType"
+                                            th:field="*{itemType}"
+                                            required>
+                                        <option value="" th:text="#{categories.selectItemType}">Select Item Type</option>
+                                        <option th:each="itemType : ${itemTypes}"
+                                                th:value="${itemType}"
+                                                th:text="${#messages.msg('inventory.type.' + (itemType.name() == 'KURTA_PAJAMA' ? 'kurtaPajama' : #strings.toLowerCase(itemType.name())))}">
+                                            FABRIC
+                                        </option>
+                                    </select>
+                                    <div class="invalid-feedback" th:text="#{categories.itemTypeRequired}">
+                                        Please select an item type.
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top"><a
-                                th:href="@{/inventory/categories}"
-                                class="btn btn-secondary rounded-pill shadow-sm px-4"> <i
-                                class="bi bi-x-circle me-1"></i> Cancel </a>
-                            <button type="submit" class="btn btn-success rounded-pill shadow-sm px-4"><i
-                                    class="bi bi-check-circle me-1"></i> <span
-                                    th:text="${category.id == null ? 'Save Category' : 'Update Category'}"> Save Category </span>
+
+                        <div class="d-flex justify-content-center gap-2 mt-4 pt-3 border-top">
+                            <a th:href="@{/inventory/categories}"
+                               class="btn btn-secondary rounded-pill shadow-sm px-4">
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span th:text="#{inventory.cancel}">Cancel</span>
+                            </a>
+
+                            <button type="submit" class="btn btn-success rounded-pill shadow-sm px-4">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="${category.id == null ? #messages.msg('categories.save') : #messages.msg('categories.update')}">Save Category</span>
                             </button>
                         </div>
                     </form>
@@ -90,6 +142,44 @@
         </div>
     </div>
 </div>
+
+<!-- Save / Update Confirmation Modal -->
+<div class="modal fade" id="confirmCategoryModal" tabindex="-1"
+     aria-labelledby="confirmCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="confirmCategoryModalLabel">
+                    <i class="bi bi-question-circle me-2"></i>
+                   <span th:text="${category.id == null ? #messages.msg('categories.confirmSaveTitle') : #messages.msg('categories.confirmUpdateTitle')}">
+                       Confirm Save </span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <span th:text="${category.id == null ? #messages.msg('categories.confirmSaveMessage') : #messages.msg('categories.confirmUpdateMessage')}">
+                    Are you sure you want to save this category?</span>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{inventory.cancel}">Cancel</span>
+                </button>
+                <button type="button" class="btn btn-success rounded-pill px-4"
+                        id="confirmCategorySubmit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="${category.id == null ? #messages.msg('categories.confirmSave') : #messages.msg('categories.confirmUpdate')}">
+                        Confirm Save</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -100,17 +190,35 @@
 </script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
-<script> document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector(".needs-validation");
-    if (form) {
-        form.addEventListener("submit", function (event) {
-            if (!form.checkValidity()) {
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("categoryForm");
+        const confirmButton = document.getElementById("confirmCategorySubmit");
+        const modalElement = document.getElementById("confirmCategoryModal");
+
+        if (form && confirmButton && modalElement) {
+            const confirmationModal = new bootstrap.Modal(modalElement);
+
+            form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                event.stopPropagation();
-            }
-            form.classList.add("was-validated");
-        });
-    }
-}); </script>
+
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                    form.classList.add("was-validated");
+                    return;
+                }
+
+                form.classList.add("was-validated");
+                confirmationModal.show();
+            });
+
+            confirmButton.addEventListener("click", function () {
+                confirmButton.disabled = true;
+                form.submit();
+            });
+        }
+    });
+</script>
 </body>
 </html>

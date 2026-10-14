@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${inventoryItem.id == null ? 'Add Inventory Item | Tailor Master' : 'Edit Inventory Item | Tailor Master'}">
-        Add Inventory Item | Tailor Master</title>
+    <title th:text="${inventoryItem.id == null ? #messages.msg('inventory.addItem') : #messages.msg('inventory.editItem')} + ' | Tailor Master'">
+        Add Inventory Item | Tailor Master
+    </title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/custom-style.css}">
@@ -21,10 +22,14 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="page-title mb-0">
                     <i class="bi bi-box-seam text-success me-2"></i>
-                    <span th:text="${inventoryItem.id == null ? 'Add Inventory Item' : 'Edit Inventory Item'}">Add Inventory Item</span>
+                    <span th:text="${inventoryItem.id == null ? #messages.msg('inventory.addItem') : #messages.msg('inventory.editItem')}">
+                        Add Inventory Item
+                    </span>
                 </h2>
-                <a th:href="@{/inventory}" class="btn btn-success shadow rounded-pill px-4"><i
-                        class="bi bi-arrow-left me-1"></i>Back to Inventory</a>
+                <a th:href="@{/inventory}" class="btn btn-success shadow rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    <span th:text="#{inventory.backToInventory}">Back to Inventory</span>
+                </a>
             </div>
 
             <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -36,54 +41,65 @@
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-pencil-square me-2"></i>Item Information
+                        <i class="bi bi-pencil-square me-2"></i>
+                        <span th:text="#{inventory.itemInformation}">Item Information</span>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <form th:action="@{/inventory/save}" th:object="${inventoryItem}" method="post" id="inventoryForm">
+                    <form th:action="@{/inventory/save}" th:object="${inventoryItem}" method="post" id="inventoryItemForm">
                         <input type="hidden" th:field="*{id}">
 
                         <div class="card border-success shadow-sm mb-4">
                             <div class="card-header bg-light text-success fw-bold">
-                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                                <i class="bi bi-info-circle me-2"></i>
+                                <span th:text="#{inventory.basicInformation}">Basic Information</span>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label for="name" class="form-label fw-semibold">Item Name <span
-                                                class="text-danger">*</span></label>
+                                        <label for="name" class="form-label fw-semibold">
+                                            <span th:text="#{inventory.itemName}">Item Name</span>
+                                            <span class="text-danger">*</span>
+                                        </label>
                                         <input type="text" th:field="*{name}" id="name"
-                                               class="form-control rounded-pill" placeholder="Enter item name" required>
+                                               class="form-control rounded-pill"
+                                               th:placeholder="#{inventory.enterItemName}"
+                                               placeholder="Enter item name" required>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="itemType" class="form-label fw-semibold">Item Type <span
-                                                class="text-danger">*</span></label>
-                                        <select th:field="*{itemType}" id="itemType" class="form-select rounded-pill"
-                                                required>
-                                            <option value="">Select Item Type</option>
-                                            <option th:each="type : ${itemTypes}" th:value="${type}"
-                                                    th:text="${type.name() == 'KURTA_PAJAMA' ? 'Kurta Pajama' : type.name().replace('_', ' ')}">
+                                        <label for="itemType" class="form-label fw-semibold">
+                                            <span th:text="#{inventory.itemType}">Item Type</span>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select th:field="*{itemType}" id="itemType"
+                                                class="form-select rounded-pill" required>
+                                            <option value="" th:text="#{inventory.selectItemType}">Select Item Type</option>
+                                            <option th:each="type : ${itemTypes}"
+                                                    th:value="${type}"
+                                                    th:text="${type.name() == 'KURTA_PAJAMA' ? #messages.msg('inventory.type.kurtaPajama') : #messages.msg('inventory.type.' + #strings.toLowerCase(type.name()))}">
                                                 Fabric
                                             </option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="brand" class="form-label fw-semibold">Brand</label>
+                                        <label for="brand" class="form-label fw-semibold"
+                                               th:text="#{inventory.brand}">Brand</label>
                                         <select th:field="*{brand}" id="brand" class="form-select rounded-pill">
-                                            <option value="">Select Brand</option>
-                                            <option th:each="brand : ${brands}" th:value="${brand.id}"
-                                                    th:text="${brand.name}">Brand
-                                            </option>
+                                            <option value="" th:text="#{inventory.selectBrand}">Select Brand</option>
+                                            <option th:each="brand : ${brands}"
+                                                    th:value="${brand.id}"
+                                                    th:text="${brand.name}">Brand</option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="category" class="form-label fw-semibold">Category</label>
+                                        <label for="category" class="form-label fw-semibold"
+                                               th:text="#{inventory.category}">Category</label>
                                         <select th:field="*{category}" id="category" class="form-select rounded-pill">
-                                            <option value="">Select Category</option>
+                                            <option value="" th:text="#{inventory.selectCategory}">Select Category</option>
                                             <option th:each="category : ${categories}"
                                                     th:value="${category.id}"
                                                     th:text="${category.name}"
@@ -97,14 +113,16 @@
 
                         <div class="card border-success shadow-sm mb-4">
                             <div class="card-header bg-light text-success fw-bold">
-                                <i class="bi bi-tags me-2"></i>Item Details
+                                <i class="bi bi-tags me-2"></i>
+                                <span th:text="#{inventory.itemDetails}">Item Details</span>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-md-4">
-                                        <label for="color" class="form-label fw-semibold">Color</label>
+                                        <label for="color" class="form-label fw-semibold"
+                                               th:text="#{inventory.color}">Color</label>
                                         <select th:field="*{color}" class="form-select">
-                                            <option value="">Select Color</option>
+                                            <option value="" th:text="#{inventory.selectColor}">Select Color</option>
                                             <option th:each="color : ${colors}"
                                                     th:value="${color.id}"
                                                     th:text="${color.name}">
@@ -113,9 +131,10 @@
                                     </div>
 
                                     <div class="col-md-4" id="designField">
-                                        <label for="design" class="form-label fw-semibold">Design / Pattern</label>
+                                        <label for="design" class="form-label fw-semibold"
+                                               th:text="#{inventory.designPattern}">Design / Pattern</label>
                                         <select th:field="*{design}" class="form-select">
-                                            <option value="">Select Design</option>
+                                            <option value="" th:text="#{inventory.selectDesign}">Select Design</option>
                                             <option th:each="design : ${designs}"
                                                     th:value="${design.id}"
                                                     th:text="${design.name}">
@@ -124,15 +143,20 @@
                                     </div>
 
                                     <div class="col-md-4" id="sizeField">
-                                        <label for="size" class="form-label fw-semibold">Size</label>
+                                        <label for="size" class="form-label fw-semibold"
+                                               th:text="#{inventory.size}">Size</label>
                                         <input type="text" th:field="*{size}" id="size"
-                                               class="form-control rounded-pill" placeholder="e.g. S, M, L, XL">
+                                               class="form-control rounded-pill"
+                                               th:placeholder="#{inventory.sizePlaceholder}"
+                                               placeholder="e.g. S, M, L, XL">
                                     </div>
 
                                     <div class="col-12">
                                         <div class="alert alert-success mb-0 py-2" id="typeInfo">
-                                            <i class="bi bi-lightbulb me-1"></i>Select an item type to see the relevant
-                                            fields.
+                                            <i class="bi bi-lightbulb me-1"></i>
+                                            <span th:text="#{inventory.selectTypeForFields}">
+                                                Select an item type to see the relevant fields.
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -141,147 +165,141 @@
 
                         <div class="card border-success shadow-sm mb-4">
                             <div class="card-header bg-light text-success fw-bold">
-                                <i class="bi bi-boxes me-2"></i>Stock & Pricing
+                                <i class="bi bi-boxes me-2"></i>
+                                <span th:text="#{inventory.stockPricing}">Stock &amp; Pricing</span>
                             </div>
 
                             <div class="card-body">
 
                                 <div th:if="${inventoryItem.id != null}" class="alert alert-info py-2 mb-3">
                                     <i class="bi bi-info-circle me-1"></i>
-                                    Purchase Price and Sale Price can only be updated through Batches.
-                                    Minimum Stock can be edited here.
+                                    <span th:text="#{inventory.editPriceBatchNotice}">
+                                        Purchase Price and Sale Price can only be updated through Batches.
+                                        Minimum Stock can be edited here.
+                                    </span>
                                 </div>
 
                                 <div class="row g-3">
-
                                     <div class="col-lg-3 col-md-6">
                                         <label for="unit" class="form-label fw-semibold">
-                                            Unit <span class="text-danger">*</span>
+                                            <span th:text="#{inventory.unit}">Unit</span>
+                                            <span class="text-danger">*</span>
                                         </label>
                                         <select th:field="*{unit}" id="unit"
                                                 class="form-select rounded-pill"
                                                 required
                                                 th:disabled="${inventoryItem.id != null}">
-                                            <option value="">Select Unit</option>
+                                            <option value="" th:text="#{inventory.selectUnit}">Select Unit</option>
                                             <option th:each="unit : ${units}"
                                                     th:value="${unit}"
-                                                    th:text="${unit.name().replace('_', ' ')}">
+                                                    th:text="${#strings.replace(unit.name(), '_', ' ')}">
                                                 Meter
                                             </option>
                                         </select>
                                         <input th:if="${inventoryItem.id != null}"
-                                               type="hidden"
-                                               th:field="*{unit}">
+                                               type="hidden" th:field="*{unit}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
                                         <label for="quantity" class="form-label fw-semibold">
-                                            Quantity <span class="text-danger">*</span>
+                                            <span th:text="#{inventory.quantity}">Quantity</span>
+                                            <span class="text-danger">*</span>
                                         </label>
-                                        <input type="number"
-                                               th:field="*{quantity}"
-                                               id="quantity"
+                                        <input type="number" th:field="*{quantity}" id="quantity"
                                                class="form-control rounded-pill"
-                                               min="0"
-                                               step="0.01"
-                                               placeholder="0.00"
-                                               required
+                                               min="0" step="0.01"
+                                               placeholder="0.00" required
                                                th:disabled="${inventoryItem.id != null}">
                                         <input th:if="${inventoryItem.id != null}"
-                                               type="hidden"
-                                               th:field="*{quantity}">
+                                               type="hidden" th:field="*{quantity}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="purchasePrice" class="form-label fw-semibold">
-                                            Purchase Price
-                                        </label>
+                                        <label for="purchasePrice" class="form-label fw-semibold"
+                                               th:text="#{inventory.purchasePrice}">Purchase Price</label>
                                         <div class="input-group">
                                             <span class="input-group-text rounded-start-pill">Rs.</span>
-                                            <input type="number"
-                                                   th:field="*{purchasePrice}"
-                                                   id="purchasePrice"
+                                            <input type="number" th:field="*{purchasePrice}" id="purchasePrice"
                                                    class="form-control rounded-end-pill"
-                                                   min="0"
-                                                   step="0.01"
-                                                   placeholder="0.00"
+                                                   min="0" step="0.01" placeholder="0.00"
                                                    th:disabled="${inventoryItem.id != null}">
                                         </div>
                                         <input th:if="${inventoryItem.id != null}"
-                                               type="hidden"
-                                               th:field="*{purchasePrice}">
+                                               type="hidden" th:field="*{purchasePrice}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="salePrice" class="form-label fw-semibold">
-                                            Sale Price
-                                        </label>
+                                        <label for="salePrice" class="form-label fw-semibold"
+                                               th:text="#{inventory.salePrice}">Sale Price</label>
                                         <div class="input-group">
                                             <span class="input-group-text rounded-start-pill">Rs.</span>
-                                            <input type="number"
-                                                   th:field="*{salePrice}"
-                                                   id="salePrice"
+                                            <input type="number" th:field="*{salePrice}" id="salePrice"
                                                    class="form-control rounded-end-pill"
-                                                   min="0"
-                                                   step="0.01"
-                                                   placeholder="0.00"
+                                                   min="0" step="0.01" placeholder="0.00"
                                                    th:disabled="${inventoryItem.id != null}">
                                         </div>
                                         <input th:if="${inventoryItem.id != null}"
-                                               type="hidden"
-                                               th:field="*{salePrice}">
+                                               type="hidden" th:field="*{purchasePrice}">
                                     </div>
 
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="minimumStock" class="form-label fw-semibold">
-                                            Minimum Stock
-                                        </label>
-                                        <input type="number"
-                                               th:field="*{minimumStock}"
-                                               id="minimumStock"
+                                        <label for="minimumStock" class="form-label fw-semibold"
+                                               th:text="#{inventory.minimumStock}">Minimum Stock</label>
+                                        <input type="number" th:field="*{minimumStock}" id="minimumStock"
                                                class="form-control rounded-pill"
-                                               min="0"
-                                               step="0.01"
-                                               placeholder="e.g. 5">
-                                        <small class="text-muted">Low-stock alert threshold</small>
+                                               min="0" step="0.01" placeholder="e.g. 5">
+                                        <small class="text-muted" th:text="#{inventory.lowStockThreshold}">
+                                            Low-stock alert threshold
+                                        </small>
                                     </div>
+
                                     <div class="col-lg-3 col-md-6">
                                         <label for="batchCode" class="form-label fw-semibold">
-                                            Batch / Roll ID <span class="text-danger">*</span>
+                                            <span th:text="#{inventory.batchRollId}">Batch / Roll ID</span>
+                                            <span class="text-danger">*</span>
                                         </label>
-                                        <input type="text"
-                                               name="batchCode"
-                                               id="batchCode"
+                                        <input type="text" name="batchCode" id="batchCode"
                                                class="form-control rounded-pill"
                                                maxlength="100"
+                                               th:placeholder="#{inventory.batchCodePlaceholder}"
                                                placeholder="e.g. GA458721"
                                                th:disabled="${inventoryItem.id != null}"
                                                required>
-                                        <small class="text-muted">Enter the supplier barcode or roll/batch number</small>
+                                        <small class="text-muted" th:text="#{inventory.supplierBarcodeHint}">
+                                            Enter the supplier barcode or roll/batch number
+                                        </small>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
 
                         <div class="card border-success shadow-sm mb-4">
                             <div class="card-header bg-light text-success fw-bold">
-                                <i class="bi bi-card-text me-2"></i>Additional Information
+                                <i class="bi bi-card-text me-2"></i>
+                                <span th:text="#{inventory.additionalInformation}">Additional Information</span>
                             </div>
                             <div class="card-body">
-                                <label for="description" class="form-label fw-semibold">Description</label>
-                                <textarea th:field="*{description}" id="description" class="form-control rounded-3"
+                                <label for="description" class="form-label fw-semibold"
+                                       th:text="#{inventory.description}">Description</label>
+                                <textarea th:field="*{description}" id="description"
+                                          class="form-control rounded-3"
                                           rows="4"
+                                          th:placeholder="#{inventory.descriptionPlaceholder}"
                                           placeholder="Enter any additional notes about this item..."></textarea>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a th:href="@{/inventory}" class="btn btn-secondary shadow rounded-pill px-4"><i
-                                    class="bi bi-x-circle me-1"></i>Cancel</a>
-                            <button type="submit" class="btn btn-success shadow rounded-pill px-4">
+                        <div class="text-center mt-4">
+                            <a th:href="@{/inventory}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span th:text="#{button.cancel}">Cancel</span>
+                            </a>
+                            <button type="button" class="btn btn-success" id="openConfirmationModal">
                                 <i class="bi bi-check-circle me-1"></i>
-                                <span th:text="${inventoryItem.id == null ? 'Save Item' : 'Update Item'}">Save Item</span>
+                                <span th:if="${inventoryItem.id == null}"
+                                      th:text="#{inventory.saveItem}">Save Item</span>
+                                <span th:unless="${inventoryItem.id == null}"
+                                      th:text="#{inventory.updateItem}">Update Item</span>
                             </button>
                         </div>
                     </form>
@@ -291,16 +309,85 @@
         </div>
     </div>
 </div>
+
+<!-- Inventory Item Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1"
+     aria-labelledby="confirmationModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title" id="confirmationModalLabel"
+                    th:if="${inventoryItem.id == null}"
+                    th:text="#{inventory.confirmSaveTitle}">
+                    Confirm Save
+                </h5>
+
+                <h5 class="modal-title" th:unless="${inventoryItem.id == null}"
+                    th:text="#{inventory.confirmUpdateTitle}">
+                    Confirm Update
+                </h5>
+
+                <button type="button" class="btn-close btn-close-white"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body"
+                 th:if="${inventoryItem.id == null}"
+                 th:text="#{inventory.confirmSaveMessage}">
+                Are you sure you want to save this inventory item?
+            </div>
+
+            <div class="modal-body"
+                 th:unless="${inventoryItem.id == null}"
+                 th:text="#{inventory.confirmUpdateMessage}">
+                Are you sure you want to update this inventory item?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{button.cancel}">Cancel</span>
+                </button>
+
+                <button type="button" class="btn btn-success" id="confirmSubmit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:if="${inventoryItem.id == null}"
+                          th:text="#{inventory.confirmSave}">
+                        Confirm Save
+                    </span>
+                    <span th:unless="${inventoryItem.id == null}"
+                          th:text="#{inventory.confirmUpdate}">
+                        Confirm Update
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
-</script>
-<script>
+
+    const inventoryFormMessages = {
+        selectType: /*[[#{inventory.selectTypeForFields}]]*/ 'Select an item type to see the relevant fields.',
+        fabricInfo: /*[[#{inventory.fabricInfo}]]*/ 'Fabric stock is measured in meters. You can track color, design and brand.',
+        stitchedInfo: /*[[#{inventory.stitchedInfo}]]*/ 'Stitched items are tracked by pieces. Size can be used for ready-made garments.',
+        waistcoatInfo: /*[[#{inventory.waistcoatInfo}]]*/ 'Waistcoats are tracked by pieces and can have different sizes.',
+        kurtaPajamaInfo: /*[[#{inventory.kurtaPajamaInfo}]]*/ 'Kurta Pajama stock is tracked by pieces and sizes.',
+        otherInfo: /*[[#{inventory.otherInfo}]]*/ 'Select the appropriate unit and enter the item details.'
+    };
+
     const itemTypeSelect = document.getElementById('itemType');
     const unit = document.getElementById('unit');
     const designField = document.getElementById('designField');
@@ -316,23 +403,23 @@
         if (type === 'FABRIC') {
             unit.value = 'METER';
             sizeField.style.display = 'none';
-            typeInfo.innerHTML = '<i class="bi bi-rulers me-1"></i>Fabric stock is measured in meters. You can track color, design and brand.';
+            typeInfo.innerHTML = '<i class="bi bi-rulers me-1"></i>' + inventoryFormMessages.fabricInfo;
         } else if (type === 'STITCHED') {
             unit.value = 'PIECE';
             designField.style.display = 'none';
-            typeInfo.innerHTML = '<i class="bi bi-scissors me-1"></i>Stitched items are tracked by pieces. Size can be used for ready-made garments.';
+            typeInfo.innerHTML = '<i class="bi bi-scissors me-1"></i>' + inventoryFormMessages.stitchedInfo;
         } else if (type === 'WAISTCOAT') {
             unit.value = 'PIECE';
             designField.style.display = 'none';
-            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>Waistcoats are tracked by pieces and can have different sizes.';
+            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>' + inventoryFormMessages.waistcoatInfo;
         } else if (type === 'KURTA_PAJAMA') {
             unit.value = 'PIECE';
             designField.style.display = 'none';
-            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>Kurta Pajama stock is tracked by pieces and sizes.';
+            typeInfo.innerHTML = '<i class="bi bi-person-standing me-1"></i>' + inventoryFormMessages.kurtaPajamaInfo;
         } else if (type === 'OTHER') {
-            typeInfo.innerHTML = '<i class="bi bi-box me-1"></i>Select the appropriate unit and enter the item details.';
+            typeInfo.innerHTML = '<i class="bi bi-box me-1"></i>' + inventoryFormMessages.otherInfo;
         } else {
-            typeInfo.innerHTML = '<i class="bi bi-lightbulb me-1"></i>Select an item type to see the relevant fields.';
+            typeInfo.innerHTML = '<i class="bi bi-lightbulb me-1"></i>' + inventoryFormMessages.selectType;
         }
     }
 
@@ -360,6 +447,45 @@
             categorySelect.value = "";
         }
     }
+
+    // Keep fields and categories correct when editing an existing item.
+    filterCategories();
+    updateItemTypeFields();
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const openModalBtn = document.getElementById("openConfirmationModal");
+        const confirmBtn = document.getElementById("confirmSubmit");
+        const form = document.getElementById("inventoryItemForm");
+
+        const modalElement = document.getElementById("confirmationModal");
+
+        if (!openModalBtn || !confirmBtn || !form || !modalElement) {
+            return;
+        }
+
+        const confirmationModal = new bootstrap.Modal(modalElement);
+
+        openModalBtn.addEventListener("click", function () {
+            if (form.checkValidity()) {
+                confirmationModal.show();
+            } else {
+                form.classList.add("was-validated");
+                form.reportValidity();
+            }
+        });
+
+        confirmBtn.addEventListener("click", function () {
+            if (form.checkValidity()) {
+                form.submit();
+            } else {
+                confirmationModal.hide();
+                form.classList.add("was-validated");
+                form.reportValidity();
+            }
+        });
+    });
 </script>
 </body>
 </html>

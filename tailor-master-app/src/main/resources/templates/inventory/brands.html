@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brands | Tailor Master</title>
+    <title th:text="#{brands.title}">Brands | Tailor Master</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
@@ -13,16 +13,21 @@
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
+
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="page-title mb-0">
-                    <i class="bi bi-tags text-success me-2"></i> Brands
+                    <i class="bi bi-tags text-success me-2"></i>
+                    <span th:text="#{brands.title}">Brands</span>
                 </h2>
+
                 <a th:href="@{/inventory/brands/add}"
                    class="btn btn-success shadow rounded-pill px-4">
-                    <i class="bi bi-plus-lg me-1"></i> Add Brand
+                    <i class="bi bi-plus-lg me-1"></i>
+                    <span th:text="#{brands.add}">Add Brand</span>
                 </a>
             </div>
 
@@ -46,10 +51,11 @@
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-tags me-2"></i>
-                        Inventory Brands
+                        <span th:text="#{brands.inventoryTitle}">Inventory Brands</span>
                     </div>
+
                     <span class="small">
-                        Total Brands:
+                        <span th:text="#{brands.total}">Total Brands:</span>
                         <strong th:text="${brands != null ? brands.size() : 0}">0</strong>
                     </span>
                 </div>
@@ -58,8 +64,8 @@
                     <div class="alert alert-success d-flex align-items-start" role="alert">
                         <i class="bi bi-info-circle-fill me-2 mt-1"></i>
                         <div>
-                            <strong>Brand Management</strong>
-                            <div class="small mt-1">
+                            <strong th:text="#{brands.management}">Brand Management</strong>
+                            <div class="small mt-1" th:text="#{brands.managementDescription}">
                                 Manage the brands available for your inventory items.
                             </div>
                         </div>
@@ -72,9 +78,11 @@
                             <thead class="table-success text-dark">
                             <tr>
                                 <th style="width: 70px;">#</th>
-                                <th>Brand Name</th>
-                                <th class="text-center" style="width: 120px;">Status</th>
-                                <th class="text-end" style="width: 180px;">Actions</th>
+                                <th th:text="#{brands.name}">Brand Name</th>
+                                <th class="text-center" style="width: 120px;"
+                                    th:text="#{brands.status}">Status</th>
+                                <th class="text-end" style="width: 180px;"
+                                    th:text="#{brands.actions}">Actions</th>
                             </tr>
                             </thead>
 
@@ -91,12 +99,14 @@
 
                                 <td class="text-center">
                                     <span th:if="${brand.active}"
-                                          class="badge bg-success-subtle text-success rounded-pill px-3">
+                                          class="badge bg-success-subtle text-success rounded-pill px-3"
+                                          th:text="#{brands.active}">
                                         Active
                                     </span>
 
                                     <span th:unless="${brand.active}"
-                                          class="badge bg-secondary-subtle text-secondary rounded-pill px-3">
+                                          class="badge bg-secondary-subtle text-secondary rounded-pill px-3"
+                                          th:text="#{brands.inactive}">
                                         Inactive
                                     </span>
                                 </td>
@@ -106,7 +116,8 @@
 
                                         <a th:href="@{/inventory/brands/edit/{id}(id=${brand.id})}"
                                            class="btn btn-warning btn-sm"
-                                           title="Edit">
+                                           th:title="#{brands.edit}"
+                                           th:attr="aria-label=#{brands.edit}">
                                             <i class="bi bi-pencil"></i>
                                         </a>
 
@@ -114,10 +125,11 @@
                                               th:action="@{/inventory/brands/deactivate/{id}(id=${brand.id})}"
                                               method="post"
                                               class="d-inline"
-                                              onsubmit="return confirm('Are you sure you want to deactivate this brand?');">
+                                              th:attr="onsubmit=|return confirm('#{brands.deactivateConfirm}');|">
                                             <button type="submit"
                                                     class="btn btn-danger btn-sm"
-                                                    title="Deactivate">
+                                                    th:title="#{brands.deactivate}"
+                                                    th:attr="aria-label=#{brands.deactivate}">
                                                 <i class="bi bi-x-circle"></i>
                                             </button>
                                         </form>
@@ -128,7 +140,8 @@
                                               class="d-inline">
                                             <button type="submit"
                                                     class="btn btn-success btn-sm"
-                                                    title="Activate">
+                                                    th:title="#{brands.activate}"
+                                                    th:attr="aria-label=#{brands.activate}">
                                                 <i class="bi bi-check-circle"></i>
                                             </button>
                                         </form>
@@ -147,31 +160,41 @@
                                style="font-size: 48px;"></i>
                         </div>
 
-                        <h5 class="fw-semibold">No Brands Found</h5>
+                        <h5 class="fw-semibold" th:text="#{brands.notFound}">
+                            No Brands Found
+                        </h5>
 
-                        <p class="text-muted mb-3">
+                        <p class="text-muted mb-3"
+                           th:text="#{brands.emptyDescription}">
                             No brands have been added yet.
                         </p>
 
                         <a th:href="@{/inventory/brands/add}"
                            class="btn btn-success shadow rounded-pill px-4">
                             <i class="bi bi-plus-lg me-1"></i>
-                            Add Your First Brand
+                            <span th:text="#{brands.addFirst}">
+                                Add Your First Brand
+                            </span>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
+
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 

@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Stock In | Tailor Master</title>
+    <title th:text="#{inventory.stockIn} + ' | Tailor Master'">Stock In | Tailor Master</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -18,8 +17,6 @@
 
 <!-- Sidebar -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-<!-- Navbar -->
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
@@ -31,13 +28,13 @@
 
                 <h2 class="page-title mb-0">
                     <i class="bi bi-box-arrow-in-down text-success me-2"></i>
-                    Stock In
+                    <span th:text="#{inventory.stockIn}">Stock In</span>
                 </h2>
 
                 <a th:href="@{/inventory}"
                    class="btn btn-success shadow rounded-pill px-4">
                     <i class="bi bi-arrow-left me-1"></i>
-                    Back to Inventory
+                    <span th:text="#{inventory.backToInventory}">Back to Inventory</span>
                 </a>
 
             </div>
@@ -80,11 +77,12 @@
 
             <!-- Stock In Card -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
-                        <i class="bi bi-plus-square me-2"></i> Add Stock
+                        <i class="bi bi-plus-square me-2"></i>
+                        <span th:text="#{inventory.addStock}">Add Stock</span>
                     </div>
-
                 </div>
 
                 <div class="card-body">
@@ -96,9 +94,10 @@
                         <i class="bi bi-info-circle-fill me-2 mt-1"></i>
 
                         <div>
-                            <strong>Stock In</strong>
+                            <strong th:text="#{inventory.stockIn}">Stock In</strong>
 
-                            <div class="small mt-1">
+                            <div class="small mt-1"
+                                 th:text="#{inventory.stockIn.info}">
                                 Select an inventory item and enter the quantity
                                 you want to add to the current stock.
                                 The stock movement will automatically be
@@ -111,7 +110,9 @@
                     <!-- Form -->
                     <form th:action="@{/inventory/stock-in}"
                           method="post"
-                          id="stockInForm">
+                          id="stockInForm"
+                          class="needs-validation"
+                          novalidate>
 
                         <div class="row g-3">
 
@@ -121,7 +122,7 @@
                                 <label for="inventoryItem"
                                        class="form-label fw-semibold">
 
-                                    Inventory Item
+                                    <span th:text="#{orders.create.inventoryItem}">Inventory Item</span>
                                     <span class="text-danger">*</span>
 
                                 </label>
@@ -131,7 +132,8 @@
                                         class="form-select rounded-pill"
                                         required>
 
-                                    <option value="">
+                                    <option value=""
+                                            th:text="#{inventory.selectItem}">
                                         Select Inventory Item
                                     </option>
 
@@ -166,14 +168,14 @@
             ).max(T(java.math.BigDecimal).ZERO))
             .stripTrailingZeros().toPlainString()
             + ' ' + item.unit.name()
-            + ' Available'}">
+                                                + ' ' + #messages.msg('inventory.available')}">
                                     </option>
 
                                 </select>
 
-                                <div class="form-text">
-                                    Select the item for which you want to
-                                    increase stock.
+                                <div class="form-text"
+                                     th:text="#{inventory.stockIn.selectItemHelp}">
+                                    Select the item for which you want to increase stock.
                                 </div>
 
                             </div>
@@ -181,7 +183,8 @@
                             <!-- Current Stock -->
                             <div class="col-md-6">
 
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold"
+                                       th:text="#{inventory.currentStock}">
                                     Current Stock
                                 </label>
 
@@ -200,20 +203,26 @@
 
                             <!-- Batch / Roll ID -->
                             <div class="col-md-6">
+
                                 <label for="batchCode" class="form-label fw-semibold">
-                                    Batch / Roll ID
+                                    <span th:text="#{inventory.batchRollId}">Batch / Roll ID</span>
                                     <span class="text-danger">*</span>
                                 </label>
+
                                 <input type="text"
                                        id="batchCode"
                                        name="batchCode"
                                        class="form-control rounded-pill"
                                        maxlength="100"
                                        placeholder="e.g. GA458721"
+                                       th:placeholder="#{inventory.batchCodePlaceholder}"
                                        required>
-                                <div class="form-text">
+
+                                <div class="form-text"
+                                     th:text="#{inventory.supplierBarcodeHint}">
                                     Enter the supplier barcode or roll/batch number.
                                 </div>
+
                             </div>
 
                             <!-- Quantity -->
@@ -222,7 +231,7 @@
                                 <label for="quantity"
                                        class="form-label fw-semibold">
 
-                                    Quantity to Add
+                                    <span th:text="#{inventory.quantityToAdd}">Quantity to Add</span>
                                     <span class="text-danger">*</span>
 
                                 </label>
@@ -234,9 +243,11 @@
                                        min="0.01"
                                        step="0.01"
                                        placeholder="Enter quantity"
+                                       th:placeholder="#{inventory.enterQuantity}"
                                        required>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{inventory.quantityHelp}">
                                     Enter the quantity being added to stock.
                                 </div>
 
@@ -244,10 +255,12 @@
 
                             <!-- Purchase Price -->
                             <div class="col-md-6">
+
                                 <label for="purchasePrice" class="form-label fw-semibold">
-                                    Purchase Price
+                                    <span th:text="#{inventory.purchasePrice}">Purchase Price</span>
                                     <span class="text-danger">*</span>
                                 </label>
+
                                 <input type="number"
                                        id="purchasePrice"
                                        name="purchasePrice"
@@ -255,18 +268,24 @@
                                        min="0"
                                        step="0.01"
                                        placeholder="Enter purchase price"
+                                       th:placeholder="#{inventory.enterPurchasePrice}"
                                        required>
-                                <div class="form-text">
+
+                                <div class="form-text"
+                                     th:text="#{inventory.purchasePriceHelp}">
                                     Price paid per unit for this stock.
                                 </div>
+
                             </div>
 
                             <!-- Sale Price -->
                             <div class="col-md-6">
+
                                 <label for="salePrice" class="form-label fw-semibold">
-                                    Sale Price
+                                    <span th:text="#{inventory.salePrice}">Sale Price</span>
                                     <span class="text-danger">*</span>
                                 </label>
+
                                 <input type="number"
                                        id="salePrice"
                                        name="salePrice"
@@ -274,43 +293,51 @@
                                        min="0"
                                        step="0.01"
                                        placeholder="Enter sale price"
+                                       th:placeholder="#{inventory.enterSalePrice}"
                                        required>
-                                <div class="form-text">
+
+                                <div class="form-text"
+                                     th:text="#{inventory.salePriceHelp}">
                                     Selling price per unit for this stock batch.
                                 </div>
+
                             </div>
 
                             <!-- Reason -->
                             <div class="col-md-6">
 
                                 <label for="reason"
-                                       class="form-label fw-semibold">
-
+                                       class="form-label fw-semibold"
+                                       th:text="#{inventory.reason}">
                                     Reason
-
                                 </label>
 
                                 <select id="reason"
                                         name="reason"
                                         class="form-select rounded-pill">
 
-                                    <option value="PURCHASE">
+                                    <option value="PURCHASE"
+                                            th:text="#{inventory.reason.purchase}">
                                         Purchase
                                     </option>
 
-                                    <option value="OPENING_STOCK">
+                                    <option value="OPENING_STOCK"
+                                            th:text="#{inventory.reason.openingStock}">
                                         Opening Stock
                                     </option>
 
-                                    <option value="RETURN">
+                                    <option value="RETURN"
+                                            th:text="#{inventory.reason.customerReturn}">
                                         Customer Return
                                     </option>
 
-                                    <option value="ADJUSTMENT">
+                                    <option value="ADJUSTMENT"
+                                            th:text="#{inventory.reason.adjustment}">
                                         Stock Adjustment
                                     </option>
 
-                                    <option value="OTHER">
+                                    <option value="OTHER"
+                                            th:text="#{inventory.type.other}">
                                         Other
                                     </option>
 
@@ -322,42 +349,38 @@
                             <div class="col-md-12">
 
                                 <label for="notes"
-                                       class="form-label fw-semibold">
-
+                                       class="form-label fw-semibold"
+                                       th:text="#{inventory.notes}">
                                     Notes
-
                                 </label>
 
                                 <textarea id="notes"
                                           name="notes"
                                           class="form-control rounded-3"
                                           rows="3"
-                                          placeholder="Enter any additional notes..."></textarea>
+                                          placeholder="Enter any additional notes..."
+                                          th:placeholder="#{inventory.notesPlaceholder}"></textarea>
 
                             </div>
 
                             <!-- Buttons -->
-                            <div class="col-md-12">
+                            <div class="text-center mt-4">
 
-                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                <a th:href="@{/inventory}"
+                                   class="btn btn-secondary shadow rounded-pill px-4">
 
-                                    <a th:href="@{/inventory}"
-                                       class="btn btn-secondary shadow rounded-pill px-4">
+                                    <i class="bi bi-x-lg me-1"></i>
+                                    <span th:text="#{button.cancel}">Cancel</span>
 
-                                        <i class="bi bi-x-lg me-1"></i>
-                                        Cancel
+                                </a>
 
-                                    </a>
+                                <button type="button"
+                                        class="btn btn-success shadow rounded-pill px-4"
+                                        id="openConfirmationModal">
 
-                                    <button type="submit"
-                                            class="btn btn-success shadow rounded-pill px-4">
-
-                                        <i class="bi bi-box-arrow-in-down me-1"></i>
-                                        Add Stock
-
-                                    </button>
-
-                                </div>
+                                    <i class="bi bi-box-arrow-in-down me-1"></i>
+                                    <span th:text="#{inventory.addStock}">Add Stock</span>
+                                </button>
 
                             </div>
 
@@ -371,18 +394,78 @@
         </div>
     </div>
 </div>
+
+<!-- Stock In Confirmation Modal -->
+<div class="modal fade"
+     id="confirmationModal"
+     tabindex="-1"
+     aria-labelledby="confirmationModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+
+                <h5 class="modal-title"
+                    id="confirmationModalLabel"
+                    th:text="#{inventory.confirmStockInTitle}">
+                    Confirm Stock In
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body"
+                 th:text="#{inventory.confirmStockInMessage}">
+                Are you sure you want to add this stock?
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{button.cancel}">Cancel</span>
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-success"
+                        id="confirmSubmit">
+
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="#{inventory.confirmAddStock}">Confirm Add Stock</span>
+
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 
-<script>
+<script th:inline="javascript">
 
     const inventoryItem = document.getElementById('inventoryItem');
     const currentStock = document.getElementById('currentStock');
@@ -396,26 +479,67 @@
             return;
         }
 
-        currentStock.textContent =
-            selectedOption.dataset.stock || '0';
+        currentStock.textContent = selectedOption.dataset.stock || '0';
     });
 
-    document.getElementById('stockInForm')
-        ?.addEventListener('submit', function (event) {
+    document.addEventListener("DOMContentLoaded", function () {
 
-            const quantity =
-                document.getElementById('quantity');
+        const form = document.getElementById("stockInForm");
+        const openModalBtn = document.getElementById("openConfirmationModal");
+        const confirmBtn = document.getElementById("confirmSubmit");
+        const quantity = document.getElementById("quantity");
+        const modalElement = document.getElementById("confirmationModal");
 
-            if (!quantity.value ||
-                parseFloat(quantity.value) <= 0) {
+        const quantityErrorMessage =
+            /*[[#{inventory.quantityValidationError}]]*/
+            'Please enter a quantity greater than 0.';
 
-                event.preventDefault();
+        const confirmationModal = new bootstrap.Modal(modalElement);
 
-                quantity.focus();
+        openModalBtn.addEventListener("click", function () {
 
-                alert('Please enter a quantity greater than 0.');
+            quantity.setCustomValidity("");
+
+            if (!form.checkValidity()) {
+                form.classList.add("was-validated");
+                form.reportValidity();
+                return;
             }
+
+            if (!quantity.value || parseFloat(quantity.value) <= 0) {
+                quantity.setCustomValidity(quantityErrorMessage);
+                quantity.reportValidity();
+                return;
+            }
+
+            confirmationModal.show();
         });
+
+        quantity.addEventListener("input", function () {
+            quantity.setCustomValidity("");
+        });
+
+        confirmBtn.addEventListener("click", function () {
+
+            quantity.setCustomValidity("");
+
+            if (!form.checkValidity()) {
+                confirmationModal.hide();
+                form.classList.add("was-validated");
+                form.reportValidity();
+                return;
+            }
+
+            if (!quantity.value || parseFloat(quantity.value) <= 0) {
+                confirmationModal.hide();
+                quantity.setCustomValidity(quantityErrorMessage);
+                quantity.reportValidity();
+                return;
+            }
+
+            form.submit();
+        });
+    });
 
 </script>
 

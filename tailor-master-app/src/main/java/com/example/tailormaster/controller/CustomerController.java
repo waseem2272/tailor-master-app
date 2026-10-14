@@ -13,6 +13,7 @@ import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.customerledger.CustomerPaymentLedgerService;
 import com.example.tailormaster.service.product.ProductService;
+import com.example.tailormaster.util.MessageUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Validation;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Controller
 @RequestMapping("/customers")
-@SessionAttributes("registrationDTO")  // Store DTO in session
+@SessionAttributes("registrationDTO")
 public class CustomerController {
 
     private static final Logger logger = LogManager.getLogger(CustomerController.class);
@@ -45,6 +46,7 @@ public class CustomerController {
     private final Validation validation;
     private final CustomerPaymentLedgerService customerPaymentLedgerService;
     private final ProductMeasurementFieldService productMeasurementFieldService;
+    private final MessageUtil messageUtil;
 
     // List all customers
     @GetMapping
@@ -60,21 +62,22 @@ public class CustomerController {
 
     @GetMapping("/datatable")
     @ResponseBody
-    public Map<String, Object> getCustomersData(@RequestParam("draw") int draw,
-                                                @RequestParam("start") int start,
-                                                @RequestParam("length") int length,
-                                                @RequestParam(value = "search[value]", required = false) String searchValue,
-                                                @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
-                                                @RequestParam(value = "order[0][dir]", required = false) String sortDirection,
-                                                @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                                @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+    public Map<String, Object> getCustomersData(
+            @RequestParam("draw") int draw,
+            @RequestParam("start") int start,
+            @RequestParam("length") int length,
+            @RequestParam(value = "search[value]", required = false) String searchValue,
+            @RequestParam(value = "order[0][column]", required = false) Integer columnIndex,
+            @RequestParam(value = "order[0][dir]", required = false) String sortDirection,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         try {
             logger.info("Fetching customers data with search value: {}, sort direction: {}, start date: {}, end date: {}",
                     searchValue, sortDirection, startDate, endDate);
             return customerService.getCustomersData(draw, start, length, searchValue, columnIndex, sortDirection, startDate, endDate);
         } catch (Exception e) {
             logger.error("Error retrieving customers from the database", e);
-            throw new RuntimeException("Error retrieving customers from the database.", e);
+            throw new RuntimeException(messageUtil.get("customer.error.retrievingCustomers"), e);
         }
     }
 
@@ -88,7 +91,7 @@ public class CustomerController {
             return "customer/create-customer";
         } catch (Exception ex) {
             logger.error("Error while showing create customer form: {}", ex.getMessage(), ex);
-            model.addAttribute("errorMessage", "Something went wrong while loading the form.");
+            model.addAttribute("errorMessage", messageUtil.get("customer.error.loadingForm"));
             return "redirect:/customers";
         }
     }
@@ -98,9 +101,7 @@ public class CustomerController {
     @ResponseBody
     public List<Map<String, Object>> getFields(@PathVariable Long productId) {
         productService.getProductById(productId);
-
-        List<ProductMeasurementField> fields =
-                productMeasurementFieldService.getMeasurementFieldsByProductId(productId);
+        List<ProductMeasurementField> fields = productMeasurementFieldService.getMeasurementFieldsByProductId(productId);
 
         return fields.stream().map(field -> {
             Map<String, Object> result = new HashMap<>();
@@ -113,12 +114,8 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public String createCustomer(
-            @Valid @ModelAttribute("form") CustomerWizardDTO form,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
+    public String createCustomer(@Valid @ModelAttribute("form") CustomerWizardDTO form, BindingResult bindingResult,
+                                 Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("isEdit", false);
@@ -128,11 +125,11 @@ public class CustomerController {
         try {
             Customer savedCustomer = customerService.createCustomerWithMeasurements(form);
             logger.info("Customer created successfully: {}", savedCustomer);
-            redirectAttributes.addFlashAttribute("successMessage", "Customer created successfully!");
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("customer.success.created"));
             return "redirect:/customers";
         } catch (Exception ex) {
             logger.error("Error while creating customer: {}", ex.getMessage(), ex);
-            model.addAttribute("errorMessage", "Failed to create customer. Please try again.");
+            model.addAttribute("errorMessage", messageUtil.get("customer.error.creating"));
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("isEdit", false);
             return "customer/create-customer";
@@ -140,49 +137,36 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable String id,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
+    public String showEditForm(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         try {
             Long customerId = validation.validateAndFetchCustomer(id, redirectAttributes);
-
             if (customerId == null) {
                 logger.warn("Invalid customer ID provided for edit: {}", id);
                 return "redirect:/customers";
             }
 
             Customer customer = customerService.getCustomerById(customerId);
-
             if (customer == null) {
                 logger.warn("Customer not found with ID {} for editing.", customerId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.notFound"));
                 return "redirect:/customers";
             }
 
             CustomerWizardDTO form = customerService.mapToWizardDTO(customer);
-
             model.addAttribute("form", form);
             model.addAttribute("customerId", customerId);
-
             return "customer/edit-customer";
 
         } catch (Exception ex) {
             logger.error("Error while showing edit customer form: {}", ex.getMessage(), ex);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Something went wrong while loading edit form."
-            );
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.loadingEditForm"));
             return "redirect:/customers";
         }
     }
 
     @PostMapping("/{id}/edit")
-    public String updateCustomer(@PathVariable Long id,
-                                 @Valid @ModelAttribute("form") CustomerWizardDTO form,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes,
-                                 Model model) {
-
+    public String updateCustomer(@PathVariable Long id, @Valid @ModelAttribute("form") CustomerWizardDTO form,
+                                 BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("customerId", id);
             return "customer/edit-customer";
@@ -190,72 +174,43 @@ public class CustomerController {
 
         try {
             Customer updatedCustomer = customerService.updateCustomer(id, form);
-
             logger.info("Customer updated successfully: {}", updatedCustomer);
-
-            redirectAttributes.addFlashAttribute(
-                    "successMessage",
-                    "Customer updated successfully!"
-            );
-
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("customer.success.updated"));
             return "redirect:/customers";
-
         } catch (Exception ex) {
             logger.error("Error while updating customer: {}", ex.getMessage(), ex);
-
-            model.addAttribute(
-                    "errorMessage",
-                    "Failed to update customer. Please try again."
-            );
+            model.addAttribute("errorMessage", messageUtil.get("customer.error.updating"));
             model.addAttribute("customerId", id);
-
             return "customer/edit-customer";
         }
     }
 
     @GetMapping("/details/{id}")
-    public String showCustomerDetails(
-            @PathVariable String id,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
+    public String showCustomerDetails(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         logger.info("Displaying details for customer ID (encrypted): {}", id);
 
         try {
             Long customerId = validation.decryptAndValidateId(id);
-
             if (customerId == null) {
                 logger.warn("Invalid customer ID provided: {}", id);
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Invalid customer ID."
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.invalidId"));
                 return "redirect:/customers";
             }
 
             logger.debug("Decrypted customer ID: {}", customerId);
-
             Customer customer = customerService.getCustomerById(customerId);
 
             if (customer == null) {
                 logger.warn("Customer not found with ID: {}", customerId);
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Customer not found."
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.notFound"));
                 return "redirect:/customers";
             }
 
             List<CustomerMeasurement> measurements = customer.getMeasurements();
+            Map<Product, List<CustomerMeasurement>> productMeasurementsMap = measurements.stream()
+                    .collect(Collectors.groupingBy(CustomerMeasurement::getProduct));
 
-            Map<Product, List<CustomerMeasurement>> productMeasurementsMap =
-                    measurements.stream()
-                            .collect(Collectors.groupingBy(
-                                    CustomerMeasurement::getProduct
-                            ));
-
-            List<CustomerProductMeasurement> customerProductMeasurements =
-                    measurementService.getCustomerProductMeasurements(customerId);
+            List<CustomerProductMeasurement> customerProductMeasurements = measurementService.getCustomerProductMeasurements(customerId);
 
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("customer", customer);
@@ -267,13 +222,8 @@ public class CustomerController {
             logger.info("Fetched {} customer product measurements for customerId={}", customerProductMeasurements.size(), customerId);
 
         } catch (Exception e) {
-            logger.error("Error loading customer details for ID (encrypted) {}: {}",
-                    id, e.getMessage(), e);
-
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error loading customer details: " + e.getMessage()
-            );
-
+            logger.error("Error loading customer details for ID (encrypted) {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.loadingDetails"));
             return "redirect:/customers";
         }
 
@@ -282,71 +232,33 @@ public class CustomerController {
 
     @PostMapping("/{customerId}/measurements")
     @ResponseBody
-    public Map<String, Object> saveCustomerMeasurements(
-            @PathVariable Long customerId,
-            @RequestParam Long productId,
-            @RequestBody CustomerMeasurementRequest request) {
-
+    public Map<String, Object> saveCustomerMeasurements(@PathVariable Long customerId, @RequestParam Long productId,
+                                                        @RequestBody CustomerMeasurementRequest request) {
         logger.info("========== SAVE MEASUREMENT ENDPOINT HIT ==========");
         logger.info("customerId={}, productId={}, notes={}, measurements={}",
-                customerId,
-                productId,
-                request.getNotes(),
-                request.getMeasurements());
+                customerId, productId, request.getNotes(), request.getMeasurements());
 
         try {
-            measurementService.saveMeasurements(
-                    customerId,
-                    productId,
-                    request.getMeasurements(), request.getNotes());
-
-            logger.info("Measurements saved successfully for customerId={}, productId={}",
-                    customerId, productId);
-
-            return Map.of(
-                    "success", true,
-                    "message", "Measurement saved successfully!"
-            );
-
+            measurementService.saveMeasurements(customerId, productId, request.getMeasurements(), request.getNotes());
+            logger.info("Measurements saved successfully for customerId={}, productId={}", customerId, productId);
+            return Map.of("success", true, "message", messageUtil.get("customer.success.measurementSaved"));
         } catch (Exception ex) {
-            logger.error(
-                    "Error saving measurements for customerId={}, productId={}",
-                    customerId,
-                    productId,
-                    ex
-            );
-
-            return Map.of(
-                    "success", false,
-                    "message", "Failed to save measurement."
-            );
+            logger.error("Error saving measurements for customerId={}, productId={}", customerId, productId, ex);
+            return Map.of("success", false, "message", messageUtil.get("customer.error.savingMeasurement"));
         }
     }
 
     @GetMapping("/{customerId}/measurements")
     @ResponseBody
-    public List<Map<String, Object>> getCustomerMeasurements(
-            @PathVariable Long customerId,
-            @RequestParam Long productId) {
-
-        logger.info(
-                "Loading measurements for customerId={}, productId={}",
-                customerId,
-                productId
-        );
-
-        List<CustomerMeasurement> measurements =
-                measurementService.getMeasurement(customerId, productId);
+    public List<Map<String, Object>> getCustomerMeasurements(@PathVariable Long customerId, @RequestParam Long productId) {
+        logger.info("Loading measurements for customerId={}, productId={}", customerId, productId);
+        List<CustomerMeasurement> measurements = measurementService.getMeasurement(customerId, productId);
 
         return measurements.stream().map(measurement -> {
-
             Map<String, Object> result = new HashMap<>();
-
             result.put("fieldId", measurement.getField().getId());
             result.put("value", measurement.getValue());
-
             return result;
-
         }).collect(Collectors.toList());
     }
 
@@ -355,6 +267,7 @@ public class CustomerController {
     public Map<String, Object> getCustomerProductMeasurement(@PathVariable Long measurementId) {
         logger.info("========== GET CUSTOMER PRODUCT MEASUREMENT ENDPOINT HIT ==========");
         logger.info("Fetching customer product measurement, measurementId={}", measurementId);
+
         try {
             CustomerMeasurementResponse measurement = measurementService.getCustomerProductMeasurement(measurementId);
             logger.info("Customer product measurement fetched successfully, measurementId={}, customerId={}, productId={}",
@@ -362,89 +275,48 @@ public class CustomerController {
             return Map.of("success", true, "measurement", measurement);
         } catch (Exception ex) {
             logger.error("Error fetching customer product measurement, measurementId={}: {}", measurementId, ex.getMessage(), ex);
-            return Map.of("success", false, "message", "Failed to load measurement.");
+            return Map.of("success", false, "message", messageUtil.get("customer.error.fetchingMeasurement"));
         }
     }
 
     @PutMapping("/measurements/{measurementId}")
     @ResponseBody
-    public Map<String, Object> updateCustomerProductMeasurement(
-            @PathVariable Long measurementId,
-            @RequestBody CustomerMeasurementRequest request) {
-
+    public Map<String, Object> updateCustomerProductMeasurement(@PathVariable Long measurementId,
+                                                                @RequestBody CustomerMeasurementRequest request) {
         logger.info("========== UPDATE CUSTOMER PRODUCT MEASUREMENT ENDPOINT HIT ==========");
-        logger.info("measurementId={}, notes={}, measurements={}",
-                measurementId, request.getNotes(), request.getMeasurements());
+        logger.info("measurementId={}, notes={}, measurements={}", measurementId, request.getNotes(), request.getMeasurements());
 
         try {
-            measurementService.updateCustomerProductMeasurement(
-                    measurementId,
-                    request.getMeasurements(),
-                    request.getNotes()
-            );
-
-            logger.info("Customer product measurement updated successfully, measurementId={}",
-                    measurementId);
-
-            return Map.of(
-                    "success", true,
-                    "message", "Measurement updated successfully!"
-            );
-
+            measurementService.updateCustomerProductMeasurement(measurementId, request.getMeasurements(), request.getNotes());
+            logger.info("Customer product measurement updated successfully, measurementId={}", measurementId);
+            return Map.of("success", true, "message", messageUtil.get("customer.success.measurementUpdated"));
         } catch (Exception ex) {
-            logger.error(
-                    "Error updating customer product measurement, measurementId={}: {}",
-                    measurementId,
-                    ex.getMessage(),
-                    ex
-            );
-
-            return Map.of(
-                    "success", false,
-                    "message", "Failed to update measurement."
-            );
+            logger.error("Error updating customer product measurement, measurementId={}: {}", measurementId, ex.getMessage(), ex);
+            return Map.of("success", false, "message", messageUtil.get("customer.error.updatingMeasurement"));
         }
     }
 
     @GetMapping("/measurements/{measurementId}/print")
-    public String printCustomerMeasurement(@PathVariable Long measurementId,
-                                           Model model,
-                                           RedirectAttributes redirectAttributes) {
-
+    public String printCustomerMeasurement(@PathVariable Long measurementId, Model model, RedirectAttributes redirectAttributes) {
         logger.info("========== CUSTOMER MEASUREMENT PRINT ENDPOINT HIT ==========");
         logger.info("Printing customer measurement, measurementId={}", measurementId);
 
         try {
-            CustomerProductMeasurement measurement =
-                    measurementService.getCustomerProductMeasurementEntity(measurementId);
-
-            List<CustomerMeasurement> customerMeasurements =
-                    measurementService.getCustomerMeasurementsByParentId(measurementId);
+            CustomerProductMeasurement measurement = measurementService.getCustomerProductMeasurementEntity(measurementId);
+            List<CustomerMeasurement> customerMeasurements = measurementService.getCustomerMeasurementsByParentId(measurementId);
 
             model.addAttribute("measurement", measurement);
             model.addAttribute("customerMeasurements", customerMeasurements);
             model.addAttribute("backToOrder", false);
-            model.addAttribute("backCustomerId",
-                    new ThymeleafUtil().encryptId(measurement.getCustomer().getId()));
+            model.addAttribute("backCustomerId", new ThymeleafUtil().encryptId(measurement.getCustomer().getId()));
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-            logger.info("Customer measurement print data loaded successfully, measurementId={}",
-                    measurementId);
 
+            logger.info("Customer measurement print data loaded successfully, measurementId={}", measurementId);
             return "customer/customer-measurement";
 
         } catch (Exception ex) {
-            logger.error(
-                    "Error loading customer measurement for print, measurementId={}: {}",
-                    measurementId,
-                    ex.getMessage(),
-                    ex
-            );
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Failed to load customer measurement."
-            );
-
+            logger.error("Error loading customer measurement for print, measurementId={}: {}", measurementId, ex.getMessage(), ex);
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.error.loadingMeasurements"));
             return "redirect:/customers";
         }
     }

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Edit Batch Price</title>
+    <title th:text="#{batches.editTitle}">Edit Batch Price</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -24,13 +24,13 @@
 
                 <h2 class="page-title d-flex align-items-center mb-4">
                     <i class="bi bi-pencil-square me-2"></i>
-                    Edit Batch Price
+                    <span th:text="#{batches.editTitle}">Edit Batch Price</span>
                 </h2>
 
                 <a th:href="@{/inventory/batches/{id}(id=${inventoryItem.id})}"
                    class="btn btn-success shadow rounded-pill px-4">
                     <i class="bi bi-arrow-left me-1"></i>
-                    Back to Batches
+                    <span th:text="#{batches.backToBatches}">Back to Batches</span>
                 </a>
 
             </div>
@@ -57,8 +57,9 @@
             <div class="card border-success border-bottom border-3 shadow-sm mt-4">
 
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-layers me-2"></i>
-                        Batch Information
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-layers me-2"></i>
+                        <span th:text="#{batches.information}">Batch Information</span>
                     </div>
                 </div>
 
@@ -67,7 +68,8 @@
                     <div class="row g-3">
 
                         <div class="col-md-4">
-                            <label class="form-label text-muted mb-1">
+                            <label class="form-label text-muted mb-1"
+                                   th:text="#{batches.inventoryItem}">
                                 Inventory Item
                             </label>
 
@@ -78,7 +80,8 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label text-muted mb-1">
+                            <label class="form-label text-muted mb-1"
+                                   th:text="#{batches.batchCode}">
                                 Batch / Roll ID
                             </label>
 
@@ -89,7 +92,8 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label text-muted mb-1">
+                            <label class="form-label text-muted mb-1"
+                                   th:text="#{batches.remainingQuantity}">
                                 Remaining Quantity
                             </label>
 
@@ -119,24 +123,26 @@
             <div class="card border-success border-bottom border-3 shadow-sm mt-4">
 
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
-                    <div class="d-flex align-items-center"><i class="bi bi-currency-exchange me-2"></i>
-                        Update Price
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-currency-exchange me-2"></i>
+                        <span th:text="#{batches.updatePrice}">Update Price</span>
                     </div>
                 </div>
 
                 <div class="card-body">
 
                     <form th:action="@{/inventory/batches/{batchId}/edit(batchId=${batch.id})}"
-                          method="post">
+                          method="post"
+                          id="batchEditForm">
 
                         <div class="row g-3">
 
                             <!-- Purchase Price -->
                             <div class="col-md-6">
 
-                                <label for="purchasePrice"
-                                       class="form-label fw-semibold">
-                                    Purchase Price <span class="text-danger">*</span>
+                                <label for="purchasePrice" class="form-label fw-semibold">
+                                    <span th:text="#{batches.purchasePrice}">Purchase Price</span>
+                                    <span class="text-danger">*</span>
                                 </label>
 
                                 <input type="number"
@@ -148,7 +154,8 @@
                                        th:value="${batch.purchasePrice}"
                                        required>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{batches.purchasePriceHelp}">
                                     Price per unit for the remaining stock.
                                 </div>
 
@@ -157,9 +164,9 @@
                             <!-- Sale Price -->
                             <div class="col-md-6">
 
-                                <label for="salePrice"
-                                       class="form-label fw-semibold">
-                                    Sale Price <span class="text-danger">*</span>
+                                <label for="salePrice" class="form-label fw-semibold">
+                                    <span th:text="#{batches.salePrice}">Sale Price</span>
+                                    <span class="text-danger">*</span>
                                 </label>
 
                                 <input type="number"
@@ -171,7 +178,8 @@
                                        th:value="${batch.salePrice}"
                                        required>
 
-                                <div class="form-text">
+                                <div class="form-text"
+                                     th:text="#{batches.salePriceHelp}">
                                     Selling price per unit for the remaining stock.
                                 </div>
 
@@ -179,24 +187,74 @@
 
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4">
+                        <div class="d-flex justify-content-center gap-2 mt-4">
 
                             <a th:href="@{/inventory/batches/{id}(id=${inventoryItem.id})}"
                                class="btn btn-secondary rounded-pill px-4">
                                 <i class="bi bi-x-circle me-1"></i>
-                                Cancel
+                                <span th:text="#{inventory.cancel}">Cancel</span>
                             </a>
 
-                            <button type="submit"
-                                    class="btn btn-success rounded-pill px-4">
+                            <button type="button"
+                                    class="btn btn-success rounded-pill px-4"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmBatchModal">
                                 <i class="bi bi-check-circle me-1"></i>
-                                Update Price
+                                <span th:text="#{batches.updatePrice}">Update Price</span>
                             </button>
 
                         </div>
 
                     </form>
 
+                </div>
+            </div>
+
+            <!-- Confirm Batch Price Update Modal -->
+            <div class="modal fade" id="confirmBatchModal" tabindex="-1"
+                 aria-labelledby="confirmBatchModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4">
+
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title" id="confirmBatchModalLabel">
+                                <i class="bi bi-question-circle me-2"></i>
+                                <span th:text="#{brands.confirmUpdateTitle}">
+                        Confirm Update
+                    </span>
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close btn-close-white"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                <span th:text="#{batches.confirmUpdateMessage}">
+                    Are you sure you want to update this batch price?
+                </span>
+                        </div>
+
+                        <div class="modal-footer justify-content-center">
+                            <button type="button"
+                                    class="btn btn-secondary rounded-pill px-4"
+                                    data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>
+                                <span th:text="#{inventory.cancel}">Cancel</span>
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-success rounded-pill px-4"
+                                    id="confirmBatchSubmit">
+                                <i class="bi bi-check-circle me-1"></i>
+                                <span th:text="#{brands.confirmUpdate}">
+                        Confirm Update
+                    </span>
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
@@ -216,6 +274,20 @@
 
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+
+<script>
+    document.getElementById('confirmBatchSubmit').addEventListener('click', function () {
+        const form = document.getElementById('batchEditForm');
+
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        this.disabled = true;
+        form.submit();
+    });
+</script>
 
 </body>
 </html>

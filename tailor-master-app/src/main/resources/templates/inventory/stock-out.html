@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Stock Out | Tailor Master</title>
+    <title th:text="#{inventory.stockOut} + ' | Tailor Master'">Stock Out | Tailor Master</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
@@ -16,10 +15,7 @@
 
 <body>
 
-<!-- Sidebar -->
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-
-<!-- Navbar -->
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div class="content">
@@ -31,13 +27,13 @@
 
                 <h2 class="page-title mb-0">
                     <i class="bi bi-box-arrow-up text-success me-2"></i>
-                    Stock Out
+                    <span th:text="#{inventory.stockOut}">Stock Out</span>
                 </h2>
 
                 <a th:href="@{/inventory}"
                    class="btn btn-success shadow rounded-pill px-4">
                     <i class="bi bi-arrow-left me-1"></i>
-                    Back to Inventory
+                    <span th:text="#{inventory.backToInventory}">Back to Inventory</span>
                 </a>
 
             </div>
@@ -48,14 +44,11 @@
                  role="alert">
 
                 <i class="bi bi-check-circle me-2"></i>
-
                 <span th:text="${successMessage}"></span>
 
                 <button type="button"
                         class="btn-close"
-                        data-bs-dismiss="alert">
-                </button>
-
+                        data-bs-dismiss="alert"></button>
             </div>
 
             <!-- Error Message -->
@@ -64,43 +57,51 @@
                  role="alert">
 
                 <i class="bi bi-exclamation-triangle me-2"></i>
-
                 <span th:text="${errorMessage}"></span>
 
                 <button type="button"
                         class="btn-close"
-                        data-bs-dismiss="alert">
-                </button>
-
+                        data-bs-dismiss="alert"></button>
             </div>
 
             <!-- Stock Out Card -->
             <div class="card border-success border-bottom border-3 shadow-sm mb-4 rounded-4">
+
                 <div class="card-header bg-success text-white fw-bold d-flex align-items-center justify-content-between rounded-top-4">
                     <div class="d-flex align-items-center">
-
                         <i class="bi bi-box-arrow-up me-2"></i>
-                        Remove Stock
+                        <span th:text="#{inventory.removeStock}">Remove Stock</span>
                     </div>
                 </div>
 
                 <div class="card-body">
 
+                    <div class="alert alert-success d-flex align-items-start" role="alert">
+                        <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <strong th:text="#{inventory.stockOut}">Stock Out</strong>
+                            <div class="small mt-1"
+                                 th:text="#{inventory.stockOut.info}">
+                                Select an inventory item and enter the quantity to remove from current stock.
+                                The stock movement will be recorded in inventory history.
+                            </div>
+                        </div>
+                    </div>
+
                     <form th:action="@{/inventory/stock-out}"
                           method="post"
-                          id="stockOutForm">
+                          id="stockOutForm"
+                          class="needs-validation"
+                          novalidate>
 
                         <div class="row g-3">
 
                             <!-- Inventory Item -->
                             <div class="col-md-6">
 
-                                <label for="inventoryItemId"
-                                       class="form-label fw-semibold">
-
-                                    Inventory Item
+                                <label for="inventoryItemId" class="form-label fw-semibold">
+                                    <span th:text="#{inventory.inventoryItem}">Inventory Item</span>
                                     <span class="text-danger">*</span>
-
                                 </label>
 
                                 <select class="form-select rounded-pill"
@@ -108,7 +109,8 @@
                                         id="inventoryItemId"
                                         required>
 
-                                    <option value="">
+                                    <option value=""
+                                            th:text="#{inventory.selectItem}">
                                         Select Item
                                     </option>
 
@@ -125,30 +127,30 @@
                                             th:data-unit="${item.unit}"
                                             th:data-sale-price="${item.salePrice}"
                                             th:text="${item.name
-                    + ' | '
-                    + (item.brand != null ? item.brand.name + ' | ' : '')
-                    + (item.category != null ? item.category.name + ' | ' : '')
-                    + (item.color != null ? item.color.name + ' | ' : '')
-                    + (item.design != null ? item.design.name + ' | ' : '')
-                    + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
-                    + (item.quantity.subtract(
-                        reservedStockMap[item.id] != null
-                            ? reservedStockMap[item.id]
-                            : T(java.math.BigDecimal).ZERO
-                    ).max(T(java.math.BigDecimal).ZERO))
-                    .stripTrailingZeros().toPlainString()
-                    + ' ' + item.unit.name()
-                    + ' Available'}">
+                                                + ' | '
+                                                + (item.brand != null ? item.brand.name + ' | ' : '')
+                                                + (item.category != null ? item.category.name + ' | ' : '')
+                                                + (item.color != null ? item.color.name + ' | ' : '')
+                                                + (item.design != null ? item.design.name + ' | ' : '')
+                                                + (item.size != null and !#strings.isEmpty(item.size) ? item.size + ' | ' : '')
+                                                + (item.quantity.subtract(
+                                                    reservedStockMap[item.id] != null
+                                                        ? reservedStockMap[item.id]
+                                                        : T(java.math.BigDecimal).ZERO
+                                                ).max(T(java.math.BigDecimal).ZERO))
+                                                .stripTrailingZeros().toPlainString()
+                                                + ' ' + item.unit.name()
+                                                + ' ' + #messages.msg('inventory.available')}">
                                     </option>
 
                                 </select>
-
                             </div>
 
                             <!-- Current Stock -->
                             <div class="col-md-6">
 
-                                <label class="form-label fw-semibold">
+                                <label class="form-label fw-semibold"
+                                       th:text="#{inventory.currentStock}">
                                     Current Stock
                                 </label>
 
@@ -157,23 +159,19 @@
 
                                     <i class="bi bi-box-seam text-success me-2"></i>
 
-                                    <span class="text-muted">
+                                    <span class="text-muted"
+                                          th:text="#{inventory.stockOut.selectItemHelp}">
                                         Select an item to view current stock
                                     </span>
-
                                 </div>
-
                             </div>
 
                             <!-- Quantity -->
                             <div class="col-md-6">
 
-                                <label for="quantity"
-                                       class="form-label fw-semibold">
-
-                                    Quantity
+                                <label for="quantity" class="form-label fw-semibold">
+                                    <span th:text="#{inventory.quantity}">Quantity</span>
                                     <span class="text-danger">*</span>
-
                                 </label>
 
                                 <input type="number"
@@ -183,127 +181,185 @@
                                        min="0.01"
                                        step="0.01"
                                        placeholder="Enter quantity"
+                                       th:placeholder="#{inventory.enterQuantity}"
                                        required>
 
-                                <div class="invalid-feedback">
-                                    Quantity must be greater than zero and
-                                    cannot exceed current stock.
+                                <div class="invalid-feedback"
+                                     th:text="#{inventory.stockOut.quantityError}">
+                                    Quantity must be greater than zero and cannot exceed current stock.
                                 </div>
-
                             </div>
 
                             <!-- Reason -->
                             <div class="col-md-6">
 
                                 <label for="reason"
-                                       class="form-label fw-semibold">
-
+                                       class="form-label fw-semibold"
+                                       th:text="#{inventory.reason}">
                                     Reason
-
                                 </label>
 
                                 <select class="form-select rounded-pill"
                                         name="reason"
                                         id="reason">
 
-                                    <option value="">
+                                    <option value=""
+                                            th:text="#{inventory.selectReason}">
                                         Select Reason
                                     </option>
 
-                                    <option value="CUSTOMER_ORDER">
+                                    <option value="CUSTOMER_ORDER"
+                                            th:text="#{inventory.reason.customerOrder}">
                                         Customer Order
                                     </option>
 
-                                    <option value="DAMAGED">
+                                    <option value="DAMAGED"
+                                            th:text="#{inventory.reason.damaged}">
                                         Damaged
                                     </option>
 
-                                    <option value="LOST">
+                                    <option value="LOST"
+                                            th:text="#{inventory.reason.lost}">
                                         Lost
                                     </option>
 
-                                    <option value="PERSONAL_USE">
+                                    <option value="PERSONAL_USE"
+                                            th:text="#{inventory.reason.personalUse}">
                                         Personal Use
                                     </option>
 
-                                    <option value="OTHER">
+                                    <option value="OTHER"
+                                            th:text="#{inventory.type.other}">
                                         Other
                                     </option>
 
                                 </select>
-
                             </div>
 
                             <!-- Notes -->
                             <div class="col-12">
 
                                 <label for="notes"
-                                       class="form-label fw-semibold">
-
+                                       class="form-label fw-semibold"
+                                       th:text="#{inventory.notes}">
                                     Notes
-
                                 </label>
 
                                 <textarea class="form-control rounded-3"
                                           name="notes"
                                           id="notes"
                                           rows="3"
-                                          placeholder="Enter any additional notes"></textarea>
-
+                                          placeholder="Enter any additional notes"
+                                          th:placeholder="#{inventory.notesPlaceholder}"></textarea>
                             </div>
 
                             <!-- Buttons -->
-                            <div class="col-12">
+                            <div class="text-center mt-4">
+                                <a th:href="@{/inventory}"
+                                   class="btn btn-secondary shadow rounded-pill px-4">
+                                    <i class="bi bi-x-lg me-1"></i>
+                                    <span th:text="#{button.cancel}">Cancel</span>
+                                </a>
 
-                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                <button type="button"
+                                        class="btn btn-success shadow rounded-pill px-4"
+                                        id="openConfirmationModal">
 
-                                    <a th:href="@{/inventory}"
-                                       class="btn btn-secondary shadow rounded-pill px-4">
-
-                                        <i class="bi bi-x-lg me-1"></i>
-                                        Cancel
-
-                                    </a>
-
-                                    <button type="submit"
-                                            class="btn btn-success shadow rounded-pill px-4">
-
-                                        <i class="bi bi-box-arrow-up me-1"></i>
-                                        Remove Stock
-
-                                    </button>
-
-                                </div>
-
+                                    <i class="bi bi-box-arrow-up me-1"></i>
+                                    <span th:text="#{inventory.removeStock}">Remove Stock</span>
+                                </button>
                             </div>
 
                         </div>
-
                     </form>
-
                 </div>
             </div>
 
         </div>
     </div>
 </div>
+
+<!-- Stock Out Confirmation Modal -->
+<div class="modal fade"
+     id="confirmationModal"
+     tabindex="-1"
+     aria-labelledby="confirmationModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+
+                <h5 class="modal-title"
+                    id="confirmationModalLabel"
+                    th:text="#{inventory.confirmStockOutTitle}">
+                    Confirm Stock Out
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body"
+                 th:text="#{inventory.confirmStockOutMessage}">
+                Are you sure you want to remove this quantity from stock?
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i>
+                    <span th:text="#{button.cancel}">Cancel</span>
+                </button>
+
+                <button type="button"
+                        class="btn btn-success"
+                        id="confirmSubmit">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="#{inventory.confirmRemoveStock}">Confirm Remove Stock</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
 
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
+
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
 </script>
+
 <script th:src="@{/js/dashboard-notifications.js}"></script>
 <script th:src="@{/js/common.js}"></script>
 
-<script>
+<script th:inline="javascript">
 
     const itemSelect = document.getElementById('inventoryItemId');
     const quantityInput = document.getElementById('quantity');
     const currentStock = document.getElementById('currentStock');
     const form = document.getElementById('stockOutForm');
+
+    const selectItemMessage =
+        /*[[#{inventory.stockOut.selectItemHelp}]]*/
+        'Select an item to view current stock';
+
+    const quantityExceedsStockMessage =
+        /*[[#{inventory.stockOut.quantityExceedsStock}]]*/
+        'Quantity cannot exceed current stock.';
+
+    const quantityErrorMessage =
+        /*[[#{inventory.stockOut.quantityError}]]*/
+        'Quantity must be greater than zero and cannot exceed current stock.';
 
     itemSelect?.addEventListener('change', function () {
 
@@ -311,75 +367,110 @@
 
         if (!this.value) {
 
-            currentStock.innerHTML =
-                '<i class="bi bi-box-seam text-success me-2"></i>' +
-                '<span class="text-muted">Select an item to view current stock</span>';
+            currentStock.replaceChildren();
+
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-box-seam text-success me-2';
+
+            const message = document.createElement('span');
+            message.className = 'text-muted';
+            message.textContent = selectItemMessage;
+
+            currentStock.append(icon, message);
 
             quantityInput.max = '';
             quantityInput.value = '';
+            quantityInput.setCustomValidity('');
 
             return;
         }
 
-        const stock =
-            parseFloat(selected.dataset.stock || '0');
+        const stock = parseFloat(selected.dataset.stock || '0');
+        const unit = selected.dataset.unit || '';
 
-        const unit =
-            selected.dataset.unit || '';
+        currentStock.replaceChildren();
 
-        currentStock.innerHTML =
-            '<i class="bi bi-box-seam text-success me-2"></i>' +
-            '<strong class="text-success">' +
-            stock + ' ' + unit +
-            '</strong>';
+        const icon = document.createElement('i');
+        icon.className = 'bi bi-box-seam text-success me-2';
+
+        const stockText = document.createElement('strong');
+        stockText.className = 'text-success';
+        stockText.textContent = stock + ' ' + unit;
+
+        currentStock.append(icon, stockText);
 
         quantityInput.max = stock;
         quantityInput.value = '';
-
         quantityInput.setCustomValidity('');
-
     });
 
     quantityInput?.addEventListener('input', function () {
 
-        const max =
-            parseFloat(this.max || '0');
+        const max = parseFloat(this.max || '0');
+        const value = parseFloat(this.value || '0');
 
-        const value =
-            parseFloat(this.value || '0');
-
-        if (value > max) {
-
-            this.setCustomValidity(
-                'Quantity cannot exceed current stock.'
-            );
-
+        if (this.value && value > max) {
+            this.setCustomValidity(quantityExceedsStockMessage);
         } else {
-
             this.setCustomValidity('');
-
         }
-
     });
 
-    form?.addEventListener('submit', function (event) {
+    document.addEventListener('DOMContentLoaded', function () {
 
-        const max =
-            parseFloat(quantityInput.max || '0');
+        const openModalBtn = document.getElementById('openConfirmationModal');
+        const confirmBtn = document.getElementById('confirmSubmit');
+        const modalElement = document.getElementById('confirmationModal');
 
-        const value =
-            parseFloat(quantityInput.value || '0');
+        const confirmationModal = new bootstrap.Modal(modalElement);
 
-        if (!itemSelect.value ||
-            value <= 0 ||
-            value > max) {
+        function validateStockOutForm() {
 
-            event.preventDefault();
+            quantityInput.setCustomValidity('');
 
-            form.classList.add('was-validated');
+            if (!itemSelect.value) {
+                itemSelect.setCustomValidity(selectItemMessage);
+            } else {
+                itemSelect.setCustomValidity('');
+            }
 
+            const quantity = parseFloat(quantityInput.value || '0');
+            const max = parseFloat(quantityInput.max || '0');
+
+            if (quantity <= 0) {
+                quantityInput.setCustomValidity(quantityErrorMessage);
+            } else if (quantity > max) {
+                quantityInput.setCustomValidity(quantityExceedsStockMessage);
+            }
+
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                form.reportValidity();
+                return false;
+            }
+
+            return true;
         }
 
+        itemSelect.addEventListener('change', function () {
+            this.setCustomValidity('');
+        });
+
+        openModalBtn.addEventListener('click', function () {
+
+            if (validateStockOutForm()) {
+                confirmationModal.show();
+            }
+        });
+
+        confirmBtn.addEventListener('click', function () {
+
+            if (validateStockOutForm()) {
+                form.submit();
+            } else {
+                confirmationModal.hide();
+            }
+        });
     });
 
 </script>
