@@ -4,6 +4,7 @@ import com.example.tailormaster.entity.InventoryDesign;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.InventoryDesignService;
 import com.example.tailormaster.util.AuthenticatedUserService;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class InventoryDesignController {
 
     private final InventoryDesignService inventoryDesignService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final MessageUtil messageUtil;
 
     @GetMapping
     public String listDesigns(Model model) {
@@ -37,73 +39,98 @@ public class InventoryDesignController {
     }
 
     @PostMapping("/save")
-    public String saveDesign(@ModelAttribute("design") InventoryDesign design,
-                             RedirectAttributes redirectAttributes) {
+    public String saveDesign(
+            @ModelAttribute("design") InventoryDesign design,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryDesignService.save(user, design);
-            redirectAttributes.addFlashAttribute("successMessage", "Design saved successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.design.success.save")
+            );
         } catch (IllegalArgumentException e) {
             log.warn("Unable to save inventory design: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while saving inventory design", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to save design.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.design.error.save")
+            );
         }
         return "redirect:/inventory/designs";
     }
 
     @GetMapping("/edit/{id}")
-    public String editDesign(@PathVariable Long id,
-                             Model model,
-                             RedirectAttributes redirectAttributes) {
+    public String editDesign(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             InventoryDesign design = inventoryDesignService.findById(user, id)
-                    .orElseThrow(() -> new IllegalArgumentException("Design not found."));
-
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            messageUtil.get("inventory.design.error.notFound")
+                    ));
             model.addAttribute("design", design);
+            model.addAttribute("activePage", "inventory/designs");
             return "inventory/design-form";
-
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/inventory/designs";
         } catch (Exception e) {
             log.error("Error while loading inventory design. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to load design.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.design.error.load")
+            );
             return "redirect:/inventory/designs";
         }
     }
 
     @PostMapping("/deactivate/{id}")
-    public String deactivateDesign(@PathVariable Long id,
-                                   RedirectAttributes redirectAttributes) {
+    public String deactivateDesign(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryDesignService.deactivate(user, id);
-            redirectAttributes.addFlashAttribute("successMessage", "Design deactivated successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.design.success.deactivate")
+            );
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while deactivating inventory design. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to deactivate design.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.design.error.deactivate")
+            );
         }
         return "redirect:/inventory/designs";
     }
 
     @PostMapping("/activate/{id}")
-    public String activateDesign(@PathVariable Long id,
-                                 RedirectAttributes redirectAttributes) {
+    public String activateDesign(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryDesignService.activate(user, id);
-            redirectAttributes.addFlashAttribute("successMessage", "Design activated successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.design.success.activate")
+            );
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while activating inventory design. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to activate design.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.design.error.activate")
+            );
         }
         return "redirect:/inventory/designs";
     }

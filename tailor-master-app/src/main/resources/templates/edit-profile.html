@@ -8,30 +8,38 @@
     <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
     <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
 </head>
+<script th:src="@{/js/language-direction.js}"></script>
+<script th:src="@{/js/theme.js}"></script>
 <body>
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="content">
     <div class="main-content">
         <div class="container-fluid">
-
             <h2 class="page-title d-flex align-items-center mb-4">
                 <i class="bi bi-person-lines-fill me-2"></i>
                 <span th:text="#{user.profile.edit}">Edit Profile</span>
             </h2>
-
+            <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center gap-2 mb-4" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <span class="fw-semibold"><span class="text-danger" th:text="#{user.create.requiredFields}"></span></span>
+            </div>
             <div class="card border-success border-bottom border-3 shadow-sm rounded-4 animate__animated animate__fadeIn mb-4">
                 <div class="card-header bg-success text-white fw-bold rounded-top-4">
                     <i class="bi bi-pencil-square me-2"></i>
                     <span th:text="#{user.profile.edit}">Edit Profile</span>
                 </div>
-                <div class="card-body">
-                    <p class="text-danger fw-bold mb-4">
-                        <span th:text="#{user.create.requiredFields}">Fields marked with * are required.</span>
-                    </p>
 
-                    <form id="profileForm" th:action="@{/users/profile/update}" method="post"
-                          th:object="${user}" enctype="multipart/form-data">
+                <div class="card-body">
+                    <form id="profileForm"
+                          th:action="@{/users/profile/update}"
+                          method="post"
+                          th:object="${user}"
+                          enctype="multipart/form-data"
+                          class="needs-validation"
+                          novalidate>
+
                         <input type="hidden" th:field="*{id}"/>
 
                         <div class="row g-3">
@@ -40,12 +48,21 @@
                                     <span th:text="#{user.create.fullName}">Full Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control shadow-sm" id="fullName"
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="fullName"
                                        th:field="*{fullName}"
                                        th:placeholder="#{user.create.fullNamePlaceholder}"
-                                       placeholder="Enter full name">
-                                <div th:if="${#fields.hasErrors('fullName')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('fullName')}" th:text="${error}"></div>
+                                       minlength="3"
+                                       maxlength="100"
+                                       required>
+                                <div class="invalid-feedback" th:text="#{validation.fullName}">
+                                    Full name must be at least 3 characters.
+                                </div>
+                                <div th:if="${#fields.hasErrors('fullName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('fullName')}"
+                                     th:text="${error}"></div>
                             </div>
 
                             <div class="col-md-6">
@@ -53,45 +70,62 @@
                                     <span th:text="#{user.create.phone1}">Phone Number 1</span>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control shadow-sm" id="phone1"
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="phone1"
                                        th:field="*{phone1}"
                                        th:placeholder="#{user.create.phone1Placeholder}"
-                                       placeholder="Enter phone number">
-                                <div th:if="${#fields.hasErrors('phone1')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('phone1')}" th:text="${error}"></div>
+                                       pattern="03[0-9]{9}"
+                                       maxlength="11"
+                                       required>
+                                <div class="invalid-feedback" th:text="#{validation.phone}">
+                                    Phone number must start with 03 and contain exactly 11 digits.
+                                </div>
+                                <div th:if="${#fields.hasErrors('phone1')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('phone1')}"
+                                     th:text="${error}"></div>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="phone2" class="form-label"
                                        th:text="#{user.create.phone2}">Phone Number 2</label>
-                                <input type="text" class="form-control shadow-sm" id="phone2"
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="phone2"
                                        th:field="*{phone2}"
                                        th:placeholder="#{user.create.phone2Placeholder}"
-                                       placeholder="Enter alternate phone number">
-                                <div th:if="${#fields.hasErrors('phone2')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('phone2')}" th:text="${error}"></div>
+                                       pattern="03[0-9]{9}"
+                                       maxlength="11">
+                                <div class="invalid-feedback" th:text="#{validation.phone}">
+                                    Phone number must start with 03 and contain exactly 11 digits.
+                                </div>
+                                <div th:if="${#fields.hasErrors('phone2')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('phone2')}"
+                                     th:text="${error}"></div>
                             </div>
-
-                            <!--
-                            <div class="col-md-6">
-                                <label for="dateOfBirth" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control shadow-sm" id="dateOfBirth"
-                                       th:value="${user?.dateOfBirth != null ? #temporals.format(user.dateOfBirth, 'yyyy-MM-dd') : ''}"
-                                       th:field="*{dateOfBirth}">
-                            </div>
-                            -->
 
                             <div class="col-md-6">
                                 <label for="shopName" class="form-label">
                                     <span th:text="#{user.create.shopName}">Shop Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control shadow-sm" id="shopName"
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="shopName"
                                        th:field="*{shopName}"
                                        th:placeholder="#{user.create.shopNamePlaceholder}"
-                                       placeholder="Enter shop name">
-                                <div th:if="${#fields.hasErrors('shopName')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('shopName')}" th:text="${error}"></div>
+                                       minlength="2"
+                                       maxlength="100"
+                                       required>
+                                <div class="invalid-feedback" th:text="#{validation.shopName}">
+                                    Shop name must be at least 2 characters.
+                                </div>
+                                <div th:if="${#fields.hasErrors('shopName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('shopName')}"
+                                     th:text="${error}"></div>
                             </div>
 
                             <div class="col-md-6">
@@ -99,12 +133,21 @@
                                     <span th:text="#{user.create.proprietorName}">Proprietor Name</span>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control shadow-sm" id="proprietorName"
+                                <input type="text"
+                                       class="form-control shadow-sm"
+                                       id="proprietorName"
                                        th:field="*{proprietorName}"
                                        th:placeholder="#{user.create.proprietorNamePlaceholder}"
-                                       placeholder="Enter proprietor name">
-                                <div th:if="${#fields.hasErrors('proprietorName')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('proprietorName')}" th:text="${error}"></div>
+                                       minlength="3"
+                                       maxlength="100"
+                                       required>
+                                <div class="invalid-feedback" th:text="#{validation.proprietorName}">
+                                    Proprietor name must be at least 3 characters.
+                                </div>
+                                <div th:if="${#fields.hasErrors('proprietorName')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('proprietorName')}"
+                                     th:text="${error}"></div>
                             </div>
 
                             <div class="col-md-12">
@@ -112,25 +155,38 @@
                                     <span th:text="#{user.create.shopAddress}">Shop Address</span>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <textarea class="form-control shadow-sm" id="shopAddress"
-                                          th:field="*{shopAddress}" rows="3"
+                                <textarea class="form-control shadow-sm"
+                                          id="shopAddress"
+                                          th:field="*{shopAddress}"
+                                          rows="3"
+                                          minlength="5"
+                                          maxlength="500"
                                           th:placeholder="#{user.create.shopAddressPlaceholder}"
-                                          placeholder="Enter shop address"></textarea>
-                                <div th:if="${#fields.hasErrors('shopAddress')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('shopAddress')}" th:text="${error}"></div>
+                                          required></textarea>
+                                <div class="invalid-feedback" th:text="#{validation.shopAddress}">
+                                    Shop address must be at least 5 characters.
+                                </div>
+                                <div th:if="${#fields.hasErrors('shopAddress')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('shopAddress')}"
+                                     th:text="${error}"></div>
                             </div>
 
                             <div class="col-md-6 text-center">
-                                <label class="form-label d-block" th:text="#{user.create.shopLogo}">
+                                <label class="form-label d-block"
+                                       th:text="#{user.create.shopLogo}">
                                     Current Shop Logo
                                 </label>
+
                                 <div th:if="${user.logo != null}">
                                     <img th:src="@{'/users/logo/' + ${user.username}}"
                                          th:alt="#{user.profile.shopLogo}"
                                          class="img-thumbnail"
                                          style="max-height: 120px; max-width: 120px;">
                                 </div>
-                                <div th:if="${user.logo == null}" class="text-muted small"
+
+                                <div th:if="${user.logo == null}"
+                                     class="text-muted small"
                                      th:text="#{user.profile.noLogo}">
                                     No logo uploaded yet
                                 </div>
@@ -141,19 +197,32 @@
                                     <span th:text="#{user.create.shopLogo}">Change Logo</span>
                                     <span th:text="#{user.create.logoFormats}">(PNG, JPG, JPEG)</span>
                                 </label>
-                                <input type="file" class="form-control shadow-sm" id="logo"
-                                       name="logoFile" accept="image/png, image/jpeg, image/jpg">
-                                <div th:if="${#fields.hasErrors('logo')}" class="text-danger small mt-1"
-                                     th:each="error : ${#fields.errors('logo')}" th:text="${error}"></div>
+                                <input type="file"
+                                       class="form-control shadow-sm"
+                                       id="logo"
+                                       name="logoFile"
+                                       accept="image/png,image/jpeg">
+                                <div class="invalid-feedback"
+                                     id="logoError"
+                                     th:text="#{validation.logo}">
+                                    Only PNG, JPG, or JPEG files are allowed.
+                                </div>
+                                <div th:if="${#fields.hasErrors('logo')}"
+                                     class="text-danger small mt-1"
+                                     th:each="error : ${#fields.errors('logo')}"
+                                     th:text="${error}"></div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-center mt-4 gap-2">
-                            <button type="submit" class="btn btn-success shadow rounded-pill px-4">
+                            <button type="submit"
+                                    id="updateProfileButton"
+                                    class="btn btn-success shadow rounded-pill px-4">
                                 <i class="bi bi-check-circle"></i>
                                 <span th:text="#{button.update}">Update</span>
                             </button>
-                            <a th:href="@{/users/profile}" class="btn btn-secondary shadow rounded-pill px-4">
+                            <a th:href="@{/users/profile}"
+                               class="btn btn-secondary shadow rounded-pill px-4">
                                 <i class="bi bi-x-circle"></i>
                                 <span th:text="#{button.cancel}">Cancel</span>
                             </a>
@@ -164,16 +233,64 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="confirmProfileModal" tabindex="-1"
+     aria-labelledby="confirmProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+
+            <div class="modal-header bg-success text-white rounded-top-4">
+                <h5 class="modal-title" id="confirmProfileModalLabel"
+                    th:text="#{profile.confirm.title}">
+                    Confirm Profile Update
+                </h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal"
+                        th:aria-label="#{button.cancel}"></button>
+            </div>
+            <div class="modal-body" th:text="#{profile.confirm.message}">
+                Are you sure you want to update your profile?
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                        th:text="#{button.cancel}">
+                    Cancel
+                </button>
+                <button type="button"
+                        class="btn btn-success"
+                        id="confirmProfileUpdate"
+                        th:text="#{profile.confirm.update}">
+                    Yes, Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/notification-modal :: notification}"></div>
-<!--<div th:replace="~{fragments/footer :: footer}"></div>-->
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+
+<script th:inline="javascript">
+    window.profileMessages = {
+        fullName: /*[[#{validation.fullName}]]*/ 'Full name must be at least 3 characters.',
+        phone: /*[[#{validation.phone}]]*/ 'Enter a valid phone number.',
+        shopName: /*[[#{validation.shopName}]]*/ 'Shop name must be at least 2 characters.',
+        proprietorName: /*[[#{validation.proprietorName}]]*/ 'Proprietor name must be at least 3 characters.',
+        shopAddress: /*[[#{validation.shopAddress}]]*/ 'Shop address must be at least 5 characters.',
+        logo: /*[[#{validation.logo}]]*/ 'Only PNG, JPG, or JPEG files are allowed.'
+    };
+</script>
+
 <script th:src="@{/js/update-user.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/dashboard-notifications.js}"></script>
+
 <script th:inline="javascript">
-    var contextPath = [[@{/}]];
+    var contextPath = /*[[@{/}]]*/ '/';
 </script>
 </body>
-</html>
+</html>]

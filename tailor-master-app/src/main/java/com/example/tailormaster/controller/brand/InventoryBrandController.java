@@ -4,6 +4,7 @@ import com.example.tailormaster.entity.InventoryBrand;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.InventoryBrandService;
 import com.example.tailormaster.util.AuthenticatedUserService;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ public class InventoryBrandController {
 
     private final InventoryBrandService inventoryBrandService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final MessageUtil messageUtil;
 
     private User getCurrentUser() {
         return authenticatedUserService.getCurrentUser();
@@ -28,15 +30,12 @@ public class InventoryBrandController {
     public String listBrands(Model model) {
         try {
             User user = getCurrentUser();
-
             model.addAttribute("brands", inventoryBrandService.getAllBrands(user));
             model.addAttribute("activePage", "inventory/brands");
-
             return "inventory/brands";
-
         } catch (Exception e) {
             log.error("Error while loading inventory brands", e);
-            model.addAttribute("errorMessage", "Unable to load brands.");
+            model.addAttribute("errorMessage", messageUtil.get("inventory.brand.error.load"));
             return "inventory/brands";
         }
     }
@@ -49,107 +48,99 @@ public class InventoryBrandController {
     }
 
     @PostMapping("/save")
-    public String saveBrand(@ModelAttribute("brand") InventoryBrand brand,
-                            RedirectAttributes redirectAttributes) {
+    public String saveBrand(
+            @ModelAttribute("brand") InventoryBrand brand,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryBrandService.save(user, brand);
-
             redirectAttributes.addFlashAttribute(
-                    "successMessage", "Brand saved successfully.");
-
+                    "successMessage",
+                    messageUtil.get("inventory.brand.success.save")
+            );
         } catch (IllegalArgumentException e) {
             log.warn("Unable to save inventory brand: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
-
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while saving inventory brand", e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to save brand.");
+                    "errorMessage",
+                    messageUtil.get("inventory.brand.error.save")
+            );
         }
-
         return "redirect:/inventory/brands";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             InventoryBrand brand = inventoryBrandService.getById(user, id);
-
             model.addAttribute("brand", brand);
             model.addAttribute("activePage", "inventory/brands");
-
             return "inventory/brand-form";
-
         } catch (IllegalArgumentException e) {
             log.warn("Brand not found. ID: {}, Message: {}", id, e.getMessage());
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/inventory/brands";
-
         } catch (Exception e) {
             log.error("Error while loading inventory brand. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to load brand.");
+                    "errorMessage",
+                    messageUtil.get("inventory.brand.error.load")
+            );
             return "redirect:/inventory/brands";
         }
     }
 
     @PostMapping("/deactivate/{id}")
-    public String deactivateBrand(@PathVariable Long id,
-                                  RedirectAttributes redirectAttributes) {
+    public String deactivateBrand(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryBrandService.deactivate(user, id);
-
             redirectAttributes.addFlashAttribute(
-                    "successMessage", "Brand deactivated successfully.");
-
+                    "successMessage",
+                    messageUtil.get("inventory.brand.success.deactivate")
+            );
         } catch (IllegalArgumentException e) {
-            log.warn("Unable to deactivate brand. ID: {}, Message: {}",
-                    id, e.getMessage());
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
-
+            log.warn("Unable to deactivate brand. ID: {}, Message: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while deactivating inventory brand. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to deactivate brand.");
+                    "errorMessage",
+                    messageUtil.get("inventory.brand.error.deactivate")
+            );
         }
-
         return "redirect:/inventory/brands";
     }
 
     @PostMapping("/activate/{id}")
-    public String activateBrand(@PathVariable Long id,
-                                RedirectAttributes redirectAttributes) {
+    public String activateBrand(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryBrandService.activate(user, id);
-
             redirectAttributes.addFlashAttribute(
-                    "successMessage", "Brand activated successfully.");
-
+                    "successMessage",
+                    messageUtil.get("inventory.brand.success.activate")
+            );
         } catch (IllegalArgumentException e) {
-            log.warn("Unable to activate brand. ID: {}, Message: {}",
-                    id, e.getMessage());
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
-
+            log.warn("Unable to activate brand. ID: {}, Message: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while activating inventory brand. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to activate brand.");
+                    "errorMessage",
+                    messageUtil.get("inventory.brand.error.activate")
+            );
         }
-
         return "redirect:/inventory/brands";
     }
 }

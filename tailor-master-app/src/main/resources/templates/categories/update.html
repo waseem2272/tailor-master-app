@@ -27,9 +27,12 @@
         }
     </style>
 </head>
+<script th:src="@{/js/language-direction.js}"></script>
+<script th:src="@{/js/theme.js}"></script>
 <body>
 <!-- Include Sidebar Fragment -->
-<div th:replace="~{fragments/sidebar :: sidebar}"/>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container">
     <div class="card">
         <h2 class="text-center">Update Category</h2>

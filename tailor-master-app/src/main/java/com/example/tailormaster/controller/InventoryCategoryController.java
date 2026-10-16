@@ -5,6 +5,7 @@ import com.example.tailormaster.entity.User;
 import com.example.tailormaster.enums.ItemType;
 import com.example.tailormaster.service.InventoryCategoryService;
 import com.example.tailormaster.util.AuthenticatedUserService;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ public class InventoryCategoryController {
 
     private final InventoryCategoryService inventoryCategoryService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final MessageUtil messageUtil;
 
     private User getCurrentUser() {
         return authenticatedUserService.getCurrentUser();
@@ -29,14 +31,12 @@ public class InventoryCategoryController {
     public String listCategories(Model model) {
         try {
             User user = getCurrentUser();
-
             model.addAttribute("categories", inventoryCategoryService.getAllCategories(user));
             model.addAttribute("activePage", "inventory/categories");
-
             return "inventory/categories";
         } catch (Exception e) {
             log.error("Error while loading inventory categories", e);
-            model.addAttribute("errorMessage", "Unable to load categories.");
+            model.addAttribute("errorMessage", messageUtil.get("inventory.category.error.load"));
             return "inventory/categories";
         }
     }
@@ -46,119 +46,104 @@ public class InventoryCategoryController {
         model.addAttribute("category", new InventoryCategory());
         model.addAttribute("itemTypes", ItemType.values());
         model.addAttribute("activePage", "inventory/categories");
-
         return "inventory/category-form";
     }
 
     @PostMapping("/save")
-    public String saveCategory(@ModelAttribute("category") InventoryCategory category,
-                               RedirectAttributes redirectAttributes) {
+    public String saveCategory(
+            @ModelAttribute("category") InventoryCategory category,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryCategoryService.save(user, category);
-
             redirectAttributes.addFlashAttribute(
-                    "successMessage", "Category saved successfully.");
+                    "successMessage",
+                    messageUtil.get("inventory.category.success.save")
+            );
         } catch (IllegalArgumentException e) {
             log.warn("Unable to save inventory category: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while saving inventory category", e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to save category.");
+                    "errorMessage",
+                    messageUtil.get("inventory.category.error.save")
+            );
         }
-
         return "redirect:/inventory/categories";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
-            InventoryCategory category =
-                    inventoryCategoryService.getById(user, id);
-
+            InventoryCategory category = inventoryCategoryService.getById(user, id);
             model.addAttribute("category", category);
             model.addAttribute("itemTypes", ItemType.values());
             model.addAttribute("activePage", "inventory/categories");
-
             return "inventory/category-form";
         } catch (IllegalArgumentException e) {
-            log.warn("Category not found. ID: {}, Message: {}",
-                    id, e.getMessage());
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
-
+            log.warn("Category not found. ID: {}, Message: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/inventory/categories";
         } catch (Exception e) {
-            log.error("Error while loading inventory category. ID: {}",
-                    id, e);
-
+            log.error("Error while loading inventory category. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to load category.");
-
+                    "errorMessage",
+                    messageUtil.get("inventory.category.error.load")
+            );
             return "redirect:/inventory/categories";
         }
     }
 
     @PostMapping("/deactivate/{id}")
-    public String deactivateCategory(@PathVariable Long id,
-                                     RedirectAttributes redirectAttributes) {
+    public String deactivateCategory(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryCategoryService.deactivate(user, id);
-
             redirectAttributes.addFlashAttribute(
                     "successMessage",
-                    "Category deactivated successfully.");
+                    messageUtil.get("inventory.category.success.deactivate")
+            );
         } catch (IllegalArgumentException e) {
-            log.warn("Unable to deactivate category. ID: {}, Message: {}",
-                    id, e.getMessage());
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
+            log.warn("Unable to deactivate category. ID: {}, Message: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
-            log.error("Error while deactivating inventory category. ID: {}",
-                    id, e);
-
+            log.error("Error while deactivating inventory category. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to deactivate category.");
+                    "errorMessage",
+                    messageUtil.get("inventory.category.error.deactivate")
+            );
         }
-
         return "redirect:/inventory/categories";
     }
 
     @PostMapping("/activate/{id}")
-    public String activateCategory(@PathVariable Long id,
-                                   RedirectAttributes redirectAttributes) {
+    public String activateCategory(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             inventoryCategoryService.activate(user, id);
-
             redirectAttributes.addFlashAttribute(
                     "successMessage",
-                    "Category activated successfully.");
+                    messageUtil.get("inventory.category.success.activate")
+            );
         } catch (IllegalArgumentException e) {
-            log.warn("Unable to activate category. ID: {}, Message: {}",
-                    id, e.getMessage());
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", e.getMessage());
+            log.warn("Unable to activate category. ID: {}, Message: {}", id, e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
-            log.error("Error while activating inventory category. ID: {}",
-                    id, e);
-
+            log.error("Error while activating inventory category. ID: {}", id, e);
             redirectAttributes.addFlashAttribute(
-                    "errorMessage", "Unable to activate category.");
+                    "errorMessage",
+                    messageUtil.get("inventory.category.error.activate")
+            );
         }
-
         return "redirect:/inventory/categories";
     }
 }

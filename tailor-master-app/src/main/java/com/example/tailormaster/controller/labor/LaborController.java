@@ -5,6 +5,7 @@ import com.example.tailormaster.entity.labor.LaborPayment;
 import com.example.tailormaster.enums.LaborPaymentType;
 import com.example.tailormaster.service.labor.LaborPaymentService;
 import com.example.tailormaster.service.labor.LaborService;
+import com.example.tailormaster.util.MessageUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Validation;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class LaborController {
     private final LaborService laborService;
     private final LaborPaymentService laborPaymentService;
     private final Validation validation;
+    private final MessageUtil messageUtil;
 
     @GetMapping
     public String listLabors(Model model) {
@@ -44,7 +46,7 @@ public class LaborController {
             logger.info("Retrieved {} labors.", labors.size());
         } catch (Exception e) {
             logger.error("Error retrieving labors for the list: {}", e.getMessage(), e);
-            model.addAttribute("errorMessage", "Error loading labors.");
+            model.addAttribute("errorMessage", messageUtil.get("labor.error.load"));
         }
         return "labor/labors";
     }
@@ -66,11 +68,11 @@ public class LaborController {
         try {
             Labor savedLabor = laborService.saveLabor(labor);
             logger.info("Labor saved successfully. ID: {}, Name: {}", savedLabor.getId(), savedLabor.getName());
-            redirectAttributes.addFlashAttribute("successMessage", "Labor added successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("labor.success.save"));
             return "redirect:/labors";
         } catch (Exception e) {
             logger.error("Error occurred while saving labor: {}", e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while saving labor. Please try again.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.save"));
             return "redirect:/labors";
         }
     }
@@ -89,7 +91,7 @@ public class LaborController {
             Optional<Labor> labor = laborService.getLaborById(laborId);
             if (labor.isEmpty()) {
                 logger.warn("Labor not found with ID {} for editing.", laborId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Labor not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.notFound"));
                 return "redirect:/labors";
             }
             model.addAttribute("labor", labor.get());
@@ -98,7 +100,7 @@ public class LaborController {
             return "labor/edit";
         } catch (Exception e) {
             logger.error("Error preparing labor edit form for encrypted ID {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while preparing the update labor.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.edit"));
             return "redirect:/labors";
         }
     }
@@ -123,18 +125,19 @@ public class LaborController {
             Optional<Labor> existingLabor = laborService.getLaborById(laborId);
             if (existingLabor.isEmpty()) {
                 logger.warn("Labor not found with ID {} for update.", laborId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Labor not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.notFound"));
                 return "redirect:/labors";
             }
             labor.setId(laborId);
             Labor updatedLabor = laborService.updateLabor(labor);
             logger.info("Labor updated successfully. ID: {}, Name: {}", updatedLabor.getId(), updatedLabor.getName());
-            redirectAttributes.addFlashAttribute("successMessage", "Labor updated successfully!");
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("labor.success.update"));
             redirectAttributes.addFlashAttribute("laborId", updatedLabor.getId());
             return "redirect:/labors";
         } catch (Exception e) {
             logger.error("Error updating Labor with encrypted ID {}: {}", encryptedLaborId, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating Labor: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("labor.error.update") + " " + e.getMessage());
             return "redirect:/labors";
         }
     }
@@ -148,14 +151,14 @@ public class LaborController {
             Long laborId = validation.decryptAndValidateId(id);
             if (laborId == null) {
                 logger.warn("Invalid labor ID provided: {}", id);
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid labor ID.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.invalidId"));
                 return "redirect:/labors";
             }
             logger.debug("Decrypted labor ID: {}", laborId);
             Optional<Labor> labor = laborService.getLaborById(laborId);
             if (labor.isEmpty()) {
                 logger.warn("Labor not found with ID: {}", laborId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Labor not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.notFound"));
                 return "redirect:/labors";
             }
             List<LaborPayment> payments = laborPaymentService.getPaymentsForLabor(laborId);
@@ -182,7 +185,8 @@ public class LaborController {
                     laborId, totalWork, totalSalary, advancePaid, totalPaid, remainingBalance);
         } catch (Exception e) {
             logger.error("Error loading labor details for ID (encrypted) {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error loading labor details: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("labor.error.details") + " " + e.getMessage());
             return "redirect:/labors";
         }
         return "labor/labor-details";
@@ -203,14 +207,15 @@ public class LaborController {
             LaborPayment savedLaborPayment = laborPaymentService.savePayment(amount, laborPayment);
             logger.info("Labor payment saved successfully. Payment ID: {}, Labor ID: {}, Type: {}, Amount: {}",
                     savedLaborPayment.getId(), parsedLaborId, savedLaborPayment.getPaymentType(), savedLaborPayment.getAmount());
-            redirectAttributes.addFlashAttribute("successMessage", "Payment recorded successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("labor.payment.success.save"));
         } catch (NumberFormatException e) {
             logger.error("Invalid labor ID: {}", laborId, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Invalid labor ID.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("labor.error.invalidId"));
             return "redirect:/labors";
         } catch (Exception e) {
             logger.error("Error saving labor payment for labor ID {}: {}", laborId, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error saving labor payment: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("labor.payment.error.save") + " " + e.getMessage());
             return "redirect:/labors";
         }
         return "redirect:/labors/details/" + new ThymeleafUtil().encryptId(laborPayment.getLabor().getId());
@@ -243,11 +248,12 @@ public class LaborController {
             LaborPayment updatedPayment = laborPaymentService.savePayment(amount, laborPayment);
             logger.info("Labor payment updated successfully. Payment ID: {}, Labor ID: {}, Type: {}, Amount: {}",
                     updatedPayment.getId(), laborId, updatedPayment.getPaymentType(), updatedPayment.getAmount());
-            redirectAttributes.addFlashAttribute("successMessage", "Payment updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", messageUtil.get("labor.payment.success.update"));
         } catch (Exception e) {
             logger.error("Error updating labor payment. Payment ID: {}, Labor ID: {}: {}",
                     laborPayment.getId(), laborId, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating labor payment: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("labor.payment.error.update") + " " + e.getMessage());
             return "redirect:/labors";
         }
         return "redirect:/labors/details/" + new ThymeleafUtil().encryptId(laborPayment.getLabor().getId());
@@ -263,7 +269,8 @@ public class LaborController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Failed to delete labor payment. Payment ID: {}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Delete failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(messageUtil.get("labor.payment.error.delete"));
         }
     }
 }

@@ -65,7 +65,8 @@
         }
     </style>
 </head>
-
+<script th:src="@{/js/language-direction.js}"></script>
+<script th:src="@{/js/theme.js}"></script>
 <body>
 
 <div th:replace="~{fragments/sidebar :: sidebar}"></div>
@@ -80,10 +81,10 @@
                 <span th:text="#{customer.edit.title}">Edit Customer</span>
             </h2>
 
-            <p class="text-danger fw-bold"
-               th:text="#{customer.edit.requiredFields}">
-                Fields marked with * are required.
-            </p>
+            <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center gap-2 mb-4" role="alert">
+                <i class="bi bi-info-circle-fill fs-5"></i>
+                <span class="fw-semibold"><span class="text-danger" th:text="#{user.create.requiredFields}"></span></span>
+            </div>
 
             <div class="card border-success border-bottom border-3 shadow-sm mb-4">
 

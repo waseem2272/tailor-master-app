@@ -21,7 +21,7 @@ function showAddProductAlert(message, type = "danger") {
 
     if (!alertBox) return;
 
-    alertBox.className = `alert alert-${type} mt-3`;
+    alertBox.className = `alert text-center alert-${type} mt-3`;
     alertBox.textContent = message;
     alertBox.classList.remove("d-none");
 
@@ -453,7 +453,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
 
         if (qty > availableStock) {
             document.getElementById("inventoryStockError").textContent =
-                orderMessages.qtyExceedsStock + " Available: " +
+                orderMessages.qtyExceedsStock +
                 availableStock.toFixed(2) +
                 " " +
                 (selectedOption.dataset.unit || "");
@@ -470,16 +470,6 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         )
             .then(async response => {
                 const responseText = await response.text();
-
-                console.log(
-                    "Inventory preview status:",
-                    response.status
-                );
-
-                console.log(
-                    "Inventory preview response:",
-                    responseText
-                );
 
                 if (!response.ok) {
                     throw new Error(
@@ -643,11 +633,9 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
             );
 
         if (fabricQuantity > availableStock) {
-            showAddProductAlert(
-                "Fabric quantity cannot be greater than available stock. " +
-                "Available: " +
+            showAddProductAlert(orderMessages.fabricQtyExceedsStock +
                 availableStock.toFixed(2) +
-                " M"
+                (selectedOption.dataset.unit || "")
             );
             return;
         }
@@ -830,7 +818,7 @@ document.getElementById("addProductBtn").addEventListener("click", function () {
         );
 
     if (!product) {
-        showAddProductAlert("Product information not found.");
+        showAddProductAlert(orderMessages.productNotFound);
         return;
     }
 
@@ -1377,16 +1365,16 @@ function setupInventoryStockValidation() {
             selectedOption.dataset.unit || "";
 
         inventoryStockInfo.textContent =
-            "Physical Stock: " +
+            orderMessages.physicalStock +
             physicalStock.toFixed(2) +
             " " + unit +
-            " | Reserved Stock: " +
+            " | " + orderMessages.reservedStock +
             reservedStock.toFixed(2) +
             " " + unit +
-            " | Current Order: " +
+            " | " + orderMessages.currentOrder +
             currentOrderQuantity.toFixed(2) +
             " " + unit +
-            " | Available Stock: " +
+            " | " + orderMessages.availableStock +
             availableStock.toFixed(2) +
             " " + unit;
 
@@ -1400,9 +1388,7 @@ function setupInventoryStockValidation() {
         }
 
         if (quantity > availableStock) {
-            inventoryStockError.textContent =
-                "Quantity cannot be greater than available stock. " +
-                "Available: " +
+            inventoryStockError.textContent = orderMessages.qtyExceedsStock +
                 availableStock.toFixed(2) +
                 " " +
                 unit;
@@ -1474,16 +1460,16 @@ function refreshInventoryStockInfo() {
         selectedOption.dataset.unit || "";
 
     inventoryStockInfo.textContent =
-        "Physical Stock: " +
+        orderMessages.physicalStock +
         physicalStock.toFixed(2) +
         " " + unit +
-        " | Reserved Stock: " +
+        " | " + orderMessages.reservedStock +
         reservedStock.toFixed(2) +
         " " + unit +
-        " | Current Order: " +
+        " | " + orderMessages.currentOrder +
         currentOrderQuantity.toFixed(2) +
         " " + unit +
-        " | Available Stock: " +
+        " | " + orderMessages.availableStock +
         availableStock.toFixed(2) +
         " " + unit;
 
@@ -1494,8 +1480,7 @@ function refreshInventoryStockInfo() {
 
     if (quantity > availableStock) {
         inventoryStockError.textContent =
-            "Quantity cannot be greater than available stock. " +
-            "Available: " +
+            orderMessages.qtyExceedsStock +
             availableStock.toFixed(2) +
             " " + unit;
 

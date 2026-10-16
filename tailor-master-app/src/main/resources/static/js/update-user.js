@@ -1,94 +1,115 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("profileForm").addEventListener("submit", function (event) {
-        let isValid = true;
+    const form = document.getElementById("profileForm");
+    const modalElement = document.getElementById("confirmProfileModal");
+    const confirmButton = document.getElementById("confirmProfileUpdate");
+    const logoInput = document.getElementById("logo");
+    const messages = window.profileMessages || {};
+    const profileModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    let confirmed = false;
 
-        // Function to Show Error Message
-        function showError(input, message) {
-            let errorDiv = input.nextElementSibling;
-            if (!errorDiv || !errorDiv.classList.contains("text-danger")) {
-                errorDiv = document.createElement("div");
-                errorDiv.className = "text-danger small mt-1";
-                input.parentNode.appendChild(errorDiv);
-            }
-            errorDiv.textContent = message;
+    const fields = [
+        { id: "fullName", message: messages.fullName, min: 3 },
+        { id: "phone1", message: messages.phone, phone: true, required: true },
+        { id: "phone2", message: messages.phone, phone: true, required: false },
+        { id: "shopName", message: messages.shopName, min: 2 },
+        { id: "proprietorName", message: messages.proprietorName, min: 3 },
+        { id: "shopAddress", message: messages.shopAddress, min: 5 }
+    ];
+
+    function validateField(input, config) {
+        const value = input.value.trim();
+        let error = "";
+
+        if (config.required && !value) {
+            error = config.message;
+        } else if (!value && !config.required) {
+            error = "";
+        } else if (config.phone && !/^03\d{9}$/.test(value)) {
+            error = config.message;
+        } else if (config.min && value.length < config.min) {
+            error = config.message;
         }
 
-        // Function to Clear Error Message
-        function clearError(input) {
-            let errorDiv = input.nextElementSibling;
-            if (errorDiv && errorDiv.classList.contains("text-danger")) {
-                errorDiv.remove();
-            }
+        input.setCustomValidity(error);
+        return input.checkValidity();
+    }
+
+    function validateLogo() {
+        if (!logoInput || !logoInput.files.length) {
+            if (logoInput) logoInput.setCustomValidity("");
+            return true;
         }
 
-        // Validate Full Name
-        let fullName = document.getElementById("fullName");
-        if (fullName.value.trim().length < 3) {
-            showError(fullName, "Full name must be at least 3 characters.");
-            isValid = false;
-        } else {
-            clearError(fullName);
-        }
+        const file = logoInput.files[0];
+        const allowedTypes = ["image/png", "image/jpeg"];
+        const valid = allowedTypes.includes(file.type);
 
-        // Validate Phone Number 1
-        let phone1 = document.getElementById("phone1");
-        if (!/^03\d{9}$/.test(phone1.value.trim())) {
-            showError(phone1, "Phone number must start with '03' and be 11 digits long.");
-            isValid = false;
-        } else {
-            clearError(phone1);
-        }
+        logoInput.setCustomValidity(valid ? "" : messages.logo);
+        return valid;
+    }
 
-        // Validate Phone Number 2 (Optional, but must be valid if entered)
-        let phone2 = document.getElementById("phone2");
-        if (phone2.value.trim() !== "" && !/^03\d{9}$/.test(phone2.value.trim())) {
-            showError(phone2, "Phone number must start with '03' and be 11 digits long.");
-            isValid = false;
-        } else {
-            clearError(phone2);
-        }
+    fields.forEach(function (config) {
+        const input = document.getElementById(config.id);
+        if (!input) return;
 
+        input.addEventListener("input", function () {
+            validateField(input, config);
+        });
 
-        // Validate Shop Name
-        let shopName = document.getElementById("shopName");
-        if (shopName.value.trim().length < 2) {
-            showError(shopName, "Shop name must be at least 2 characters.");
-            isValid = false;
-        } else {
-            clearError(shopName);
-        }
-
-        // Validate Proprietor Name
-        let proprietorName = document.getElementById("proprietorName");
-        if (proprietorName.value.trim().length < 3) {
-            showError(proprietorName, "Proprietor name must be at least 3 characters.");
-            isValid = false;
-        } else {
-            clearError(proprietorName);
-        }
-
-        // Validate Short Code
-        let shortCode = document.getElementById("shortCode");
-        if (shortCode.value.trim().length < 2 || shortCode.value.trim().length > 5) {
-            showError(shortCode, "Short code must be 2-5 characters.");
-            isValid = false;
-        } else {
-            clearError(shortCode);
-        }
-
-        // Validate Shop Address
-        let shopAddress = document.getElementById("shopAddress");
-        if (shopAddress.value.trim().length < 5) {
-            showError(shopAddress, "Shop address must be at least 5 characters.");
-            isValid = false;
-        } else {
-            clearError(shopAddress);
-        }
-
-        // If any validation fails, prevent form submission
-        if (!isValid) {
-            event.preventDefault();
-        }
+        input.addEventListener("blur", function () {
+            validateField(input, config);
+        });
     });
 
+    if (logoInput) {
+        logoInput.addEventListener("change", validateLogo);
+    }
+
+    form.addEventListener("submit", function (event) {
+        if (confirmed) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        let isValid = true;
+
+        fields.forEach(function (config) {
+            const input = document.getElementById(config.id);
+            if (input && !validateField(input, config)) {
+                isValid = false;
+            }
+        });
+
+        if (!validateLogo()) {
+            isValid = false;
+        }
+
+        form.classList.add("was-validated");
+
+        if (!isValid || !form.checkValidity()) {
+            form.reportValidity();
+
+            const firstInvalid = form.querySelector(":invalid");
+            if (firstInvalid) {
+                firstInvalid.focus();
+            }
+            return;
+        }
+
+        profileModal.show();
+    });
+
+    confirmButton.addEventListener("click", function () {
+        confirmed = true;
+        confirmButton.disabled = true;
+        form.requestSubmit();
+    });
+
+    modalElement.addEventListener("hidden.bs.modal", function () {
+        if (!confirmed) {
+            confirmButton.disabled = false;
+        }
+    });
 });

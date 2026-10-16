@@ -9,6 +9,7 @@ import com.example.tailormaster.service.backup.BackupService;
 import com.example.tailormaster.service.backup.GoogleDriveService;
 import com.example.tailormaster.service.backup.UserBackupSettingsService;
 import com.example.tailormaster.util.AuthenticatedUserService;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,15 +24,15 @@ import java.util.List;
 @RequestMapping("/backup")
 @RequiredArgsConstructor
 public class BackupController {
-
     private final UserBackupSettingsService userBackupSettingsService;
     private final AuthenticatedUserService authenticatedUserService;
     private final BackupService backupService;
     private final BackupHistoryRepository backupHistoryRepository;
     private final GoogleDriveService googleDriveService;
+    private final MessageUtil messageUtil;
 
     @GetMapping("/settings")
-    public String settings(Model model) {
+    public String settings(Model model, RedirectAttributes redirectAttributes) {
         try {
             User user = authenticatedUserService.getCurrentUser();
             UserBackupSettings settings = userBackupSettingsService.getByUser(user);
@@ -40,6 +41,8 @@ public class BackupController {
             return "backup/settings";
         } catch (Exception e) {
             log.error("Error loading backup settings", e);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.settings.load"));
             return "redirect:/dashboard";
         }
     }
@@ -61,10 +64,12 @@ public class BackupController {
             userBackupSettingsService.save(existingSettings);
 
             log.info("Backup settings updated successfully for user: {}", user.getUsername());
-            redirectAttributes.addFlashAttribute("successMessage", "Backup settings saved successfully.");
+            redirectAttributes.addFlashAttribute("successMessage",
+                    messageUtil.get("backup.settings.saved"));
         } catch (Exception e) {
             log.error("Error saving backup settings", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to save backup settings.");
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.settings.save"));
         }
         return "redirect:/backup/settings";
     }
@@ -76,55 +81,52 @@ public class BackupController {
             BackupHistory history = backupService.createLocalBackup(user);
 
             if (history.getStatus() == BackupStatus.SUCCESS) {
-                redirectAttributes.addFlashAttribute(
-                        "successMessage",
-                        "Database backup completed successfully."
-                );
+                redirectAttributes.addFlashAttribute("successMessage",
+                        messageUtil.get("backup.success.completed"));
             } else if (history.getStatus() == BackupStatus.PARTIAL_SUCCESS) {
-                redirectAttributes.addFlashAttribute(
-                        "warningMessage",
-                        "Local backup completed successfully, but Google Drive backup failed."
-                );
+                redirectAttributes.addFlashAttribute("warningMessage",
+                        messageUtil.get("backup.warning.partial"));
             } else {
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
+                redirectAttributes.addFlashAttribute("errorMessage",
                         history.getErrorMessage() != null
                                 ? history.getErrorMessage()
-                                : "Unable to create database backup."
-                );
+                                : messageUtil.get("backup.error.create"));
             }
         } catch (Exception e) {
             log.error("Error starting manual backup", e);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Unable to create database backup."
-            );
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.create"));
         }
         return "redirect:/backup/settings";
     }
 
     @GetMapping("/history")
-    public String history(Model model) {
+    public String history(Model model, RedirectAttributes redirectAttributes) {
         try {
             User user = authenticatedUserService.getCurrentUser();
-            List<BackupHistory> history = backupHistoryRepository.findByUserOrderByStartedAtDesc(user);
+            List<BackupHistory> history =
+                    backupHistoryRepository.findByUserOrderByStartedAtDesc(user);
             model.addAttribute("history", history);
             model.addAttribute("activePage", "backup/history");
             return "backup/history";
         } catch (Exception e) {
             log.error("Error loading backup history", e);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.history.load"));
             return "redirect:/backup/settings";
         }
     }
 
     @GetMapping("/google/connect")
-    public String connectGoogleDrive() {
+    public String connectGoogleDrive(RedirectAttributes redirectAttributes) {
         try {
             User user = authenticatedUserService.getCurrentUser();
             String authorizationUrl = googleDriveService.getAuthorizationUrl(user);
             return "redirect:" + authorizationUrl;
         } catch (Exception e) {
             log.error("Error connecting Google Drive", e);
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.google.connect"));
             return "redirect:/backup/settings";
         }
     }
@@ -134,21 +136,15 @@ public class BackupController {
                                  RedirectAttributes redirectAttributes) {
         try {
             User user = authenticatedUserService.getCurrentUser();
-
             googleDriveService.handleCallback(user, code);
 
-            redirectAttributes.addFlashAttribute(
-                    "successMessage",
-                    "Google Drive connected successfully."
-            );
+            redirectAttributes.addFlashAttribute("successMessage",
+                    messageUtil.get("backup.google.connected"));
         } catch (Exception e) {
             log.error("Error handling Google Drive callback", e);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Unable to connect Google Drive."
-            );
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.google.connect"));
         }
-
         return "redirect:/backup/settings";
     }
 
@@ -156,21 +152,15 @@ public class BackupController {
     public String disconnectGoogleDrive(RedirectAttributes redirectAttributes) {
         try {
             User user = authenticatedUserService.getCurrentUser();
-
             googleDriveService.disconnect(user);
 
-            redirectAttributes.addFlashAttribute(
-                    "successMessage",
-                    "Google Drive disconnected successfully."
-            );
+            redirectAttributes.addFlashAttribute("successMessage",
+                    messageUtil.get("backup.google.disconnected"));
         } catch (Exception e) {
             log.error("Error disconnecting Google Drive", e);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Unable to disconnect Google Drive."
-            );
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    messageUtil.get("backup.error.google.disconnect"));
         }
-
         return "redirect:/backup/settings";
     }
 }

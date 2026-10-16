@@ -13,9 +13,12 @@
         }
     </style>
 </head>
+<script th:src="@{/js/language-direction.js}"></script>
+<script th:src="@{/js/theme.js}"></script>
 <body>
 <!-- Include Sidebar Fragment -->
-<div th:replace="~{fragments/sidebar :: sidebar}"/>
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container mt-5">
     <h2 class="text-center">Product Category</h2>
     <!-- Success Alert -->

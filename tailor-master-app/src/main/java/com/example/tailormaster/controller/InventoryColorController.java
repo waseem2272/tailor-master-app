@@ -4,6 +4,7 @@ import com.example.tailormaster.entity.InventoryColor;
 import com.example.tailormaster.entity.User;
 import com.example.tailormaster.service.InventoryColorService;
 import com.example.tailormaster.util.AuthenticatedUserService;
+import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class InventoryColorController {
 
     private final InventoryColorService inventoryColorService;
     private final AuthenticatedUserService authenticatedUserService;
+    private final MessageUtil messageUtil;
 
     @GetMapping
     public String listColors(Model model) {
@@ -37,73 +39,98 @@ public class InventoryColorController {
     }
 
     @PostMapping("/save")
-    public String saveColor(@ModelAttribute("color") InventoryColor color,
-                            RedirectAttributes redirectAttributes) {
+    public String saveColor(
+            @ModelAttribute("color") InventoryColor color,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryColorService.save(user, color);
-            redirectAttributes.addFlashAttribute("successMessage", "Color saved successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.color.success.save")
+            );
         } catch (IllegalArgumentException e) {
             log.warn("Unable to save inventory color: {}", e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while saving inventory color", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to save color.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.color.error.save")
+            );
         }
         return "redirect:/inventory/colors";
     }
 
     @GetMapping("/edit/{id}")
-    public String editColor(@PathVariable Long id,
-                            Model model,
-                            RedirectAttributes redirectAttributes) {
+    public String editColor(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
-
             InventoryColor color = inventoryColorService.findById(user, id)
-                    .orElseThrow(() -> new IllegalArgumentException("Color not found."));
-
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            messageUtil.get("inventory.color.error.notFound")
+                    ));
             model.addAttribute("color", color);
+            model.addAttribute("activePage", "inventory/colors");
             return "inventory/color-form";
-
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/inventory/colors";
         } catch (Exception e) {
             log.error("Error while loading inventory color. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to load color.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.color.error.load")
+            );
             return "redirect:/inventory/colors";
         }
     }
 
     @PostMapping("/deactivate/{id}")
-    public String deactivateColor(@PathVariable Long id,
-                                   RedirectAttributes redirectAttributes) {
+    public String deactivateColor(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryColorService.deactivate(user, id);
-            redirectAttributes.addFlashAttribute("successMessage", "Color deactivated successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.color.success.deactivate")
+            );
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while deactivating inventory color. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to deactivate color.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.color.error.deactivate")
+            );
         }
         return "redirect:/inventory/colors";
     }
 
     @PostMapping("/activate/{id}")
-    public String activateColor(@PathVariable Long id,
-                                RedirectAttributes redirectAttributes) {
+    public String activateColor(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         try {
             User user = getCurrentUser();
             inventoryColorService.activate(user, id);
-            redirectAttributes.addFlashAttribute("successMessage", "Color activated successfully.");
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    messageUtil.get("inventory.color.success.activate")
+            );
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             log.error("Error while activating inventory color. ID: {}", id, e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Unable to activate color.");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    messageUtil.get("inventory.color.error.activate")
+            );
         }
         return "redirect:/inventory/colors";
     }

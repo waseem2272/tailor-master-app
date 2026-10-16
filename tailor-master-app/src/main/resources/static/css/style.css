@@ -381,3 +381,596 @@ body.sidebar-open .trial-banner {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
 }
+
+
+/* =========================
+   RTL Support - Urdu
+   ========================= */
+
+html[dir="rtl"] .sidebar {
+    left: auto;
+    right: 0;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+html[dir="rtl"] .sidebar a {
+    text-align: right;
+}
+
+html[dir="rtl"] .sidebar #inventory-submenu,
+html[dir="rtl"] .sidebar #backup-submenu {
+    padding-left: 0 !important;
+    padding-right: 20px !important;
+}
+
+html[dir="rtl"] .sidebar #inventory-submenu a,
+html[dir="rtl"] .sidebar #backup-submenu a {
+    text-align: right;
+}
+
+html[dir="rtl"] .sidebar #inventory-toggle-arrow,
+html[dir="rtl"] .sidebar #backup-toggle-arrow {
+    float: left !important;
+}
+
+html[dir="rtl"] .content,
+html[dir="rtl"] .navbar.topbar,
+html[dir="rtl"] .trial-banner {
+    margin-left: 0;
+    margin-right: 270px;
+}
+
+html[dir="rtl"] body.sidebar-open .sidebar {
+    transform: translateX(100%);
+}
+
+html[dir="rtl"] body.sidebar-open .content,
+html[dir="rtl"] body.sidebar-open .navbar.topbar,
+html[dir="rtl"] body.sidebar-open .trial-banner {
+    margin-right: 0;
+}
+
+@media (max-width: 992px) {
+    html[dir="rtl"] .sidebar {
+        right: 0;
+        left: auto;
+        transform: translateX(100%);
+    }
+
+    html[dir="rtl"] body.sidebar-open .sidebar {
+        transform: translateX(0);
+    }
+
+    html[dir="rtl"] .content,
+    html[dir="rtl"] .navbar.topbar,
+    html[dir="rtl"] .trial-banner {
+        margin-right: 0 !important;
+    }
+}
+
+/* Keep sidebar icons spaced in both directions */
+
+.sidebar a > i:first-child {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+html[dir="rtl"] .sidebar a > i:first-child {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+/* Keep dropdown arrows away from menu text */
+.sidebar a .inventory-arrow,
+.sidebar a .backup-arrow {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+html[dir="rtl"] .sidebar a .inventory-arrow,
+html[dir="rtl"] .sidebar a .backup-arrow {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+/* =========================
+   Page Heading Icon Spacing
+   ========================= */
+
+.page-title i,
+.page-header i,
+.d-flex i,
+h1 i,
+h2 i,
+h3 i,
+h4 i,
+h5 i,
+h6 i {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+html[dir="rtl"] .page-title i,
+html[dir="rtl"] .page-header i,
+html[dir="rtl"] .d-flex i,
+html[dir="rtl"] h1 i,
+html[dir="rtl"] h2 i,
+html[dir="rtl"] h3 i,
+html[dir="rtl"] h4 i,
+html[dir="rtl"] h5 i,
+html[dir="rtl"] h6 i {
+    margin-right: 0;
+    margin-left: 8px;
+}
+
+
+/* =========================
+   Dark Mode - Tailor Master
+   ========================= */
+
+html[data-theme="dark"] body {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Main content and navigation */
+html[data-theme="dark"] .content {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .navbar.topbar,
+html[data-theme="dark"] .navbar.navbar-light,
+html[data-theme="dark"] .bg-white {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .navbar.topbar {
+    border-color: #333 !important;
+}
+
+html[data-theme="dark"] .navbar.topbar .text-dark,
+html[data-theme="dark"] .navbar.topbar .nav-link,
+html[data-theme="dark"] .navbar.topbar .text-secondary {
+    color: #e0e0e0 !important;
+}
+
+/* Sidebar */
+html[data-theme="dark"] .sidebar {
+    background-color: #1b1b1b !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+html[data-theme="dark"] .sidebar a {
+    color: #d0d0d0 !important;
+}
+
+html[data-theme="dark"] .sidebar a:hover,
+html[data-theme="dark"] .sidebar a.active {
+    background-color: #293b2d !important;
+    color: #4ade80 !important;
+}
+
+/* Cards and containers */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .list-group-item,
+html[data-theme="dark"] .accordion-item,
+html[data-theme="dark"] .offcanvas {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #383838 !important;
+}
+
+html[data-theme="dark"] .card-header,
+html[data-theme="dark"] .card-footer,
+html[data-theme="dark"] .modal-header,
+html[data-theme="dark"] .modal-footer {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+    border-color: #383838 !important;
+}
+
+html[data-theme="dark"] .shadow,
+html[data-theme="dark"] .shadow-sm,
+html[data-theme="dark"] .shadow-lg {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Headings and text */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] label,
+html[data-theme="dark"] .form-label,
+html[data-theme="dark"] .form-check-label,
+html[data-theme="dark"] .card-title,
+html[data-theme="dark"] .modal-title,
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-body {
+    color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .text-secondary {
+    color: #a8a8a8 !important;
+}
+
+/* Form controls */
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .input-group-text {
+    background-color: #292929 !important;
+    color: #e0e0e0 !important;
+    border-color: #484848 !important;
+}
+
+html[data-theme="dark"] .form-control::placeholder {
+    color: #a0a0a0 !important;
+    opacity: 1;
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .form-select:focus {
+    background-color: #303030 !important;
+    color: #fff !important;
+    border-color: #198f3a !important;
+    box-shadow: 0 0 0 0.2rem rgba(25, 143, 58, 0.2) !important;
+}
+
+html[data-theme="dark"] .form-select option {
+    background-color: #292929;
+    color: #e0e0e0;
+}
+
+html[data-theme="dark"] .form-check-input {
+    background-color: #292929;
+    border-color: #686868;
+}
+
+html[data-theme="dark"] .form-check-input:checked {
+    background-color: #198f3a;
+    border-color: #198f3a;
+}
+
+/* Tables */
+html[data-theme="dark"] .table {
+    --bs-table-color: #e0e0e0;
+    --bs-table-bg: #1e1e1e;
+    --bs-table-border-color: #383838;
+    --bs-table-striped-bg: #252525;
+    --bs-table-striped-color: #e0e0e0;
+    --bs-table-hover-bg: #303030;
+    --bs-table-hover-color: #fff;
+
+    color: #e0e0e0 !important;
+    border-color: #383838 !important;
+}
+
+html[data-theme="dark"] .table th,
+html[data-theme="dark"] .table td {
+    border-color: #383838 !important;
+}
+
+html[data-theme="dark"] .table thead th {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+}
+
+/* Dropdowns and notifications */
+html[data-theme="dark"] .dropdown-item {
+    color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme="dark"] .dropdown-item:focus {
+    background-color: #303030 !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] .notification-dropdown,
+html[data-theme="dark"] #notificationDropdownList {
+    background-color: #1e1e1e !important;
+    border-color: #383838 !important;
+}
+
+/* Borders and separators */
+html[data-theme="dark"] .border,
+html[data-theme="dark"] .border-top,
+html[data-theme="dark"] .border-bottom,
+html[data-theme="dark"] .border-start,
+html[data-theme="dark"] .border-end,
+html[data-theme="dark"] hr,
+html[data-theme="dark"] .vr {
+    border-color: #383838 !important;
+}
+
+/* Links - keep green accent */
+html[data-theme="dark"] a:not(.btn):not(.sidebar a) {
+    color: #72d990;
+}
+
+html[data-theme="dark"] a:not(.btn):not(.sidebar a):hover {
+    color: #9aefb0;
+}
+
+/* Keep primary green buttons consistent */
+html[data-theme="dark"] .btn-success {
+    background-color: #198f3a;
+    border-color: #198f3a;
+    color: #fff;
+}
+
+html[data-theme="dark"] .btn-outline-secondary {
+    color: #d0d0d0;
+    border-color: #686868;
+}
+
+html[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #383838;
+    color: #fff;
+}
+
+/* Alerts and trial banner */
+html[data-theme="dark"] .alert {
+    background-color: #252525;
+    color: #e0e0e0;
+    border-color: #484848;
+}
+
+html[data-theme="dark"] .trial-banner {
+    color: #f0d68a;
+}
+
+/* Pagination */
+html[data-theme="dark"] .page-link {
+    background-color: #1e1e1e;
+    color: #72d990;
+    border-color: #383838;
+}
+
+html[data-theme="dark"] .page-item.active .page-link {
+    background-color: #198f3a;
+    border-color: #198f3a;
+    color: #fff;
+}
+
+html[data-theme="dark"] .page-item.disabled .page-link {
+    background-color: #252525;
+    color: #777;
+    border-color: #383838;
+}
+
+/* DataTables controls */
+html[data-theme="dark"] .dataTables_wrapper,
+html[data-theme="dark"] .dataTables_info,
+html[data-theme="dark"] .dataTables_length,
+html[data-theme="dark"] .dataTables_filter,
+html[data-theme="dark"] .dataTables_paginate {
+    color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .dataTables_wrapper select,
+html[data-theme="dark"] .dataTables_wrapper input {
+    background-color: #292929 !important;
+    color: #e0e0e0 !important;
+    border-color: #484848 !important;
+}
+
+/* Smooth theme transition */
+body,
+.sidebar,
+.navbar.topbar,
+.card,
+.modal-content,
+.dropdown-menu,
+.form-control,
+.form-select,
+.table {
+    transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* =========================
+   Dark Mode - Dynamic Fields
+   ========================= */
+
+/* Dynamically generated labels and text */
+html[data-theme="dark"] .dynamic-fields label,
+html[data-theme="dark"] .dynamic-fields .form-label,
+html[data-theme="dark"] .dynamic-fields .form-check-label,
+html[data-theme="dark"] .dynamic-fields p,
+html[data-theme="dark"] .dynamic-fields span,
+html[data-theme="dark"] .dynamic-fields h5,
+html[data-theme="dark"] .dynamic-fields h6 {
+    color: #e0e0e0 !important;
+}
+
+/* Dynamic inputs, dropdowns and textareas */
+html[data-theme="dark"] .dynamic-fields input,
+html[data-theme="dark"] .dynamic-fields select,
+html[data-theme="dark"] .dynamic-fields textarea,
+html[data-theme="dark"] .dynamic-fields .form-control,
+html[data-theme="dark"] .dynamic-fields .form-select {
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+}
+
+html[data-theme="dark"] .dynamic-fields input::placeholder,
+html[data-theme="dark"] .dynamic-fields textarea::placeholder {
+    color: #aaa !important;
+}
+
+/* Inventory type badge - readable yellow */
+html[data-theme="dark"] .badge.bg-warning,
+html[data-theme="dark"] .bg-warning .badge,
+html[data-theme="dark"] .badge.text-bg-warning {
+    background-color: #ffca2c !important;
+    color: #212529 !important;
+}
+
+/* Keep warning text readable in dark mode */
+html[data-theme="dark"] .text-warning {
+    color: #ffd166 !important;
+}
+
+
+/* Pickup Modal - Dark Mode Fix */
+
+/* Products in Order count badge */
+html[data-theme="dark"] #pickupModal #modalProductCount {
+    background-color: #343a40 !important;
+    color: #f1f1f1 !important;
+    border-color: #555 !important;
+}
+
+/* Amount Received section */
+html[data-theme="dark"] #pickupModal .modal-body .bg-light {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+    border-color: #484848 !important;
+}
+
+/* Labels and text inside the amount section */
+html[data-theme="dark"] #pickupModal .form-label,
+html[data-theme="dark"] #pickupModal small.text-muted {
+    color: #e0e0e0 !important;
+}
+
+/* Products list items */
+html[data-theme="dark"] #pickupModal #productList .list-group-item,
+html[data-theme="dark"] #pickupModal #productList .card {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+    border-color: #484848 !important;
+}
+
+/* Keep the amount input readable */
+html[data-theme="dark"] #pickupModal #amountReceived {
+    background-color: #292929 !important;
+    color: #fff !important;
+    border-color: #484848 !important;
+}
+
+/* Modal close button */
+html[data-theme="dark"] #pickupModal .btn-close {
+    filter: none;
+}
+
+/* =========================
+   Dark Mode - Dropdown Arrows
+   ========================= */
+
+html[data-theme="dark"] .form-select {
+    color-scheme: dark;
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+}
+
+/* =========================
+   Dark Mode - Date/Time Icons
+   ========================= */
+
+html[data-theme="dark"] input[type="date"],
+html[data-theme="dark"] input[type="datetime-local"],
+html[data-theme="dark"] input[type="month"],
+html[data-theme="dark"] input[type="time"] {
+    color-scheme: dark;
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+}
+
+/* Calendar picker icon for Chromium browsers */
+html[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="month"]::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+/* Keep dropdown options readable */
+html[data-theme="dark"] select option {
+    background-color: #292929;
+    color: #f1f1f1;
+}
+
+
+/* Orders filters - Dark mode dropdown arrow */
+html[data-theme="dark"] #filterSection select.form-select {
+    color: #f1f1f1 !important;
+    background-color: #292929 !important;
+    border-color: #484848 !important;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23f1f1f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Orders filters - Dark mode date fields */
+html[data-theme="dark"] #filterSection input[type="date"] {
+    color-scheme: dark !important;
+    color: #f1f1f1 !important;
+    background-color: #292929 !important;
+    border-color: #484848 !important;
+}
+
+/* Native calendar icon */
+html[data-theme="dark"] #filterSection input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1 !important;
+    cursor: pointer;
+}
+
+/* Dropdown options */
+html[data-theme="dark"] #filterSection select.form-select option {
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+}
+
+
+
+
+/* Orders List - Action buttons in dark mode */
+html[data-theme="dark"] .pickup-btn {
+    background-color: #198f3a !important;
+    border-color: #198f3a !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] a.btn-info {
+    background-color: #087990 !important;
+    border-color: #087990 !important;
+    color: #fff !important;
+}
+
+
+/* Fix native calendar icon in dark mode */
+html[data-theme="dark"] #filterSection input[type="date"] {
+    color-scheme: dark !important;
+    -webkit-appearance: auto !important;
+    appearance: auto !important;
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+}
+
+html[data-theme="dark"] #filterSection input[type="date"]::-webkit-calendar-picker-indicator {
+    -webkit-appearance: auto !important;
+    filter: none !important;
+    opacity: 1 !important;
+    display: block !important;
+    cursor: pointer !important;
+}
+

@@ -8,6 +8,7 @@ import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.orderproduct.OrderProductService;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.service.receipts.ReceiptService;
+import com.example.tailormaster.util.MessageUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
 import com.example.tailormaster.validation.Utility;
 import com.example.tailormaster.validation.Validation;
@@ -30,273 +31,114 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/receipts")
 public class ReceiptController {
-
     private static final Logger logger = LogManager.getLogger(ReceiptController.class);
-
     private final ReceiptService receiptService;
     private final Validation validation;
     private final OrderService orderService;
     private final CustomerMeasurementService customerMeasurementService;
     private final OrderProductService orderProductService;
-    private final CustomerService customerService;
-    private final ProductService productService;
+    private final MessageUtil messageUtil;
 
     @GetMapping("/generate-order-receipt/{id}")
-    public String generateOrderReceipt(@PathVariable String id,
-                                       Model model,
-                                       RedirectAttributes redirectAttributes) {
-
+    public String generateOrderReceipt(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         logger.info("Attempting to generate order receipt for order ID: {}", id);
-
         try {
-
             Long orderId = validation.decryptAndValidateId(id);
-
             if (orderId == null) {
                 logger.warn("Invalid order ID provided for receipt generation: {}", id);
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Invalid order ID."
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.invalidOrderId"));
                 return "redirect:/orders";
             }
-
             Order order = orderService.findById(orderId);
-
             if (order == null) {
                 logger.warn("Order not found with ID {}", orderId);
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        "Order not found."
-                );
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.orderNotFound"));
                 return "redirect:/orders";
             }
-
             logger.debug("Fetched order for receipt generation: {}", orderId);
-
             ReceiptDTO receiptDTO = receiptService.generateOrderReceipt(order);
-
             User user = receiptDTO.getUser();
-
             byte[] logoData = user.getLogo();
-
             String logoBase64 = null;
             String logoMimeType = null;
-
             if (logoData != null && logoData.length > 0) {
                 logoBase64 = Base64.getEncoder().encodeToString(logoData);
                 logoMimeType = Utility.detectImageMimeType(logoData);
             }
-
             model.addAttribute("order", receiptDTO.getOrder());
             model.addAttribute("user", user);
-
             model.addAttribute("logoBase64", logoBase64);
             model.addAttribute("logoMimeType", logoMimeType);
-
-            model.addAttribute(
-                    "thymeleafUtil",
-                    new ThymeleafUtil()
-            );
-
-            /*
-             * Calculate due amount only for display.
-             * Do NOT modify order entity.
-             */
-            BigDecimal totalAmount =
-                    Optional.ofNullable(order.getTotalProductAmount())
-                            .orElse(BigDecimal.ZERO);
-
-            BigDecimal advancePayment =
-                    Optional.ofNullable(order.getAdvancePayment())
-                            .orElse(BigDecimal.ZERO);
-
-            BigDecimal dueAmount =
-                    totalAmount.subtract(advancePayment);
-
+            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
+            BigDecimal totalAmount = Optional.ofNullable(order.getTotalProductAmount()).orElse(BigDecimal.ZERO);
+            BigDecimal advancePayment = Optional.ofNullable(order.getAdvancePayment()).orElse(BigDecimal.ZERO);
+            BigDecimal dueAmount = totalAmount.subtract(advancePayment);
             model.addAttribute("displayDueAmount", dueAmount);
-
-            logger.debug(
-                    "Receipt DTO generated successfully for order ID: {}",
-                    orderId
-            );
-
+            logger.debug("Receipt DTO generated successfully for order ID: {}", orderId);
             return "order/receipt";
-
         } catch (Exception e) {
-
-            logger.error(
-                    "An error occurred while generating receipt for order ID {}: {}", id, e.getMessage(), e
-            );
-
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage", "An error occurred while generating the receipt."
-            );
-
+            logger.error("An error occurred while generating receipt for order ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.generating"));
             return "redirect:/orders";
         }
     }
 
     @GetMapping("/generate-measurement/{id}")
-    public String generateMeasurement(@PathVariable String id, Model model,
-                                  RedirectAttributes redirectAttributes) {
+    public String generateMeasurement(@PathVariable String id, Model model, RedirectAttributes redirectAttributes) {
         logger.info("Attempting to generate measurement for order product ID: {}", id);
         try {
-            // Decrypt and validate customer ID
             Long orderProductId = validation.decryptAndValidateId(id);
             if (orderProductId == null) {
                 logger.warn("Invalid orderProductId provided for measurement generation: {}", id);
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid orderProductId.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.invalidOrderProductId"));
                 return "redirect:/orders";
             }
             logger.debug("Decrypted orderProductId for measurement generation: {}", orderProductId);
-
             OrderProduct orderProduct = orderProductService.getOrderProductById(orderProductId).orElse(null);
             if (orderProduct == null) {
                 logger.warn("Order Product not found with ID {} for measurement generation.", orderProductId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Order Product not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.orderProductNotFound"));
                 return "redirect:/orders";
             }
             logger.debug("Fetched order product for measurement generation: {}", orderProductId);
-
             Order order = orderService.findById(orderProduct.getOrder().getId());
             if (order == null) {
                 logger.warn("Order not found with ID {} for measurement generation.", orderProductId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Order not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.orderNotFound"));
                 return "redirect:/orders";
             }
             logger.debug("Fetched order for measurement generation: {}", order);
-
-            // get customer
             Customer customer = order.getCustomer();
             if (customer == null) {
                 logger.warn("Customer not found with ID {} for measurement generation.", orderProductId);
-                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.customerNotFound"));
                 return "redirect:/orders";
             }
             logger.info("Fetched customer for measurement generation: {}", customer);
-            // get measurement
-
-            CustomerProductMeasurement measurement =
-                    customerMeasurementService.getCustomerProductMeasurement(
-                            customer.getId(),
-                            orderProduct.getProduct().getId()
-                    );
-
+            CustomerProductMeasurement measurement = customerMeasurementService.getCustomerProductMeasurement(
+                    customer.getId(), orderProduct.getProduct().getId());
             List<CustomerMeasurement> customerMeasurements =
-                    customerMeasurementService.getCustomerMeasurementsByParentId(
-                            measurement.getId()
-                    );
-
+                    customerMeasurementService.getCustomerMeasurementsByParentId(measurement.getId());
             if (customerMeasurements == null || customerMeasurements.isEmpty()) {
                 logger.warn("Measurement not found with customer ID: {}", customer.getId());
-                redirectAttributes.addFlashAttribute("errorMessage", "Measurement not found.");
+                redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.measurementNotFound"));
                 return "redirect:/orders";
             }
             logger.debug("Fetched customer product measurement: {}", measurement);
             logger.debug("Fetched customer measurements: {}", customerMeasurements);
-
             model.addAttribute("order", order);
             model.addAttribute("orderProduct", orderProduct);
             model.addAttribute("quantity", orderProduct.getQuantity());
             model.addAttribute("measurement", measurement);
             model.addAttribute("customerMeasurements", customerMeasurements);
             model.addAttribute("backToOrder", true);
-            model.addAttribute("backOrderId",
-                    new ThymeleafUtil().encryptId(order.getId()));
+            model.addAttribute("backOrderId", new ThymeleafUtil().encryptId(order.getId()));
             model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-
-            return "customer/customer-measurement"; // Show the measurement page
+            return "customer/customer-measurement";
         } catch (Exception e) {
             logger.error("An error occurred while generating receipt for order ID {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while generating the receipt.");
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.generating"));
             return "redirect:/orders";
         }
     }
-
-//    @GetMapping("/generate-measurement/{customerId}/{productId}")
-//    public String generateMeasurementForCustomerDetails(@PathVariable String customerId, @PathVariable String productId, Model model,
-//                                      RedirectAttributes redirectAttributes) {
-//        logger.info("Attempting to generate measurement for customer ID: {}, product ID: {}", customerId, productId);
-//        try {
-//            // Decrypt and validate customer ID
-//            Long customerIdd = validation.decryptAndValidateId(customerId);
-//            Long productIdd = validation.decryptAndValidateId(productId);
-//            if (customerIdd == null || productIdd == null) {
-//                logger.warn("Invalid customerI:d {} productId: {} provided for measurement generation.", customerId, productId);
-//                redirectAttributes.addFlashAttribute("errorMessage", "Invalid customerId.");
-//                return "redirect:/customers";
-//            }
-//            logger.debug("Decrypted customerId: {} productId: {} for measurement generation", customerIdd, productIdd);
-//
-//            // get customer
-//            Customer customer = customerService.getCustomerById(customerIdd);
-//            if (customer == null) {
-//                logger.warn("Customer not found with ID {} for measurement generation.", customerIdd);
-//                redirectAttributes.addFlashAttribute("errorMessage", "Customer not found.");
-//                return "redirect:/customers";
-//            }
-//            logger.info("Fetched customer for measurement generation: {}", customer);
-//            // get product
-//            Product product = productService.getProductById(productIdd);
-//            if (product == null) {
-//                logger.warn("Product not found with ID {} for measurement generation.", productIdd);
-//                redirectAttributes.addFlashAttribute("errorMessage", "Product not found.");
-//                return "redirect:/customers";
-//            }
-//            logger.info("Fetched customer for measurement generation: {}", customer);
-//            // get measurement
-//
-//            List<CustomerMeasurement> measurement = customerMeasurementService.getMeasurement(customerIdd, productIdd);
-//            if (measurement == null || measurement.isEmpty()) {
-//                logger.warn("Measurement not found with customer ID: {}", customer.getId());
-//                redirectAttributes.addFlashAttribute("errorMessage", "Measurement not found.");
-//                return "redirect:/customers";
-//            }
-//            logger.debug("Fetched customer measurement: {}", measurement);
-//
-//            model.addAttribute("customer", customer);
-//            model.addAttribute("product", product);
-//            model.addAttribute("measurement", measurement);
-//            model.addAttribute("thymeleafUtil", new ThymeleafUtil());
-//
-//            return "order/customer-measurement"; // Show the measurement page
-//        } catch (Exception e) {
-//            logger.error("An error occurred while generating measurement for customer ID {}: product ID {}: {}", customerId, productId, e.getMessage(), e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while generating the Measurement.");
-//            return "redirect:/customers";
-//        }
-//    }
-
-//    @GetMapping("/receipts/generate-measurement/{customerId}/{productId}")
-//    public String generateMeasurement(
-//            @PathVariable String customerId,
-//            @PathVariable String productId,
-//            Model model, RedirectAttributes redirectAttributes) {
-//
-//        Long customerDbId = validation.decryptAndValidateId(customerId);
-//        Long productDbId = validation.decryptAndValidateId(productId);
-//
-//        Customer customer = customerService.getCustomerById(customerDbId);
-//        Product product = productService.getProductById(productDbId);
-//
-//        List<CustomerMeasurement> measurement =
-//                customerMeasurementService.getMeasurement(
-//                        customerDbId,
-//                        productDbId
-//                );
-//
-//        if (measurement == null || measurement.isEmpty()) {
-//                logger.warn("Measurement not found with customer ID: {}", customer.getId());
-//                redirectAttributes.addFlashAttribute("errorMessage", "Measurement not found.");
-//                return "redirect:/customers";
-//            }
-//            logger.debug("Fetched customer measurement: {}", measurement);
-//
-//        model.addAttribute("customer", customer);
-//        model.addAttribute("product", product);
-//        model.addAttribute("measurement", measurement);
-//
-//        return "receipts/measurement";
-//    }
 }
