@@ -11,30 +11,39 @@
         .badge-completed {
             background-color: #6f42c1 !important;
         }
+
         .text-gray-800 {
             color: #5a5c69 !important;
         }
+
         .fa-2x {
             font-size: 2rem;
         }
+
         .border-left-primary {
             border-left: 4px solid #4e73df !important;
         }
+
         .border-left-success {
             border-left: 4px solid #1cc88a !important;
         }
+
         .border-left-danger {
             border-left: 4px solid #e74a3b !important;
         }
+
         .border-left-warning {
             border-left: 4px solid #f6c23e !important;
         }
+
         .border-left-info {
             border-left: 4px solid #36b9cc !important;
         }
+
         .border-left-dark {
             border-left: 4px solid #343a40 !important;
         }
+
         .card.custom-shadow {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15),
             0 6px 20px rgba(0, 0, 0, 0.1);
@@ -71,7 +80,8 @@
                                             Total Customers
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                             id="totalCustomers">0</div>
+                                             id="totalCustomers">0
+                                        </div>
                                         <div class="small text-muted mt-2">
                                             <span th:text="#{dashboard.viewCustomers}">View all customers</span>
                                             <i class="bi bi-arrow-right ms-1 dashboard-kpi-arrow"></i>
@@ -98,7 +108,8 @@
                                             Total Orders
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                             id="totalOrders">0</div>
+                                             id="totalOrders">0
+                                        </div>
                                         <div class="small text-muted mt-2">
                                             <span th:text="#{dashboard.viewOrders}">View all orders</span>
                                             <i class="bi bi-arrow-right ms-1 dashboard-kpi-arrow"></i>
@@ -126,7 +137,8 @@
                                         </div>
                                         <div class="d-flex align-items-baseline gap-2">
                                             <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                                 id="pendingPayments">0</div>
+                                                 id="pendingPayments">0
+                                            </div>
                                             <div class="small text-muted" id="pendingPaymentsAmount">
                                                 PKR 0
                                             </div>
@@ -149,28 +161,41 @@
 
                 <!-- Revenue This Month -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-dark custom-shadow h-100 dashboard-kpi-card dashboard-kpi-hover">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1"
-                                         th:text="#{dashboard.revenueThisMonth}">
-                                        Revenue This Month
+                    <a th:href="@{/dashboard/revenue-details}"
+                       class="dashboard-kpi-link">
+
+                        <div class="card border-left-dark custom-shadow h-100 dashboard-kpi-card dashboard-kpi-hover">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1"
+                                             th:text="#{dashboard.revenueThisMonth}">
+                                            Revenue This Month
+                                        </div>
+
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             id="revenueThisMonth">
+                                            PKR 0
+                                        </div>
+
+                                        <div class="small text-muted mt-2">
+                            <span th:text="#{dashboard.currentMonthRevenue}">
+                                Current month revenue
+                            </span>
+                                            <i class="bi bi-arrow-right ms-1 dashboard-kpi-arrow"></i>
+                                        </div>
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                         id="revenueThisMonth">PKR 0</div>
-                                    <div class="small text-muted mt-2"
-                                         th:text="#{dashboard.currentMonthRevenue}">
-                                        Current month revenue
+
+                                    <div class="col-auto">
+                                        <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
                                     </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="bi bi-cash-stack fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                    </a>
                 </div>
+
             </div>
 
             <div class="row mt-2">
@@ -332,7 +357,7 @@
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/chart.umd.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 
 <script th:inline="javascript">
@@ -376,6 +401,58 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+        let revenueChart = null;
+        let orderStatusChart = null;
+
+        function getDashboardChartTextColor() {
+            return document.documentElement.getAttribute("data-theme") === "dark"
+                ? "#e0e0e0"
+                : "#5a5c69";
+        }
+
+        function applyDashboardChartTheme() {
+            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+            const textColor = getDashboardChartTextColor();
+            const gridColor = isDark
+                ? "rgba(255, 255, 255, 0.10)"
+                : "rgba(0, 0, 0, 0.08)";
+
+            [revenueChart, orderStatusChart].forEach(chart => {
+                if (!chart) return;
+
+                if (chart.options.plugins.title) {
+                    chart.options.plugins.title.color = textColor;
+                }
+
+                if (chart.options.plugins.legend?.labels) {
+                    chart.options.plugins.legend.labels.color = textColor;
+                }
+
+                if (chart.options.scales) {
+                    Object.values(chart.options.scales).forEach(scale => {
+                        if (scale.ticks) {
+                            scale.ticks.color = textColor;
+                        }
+
+                        if (scale.grid && scale.grid.display !== false) {
+                            scale.grid.color = gridColor;
+                        }
+                    });
+                }
+
+                chart.update("none");
+            });
+        }
+
+        const dashboardThemeObserver = new MutationObserver(() => {
+            applyDashboardChartTheme();
+        });
+
+        dashboardThemeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme"]
+        });
 
         // Load Total Customers
         fetch(contextPath + "dashboard/total-customers")
@@ -436,7 +513,7 @@
                 const revenueData = data.map(item => item.revenue);
                 const ctx = canvas.getContext("2d");
 
-                new Chart(ctx, {
+                revenueChart = new Chart(ctx, {
                     type: "bar",
                     data: {
                         labels: labels,
@@ -462,6 +539,7 @@
                             title: {
                                 display: true,
                                 text: dashboardI18n.revenueTrend,
+                                color: getDashboardChartTextColor(),
                                 font: {
                                     size: 15,
                                     weight: "600"
@@ -479,6 +557,9 @@
                             x: {
                                 grid: {
                                     display: false
+                                },
+                                ticks: {
+                                    color: getDashboardChartTextColor()
                                 }
                             },
                             y: {
@@ -487,6 +568,7 @@
                                     drawBorder: false
                                 },
                                 ticks: {
+                                    color: getDashboardChartTextColor(),
                                     callback: function (value) {
                                         return "PKR " + value;
                                     }
@@ -549,7 +631,7 @@
 
                 const ctx = canvas.getContext("2d");
 
-                new Chart(ctx, {
+                orderStatusChart = new Chart(ctx, {
                     type: "doughnut",
                     data: {
                         labels: labels,
@@ -570,23 +652,27 @@
                             legend: {
                                 position: "bottom",
                                 labels: {
+                                    color: getDashboardChartTextColor(),
                                     padding: 15,
                                     usePointStyle: true,
                                     pointStyle: "circle",
                                     generateLabels: function (chart) {
                                         const dataset = chart.data.datasets[0];
+
                                         return chart.data.labels.map((label, index) => ({
                                             text: label + " (" + dataset.data[index] + ")",
                                             fillStyle: dataset.backgroundColor[index],
                                             strokeStyle: dataset.borderColor[index],
                                             lineWidth: 1,
                                             hidden: false,
-                                            index: index
+                                            index: index,
+                                            fontColor: getDashboardChartTextColor()
                                         }));
                                     }
                                 }
                             },
                             title: {
+                                color: getDashboardChartTextColor(),
                                 display: true,
                                 text: dashboardI18n.orderStatusDistribution,
                                 font: {
@@ -644,7 +730,7 @@
 
                     const date = new Date(order.orderDate);
                     const day = String(date.getDate()).padStart(2, "0");
-                    const month = date.toLocaleString("en-US", { month: "short" });
+                    const month = date.toLocaleString("en-US", {month: "short"});
                     const year = date.getFullYear();
                     const formattedDate = `${day}-${month}-${year}`;
 
@@ -711,7 +797,7 @@
 
                     const deliveryDate = new Date(order.deliveryDate);
                     const day = String(deliveryDate.getDate()).padStart(2, "0");
-                    const month = deliveryDate.toLocaleString("en-US", { month: "short" });
+                    const month = deliveryDate.toLocaleString("en-US", {month: "short"});
                     const year = deliveryDate.getFullYear();
                     const formattedDate = `${day}-${month}-${year}`;
 

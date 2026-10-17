@@ -91,7 +91,7 @@
                             </button>
 
                             <a th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(order.id)}}"
-                               class="btn btn-info btn-sm">
+                               class="btn btn-info btn-sm m-2">
                                 <i class="bi bi-eye"></i>
                                 <span th:text="#{pendingPayments.details}">Details</span>
                             </a>
@@ -146,7 +146,7 @@
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/sweetalert2.all.min.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 <script th:inline="javascript">
     var contextPath = [[@{/}]];

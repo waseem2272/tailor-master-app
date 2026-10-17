@@ -400,6 +400,67 @@
                 font-size: 8px !important;
             }
         }
+
+        /* Customer Measurement - Dark Mode */
+        html[data-theme="dark"] body {
+            background: #181818;
+        }
+
+        html[data-theme="dark"] .measurement-card {
+            background: #202020;
+            border-color: #484848;
+        }
+
+        html[data-theme="dark"] .customer-summary,
+        html[data-theme="dark"] .measurement-footer {
+            border-color: #484848;
+        }
+
+        html[data-theme="dark"] .customer-name,
+        html[data-theme="dark"] .info-value,
+        html[data-theme="dark"] .measurements-title,
+        html[data-theme="dark"] .notes-value {
+            color: #e0e0e0;
+        }
+
+        html[data-theme="dark"] .customer-meta,
+        html[data-theme="dark"] .info-label,
+        html[data-theme="dark"] .notes-label,
+        html[data-theme="dark"] .measurement-footer .text-muted {
+            color: #bdbdbd;
+        }
+
+        html[data-theme="dark"] .info-box,
+        html[data-theme="dark"] .measurement-field,
+        html[data-theme="dark"] .notes {
+            background: #292929;
+            border-color: #484848;
+        }
+
+        html[data-theme="dark"] .measurement-item {
+            background: #202020;
+            border-color: #484848;
+        }
+
+        html[data-theme="dark"] .measurement-field {
+            color: #e0e0e0;
+        }
+
+        html[data-theme="dark"] .measurement-value {
+            background: #193d2b;
+            color: #75d99a;
+        }
+
+        html[data-theme="dark"] .measurement-count {
+            background: #193d2b;
+            color: #75d99a;
+        }
+
+        html[data-theme="dark"] .empty-measurement {
+            color: #bdbdbd;
+            border-color: #555;
+        }
+
     </style>
 </head>
 <script th:src="@{/js/language-direction.js}"></script>
@@ -576,6 +637,24 @@
 </div>
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script>
+    let measurementThemeBeforePrint = null;
 
+    window.addEventListener('beforeprint', function () {
+        measurementThemeBeforePrint =
+            document.documentElement.getAttribute('data-theme');
+
+        document.documentElement.setAttribute('data-theme', 'light');
+    });
+
+    window.addEventListener('afterprint', function () {
+        if (measurementThemeBeforePrint) {
+            document.documentElement.setAttribute(
+                'data-theme',
+                measurementThemeBeforePrint
+            );
+        }
+    });
+</script>
 </body>
 </html>

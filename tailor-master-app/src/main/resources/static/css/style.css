@@ -487,7 +487,7 @@ h4 i,
 h5 i,
 h6 i {
     display: inline-block;
-    margin-right: 8px;
+    /*margin-right: 8px;*/
 }
 
 html[dir="rtl"] .page-title i,
@@ -821,8 +821,17 @@ html[data-theme="dark"] .text-warning {
     color: #ffd166 !important;
 }
 
+html[data-theme="dark"] .badge.bg-info,
+html[data-theme="dark"] .bg-info .badge,
+html[data-theme="dark"] .badge.text-bg-info {
+    background-color: #66faff !important;
+    color: #212529 !important;
+}
 
-/* Pickup Modal - Dark Mode Fix */
+/* Keep warning text readable in dark mode */
+html[data-theme="dark"] .text-bg-info {
+    color: #66faff !important;
+}
 
 /* Products in Order count badge */
 html[data-theme="dark"] #pickupModal #modalProductCount {
@@ -973,4 +982,116 @@ html[data-theme="dark"] #filterSection input[type="date"]::-webkit-calendar-pick
     display: block !important;
     cursor: pointer !important;
 }
+
+/* Measurement Dropdown Arrow - Dark Mode */
+html[data-theme="dark"] select.field-type {
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23f1f1f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Dark Mode - Light Background Cards */
+html[data-theme="dark"] .card .bg-light {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+    border-color: #484848 !important;
+}
+
+html[data-theme="dark"] .card .bg-light .text-muted {
+    color: #bdbdbd !important;
+}
+
+html[data-theme="dark"] .card .bg-light .fw-semibold {
+    color: #f1f1f1 !important;
+}
+
+
+/* =========================
+   Dashboard - Dark Mode
+   ========================= */
+
+/* KPI card values */
+html[data-theme="dark"] .dashboard-kpi-card .text-gray-800 {
+    color: #f1f1f1 !important;
+}
+
+/* KPI card icons */
+html[data-theme="dark"] .dashboard-kpi-card .text-gray-300 {
+    color: #bdbdbd !important;
+}
+
+/* KPI card descriptions */
+html[data-theme="dark"] .dashboard-kpi-card .text-muted {
+    color: #bdbdbd !important;
+}
+
+/* Revenue label uses Bootstrap text-dark */
+html[data-theme="dark"] .dashboard-kpi-card .text-dark {
+    color: #e0e0e0 !important;
+}
+
+/* Dashboard table headers */
+html[data-theme="dark"] .content .table thead.table-success,
+html[data-theme="dark"] .content .table thead.table-success th {
+    background-color: #252525 !important;
+    color: #e0e0e0 !important;
+    border-color: #383838 !important;
+}
+
+/* Create Order - Date Picker Dark Mode */
+html[data-theme="dark"] #orderDate,
+html[data-theme="dark"] #deliveryDate {
+    color-scheme: dark !important;
+    background-color: #292929 !important;
+    color: #f1f1f1 !important;
+    border-color: #484848 !important;
+}
+
+/* Calendar icon visibility */
+html[data-theme="dark"] #orderDate::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] #deliveryDate::-webkit-calendar-picker-indicator {
+    opacity: 1 !important;
+    visibility: visible !important;
+    cursor: pointer;
+    filter: brightness(0) invert(1) !important;
+}
+
+
+/* SweetAlert title - Light Mode */
+.swal2-popup .pickup-alert-title {
+    color: #212529 !important;
+}
+
+/* SweetAlert title - Dark Mode */
+html[data-theme="dark"] .swal2-popup .pickup-alert-title {
+    color: #f1f1f1 !important;
+}
+
+
+/* SweetAlert - Dark Mode */
+html[data-theme="dark"] .swal2-popup {
+    background: #202020 !important;
+    color: #f1f1f1 !important;
+}
+
+html[data-theme="dark"] .swal2-popup .swal2-title,
+html[data-theme="dark"] .swal2-popup .swal2-html-container {
+    color: #f1f1f1 !important;
+}
+
+/* SweetAlert buttons - Dark Mode */
+html[data-theme="dark"] .swal2-popup .swal2-styled.swal2-confirm {
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .swal2-popup .swal2-styled.swal2-cancel {
+    color: #ffffff !important;
+}
+
 

@@ -41,6 +41,23 @@ public class CustomerPaymentLedgerService {
         }
     }
 
+    public List<CustomerPaymentLedger> getRevenueEntriesThisMonth() {
+        try {
+            List<CustomerPaymentLedger> entries =
+                    customerPaymentRepository.findRevenueEntriesThisMonth(
+                            PaymentType.DEBIT,
+                            authenticatedUserService.getCurrentUser()
+                    );
+
+            logger.debug("Fetched {} revenue entries for the current month.", entries.size());
+            return entries;
+
+        } catch (Exception e) {
+            logger.error("Error fetching revenue entries for this month: {}", e.getMessage(), e);
+            throw new RuntimeException("Error fetching revenue entries for this month.", e);
+        }
+    }
+
     public List<Map<String, Object>> getMonthlyRevenueTrendsForLast6Months() {
         List<Map<String, Object>> trends = new ArrayList<>();
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Karachi"));

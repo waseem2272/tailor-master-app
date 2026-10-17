@@ -112,7 +112,7 @@
                                        th:text="#{orders.create.orderType}">
                                     Order Type
                                 </label>
-                                <select class="form-select" id="orderProductType">
+                                <select class="form-select field-type" id="orderProductType">
                                     <option value="TAILORING" selected
                                             th:text="#{orders.create.tailoring}">Tailoring</option>
                                     <option value="INVENTORY"
@@ -126,7 +126,7 @@
                                        th:text="#{orders.create.selectProduct}">
                                     Select Product
                                 </label>
-                                <select class="form-select" id="productSelect">
+                                <select class="form-select field-type" id="productSelect">
                                     <option value="" disabled selected
                                             th:text="#{orders.create.selectProductPlaceholder}">
                                         -- Select a Product --
@@ -144,7 +144,7 @@
                                        th:text="#{orders.create.silaiType}">
                                     Silai Type
                                 </label>
-                                <select class="form-select" id="silaiSelect">
+                                <select class="form-select field-type" id="silaiSelect">
                                     <option value="" disabled selected
                                             th:text="#{orders.create.silaiTypePlaceholder}">
                                         -- Silai Type --
@@ -176,7 +176,7 @@
                                     Fabric Source
                                 </label>
 
-                                <select class="form-select" id="fabricSource">
+                                <select class="form-select field-type" id="fabricSource">
                                     <option value="CUSTOMER" selected
                                             th:text="#{orders.create.customerFabric}">
                                         Customer Fabric
@@ -195,7 +195,7 @@
                                     Shop Fabric
                                 </label>
 
-                                <select class="form-select" id="inventoryItemSelect">
+                                <select class="form-select field-type" id="inventoryItemSelect">
                                     <option value="" disabled selected
                                             th:text="#{orders.create.selectShopFabric}">
                                         -- Select Shop Fabric --
@@ -270,7 +270,7 @@
                             <div class="col-md-6">
                                 <label for="inventoryItemOrderSelect" class="form-label fw-bold"
                                        th:text="#{orders.create.inventoryItem}">Inventory Item</label>
-                                <select class="form-select" id="inventoryItemOrderSelect">
+                                <select class="form-select field-type" id="inventoryItemOrderSelect">
                                     <option value="" disabled selected
                                             th:text="#{orders.create.selectInventoryItem}">
                                         -- Select Inventory Item --
@@ -607,7 +607,7 @@
 
                     <!-- Customer Name -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-person me-1"></i>
                                 <span th:text="#{orders.create.customerName}">Customer Name</span>
@@ -620,7 +620,7 @@
 
                     <!-- Phone Number -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-telephone me-1"></i>
                                 <span th:text="#{orders.create.phoneNumber}">Phone Number</span>
@@ -633,7 +633,7 @@
 
                     <!-- Book Number -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-book me-1"></i>
                                 <span th:text="#{orders.create.bookNumber}">Book Number</span>
@@ -646,7 +646,7 @@
 
                     <!-- Order Date -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-calendar-event me-1"></i>
                                 <span th:text="#{orders.create.orderDate}">Order Date</span>
@@ -659,7 +659,7 @@
 
                     <!-- Delivery Date -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-calendar-check me-1"></i>
                                 <span th:text="#{orders.create.deliveryDate}">Delivery Date</span>
@@ -672,7 +672,7 @@
 
                     <!-- Order Status -->
                     <div class="col-md-4">
-                        <div class="border rounded-3 p-3 bg-light h-100">
+                        <div class="border rounded-3 p-3 h-100">
                             <div class="text-muted small mb-1">
                                 <i class="bi bi-info-circle me-1"></i>
                                 <span th:text="#{orders.create.orderStatus}">Order Status</span>
@@ -796,7 +796,7 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 
 <script th:inline="javascript">

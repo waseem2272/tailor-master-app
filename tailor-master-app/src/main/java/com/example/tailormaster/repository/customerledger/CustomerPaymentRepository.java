@@ -44,4 +44,20 @@ public interface CustomerPaymentRepository extends JpaRepository<CustomerPayment
             @Param("user") User user
     );
 
+    @Query("""
+    SELECT o
+    FROM CustomerPaymentLedger o
+    JOIN FETCH o.customer c
+    LEFT JOIN FETCH o.order ord
+    WHERE o.paymentType = :paymentType
+      AND c.user = :user
+      AND MONTH(o.paymentDate) = MONTH(CURRENT_DATE)
+      AND YEAR(o.paymentDate) = YEAR(CURRENT_DATE)
+    ORDER BY o.paymentDate DESC, o.id DESC
+""")
+    List<CustomerPaymentLedger> findRevenueEntriesThisMonth(
+            @Param("paymentType") PaymentType paymentType,
+            @Param("user") User user
+    );
+
 }

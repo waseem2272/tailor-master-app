@@ -81,7 +81,7 @@
                                             <span class="text-danger">*</span>
                                         </label>
                                         <select th:field="*{itemType}" id="itemType"
-                                                class="form-select rounded-pill" required>
+                                                class="form-select field-type rounded-pill" required>
                                             <option value="" th:text="#{inventory.selectItemType}">Select Item Type</option>
                                             <option th:each="type : ${itemTypes}"
                                                     th:value="${type}"
@@ -94,7 +94,7 @@
                                     <div class="col-md-6">
                                         <label for="brand" class="form-label fw-semibold"
                                                th:text="#{inventory.brand}">Brand</label>
-                                        <select th:field="*{brand}" id="brand" class="form-select rounded-pill">
+                                        <select th:field="*{brand}" id="brand" class="form-select field-type rounded-pill">
                                             <option value="" th:text="#{inventory.selectBrand}">Select Brand</option>
                                             <option th:each="brand : ${brands}"
                                                     th:value="${brand.id}"
@@ -105,7 +105,7 @@
                                     <div class="col-md-6">
                                         <label for="category" class="form-label fw-semibold"
                                                th:text="#{inventory.category}">Category</label>
-                                        <select th:field="*{category}" id="category" class="form-select rounded-pill">
+                                        <select th:field="*{category}" id="category" class="form-select field-type rounded-pill">
                                             <option value="" th:text="#{inventory.selectCategory}">Select Category</option>
                                             <option th:each="category : ${categories}"
                                                     th:value="${category.id}"
@@ -128,7 +128,7 @@
                                     <div class="col-md-4">
                                         <label for="color" class="form-label fw-semibold"
                                                th:text="#{inventory.color}">Color</label>
-                                        <select th:field="*{color}" class="form-select">
+                                        <select th:field="*{color}" class="form-select field-type">
                                             <option value="" th:text="#{inventory.selectColor}">Select Color</option>
                                             <option th:each="color : ${colors}"
                                                     th:value="${color.id}"
@@ -140,7 +140,7 @@
                                     <div class="col-md-4" id="designField">
                                         <label for="design" class="form-label fw-semibold"
                                                th:text="#{inventory.designPattern}">Design / Pattern</label>
-                                        <select th:field="*{design}" class="form-select">
+                                        <select th:field="*{design}" class="form-select field-type">
                                             <option value="" th:text="#{inventory.selectDesign}">Select Design</option>
                                             <option th:each="design : ${designs}"
                                                     th:value="${design.id}"
@@ -182,7 +182,6 @@
                                     <i class="bi bi-info-circle me-1"></i>
                                     <span th:text="#{inventory.editPriceBatchNotice}">
                                         Purchase Price and Sale Price can only be updated through Batches.
-                                        Minimum Stock can be edited here.
                                     </span>
                                 </div>
 
@@ -193,7 +192,7 @@
                                             <span class="text-danger">*</span>
                                         </label>
                                         <select th:field="*{unit}" id="unit"
-                                                class="form-select rounded-pill"
+                                                class="form-select field-type rounded-pill"
                                                 required
                                                 th:disabled="${inventoryItem.id != null}">
                                             <option value="" th:text="#{inventory.selectUnit}">Select Unit</option>
@@ -380,7 +379,7 @@
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 
 <script th:inline="javascript">

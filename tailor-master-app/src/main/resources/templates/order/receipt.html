@@ -22,6 +22,35 @@
             color: #212529;
         }
 
+
+        /* Customer & Order info spacing */
+        .info-cards-row .card-body .d-flex {
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .info-cards-row .card-body .d-flex > span:first-of-type {
+            flex-shrink: 0;
+        }
+
+        .info-cards-row .card-body .d-flex > span:last-of-type {
+            margin-inline-start: auto;
+            overflow-wrap: anywhere;
+            text-align: end;
+        }
+
+        /* Urdu / RTL receipt */
+        html[dir="rtl"] .info-cards-row .card-body .d-flex {
+            justify-content: flex-start;
+        }
+
+        @media print {
+            .info-cards-row .card-body .d-flex {
+                gap: 6px !important;
+            }
+        }
+
+
         @media print {
             @page {
                 size: A4;
@@ -387,5 +416,24 @@
 
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/common.js}"></script>
+<script>
+    let receiptThemeBeforePrint = null;
+
+    window.addEventListener('beforeprint', function () {
+        receiptThemeBeforePrint =
+            document.documentElement.getAttribute('data-theme');
+
+        document.documentElement.setAttribute('data-theme', 'light');
+    });
+
+    window.addEventListener('afterprint', function () {
+        if (receiptThemeBeforePrint) {
+            document.documentElement.setAttribute(
+                'data-theme',
+                receiptThemeBeforePrint
+            );
+        }
+    });
+</script>
 </body>
 </html>

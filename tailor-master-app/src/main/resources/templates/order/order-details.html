@@ -12,96 +12,50 @@
         .badge-completed {
             background-color: #6f42c1 !important;
         }
-
-        .order-product-status {
-            min-width: 180px;
-            width: auto;
-        }
-
+        /* Order Information */
         .order-info-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
-            padding: 9px 0;
-            border-bottom: 1px solid #eeeeee;
-        }
-
-        .order-info-row:last-child {
-            border-bottom: none;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .order-info-label {
-            color: #6c757d;
-            font-size: 14px;
-            font-weight: 500;
+            color: #495057;
+            font-weight: 600;
         }
 
         .order-info-value {
             color: #212529;
-            font-size: 14px;
             font-weight: 600;
             text-align: right;
         }
 
-        .product-name {
-            font-weight: 600;
-            color: #212529;
+        /* Dark Mode */
+        html[data-theme="dark"] .order-info-row {
+            border-bottom-color: #3a4148;
         }
 
-        .product-type {
-            font-size: 12px;
-            font-weight: 600;
+        html[data-theme="dark"] .order-info-label {
+            color: #adb5bd !important;
         }
 
-        .product-sub-info {
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 3px;
+        html[data-theme="dark"] .order-info-value {
+            color: #f8f9fa !important;
         }
 
-        .amount-cell {
-            font-weight: 600;
-            white-space: nowrap;
+        html[data-theme="dark"] .order-info-value.text-danger {
+            color: #ff6b6b !important;
+        }
+        html[data-theme="dark"] .card {
+            background-color: #212529;
+            color: #f8f9fa;
         }
 
-        .notes-cell {
-            min-width: 150px;
-            max-width: 250px;
-            white-space: normal;
-        }
-
-        .table > :not(caption) > * > * {
-            padding: 12px 10px;
-        }
-
-        .table thead th {
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            vertical-align: middle;
-        }
-
-        .table tbody td {
-            font-size: 14px;
-        }
-
-        .order-actions .btn {
-            min-width: 150px;
-        }
-
-        @media (max-width: 768px) {
-            .order-info-row {
-                align-items: flex-start;
-            }
-
-            .order-info-value {
-                text-align: right;
-            }
-
-            .order-actions .btn {
-                width: 100%;
-            }
+        html[data-theme="dark"] .card-body {
+            color: #f8f9fa;
         }
     </style>
 </head>
@@ -270,7 +224,9 @@
                                             <span th:text="#{orders.table.orderDate}">Order Date</span>
                                         </span>
                                         <span class="order-info-value"
-                                              th:text="${#temporals.format(order.orderDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
+                                              th:text="${order.orderDate != null
+                                                ? #temporals.format(order.orderDate, 'dd-MM-yyyy')
+                                                : '-'}"></span>
                                     </div>
 
                                     <div class="order-info-row">
@@ -278,7 +234,9 @@
                                             <span th:text="#{orders.table.deliveryDate}">Delivery Date</span>
                                         </span>
                                         <span class="order-info-value"
-                                              th:text="${#temporals.format(order.deliveryDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
+                                              th:text="${order.deliveryDate != null
+                                                ? #temporals.format(order.deliveryDate, 'dd-MM-yyyy')
+                                                : '-'}"></span>
                                     </div>
 
                                     <div class="order-info-row">
@@ -295,7 +253,9 @@
                                         </span>
                                         <span class="order-info-value">
                                             <span th:if="${order.pickupDate != null}"
-                                                  th:text="${#temporals.format(order.pickupDate, 'dd-MMM-yyyy', T(java.util.Locale).ENGLISH)}"></span>
+                                                  th:text="${order.pickupDate != null
+                                                        ? #temporals.format(order.pickupDate, 'dd-MM-yyyy')
+                                                        : '-'}"></span>
                                             <span th:unless="${order.pickupDate != null}"
                                                   class="text-muted">-</span>
                                         </span>
@@ -335,14 +295,6 @@
 
                                     <div class="order-info-row">
                                         <span class="order-info-label">
-                                            <span th:text="#{orders.pickup.dueAmount}">Due Amount</span>
-                                        </span>
-                                        <span class="order-info-value format-amount"
-                                              th:text="${order.duePayment}"></span>
-                                    </div>
-
-                                    <div class="order-info-row">
-                                        <span class="order-info-label">
                                             <span th:text="#{orders.details.paidAmount}">Paid Amount</span>
                                         </span>
                                         <span class="order-info-value format-amount"
@@ -351,11 +303,19 @@
 
                                     <div class="order-info-row">
                                         <span class="order-info-label">
+                                            <span th:text="#{orders.pickup.dueAmount}">Due Amount</span>
+                                        </span>
+                                        <span class="order-info-value format-amount"
+                                              th:text="${order.duePayment}"></span>
+                                    </div>
+
+                                    <!--<div class="order-info-row">
+                                        <span class="order-info-label">
                                             <span th:text="#{orders.details.outstandingDue}">Outstanding Due</span>
                                         </span>
                                         <span class="order-info-value text-danger format-amount"
                                               th:text="${order.outstandingDueAmount}"></span>
-                                    </div>
+                                    </div>-->
 
                                     <div class="order-info-row"
                                          th:if="${(order.status?.name() == 'COMPLETED' or order.status?.name() == 'DELIVERED') and order.pickupStatus?.name() == 'PICKED_UP'}">
@@ -384,7 +344,7 @@
                                             <span th:text="#{orders.create.orderStatus}">Order Status</span>
                                         </label>
 
-                                        <select id="orderStatus" name="status" class="form-select w-auto">
+                                        <select id="orderStatus" name="status" class="form-select field-type w-auto">
 
                                             <th:block th:if="${order.status?.name() == 'PENDING'}">
                                                 <option value="PENDING" selected
@@ -516,7 +476,7 @@
 
                                 <!-- Status -->
                                 <td class="text-center">
-                                    <select class="form-select form-select-sm order-product-status"
+                                    <select class="form-select field-type form-select-sm order-product-status"
                                             th:data-order-product-id="${item.id}"
                                             th:data-current-status="${item.status?.name()}"
                                             th:disabled="${order.status?.name() == 'CANCELLED' || order.status?.name() == 'DELIVERED' || item.status?.name() == 'CANCELLED'}">
@@ -735,7 +695,7 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 
 <script th:inline="javascript">

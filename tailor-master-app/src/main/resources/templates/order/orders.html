@@ -126,7 +126,7 @@
                             <div class="col-md-2">
                                 <label for="dateRange" class="form-label fw-semibold"
                                        th:text="#{orders.filter.quickDateRange}">Quick Date Range</label>
-                                <select id="dateRange" class="form-select rounded-pill">
+                                <select id="dateRange" class="form-select field-type rounded-pill">
                                     <option value="" th:text="#{orders.filter.selectRange}">Select range</option>
                                     <option value="last7days" th:text="#{orders.filter.last7Days}">Last 7 days</option>
                                     <option value="thismonth" th:text="#{orders.filter.thisMonth}">This month</option>
@@ -145,7 +145,7 @@
                             <div class="col-md-2">
                                 <label for="paymentStatus" class="form-label fw-semibold"
                                        th:text="#{orders.filter.paymentStatus}">Payment Status</label>
-                                <select id="paymentStatus" name="orderStatus" class="form-select rounded-pill">
+                                <select id="paymentStatus" name="orderStatus" class="form-select field-type rounded-pill">
                                     <option value="" selected th:text="#{orders.filter.all}">All</option>
                                     <option th:value="paid" th:text="#{orders.filter.paid}">Paid</option>
                                     <option th:value="unpaid" th:text="#{orders.filter.unpaid}">Unpaid</option>
@@ -155,7 +155,7 @@
                             <div class="col-md-2">
                                 <label for="orderStatus" class="form-label fw-semibold"
                                        th:text="#{orders.filter.orderStatus}">Order Status</label>
-                                <select id="orderStatus" name="orderStatus" class="form-select rounded-pill">
+                                <select id="orderStatus" name="orderStatus" class="form-select field-type rounded-pill">
                                     <option value="" selected th:text="#{orders.filter.all}">All</option>
                                     <option th:each="status : ${orderStatusList}"
                                             th:value="${status}"
@@ -292,7 +292,7 @@
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
 <script th:src="@{/js/sweetalert2.all.min.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
@@ -757,38 +757,79 @@
         }
         confirmPickupBtn.disabled = true;
         confirmPickupBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + orderMessages.processing;
+
         $.ajax({
             url: contextPath + "orders/pickup",
             method: "POST",
             contentType: "application/json",
-            data: JSON.stringify({orderId: orderDbId, amountReceived: amountReceived}),
+            data: JSON.stringify({
+                orderId: orderDbId,
+                amountReceived: amountReceived
+            }),
             beforeSend: function (xhr) {
                 xhr.setRequestHeader(csrfHeader, csrfToken);
             },
             success: function () {
                 $('#pickupModal').modal('hide');
+
                 Swal.fire({
                     icon: 'success',
                     title: orderMessages.pickupSuccess,
                     showConfirmButton: false,
-                    timer: 3500
+                    timer: 3500,
+                    didOpen: function (popup) {
+                        const isDark =
+                            document.documentElement.getAttribute('data-theme') === 'dark';
+
+                        popup.querySelector('.swal2-title').style.setProperty(
+                            'color',
+                            isDark ? '#f1f1f1' : '#212529',
+                            'important'
+                        );
+                    }
                 });
+
                 confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>' + orderMessages.confirmPickup;
+                confirmPickupBtn.innerHTML =
+                    '<i class="bi bi-check-circle me-1"></i>' +
+                    orderMessages.confirmPickup;
+
                 $('#ordersTable').DataTable().ajax.reload(null, false);
             },
             error: function (xhr) {
                 let errorMessage = orderMessages.genericError;
+
                 if (xhr.responseJSON) {
-                    errorMessage = xhr.responseJSON.error || xhr.responseJSON.message || errorMessage;
+                    errorMessage = xhr.responseJSON.error ||
+                        xhr.responseJSON.message ||
+                        errorMessage;
                 } else if (xhr.responseText) {
                     errorMessage = xhr.responseText;
                 }
-                Swal.fire({icon: 'error', title: orderMessages.pickupErrorTitle, text: errorMessage});
+
+                Swal.fire({
+                    icon: 'error',
+                    title: orderMessages.pickupErrorTitle,
+                    text: errorMessage,
+                    didOpen: function (popup) {
+                        const isDark =
+                            document.documentElement.getAttribute('data-theme') === 'dark';
+
+                        popup.querySelector('.swal2-title').style.setProperty(
+                            'color',
+                            isDark ? '#f1f1f1' : '#212529',
+                            'important'
+                        );
+                    }
+                });
+
                 confirmPickupBtn.disabled = false;
-                confirmPickupBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>' + orderMessages.confirmPickup;
+                confirmPickupBtn.innerHTML =
+                    '<i class="bi bi-check-circle me-1"></i>' +
+                    orderMessages.confirmPickup;
             }
         });
+
     });
 </script>
 

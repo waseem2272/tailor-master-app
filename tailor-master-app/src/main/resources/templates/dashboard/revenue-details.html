@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{revenueDetails.title}">Revenue Details</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom-style.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{/font/bootstrap-icons.css}"/>
+</head>
+
+<script th:src="@{/js/language-direction.js}"></script>
+<script th:src="@{/js/theme.js}"></script>
+
+<body>
+
+<div th:replace="~{fragments/sidebar :: sidebar}"></div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="content">
+    <div class="main-content container-fluid">
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h2 class="page-title d-flex align-items-center mb-0">
+                <i class="bi bi-cash-coin me-2"></i>
+                <span th:text="#{revenueDetails.pageTitle}">
+                    Revenue Details - This Month
+                </span>
+            </h2>
+
+            <a th:href="@{/dashboard}" class="btn btn-success shadow rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i>
+                <span th:text="#{revenueDetails.backToDashboard}">
+                    Back to Dashboard
+                </span>
+            </a>
+        </div>
+
+        <p class="text-muted mb-4"
+           th:text="#{revenueDetails.description}">
+            All debit entries recorded during the current month.
+        </p>
+
+        <!-- Total Revenue -->
+        <div class="card shadow-sm border-success border-bottom border-3 mb-4">
+            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                <i class="bi bi-wallet2 me-2"></i>
+                <span th:text="#{revenueDetails.totalRevenue}">
+                    Total Revenue This Month
+                </span>
+            </div>
+
+            <div class="card-body">
+                <h3 class="text-success fw-bold mb-0">
+                    PKR
+                    <span class="format-amount"
+                          th:text="${totalRevenue}">0.00</span>
+                </h3>
+            </div>
+        </div>
+
+        <!-- Revenue Entries -->
+        <div class="card shadow-sm border-success border-bottom border-3">
+            <div class="card-header bg-success text-white fw-bold d-flex align-items-center rounded-top-4">
+                <i class="bi bi-list-ul me-2"></i>
+                <span th:text="#{revenueDetails.title}">
+                    Revenue Details
+                </span>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="revenueDetailsTable"
+                           class="table table-bordered table-hover table-striped align-middle w-100">
+
+                        <thead class="table-success text-dark">
+                        <tr>
+                            <th th:text="#{revenueDetails.transactionDate}">
+                                Payment Date
+                            </th>
+                            <th th:text="#{revenueDetails.customerName}">
+                                Customer Name
+                            </th>
+                            <th th:text="#{revenueDetails.orderNumber}">
+                                Order Number
+                            </th>
+                            <th th:text="#{revenueDetails.amount}">
+                                Amount
+                            </th>
+                            <th th:text="#{revenueDetails.remarks}">
+                                Remarks
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="entry : ${revenueEntries}">
+
+                            <td th:text="${entry.paymentDate != null
+    ? #temporals.format(entry.paymentDate, 'dd-MM-yyyy')
+    : '-'}">
+                            </td>
+
+
+
+                            <td>
+                                <a th:if="${entry.customer != null}"
+                                   th:href="@{'/customers/details/' + ${thymeleafUtil.encryptId(entry.customer.id)}}"
+                                   class="text-success fw-semibold text-decoration-none"
+                                   th:text="${entry.customer.fullName}">
+                                </a>
+
+                                <span th:if="${entry.customer == null}">-</span>
+
+                                <br>
+
+                                <small class="text-muted"
+                                       th:if="${entry.customer != null}"
+                                       th:text="${entry.customer.phoneNumber}">
+                                </small>
+                            </td>
+
+
+                            <td>
+                                <a th:if="${entry.order != null}"
+                                   th:href="@{'/orders/details/' + ${thymeleafUtil.encryptId(entry.order.id)}}"
+                                   th:text="${entry.order.orderId}"
+                                   class="text-success fw-semibold text-decoration-none">
+                                </a>
+                                <span th:unless="${entry.order != null}">-</span>
+                            </td>
+
+                            <td class="format-amount fw-semibold"
+                                th:text="${entry.amount != null ? entry.amount : 0}">
+                            </td>
+
+                            <td th:text="${#strings.isEmpty(entry.remarks)
+                                ? '-'
+                                : entry.remarks}">
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(revenueEntries)}">
+                            <td colspan="5"
+                                class="text-center text-muted py-4"
+                                th:text="#{revenueDetails.noRecords}">
+                                No revenue entries found for this month.
+                            </td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div th:replace="~{fragments/notification-modal :: notification}"></div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/datatables.min.js}"></script>
+<script th:src="@{/js/sidebar-toggle.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#revenueDetailsTable').DataTable({
+            order: [],
+            columnDefs: [
+                { targets: '_all', defaultContent: '-' }
+            ]
+        });
+    });
+</script>
+
+</body>
+</html>

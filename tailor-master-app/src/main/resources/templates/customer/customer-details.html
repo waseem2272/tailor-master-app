@@ -170,12 +170,12 @@
             </div>
 
             <div class="modal-body">
-                <div class="mb-4 p-3 border rounded-3 bg-light">
+                <div class="mb-4 p-3 border rounded-3">
                     <label for="measurementProduct" class="form-label fw-semibold">
                         <i class="bi bi-box-seam me-1 text-success"></i>
                         <span th:text="#{customer.details.product}">Product</span>
                     </label>
-                    <select id="measurementProduct" class="form-select">
+                    <select id="measurementProduct" class="form-select field-type">
                         <option value="" th:text="#{customer.details.selectProduct}">Select Product</option>
                         <option th:each="product : ${products}"
                                 th:value="${product.id}" th:text="${product.name}"></option>
@@ -237,7 +237,7 @@
             </div>
 
             <div class="modal-body">
-                <div class="mb-4 p-3 border rounded-3 bg-light">
+                <div class="mb-4 p-3 border rounded-3">
                     <label for="editMeasurementProduct" class="form-label fw-semibold">
                         <i class="bi bi-box-seam me-1 text-success"></i>
                         <span th:text="#{customer.details.product}">Product</span>
@@ -284,7 +284,7 @@
 <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 <script th:src="@{/js/datatables.min.js}"></script>
 <script th:src="@{/js/sidebar-toggle.js}"></script>
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 
 <script th:inline="javascript">
     var contextPath = [[@{/}]];
@@ -414,7 +414,7 @@
                                        placeholder="${customerDetailsMessages.enterValue} ${field.fieldName}">`;
                         } else if (field.fieldType === "DROPDOWN") {
                             fieldHtml += `
-                                <select class="form-select" data-field-id="${field.id}">
+                                <select class="form-select field-type" data-field-id="${field.id}">
                                     <option value="">${customerDetailsMessages.selectValue} ${field.fieldName}</option>`;
 
                             if (field.options) {
@@ -549,7 +549,7 @@
                             input.placeholder = `${customerDetailsMessages.enterValue} ${field.fieldName}`;
                         } else if (field.fieldType === "DROPDOWN") {
                             input = document.createElement("select");
-                            input.className = "form-select edit-measurement-field";
+                            input.className = "form-select field-type edit-measurement-field";
 
                             const placeholder = document.createElement("option");
                             placeholder.value = "";

@@ -1,6 +1,7 @@
 package com.example.tailormaster.service.dashboard;
 
 import com.example.tailormaster.entity.Order;
+import com.example.tailormaster.entity.ledger.CustomerPaymentLedger;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.customerledger.CustomerPaymentLedgerService;
 import com.example.tailormaster.service.order.OrderService;
@@ -80,6 +81,17 @@ public class DashboardService {
         BigDecimal revenue = customerPaymentLedgerService.getRevenueThisMonth();
         logger.info("Revenue this month: {}", revenue);
         return revenue;
+    }
+
+    public List<CustomerPaymentLedger> getRevenueEntriesThisMonth() {
+        logger.debug("Fetching revenue entries for current month");
+
+        List<CustomerPaymentLedger> entries =
+                customerPaymentLedgerService.getRevenueEntriesThisMonth();
+
+        logger.info("Revenue entries fetched: {}", entries.size());
+
+        return entries;
     }
 
     public List<Map<String, Object>> getMonthlyRevenueTrendsForLast6Months() {

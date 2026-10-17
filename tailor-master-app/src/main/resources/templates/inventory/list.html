@@ -123,7 +123,7 @@
                                 <div class="col-md-3">
                                     <label class="form-label fw-semibold"
                                            th:text="#{inventory.itemType}">Item Type</label>
-                                    <select id="itemTypeFilter" class="form-select rounded-pill">
+                                    <select id="itemTypeFilter" class="form-select field-type rounded-pill">
                                         <option value="" th:text="#{inventory.allTypes}">All Types</option>
                                         <option value="FABRIC" th:text="#{inventory.type.fabric}">Fabric</option>
                                         <option value="STITCHED" th:text="#{inventory.type.stitched}">Stitched</option>
@@ -136,7 +136,7 @@
                                 <div class="col-md-3">
                                     <label class="form-label fw-semibold"
                                            th:text="#{inventory.stockStatus}">Stock Status</label>
-                                    <select id="stockFilter" class="form-select rounded-pill">
+                                    <select id="stockFilter" class="form-select field-type rounded-pill">
                                         <option value="" th:text="#{inventory.allStock}">All Stock</option>
                                         <option value="available" th:text="#{inventory.inStock}">In Stock</option>
                                         <option value="low" th:text="#{inventory.lowStock}">Low Stock</option>
@@ -267,7 +267,7 @@
     var contextPath = [[@{/}]];
 </script>
 
-<script th:src="@{/js/dashboard-notifications.js}"></script>
+<!--<script th:src="@{/js/dashboard-notifications.js}"></script>-->
 <script th:src="@{/js/common.js}"></script>
 
 <script th:inline="javascript">

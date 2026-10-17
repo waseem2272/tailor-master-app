@@ -137,7 +137,7 @@ public class ReceiptController {
             return "customer/customer-measurement";
         } catch (Exception e) {
             logger.error("An error occurred while generating receipt for order ID {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("receipt.error.generating"));
+            redirectAttributes.addFlashAttribute("errorMessage", messageUtil.get("customer.details.loadMeasurementError"));
             return "redirect:/orders";
         }
     }
