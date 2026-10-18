@@ -1095,3 +1095,51 @@ html[data-theme="dark"] .swal2-popup .swal2-styled.swal2-cancel {
 }
 
 
+/* Customer summary cards - Light mode */
+.customer-summary-card {
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.customer-summary-orders {
+    background-color: #f0f8f1;
+    border-bottom: 3px solid #198f3a !important;
+}
+
+.customer-summary-orders .customer-summary-label,
+.customer-summary-orders .customer-summary-value {
+    color: #198f3a;
+}
+
+.customer-summary-amount {
+    background-color: #f0f6ff;
+    border-bottom: 3px solid #0d6efd !important;
+}
+
+.customer-summary-amount .customer-summary-label,
+.customer-summary-amount .customer-summary-value {
+    color: #0d6efd;
+}
+
+/* Customer summary cards - Dark mode */
+html[data-theme="dark"] .customer-summary-orders {
+    background-color: #1b3023;
+    border-color: #198f3a !important;
+}
+
+html[data-theme="dark"] .customer-summary-orders .customer-summary-label,
+html[data-theme="dark"] .customer-summary-orders .customer-summary-value {
+    color: #75d995;
+}
+
+html[data-theme="dark"] .customer-summary-amount {
+    background-color: #1c293b;
+    border-color: #4d94ff !important;
+}
+
+html[data-theme="dark"] .customer-summary-amount .customer-summary-label,
+html[data-theme="dark"] .customer-summary-amount .customer-summary-value {
+    color: #8bbaff;
+}
+
+
+

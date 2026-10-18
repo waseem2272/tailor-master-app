@@ -1610,4 +1610,34 @@ public class OrderService {
                 PageRequest.of(0, limit)
         );
     }
+
+    public Map<String, Object> getDeliveredOrderSummary(Long customerId) {
+        try {
+            Object[] result = orderRepository.getDeliveredOrderSummary(customerId, authenticatedUserService.getCurrentUser());
+
+            if (result != null && result.length == 1 && result[0] instanceof Object[]) {
+                result = (Object[]) result[0];
+            }
+
+            Map<String, Object> summary = new HashMap<>();
+            summary.put("totalOrders", result != null && result.length > 0
+                    ? ((Number) result[0]).longValue() : 0L);
+            summary.put("totalAmount", result != null && result.length > 1
+                    ? new BigDecimal(result[1].toString()) : BigDecimal.ZERO);
+
+            logger.debug(
+                    "Fetched delivered order summary for customerId={}: orders={}, amount={}",
+                    customerId, summary.get("totalOrders"), summary.get("totalAmount")
+            );
+
+            return summary;
+
+        } catch (Exception e) {
+            logger.error(
+                    "Error fetching delivered order summary for customerId={}: {}",
+                    customerId, e.getMessage(), e
+            );
+            throw new RuntimeException("Error fetching delivered order summary.", e);
+        }
+    }
 }

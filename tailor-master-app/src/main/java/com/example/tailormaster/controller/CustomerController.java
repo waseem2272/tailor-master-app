@@ -8,10 +8,12 @@ import com.example.tailormaster.entity.CustomerMeasurement;
 import com.example.tailormaster.entity.CustomerProductMeasurement;
 import com.example.tailormaster.entity.ProductMeasurementField;
 import com.example.tailormaster.entity.product.Product;
+import com.example.tailormaster.repository.order.OrderRepository;
 import com.example.tailormaster.service.ProductMeasurementFieldService;
 import com.example.tailormaster.service.customer.CustomerMeasurementService;
 import com.example.tailormaster.service.customer.CustomerService;
 import com.example.tailormaster.service.customerledger.CustomerPaymentLedgerService;
+import com.example.tailormaster.service.order.OrderService;
 import com.example.tailormaster.service.product.ProductService;
 import com.example.tailormaster.util.MessageUtil;
 import com.example.tailormaster.util.ThymeleafUtil;
@@ -27,6 +29,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +50,8 @@ public class CustomerController {
     private final CustomerPaymentLedgerService customerPaymentLedgerService;
     private final ProductMeasurementFieldService productMeasurementFieldService;
     private final MessageUtil messageUtil;
+    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     // List all customers
     @GetMapping
@@ -212,6 +217,10 @@ public class CustomerController {
 
             List<CustomerProductMeasurement> customerProductMeasurements = measurementService.getCustomerProductMeasurements(customerId);
 
+            Map<String, Object> orderSummary = orderService.getDeliveredOrderSummary(customerId);
+
+            model.addAttribute("totalDeliveredOrders", orderSummary.get("totalOrders"));
+            model.addAttribute("totalPaidAmount", orderSummary.get("totalAmount"));
             model.addAttribute("products", productService.getAllActiveProducts());
             model.addAttribute("customer", customer);
             model.addAttribute("productMeasurementsMap", productMeasurementsMap);

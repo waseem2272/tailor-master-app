@@ -88,6 +88,51 @@
                                 <div class="fw-semibold" th:text="${customer.phoneNumber}">Phone Number</div>
                             </div>
                         </div>
+
+
+                        <!-- CUSTOMER ORDER SUMMARY -->
+                        <div class="row g-3 mt-2">
+
+                            <!-- TOTAL DELIVERED ORDERS -->
+                            <div class="col-md-6">
+                                <div class="customer-summary-card customer-summary-orders border rounded-3 p-3 h-100 text-center">
+
+                                    <div class="customer-summary-label small fw-semibold mb-1">
+                                        <i class="bi bi-bag-check-fill me-1"></i>
+                                        <span th:text="#{customer.details.totalDeliveredOrders}">
+                    Total Delivered Orders
+                </span>
+                                    </div>
+
+                                    <div class="customer-summary-value fw-bold fs-4"
+                                         th:text="${totalDeliveredOrders != null ? totalDeliveredOrders : 0}">
+                                        0
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TOTAL PAID AMOUNT -->
+                            <div class="col-md-6">
+                                <div class="customer-summary-card customer-summary-amount border rounded-3 p-3 h-100 text-center">
+
+                                    <div class="customer-summary-label small fw-semibold mb-1">
+                                        <i class="bi bi-cash-stack me-1"></i>
+                                        <span th:text="#{customer.details.totalPaidAmount}">
+                    Total Paid Amount
+                </span>
+                                    </div>
+
+                                    <div class="customer-summary-value fw-bold fs-4"
+                                         style="overflow-wrap: anywhere;"
+                                         th:text="${'PKR ' + #numbers.formatDecimal(totalPaidAmount != null ? totalPaidAmount : 0, 1, 'COMMA', 2, 'POINT')}">
+                                        PKR 0.00
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
                     </div>
                 </div>
             </div>

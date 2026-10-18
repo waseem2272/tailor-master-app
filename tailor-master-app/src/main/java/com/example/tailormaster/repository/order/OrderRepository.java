@@ -108,4 +108,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("currentDate") LocalDate currentDate,
             @Param("excludedStatuses") List<OrderStatus> excludedStatuses,
             Pageable pageable);
+
+    @Query("""
+    SELECT COUNT(o), COALESCE(SUM(o.paidAmount), 0)
+    FROM Order o
+    WHERE o.customer.id = :customerId
+    AND o.status = 'DELIVERED'
+    AND o.user = :user
+    """)
+    Object[] getDeliveredOrderSummary(
+            @Param("customerId") Long customerId,
+            @Param("user") User user
+    );
 }
