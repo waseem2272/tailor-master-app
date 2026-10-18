@@ -15,6 +15,7 @@ import com.google.api.services.drive.model.FileList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import com.google.api.services.drive.Drive;
 import com.google.api.client.http.FileContent;
@@ -31,6 +32,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Profile("!demo")
 public class GoogleDriveServiceImpl implements GoogleDriveService {
 
     private static final String REDIRECT_URI =

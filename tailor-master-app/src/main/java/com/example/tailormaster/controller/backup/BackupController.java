@@ -12,6 +12,7 @@ import com.example.tailormaster.util.AuthenticatedUserService;
 import com.example.tailormaster.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/backup")
 @RequiredArgsConstructor
+@Profile("!demo")
 public class BackupController {
     private final UserBackupSettingsService userBackupSettingsService;
     private final AuthenticatedUserService authenticatedUserService;
