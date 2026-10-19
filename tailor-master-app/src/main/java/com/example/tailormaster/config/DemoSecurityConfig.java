@@ -1,6 +1,7 @@
 package com.example.tailormaster.config;
 
 import com.example.tailormaster.repository.UserRepository;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -29,11 +31,33 @@ public class DemoSecurityConfig {
     }
 
     @Bean
+    public FilterRegistrationBean<DemoAuthenticationFilter>
+    demoAuthenticationFilterRegistration(
+            DemoAuthenticationFilter filter) {
+
+        FilterRegistrationBean<DemoAuthenticationFilter> registration =
+                new FilterRegistrationBean<>(filter);
+
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
     public SecurityFilterChain demoSecurityFilterChain(
-            HttpSecurity http
+            HttpSecurity http,
+            DemoAuthenticationFilter demoAuthenticationFilter
     ) throws Exception {
 
         http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(
+                                CookieCsrfTokenRepository.withHttpOnlyFalse()
+                        )
+                )
+                .addFilterBefore(
+                        demoAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
@@ -44,4 +68,3 @@ public class DemoSecurityConfig {
         return http.build();
     }
 }
-
