@@ -10,6 +10,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Profile("demo")
 public class DemoAuthenticationFilter extends OncePerRequestFilter {
 
@@ -21,7 +24,7 @@ public class DemoAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        log.info("DemoAuthenticationFilter called for: {}", request.getRequestURI());
     }
 
     // Baqi doFilterInternal() method bilkul waisa hi rahega.
