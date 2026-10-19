@@ -34,12 +34,6 @@ public class DemoSecurityConfig {
     ) throws Exception {
 
         http
-
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
