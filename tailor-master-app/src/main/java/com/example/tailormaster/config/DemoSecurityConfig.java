@@ -45,12 +45,14 @@ public class DemoSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/login",
-                                "/update-password",
-                                "/users/register",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
                                 "/font/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/update-password",
+                                "/users/register"
                         ).denyAll()
                         .anyRequest().authenticated()
                 )
