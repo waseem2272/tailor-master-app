@@ -24,7 +24,23 @@ public class DemoAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("Before filterChain: status={}, URI={}",
+                response.getStatus(), request.getRequestURI());
+
+        filterChain.doFilter(request, response);
+
+        log.info("After filterChain: status={}, URI={}",
+                response.getStatus(), request.getRequestURI());
+
         log.info("DemoAuthenticationFilter called for: {}", request.getRequestURI());
+
+        log.info("Before filterChain: status={}, URI={}",
+                response.getStatus(), request.getRequestURI());
+
+        filterChain.doFilter(request, response);
+
+        log.info("After filterChain: status={}, URI={}",
+                response.getStatus(), request.getRequestURI());
     }
 
     // Baqi doFilterInternal() method bilkul waisa hi rahega.
