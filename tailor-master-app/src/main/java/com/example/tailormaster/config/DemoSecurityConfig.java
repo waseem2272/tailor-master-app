@@ -35,7 +35,6 @@ public class DemoSecurityConfig {
     ) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
