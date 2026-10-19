@@ -30,21 +30,22 @@ public class DemoSecurityConfig {
 
     @Bean
     public SecurityFilterChain demoSecurityFilterChain(
-            HttpSecurity http,
-            DemoAuthenticationFilter demoAuthenticationFilter
+            HttpSecurity http
     ) throws Exception {
 
         http
+
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().permitAll()
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
-                .logout(logout -> logout.disable())
-                .addFilterBefore(
-                        demoAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                .logout(logout -> logout.disable());
 
         return http.build();
     }

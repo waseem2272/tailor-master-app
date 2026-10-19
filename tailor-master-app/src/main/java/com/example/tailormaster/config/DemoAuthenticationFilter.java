@@ -1,4 +1,3 @@
-
 package com.example.tailormaster.config;
 
 import com.example.tailormaster.entity.User;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -65,18 +63,18 @@ public class DemoAuthenticationFilter extends OncePerRequestFilter {
                 authorities
         );
 
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
-
+        // No session/request details required for demo authentication.
         var context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
 
-        // Login page ki jagah dashboard kholna hai.
+        // Demo login is automatic.
         if ("/login".equals(request.getServletPath())
                 && "GET".equalsIgnoreCase(request.getMethod())) {
-            response.sendRedirect(request.getContextPath() + "/dashboard");
+
+            response.sendRedirect(
+                    request.getContextPath() + "/dashboard"
+            );
             return;
         }
 
