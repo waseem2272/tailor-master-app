@@ -520,7 +520,7 @@
             fetch(contextPath + `labors/payments/delete/${paymentId}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+                    'X-XSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
                 }
             })
                 .then(response => {
