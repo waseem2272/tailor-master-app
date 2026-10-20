@@ -106,6 +106,26 @@
 
                     <div class="card-body">
                         <div class="row g-3" id="tailoringProductFields">
+
+                            <!-- Tailoring Information -->
+                            <div class="col-12" id="tailoringInfoMessage">
+                                <div class="alert alert-info d-flex align-items-start gap-2 mb-0"
+                                     role="note">
+                                    <i class="bi bi-info-circle-fill mt-1"></i>
+                                    <div>
+                    <span th:text="#{orders.create.measurementInfo}">
+                        If customer measurements are unavailable, add them from Customer Details.
+                    </span>
+                                        <a th:href="@{/customers/details/{id}(id=${thymeleafUtil.encryptId(orderDto.customer.id)})}"
+                                           id="customerDetailsLink"
+                                           class="alert-link ms-1"
+                                           th:text="#{orders.create.viewCustomerDetails}">
+                                            View Customer Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Order Type -->
                             <div class="col-md-3">
                                 <label for="orderProductType" class="form-label fw-bold"
@@ -114,9 +134,11 @@
                                 </label>
                                 <select class="form-select field-type" id="orderProductType">
                                     <option value="TAILORING" selected
-                                            th:text="#{orders.create.tailoring}">Tailoring</option>
+                                            th:text="#{orders.create.tailoring}">Tailoring
+                                    </option>
                                     <option value="INVENTORY"
-                                            th:text="#{orders.create.inventory}">Inventory</option>
+                                            th:text="#{orders.create.inventory}">Inventory
+                                    </option>
                                 </select>
                             </div>
 

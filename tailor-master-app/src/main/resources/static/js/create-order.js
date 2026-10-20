@@ -1365,16 +1365,16 @@ function setupInventoryStockValidation() {
             selectedOption.dataset.unit || "";
 
         inventoryStockInfo.textContent =
-            orderMessages.physicalStock +
+            orderMessages.physicalStock + " " +
             physicalStock.toFixed(2) +
             " " + unit +
-            " | " + orderMessages.reservedStock +
+            " | " + orderMessages.reservedStock + " " +
             reservedStock.toFixed(2) +
             " " + unit +
-            " | " + orderMessages.currentOrder +
+            " | " + orderMessages.currentOrder + " " +
             currentOrderQuantity.toFixed(2) +
             " " + unit +
-            " | " + orderMessages.availableStock +
+            " | " + orderMessages.availableStock + " " +
             availableStock.toFixed(2) +
             " " + unit;
 
@@ -1460,16 +1460,16 @@ function refreshInventoryStockInfo() {
         selectedOption.dataset.unit || "";
 
     inventoryStockInfo.textContent =
-        orderMessages.physicalStock +
+        orderMessages.physicalStock + " " +
         physicalStock.toFixed(2) +
         " " + unit +
-        " | " + orderMessages.reservedStock +
+        " | " + orderMessages.reservedStock + " " +
         reservedStock.toFixed(2) +
         " " + unit +
-        " | " + orderMessages.currentOrder +
+        " | " + orderMessages.currentOrder + " " +
         currentOrderQuantity.toFixed(2) +
         " " + unit +
-        " | " + orderMessages.availableStock +
+        " | " + orderMessages.availableStock + " " +
         availableStock.toFixed(2) +
         " " + unit;
 

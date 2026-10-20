@@ -1046,6 +1046,7 @@ html[data-theme="dark"] .content .table thead.table-success th {
 
 /* Create Order - Date Picker Dark Mode */
 html[data-theme="dark"] #orderDate,
+html[data-theme="dark"] #joinDate,
 html[data-theme="dark"] #deliveryDate {
     color-scheme: dark !important;
     background-color: #292929 !important;
@@ -1055,6 +1056,7 @@ html[data-theme="dark"] #deliveryDate {
 
 /* Calendar icon visibility */
 html[data-theme="dark"] #orderDate::-webkit-calendar-picker-indicator,
+html[data-theme="dark"] #joinDate::-webkit-calendar-picker-indicator,
 html[data-theme="dark"] #deliveryDate::-webkit-calendar-picker-indicator {
     opacity: 1 !important;
     visibility: visible !important;
