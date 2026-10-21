@@ -5,6 +5,7 @@ import com.example.tailormaster.service.UserService;
 import com.example.tailormaster.util.MessageUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class GlobalControllerAdvice {
     private final UserService userService;
     private final MessageUtil messageUtil;
+    private final Environment environment;
 
     @ModelAttribute
     public void addAttributes(Model model, HttpServletRequest request) {
@@ -52,6 +55,11 @@ public class GlobalControllerAdvice {
         }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        model.addAttribute(
+                "demoMode",
+                Arrays.asList(environment.getActiveProfiles()).contains("demo")
+        );
 
         if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
             String username = auth.getName();
