@@ -80,7 +80,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     FROM Order o
     WHERE o.status IN('COMPLETED', 'DELIVERED') AND o.pickupStatus = 'PICKED_UP' AND o.paidAmount IS NOT NULL
         AND o.user = :currentUser
-    GROUP BY o.customer.fullName, o.customer.phoneNumber
+    GROUP BY o.customer.id, o.customer.fullName, o.customer.phoneNumber
     ORDER BY SUM(o.paidAmount) DESC
     """)
     List<Object[]> findTopCustomersWithDetails(User currentUser, Pageable pageable);
