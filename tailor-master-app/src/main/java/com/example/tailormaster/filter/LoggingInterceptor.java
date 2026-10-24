@@ -15,10 +15,13 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        logger.info("User '{}' is requesting: {} {}",
+        String ip = request.getRemoteAddr();
+
+        logger.info("User '{}' from IP '{}' is requesting: {} {}",
                 ThreadContext.get("user"),
+                ip,
                 request.getMethod(),
                 request.getRequestURI());
-        return true; // Proceed with the request
+        return true;
     }
 }
