@@ -82,7 +82,7 @@ public class InventoryController {
                     columnIndex, sortDirection
             );
 
-            log.info("Inventory datatable fetched successfully. draw={}, response={}", draw, response);
+            log.info("Inventory datatable fetched successfully");
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             log.warn("Invalid inventory datatable request: {}", e.getMessage());
